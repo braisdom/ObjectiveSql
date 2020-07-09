@@ -1,6 +1,6 @@
 package com.github.braisdom.funcsql;
 
-import com.github.braisdom.xsql.util.StringUtil;
+import com.github.braisdom.funcsql.util.StringUtil;
 
 import java.util.Objects;
 
