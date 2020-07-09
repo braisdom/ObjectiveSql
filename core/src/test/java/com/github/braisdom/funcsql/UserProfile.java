@@ -1,8 +1,8 @@
 package com.github.braisdom.funcsql;
 
-import com.github.braisdom.xsql.annotations.BelongsTo;
-import com.github.braisdom.xsql.annotations.RelatedTo;
-import com.github.braisdom.xsql.annotations.Table;
+import com.github.braisdom.funcsql.annotations.BelongsTo;
+import com.github.braisdom.funcsql.annotations.RelatedTo;
+import com.github.braisdom.funcsql.annotations.Table;
 
 @Table("user_profiles")
 @RelatedTo(base = User.class, name = "userProfiles", foreignKey = "user_id")
