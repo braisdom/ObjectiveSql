@@ -1,8 +1,8 @@
 package com.github.braisdom.funcsql;
 
-import com.github.braisdom.xsql.annotations.BelongsTo;
-import com.github.braisdom.xsql.annotations.PrimaryKey;
-import com.github.braisdom.xsql.annotations.RelatedTo;
+import com.github.braisdom.funcsql.annotations.BelongsTo;
+import com.github.braisdom.funcsql.annotations.PrimaryKey;
+import com.github.braisdom.funcsql.annotations.RelatedTo;
 
 import java.util.Arrays;
 import java.util.Objects;
