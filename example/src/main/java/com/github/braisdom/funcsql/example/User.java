@@ -8,8 +8,8 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-@Table("users")
 @FuncSql
+@Table("users")
 @PrimaryKey(value = "id", relatedClass = UserProfile.class)
 public class User {
 
