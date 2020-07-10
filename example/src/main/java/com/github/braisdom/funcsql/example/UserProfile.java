@@ -1,4 +1,4 @@
-package com.github.braisdom.funcsql;
+package com.github.braisdom.funcsql.example;
 
 import com.github.braisdom.funcsql.annotations.BelongsTo;
 import com.github.braisdom.funcsql.annotations.RelatedTo;
