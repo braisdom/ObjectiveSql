@@ -7,5 +7,9 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.SOURCE)
-public @interface FuncSql {
+public @interface DomainModel {
+
+    String tableName() default "";
+
+    String sqlFile() default "";
 }

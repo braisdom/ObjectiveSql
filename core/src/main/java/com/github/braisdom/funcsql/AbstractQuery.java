@@ -1,6 +1,5 @@
 package com.github.braisdom.funcsql;
 
-import com.github.braisdom.funcsql.annotations.Table;
 import com.github.braisdom.funcsql.util.WordUtil;
 
 import java.sql.SQLException;
@@ -164,7 +163,7 @@ public abstract class AbstractQuery<T extends Class> implements SimpleQuery<T>, 
     protected void processAssociations(ConnectionFactory connectionFactory, SQLExecutor sqlExecutor,
                                        Class rowClass, List rows) throws SQLException {
         for (RelationDefinition relationDefinition : relationDefinitions) {
-            if(RelationType.BELONGS_TO.equals(relationDefinition.getRelationType()))
+            if (RelationType.BELONGS_TO.equals(relationDefinition.getRelationType()))
                 processBelongsTo(connectionFactory, sqlExecutor, relationDefinition, rowClass, rows);
             else
                 processHasAny(connectionFactory, sqlExecutor, relationDefinition, rowClass, rows);
@@ -172,7 +171,7 @@ public abstract class AbstractQuery<T extends Class> implements SimpleQuery<T>, 
     }
 
     protected void processHasAny(ConnectionFactory connectionFactory, SQLExecutor sqlExecutor,
-                               RelationDefinition relationDefinition, Class rowClass, List rows) throws SQLException {
+                                 RelationDefinition relationDefinition, Class rowClass, List rows) throws SQLException {
         String foreignKey = relationDefinition.getForeignKey(rowClass);
         String primaryKey = relationDefinition.getPrimaryKey(rowClass);
         String relationTableName = getTableName(relationDefinition.getRelatedClass());
@@ -205,7 +204,7 @@ public abstract class AbstractQuery<T extends Class> implements SimpleQuery<T>, 
     }
 
     protected void processBelongsTo(ConnectionFactory connectionFactory, SQLExecutor sqlExecutor,
-                                  RelationDefinition relationDefinition, Class rowClass, List rows) throws SQLException {
+                                    RelationDefinition relationDefinition, Class rowClass, List rows) throws SQLException {
         String foreignKey = relationDefinition.getBelongsToForeignKey(relationDefinition.getRelatedClass());
         String primaryKey = relationDefinition.getPrimaryKey(relationDefinition.getRelatedClass());
         String relationTableName = getTableName(relationDefinition.getRelatedClass());
@@ -237,13 +236,7 @@ public abstract class AbstractQuery<T extends Class> implements SimpleQuery<T>, 
 
     protected String getTableName(Class tableClass) {
         String tableName;
-
-        Table table = (Table) (tableClass == null ? null : tableClass.getAnnotation(Table.class));
-
-        if (table != null)
-            tableName = table.value();
-        else
-            tableName = WordUtil.tableize(tableClass.getSimpleName());
+        tableName = WordUtil.tableize(tableClass.getSimpleName());
 
         return tableName;
     }

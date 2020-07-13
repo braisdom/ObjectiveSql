@@ -18,7 +18,7 @@ import javax.lang.model.element.TypeElement;
 import java.util.Set;
 
 @SupportedSourceVersion(value = SourceVersion.RELEASE_8)
-@SupportedAnnotationTypes(value = {"com.github.braisdom.funcsql.annotations.FuncSql"})
+@SupportedAnnotationTypes(value = {"com.github.braisdom.funcsql.annotations.DomainModel"})
 public class AnnotationProcessor extends AbstractProcessor {
 
     private JavacTrees trees;
@@ -37,7 +37,7 @@ public class AnnotationProcessor extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        Set<? extends Element> elements = roundEnv.getElementsAnnotatedWith(FuncSql.class);
+        Set<? extends Element> elements = roundEnv.getElementsAnnotatedWith(DomainModel.class);
 
         elements.forEach(element -> {
             JCTree jcTree = trees.getTree(element);

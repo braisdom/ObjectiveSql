@@ -5,15 +5,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target(ElementType.TYPE)
+@Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface BelongsTo {
 
-    Class base();
+    String primaryKey() default "";
 
-    String name();
+    String foreignKey() default "";
 
-    String primaryKey();
-
-    String foreignKey();
+    String condition() default "";
 }
