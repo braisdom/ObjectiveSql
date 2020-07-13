@@ -16,22 +16,7 @@ public class DefaultFuncSqlQuery<T extends Class> extends AbstractQuery<T> {
     }
 
     @Override
-    public List<T> execute(Relation... relations) throws SQLException {
-        return null;
-    }
-
-    @Override
-    public <C extends Class> List<C> execute(C relevantDomainClass) throws SQLException {
-        return null;
-    }
-
-    @Override
     public <C extends Class> List<C> execute(C relevantDomainClass, Relation... relations) throws SQLException {
-        return null;
-    }
-
-    @Override
-    public List<Row> executeRawly() throws SQLException {
         return null;
     }
 }

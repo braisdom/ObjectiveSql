@@ -2,11 +2,8 @@ package com.github.braisdom.funcsql.example;
 
 import com.github.braisdom.funcsql.annotations.BelongsTo;
 import com.github.braisdom.funcsql.annotations.RelatedTo;
-import com.github.braisdom.funcsql.annotations.Table;
 
-@Table("user_profiles")
 @RelatedTo(base = User.class, name = "userProfiles", foreignKey = "user_id")
-@BelongsTo(base = User.class, name = "user", primaryKey = "id", foreignKey = "user_id")
 public class UserProfile {
 
     private int id;

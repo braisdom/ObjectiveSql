@@ -20,10 +20,15 @@
             <version>1.18.12</version>
         </dependency>
         <dependency>
-            <groupId>com.github.braisdom</groupId>
-            <artifactId>funcsql-core</artifactId>
+            <groupId>com.github.braisdom.funcsql</groupId>
+            <artifactId>core</artifactId>
             <version>1.0</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.xerial</groupId>
+            <artifactId>sqlite-jdbc</artifactId>
+            <version>3.31.1</version>
         </dependency>
     </dependencies>
 
