@@ -1,5 +1,6 @@
 package com.github.braisdom.funcsql;
 
+import com.github.braisdom.funcsql.annotations.DomainModel;
 import com.github.braisdom.funcsql.util.WordUtil;
 
 import java.sql.SQLException;
@@ -10,16 +11,16 @@ public abstract class AbstractQuery<T> implements Query<T> {
 
     private List<RelationDefinition> relationDefinitions = new ArrayList<>();
 
-    private final Class<T> domainModelClass;
+    protected final Class<T> domainModelClass;
 
-    private int limit = -1;
-    private int offset = -1;
+    protected int limit = -1;
+    protected int offset = -1;
 
-    private String projection;
-    private String filter;
-    private String orderBy;
-    private String groupBy;
-    private String having;
+    protected String projection;
+    protected String filter;
+    protected String orderBy;
+    protected String groupBy;
+    protected String having;
 
     public AbstractQuery(Class<T> domainModelClass) {
         this.domainModelClass = domainModelClass;
@@ -67,42 +68,17 @@ public abstract class AbstractQuery<T> implements Query<T> {
         return this;
     }
 
-    public List<T> executeSimply(T rowClass) throws SQLException {
-        Objects.requireNonNull(rowClass, "The rowClass cannot be null");
-
-//        ConnectionFactory connectionFactory = Database.getConnectionFactory();
-//        SQLExecutor sqlExecutor = Database.getSqlExecutor();
-//        SQLGenerator sqlGenerator = Database.getSQLGenerator();
-//        String tableName = getTableName(rowClass);
-//
-//
-//        String sql = sqlGenerator.createQuerySQL(tableName, projection, filter, groupBy,
-//                having, orderBy, offset, limit);
-//        List<T> objects = sqlExecutor.query(connectionFactory.getConnection(), sql, rowClass);
-//
-//        processAssociations(connectionFactory, sqlExecutor, rowClass, objects);
-
-        return null;
-    }
-
-    public List<Row> executeSimply(String tableName) throws SQLException {
+    protected <C extends Class> List<C> executeInternally(Class<C> domainModelClass, String sql) throws SQLException {
         ConnectionFactory connectionFactory = Database.getConnectionFactory();
         SQLExecutor sqlExecutor = Database.getSqlExecutor();
-        SQLGenerator sqlGenerator = Database.getSQLGenerator();
+        List<C> objects = sqlExecutor.query(connectionFactory.getConnection(), sql, domainModelClass);
 
-        String sql = sqlGenerator.createQuerySQL(tableName, projection, filter, groupBy,
-                having, orderBy, offset, limit);
-        return sqlExecutor.query(connectionFactory.getConnection(), sql);
+        processAssociations(connectionFactory, sqlExecutor, domainModelClass, objects);
+
+        return objects;
     }
 
-    public List<T> execute(Class rowClass, String sql) throws SQLException {
-        ConnectionFactory connectionFactory = Database.getConnectionFactory();
-        SQLExecutor sqlExecutor = Database.getSqlExecutor();
-
-        return sqlExecutor.query(connectionFactory.getConnection(), sql, rowClass);
-    }
-
-    public List<Row> execute(String sql) throws SQLException {
+    protected List<Row> executeRawInternally(String sql) throws SQLException {
         ConnectionFactory connectionFactory = Database.getConnectionFactory();
         SQLExecutor sqlExecutor = Database.getSqlExecutor();
 
@@ -185,7 +161,12 @@ public abstract class AbstractQuery<T> implements Query<T> {
 
     protected String getTableName(Class tableClass) {
         String tableName;
-        tableName = WordUtil.tableize(tableClass.getSimpleName());
+        DomainModel domainModel = (DomainModel) (tableClass == null ? null : tableClass.getAnnotation(DomainModel.class));
+
+        if (domainModel != null)
+            tableName = domainModel.tableName();
+        else
+            tableName = WordUtil.tableize(tableClass.getSimpleName());
 
         return tableName;
     }
