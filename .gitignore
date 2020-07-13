@@ -5,3 +5,4 @@
 .idea/**
 *.iml
 /.idea/vcs.xml
+/example.db
