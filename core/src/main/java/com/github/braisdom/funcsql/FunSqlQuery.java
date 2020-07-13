@@ -3,7 +3,9 @@ package com.github.braisdom.funcsql;
 import java.sql.SQLException;
 import java.util.List;
 
-public interface FunSqlQuery extends Query {
+public interface FunSqlQuery<T> extends Query<T> {
 
-    List<Row> executeRawly(Relation... relations) throws SQLException;
+    List<T> execute() throws SQLException;
+
+    List<Row> execute(Relation... relations) throws SQLException;
 }
