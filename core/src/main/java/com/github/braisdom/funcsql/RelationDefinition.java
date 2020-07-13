@@ -22,58 +22,62 @@ public class RelationDefinition {
     }
 
     public String getBelongsToPrimaryKey(Class baseClass) {
-        BelongsTo[] primaryKeys = (BelongsTo[]) baseClass.getAnnotationsByType(BelongsTo.class);
-        if (primaryKeys.length == 1)
-            return primaryKeys[0].primaryKey();
-        else if (primaryKeys.length > 0) {
-            BelongsTo[] rawPrimaryKeys = (BelongsTo[]) Arrays.stream(primaryKeys)
-                    .filter(primaryKey -> primaryKey.base().equals(baseClass))
-                    .toArray();
-            if (rawPrimaryKeys.length == 1)
-                return rawPrimaryKeys[0].primaryKey();
-            else
-                throw new RelationException("Cannot find belongs primary key for " + baseClass.getName()
-                        + " from " + relatedClass.getName());
-        } else
-            throw new RelationException("Cannot find belongs primary key for " + baseClass.getName()
-                    + " from " + relatedClass.getName());
+//        BelongsTo[] primaryKeys = (BelongsTo[]) baseClass.getAnnotationsByType(BelongsTo.class);
+//        if (primaryKeys.length == 1)
+//            return primaryKeys[0].primaryKey();
+//        else if (primaryKeys.length > 0) {
+//            BelongsTo[] rawPrimaryKeys = (BelongsTo[]) Arrays.stream(primaryKeys)
+//                    .filter(primaryKey -> primaryKey.base().equals(baseClass))
+//                    .toArray();
+//            if (rawPrimaryKeys.length == 1)
+//                return rawPrimaryKeys[0].primaryKey();
+//            else
+//                throw new RelationException("Cannot find belongs primary key for " + baseClass.getName()
+//                        + " from " + relatedClass.getName());
+//        } else
+//            throw new RelationException("Cannot find belongs primary key for " + baseClass.getName()
+//                    + " from " + relatedClass.getName());
+
+        return null;
     }
 
     public String getBelongsToForeignKey(Class baseClass) {
-        BelongsTo[] primaryKeys = (BelongsTo[]) baseClass.getAnnotationsByType(BelongsTo.class);
-        if (primaryKeys.length == 1)
-            return primaryKeys[0].foreignKey();
-        else if (primaryKeys.length > 0) {
-            BelongsTo[] rawPrimaryKeys = (BelongsTo[]) Arrays.stream(primaryKeys)
-                    .filter(primaryKey -> primaryKey.base().equals(baseClass))
-                    .toArray();
-            if (rawPrimaryKeys.length == 1)
-                return rawPrimaryKeys[0].foreignKey();
-            else
-                throw new RelationException("Cannot find belongs primary key for " + baseClass.getName()
-                        + " from " + relatedClass.getName());
-        } else
-            throw new RelationException("Cannot find belongs primary key for " + baseClass.getName()
-                    + " from " + relatedClass.getName());
+//        BelongsTo[] primaryKeys = (BelongsTo[]) baseClass.getAnnotationsByType(BelongsTo.class);
+//        if (primaryKeys.length == 1)
+//            return primaryKeys[0].foreignKey();
+//        else if (primaryKeys.length > 0) {
+//            BelongsTo[] rawPrimaryKeys = (BelongsTo[]) Arrays.stream(primaryKeys)
+//                    .filter(primaryKey -> primaryKey.base().equals(baseClass))
+//                    .toArray();
+//            if (rawPrimaryKeys.length == 1)
+//                return rawPrimaryKeys[0].foreignKey();
+//            else
+//                throw new RelationException("Cannot find belongs primary key for " + baseClass.getName()
+//                        + " from " + relatedClass.getName());
+//        } else
+//            throw new RelationException("Cannot find belongs primary key for " + baseClass.getName()
+//                    + " from " + relatedClass.getName());
+        return null;
     }
 
     public String getPrimaryKey(Class baseClass) {
-        PrimaryKey[] primaryKeys = (PrimaryKey[]) baseClass.getAnnotationsByType(PrimaryKey.class);
-
-        if (primaryKeys.length == 1)
-            return primaryKeys[0].value();
-        else if (primaryKeys.length > 0) {
-            PrimaryKey[] rawPrimaryKeys = (PrimaryKey[]) Arrays.stream(primaryKeys)
-                    .filter(primaryKey -> primaryKey.relatedClass().equals(baseClass))
-                    .toArray();
-            if (rawPrimaryKeys.length == 1)
-                return rawPrimaryKeys[0].value();
-            else
-                throw new RelationException("Cannot find primary key for " + baseClass.getName()
-                        + " from " + relatedClass.getName());
-        } else
-            throw new RelationException("Cannot find primary key for " + baseClass.getName()
-                    + " from " + relatedClass.getName());
+//        PrimaryKey[] primaryKeys = (PrimaryKey[]) baseClass.getAnnotationsByType(PrimaryKey.class);
+//
+//        if (primaryKeys.length == 1)
+//            return primaryKeys[0].value();
+//        else if (primaryKeys.length > 0) {
+//            PrimaryKey[] rawPrimaryKeys = (PrimaryKey[]) Arrays.stream(primaryKeys)
+//                    .filter(primaryKey -> primaryKey.relatedClass().equals(baseClass))
+//                    .toArray();
+//            if (rawPrimaryKeys.length == 1)
+//                return rawPrimaryKeys[0].value();
+//            else
+//                throw new RelationException("Cannot find primary key for " + baseClass.getName()
+//                        + " from " + relatedClass.getName());
+//        } else
+//            throw new RelationException("Cannot find primary key for " + baseClass.getName()
+//                    + " from " + relatedClass.getName());
+        return null;
     }
 
     public String getForeignKey(Class parentClass) {

@@ -1,21 +1,45 @@
 package com.github.braisdom.funcsql;
 
-public interface Relation {
+public class Relation {
 
-    String DEFAULT_PRIMARY_KEY = "id";
+    private RelationType relationType;
+    private Class baseClass;
+    private Class relatedClass;
+    private String primaryKey;
+    private String foreignKey;
+    private String condition;
 
-    SimpleQuery hasMany(Class relatedClass);
+    public Relation(RelationType relationType, Class baseClass, Class relatedClass,
+                    String primaryKey, String foreignKey, String condition) {
+        this.relationType = relationType;
+        this.baseClass = baseClass;
+        this.relatedClass = relatedClass;
+        this.primaryKey = primaryKey;
+        this.foreignKey = foreignKey;
+        this.condition = condition;
+    }
 
-    SimpleQuery hasMany(Class relatedClass, String foreignKey, String conditions);
+    public RelationType getRelationType() {
+        return relationType;
+    }
 
-    SimpleQuery hasOne(Class relatedClass, String foreignKey);
+    public Class getBaseClass() {
+        return baseClass;
+    }
 
-    SimpleQuery hasOne(Class relatedClass, String foreignKey, String conditions);
+    public Class getRelatedClass() {
+        return relatedClass;
+    }
 
-    SimpleQuery belongsTo(Class relatedClass, String foreignKey);
+    public String getPrimaryKey() {
+        return primaryKey;
+    }
 
-    SimpleQuery belongsTo(Class relatedClass, String foreignKey, String conditions);
+    public String getForeignKey() {
+        return foreignKey;
+    }
 
-    SimpleQuery relatedTo(RelationDefinition relationDefinition);
-
+    public String getCondition() {
+        return condition;
+    }
 }

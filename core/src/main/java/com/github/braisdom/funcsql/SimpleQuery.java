@@ -3,9 +3,9 @@ package com.github.braisdom.funcsql;
 import java.sql.SQLException;
 import java.util.List;
 
-public interface SimpleQuery<T extends Class> extends Relation {
+public interface SimpleQuery<T extends Class>  {
 
-    SimpleQuery filter(String filter, Object... args);
+    SimpleQuery where(String filter, Object... args);
 
     SimpleQuery select(String... columns);
 

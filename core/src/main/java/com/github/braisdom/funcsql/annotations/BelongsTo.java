@@ -14,4 +14,5 @@ public @interface BelongsTo {
     String foreignKey() default "";
 
     String condition() default "";
+
 }

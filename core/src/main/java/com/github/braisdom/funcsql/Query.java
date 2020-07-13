@@ -3,9 +3,30 @@ package com.github.braisdom.funcsql;
 import java.sql.SQLException;
 import java.util.List;
 
-public interface Query<T extends Class> extends Relation {
+public interface Query<T> {
 
-    List<T> execute(T rowClass, String sql) throws SQLException;
+    Query where(String filter, Object... args);
 
-    List<Row> execute(String sql) throws SQLException;
+    Query select(String... columns);
+
+    Query limit(int limit);
+
+    Query offset(int offset);
+
+    Query groupBy(String groupBy);
+
+    Query having(String having);
+
+    Query orderBy(String orderBy);
+
+    List<T> execute() throws SQLException;
+
+    List<T> execute(Relation... relations) throws SQLException;
+
+    <C extends Class> List<C> execute(C relevantDomainClass) throws SQLException;
+
+    <C extends Class> List<C> execute(C relevantDomainClass, Relation... relations) throws SQLException;
+
+    List<Row> executeRawly() throws SQLException;
+
 }
