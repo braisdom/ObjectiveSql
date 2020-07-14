@@ -68,11 +68,6 @@ public abstract class AbstractQuery<T> implements Query<T> {
         return this;
     }
 
-    public <C extends Class> List<C> execute(C relevantDomainClass, Relation... relations) throws SQLException {
-        return null;
-    }
-
-
     protected <C extends Class> List<C> executeInternally(Class<C> domainModelClass, String sql) throws SQLException {
         ConnectionFactory connectionFactory = Database.getConnectionFactory();
         SQLExecutor sqlExecutor = Database.getSqlExecutor();

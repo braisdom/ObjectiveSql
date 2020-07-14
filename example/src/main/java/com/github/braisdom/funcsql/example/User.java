@@ -24,7 +24,7 @@ public class User {
     @HasOne
     private Domain domain;
 
-    public static SimpleQuery<User> createQuery() {
+    public static Query<User> createQuery() {
         return new DefaultQuery(User.class);
     }
 }

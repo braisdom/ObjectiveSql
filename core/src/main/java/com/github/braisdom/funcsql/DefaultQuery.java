@@ -3,7 +3,7 @@ package com.github.braisdom.funcsql;
 import java.sql.SQLException;
 import java.util.List;
 
-public class DefaultQuery<T extends Class> extends AbstractQuery<T> implements SimpleQuery<T> {
+public class DefaultQuery<T extends Class> extends AbstractQuery<T> {
 
     public DefaultQuery(Class<T> domainModelClass) {
         super(domainModelClass);
@@ -15,6 +15,11 @@ public class DefaultQuery<T extends Class> extends AbstractQuery<T> implements S
         String sql = sqlGenerator.createQuerySQL(getTableName(domainModelClass), projection, filter, groupBy,
                 having, orderBy, offset, limit);
         return executeInternally(domainModelClass, sql);
+    }
+
+    @Override
+    public List<Row> execute() throws SQLException {
+        return null;
     }
 
     @Override

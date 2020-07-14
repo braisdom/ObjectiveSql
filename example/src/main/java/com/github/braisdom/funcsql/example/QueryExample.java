@@ -2,7 +2,6 @@ package com.github.braisdom.funcsql.example;
 
 import com.github.braisdom.funcsql.Database;
 import com.github.braisdom.funcsql.Query;
-import com.github.braisdom.funcsql.SimpleQuery;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -29,7 +28,7 @@ public class QueryExample {
 
         createTables(Database.getConnectionFactory().getConnection());
 
-        SimpleQuery<User> userQuery = User.createQuery();
-        System.out.println(userQuery.execute());
+        Query<User> userQuery = User.createQuery();
+        System.out.println(userQuery.select("name").limit(1).execute());
     }
 }

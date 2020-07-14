@@ -19,5 +19,9 @@ public interface Query<T> {
 
     Query orderBy(String orderBy);
 
+    List<T> execute(Relation... relations) throws SQLException;
+
+    List<Row> execute() throws SQLException;
+
     <C extends Class> List<C> execute(C relevantDomainClass, Relation... relations) throws SQLException;
 }

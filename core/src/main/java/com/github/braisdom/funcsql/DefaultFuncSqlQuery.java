@@ -3,7 +3,7 @@ package com.github.braisdom.funcsql;
 import java.sql.SQLException;
 import java.util.List;
 
-public class DefaultFuncSqlQuery<T> extends AbstractQuery<T> implements FunSqlQuery<T> {
+public class DefaultFuncSqlQuery<T> extends AbstractQuery<T>  {
 
     private final String sql;
     private final Object[] params;
@@ -16,17 +16,17 @@ public class DefaultFuncSqlQuery<T> extends AbstractQuery<T> implements FunSqlQu
     }
 
     @Override
-    public List<T> execute() throws SQLException {
+    public List<T> execute(Relation... relations) throws SQLException {
         return null;
     }
 
     @Override
-    public List<Row> execute(Relation... relations) throws SQLException {
+    public List<Row> execute() throws SQLException {
         return null;
     }
 
     @Override
-    public List execute(Class relevantDomainClass, Relation... relations) throws SQLException {
+    public <C extends Class> List<C> execute(C relevantDomainClass, Relation... relations) throws SQLException {
         return null;
     }
 }
