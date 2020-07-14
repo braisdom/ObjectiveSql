@@ -24,11 +24,11 @@ public class QueryExample {
 
 
     public static void main(String[] args) throws SQLException {
-        Database.setConnectionFactory(new DemoConnectionFactory());
+        Database.setConnectionFactory(new SqliteConnectionFactory());
 
         createTables(Database.getConnectionFactory().getConnection());
 
         Query<User> userQuery = User.createQuery();
-        System.out.println(userQuery.select("name").limit(1).execute());
+        System.out.println(userQuery.where("name = '%s'", "hello").execute());
     }
 }

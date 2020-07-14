@@ -5,7 +5,7 @@ import com.github.braisdom.funcsql.ConnectionFactory;
 import java.sql.Connection;
 import java.sql.DriverManager;
 
-public class DemoConnectionFactory implements ConnectionFactory {
+public class SqliteConnectionFactory implements ConnectionFactory {
 
     @Override
     public Connection getConnection() {
