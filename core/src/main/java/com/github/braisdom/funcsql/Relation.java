@@ -1,22 +1,26 @@
 package com.github.braisdom.funcsql;
 
+import java.lang.annotation.Annotation;
+
 public class Relation {
 
     private RelationType relationType;
-    private final String name;
+    private final String fieldName;
     private Class baseClass;
     private Class relatedClass;
     private String primaryKey;
+    private final String primaryName;
     private String foreignKey;
     private String condition;
 
-    public Relation(RelationType relationType, String name, Class baseClass, Class relatedClass,
-                    String primaryKey, String foreignKey, String condition) {
+    public Relation(RelationType relationType, String fieldName, Class baseClass, Class relatedClass,
+                    String primaryKey, String primaryName, String foreignKey, String condition) {
         this.relationType = relationType;
-        this.name = name;
+        this.fieldName = fieldName;
         this.baseClass = baseClass;
         this.relatedClass = relatedClass;
         this.primaryKey = primaryKey;
+        this.primaryName = primaryName;
         this.foreignKey = foreignKey;
         this.condition = condition;
     }
@@ -25,12 +29,16 @@ public class Relation {
         return relationType;
     }
 
-    public String getName() {
-        return name;
-    }
-
     public Class getBaseClass() {
         return baseClass;
+    }
+
+    public String getFieldName() {
+        return fieldName;
+    }
+
+    public String getPrimaryName() {
+        return primaryName;
     }
 
     public Class getRelatedClass() {

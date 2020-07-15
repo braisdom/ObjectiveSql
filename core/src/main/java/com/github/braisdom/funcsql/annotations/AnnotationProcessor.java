@@ -1,9 +1,8 @@
 package com.github.braisdom.funcsql.annotations;
 
+import com.sun.source.tree.Tree;
 import com.sun.tools.javac.api.JavacTrees;
 import com.sun.tools.javac.code.Flags;
-import com.sun.tools.javac.code.Type;
-import com.sun.tools.javac.code.TypeTag;
 import com.sun.tools.javac.processing.JavacProcessingEnvironment;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
@@ -16,6 +15,7 @@ import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
+import java.util.ArrayList;
 import java.util.Set;
 
 @SupportedSourceVersion(value = SourceVersion.RELEASE_8)
@@ -23,6 +23,8 @@ import java.util.Set;
 public class AnnotationProcessor extends AbstractProcessor {
 
     private static final String FUNC_SQL_PACKAGE = "com.github.braisdom.funcsql";
+
+    private java.util.List<String> methodsCache = new ArrayList<>();
 
     private JavacTrees trees;
     private TreeMaker treeMaker;
@@ -51,6 +53,8 @@ public class AnnotationProcessor extends AbstractProcessor {
 
                     JCTree.JCCompilationUnit imports = (JCTree.JCCompilationUnit) trees.getPath(element).getCompilationUnit();
 
+                    cacheMethod(jcClassDecl.defs);
+
                     imports.defs = imports.defs.append(
                             treeMaker.Import(
                                     treeMaker.Select(
@@ -67,9 +71,10 @@ public class AnnotationProcessor extends AbstractProcessor {
                                     false)
                     );
 
-                    jcClassDecl.defs = jcClassDecl.defs.append(
-                            createQueryMethod(jcClassDecl, element)
-                    );
+                    if(!methodsCache.contains("createQuery"))
+                        jcClassDecl.defs = jcClassDecl.defs.append(
+                                createQueryMethod(jcClassDecl, element)
+                        );
                 }
             });
         });
@@ -78,6 +83,9 @@ public class AnnotationProcessor extends AbstractProcessor {
     }
 
     private JCTree.JCMethodDecl createQueryMethod(JCTree.JCClassDecl jcClassDecl, Element element) {
+        if(methodsCache.contains("createQuery"))
+            return null;
+
         ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
         ListBuffer<JCTree.JCExpression> jcVariableExpressions = new ListBuffer<>();
 
@@ -110,20 +118,11 @@ public class AnnotationProcessor extends AbstractProcessor {
         );
     }
 
-    private JCTree.JCMethodDecl createFindByIdMethod() {
-        ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
-
-        JCTree.JCBlock jcBlock = treeMaker.Block(0, jcStatements.toList());
-
-        return treeMaker.MethodDef(
-                treeMaker.Modifiers(Flags.PUBLIC),
-                names.fromString("findById"),
-                treeMaker.TypeIdent(TypeTag.VOID),
-                List.nil(),
-                List.nil(),
-                List.nil(),
-                jcBlock,
-                null
-        );
+    private void cacheMethod(List<JCTree> defs) {
+        for (JCTree def : defs) {
+            if(def.getKind() == Tree.Kind.METHOD) {
+                methodsCache.add(((JCTree.JCMethodDecl)def).getName().toString());
+            }
+        }
     }
 }

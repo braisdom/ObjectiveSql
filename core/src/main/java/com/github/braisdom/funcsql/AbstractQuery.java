@@ -91,13 +91,12 @@ public abstract class AbstractQuery<T> implements Query<T> {
     protected void processHasAny(Connection connection, List rows, Relation relation) throws SQLException {
         SQLExecutor sqlExecutor = Database.getSqlExecutor();
         String foreignKey = relation.getForeignKey();
-        String primaryKey = relation.getPrimaryKey();
         String relationTableName = getTableName(relation.getRelatedClass());
 
         SQLGenerator sqlGenerator = Database.getSQLGenerator();
 
         Map<Object, List<RawRelationObject>> baseRows = (Map<Object, List<RawRelationObject>>) rows.stream()
-                .map(row -> new RawRelationObject(domainModelClass, primaryKey, row))
+                .map(row -> new RawRelationObject(relation, row))
                 .collect(Collectors.groupingBy(RawRelationObject::getValue));
 
         String relationConditions = relation.getCondition() == null
@@ -110,7 +109,7 @@ public abstract class AbstractQuery<T> implements Query<T> {
                 relation.getRelatedClass());
 
         Map<Object, List<RawRelationObject>> relationRows = relations.stream()
-                .map(row -> new RawRelationObject(relation.getRelatedClass(), foreignKey, row))
+                .map(row -> new RawRelationObject(relation, row))
                 .collect(Collectors.groupingBy(RawRelationObject::getValue));
 
         for (Object key : baseRows.keySet()) {
@@ -122,14 +121,13 @@ public abstract class AbstractQuery<T> implements Query<T> {
 
     protected void processBelongsTo(ConnectionFactory connectionFactory, SQLExecutor sqlExecutor,
                                     RelationDefinition relationDefinition, Class rowClass, List rows) throws SQLException {
-        String foreignKey = relationDefinition.getBelongsToForeignKey(relationDefinition.getRelatedClass());
         String primaryKey = relationDefinition.getPrimaryKey(relationDefinition.getRelatedClass());
         String relationTableName = getTableName(relationDefinition.getRelatedClass());
 
         SQLGenerator sqlGenerator = Database.getSQLGenerator();
 
         Map<Object, List<RawRelationObject>> relationRows = (Map<Object, List<RawRelationObject>>) rows.stream()
-                .map(row -> new RawRelationObject(rowClass, foreignKey, row))
+                .map(row -> new RawRelationObject(null, row))
                 .collect(Collectors.groupingBy(RawRelationObject::getValue));
 
         String baseConditions = String.format(" %s IN (%s) ", primaryKey, quote(relationRows.keySet().toArray()));
@@ -140,7 +138,7 @@ public abstract class AbstractQuery<T> implements Query<T> {
                 relationDefinition.getRelatedClass());
 
         Map<Object, List<RawRelationObject>> baseRows = rawBaseObjects.stream()
-                .map(row -> new RawRelationObject(relationDefinition.getRelatedClass(), primaryKey, row))
+                .map(row -> new RawRelationObject(null, row))
                 .collect(Collectors.groupingBy(RawRelationObject::getValue));
 
         for (Object key : baseRows.keySet()) {

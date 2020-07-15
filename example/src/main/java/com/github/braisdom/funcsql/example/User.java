@@ -4,10 +4,7 @@ import com.github.braisdom.funcsql.DefaultQuery;
 import com.github.braisdom.funcsql.Query;
 import com.github.braisdom.funcsql.Relation;
 import com.github.braisdom.funcsql.RelationType;
-import com.github.braisdom.funcsql.annotations.DomainModel;
-import com.github.braisdom.funcsql.annotations.HasMany;
-import com.github.braisdom.funcsql.annotations.HasOne;
-import com.github.braisdom.funcsql.annotations.Queryable;
+import com.github.braisdom.funcsql.annotations.*;
 import lombok.Data;
 
 import java.util.List;
@@ -17,10 +14,14 @@ import java.util.List;
 public class User {
 
     public static final Relation R_USER_PROFILE = new Relation(RelationType.HAS_MANY,
-            "userProfiles", User.class, UserProfile.class, "id", "user_id", null);
+            "userProfiles", User.class, UserProfile.class, "id", "id",
+            "user_id", null);
 
-    @Queryable private int id;
-    @Queryable private String name;
+    @Queryable
+    @Column("id")
+    private int id;
+    @Queryable
+    private String name;
 
     @HasMany(primaryKey = "id", foreignKey = "user_id")
     private List<UserProfile> userProfiles;
