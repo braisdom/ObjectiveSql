@@ -31,6 +31,6 @@ public class QueryExample {
         createTables(Database.getConnectionFactory().getConnection());
 
         Query<User> userQuery = User.createQuery();
-        System.out.println(userQuery.where("name = '%s'", "hello").execute(R_USER_PROFILE));
+        System.out.println(userQuery.limit(2).execute(R_USER_PROFILE));
     }
 }

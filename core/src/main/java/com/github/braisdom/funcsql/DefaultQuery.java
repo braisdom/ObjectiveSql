@@ -2,7 +2,6 @@ package com.github.braisdom.funcsql;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.List;
 
 public class DefaultQuery<T> extends AbstractQuery<T> {

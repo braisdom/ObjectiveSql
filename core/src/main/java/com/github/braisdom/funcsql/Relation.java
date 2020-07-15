@@ -1,7 +1,5 @@
 package com.github.braisdom.funcsql;
 
-import java.lang.annotation.Annotation;
-
 public class Relation {
 
     private RelationType relationType;
@@ -12,6 +10,11 @@ public class Relation {
     private final String primaryName;
     private String foreignKey;
     private String condition;
+
+    public Relation(RelationType relationType, String fieldName, Class baseClass, Class relatedClass,
+                    String primaryKey, String primaryName, String foreignKey) {
+        this(relationType, fieldName, baseClass, relatedClass, primaryKey, primaryName, foreignKey, null);
+    }
 
     public Relation(RelationType relationType, String fieldName, Class baseClass, Class relatedClass,
                     String primaryKey, String primaryName, String foreignKey, String condition) {

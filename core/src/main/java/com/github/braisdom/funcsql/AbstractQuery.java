@@ -83,7 +83,7 @@ public abstract class AbstractQuery<T> implements Query<T> {
 
     protected void processRelation(Connection connection, List rows, Relation relation) throws SQLException {
         if (RelationType.BELONGS_TO.equals(relation.getRelationType()))
-            processBelongsTo(null, null, null, null, rows);
+            processBelongsTo(connection, rows, relation);
         else
             processHasAny(connection, rows, relation);
     }
@@ -119,10 +119,10 @@ public abstract class AbstractQuery<T> implements Query<T> {
         }
     }
 
-    protected void processBelongsTo(ConnectionFactory connectionFactory, SQLExecutor sqlExecutor,
-                                    RelationDefinition relationDefinition, Class rowClass, List rows) throws SQLException {
-        String primaryKey = relationDefinition.getPrimaryKey(relationDefinition.getRelatedClass());
-        String relationTableName = getTableName(relationDefinition.getRelatedClass());
+    protected void processBelongsTo(Connection connection, List rows, Relation relation) throws SQLException {
+        SQLExecutor sqlExecutor = Database.getSqlExecutor();
+        String foreignKey = relation.getForeignKey();
+        String relationTableName = getTableName(relation.getRelatedClass());
 
         SQLGenerator sqlGenerator = Database.getSQLGenerator();
 
@@ -130,12 +130,12 @@ public abstract class AbstractQuery<T> implements Query<T> {
                 .map(row -> new RawRelationObject(null, row))
                 .collect(Collectors.groupingBy(RawRelationObject::getValue));
 
-        String baseConditions = String.format(" %s IN (%s) ", primaryKey, quote(relationRows.keySet().toArray()));
+        String baseConditions = String.format(" %s IN (%s) ", foreignKey, quote(relationRows.keySet().toArray()));
         String baseTableQuerySql = sqlGenerator.createQuerySQL(relationTableName, null, baseConditions,
                 null, null, null, -1, -1);
 
-        List<Object> rawBaseObjects = sqlExecutor.query(connectionFactory.getConnection(), baseTableQuerySql,
-                relationDefinition.getRelatedClass());
+        List<Object> rawBaseObjects = sqlExecutor.query(connection, baseTableQuerySql,
+                relation.getRelatedClass());
 
         Map<Object, List<RawRelationObject>> baseRows = rawBaseObjects.stream()
                 .map(row -> new RawRelationObject(null, row))

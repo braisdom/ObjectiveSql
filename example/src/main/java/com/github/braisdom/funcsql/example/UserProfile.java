@@ -1,5 +1,8 @@
 package com.github.braisdom.funcsql.example;
 
+import lombok.Data;
+
+@Data
 public class UserProfile {
 
     private int id;
