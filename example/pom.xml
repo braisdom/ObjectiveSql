@@ -11,7 +11,7 @@
 
     <groupId>com.github.braisdom.funcsql</groupId>
     <artifactId>example</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
 
     <dependencies>
         <dependency>
@@ -23,6 +23,7 @@
             <groupId>com.github.braisdom.funcsql</groupId>
             <artifactId>core</artifactId>
             <version>1.0</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.xerial</groupId>
