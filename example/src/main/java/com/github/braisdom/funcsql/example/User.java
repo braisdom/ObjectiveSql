@@ -1,9 +1,9 @@
 package com.github.braisdom.funcsql.example;
 
-import com.github.braisdom.funcsql.*;
 import com.github.braisdom.funcsql.annotations.DomainModel;
 import com.github.braisdom.funcsql.annotations.HasMany;
 import com.github.braisdom.funcsql.annotations.HasOne;
+import com.github.braisdom.funcsql.annotations.Queryable;
 import lombok.Data;
 
 import java.util.List;
@@ -12,11 +12,9 @@ import java.util.List;
 @DomainModel
 public class User {
 
-    public static final Relation R_USER_PROFILE = new Relation(RelationType.HAS_MANY, User.class,
-            UserProfile.class, null, null, null);
 
-    private int id;
-    private String name;
+    @Queryable private int id;
+    @Queryable private String name;
 
     @HasMany
     private List<UserProfile> userProfiles;
@@ -24,7 +22,7 @@ public class User {
     @HasOne
     private Domain domain;
 
-    public static Query<User> createQuery() {
-        return new DefaultQuery(User.class);
-    }
+//    public static Query<User> createQuery() {
+//        return new DefaultQuery(User.class);
+//    }
 }

@@ -68,7 +68,7 @@ public abstract class AbstractQuery<T> implements Query<T> {
         return this;
     }
 
-    protected <C extends Class> List<C> executeInternally(Class<C> domainModelClass, String sql) throws SQLException {
+    protected <C> List<C> executeInternally(Class<C> domainModelClass, String sql) throws SQLException {
         ConnectionFactory connectionFactory = Database.getConnectionFactory();
         SQLExecutor sqlExecutor = Database.getSqlExecutor();
         List<C> objects = sqlExecutor.query(connectionFactory.getConnection(), sql, domainModelClass);

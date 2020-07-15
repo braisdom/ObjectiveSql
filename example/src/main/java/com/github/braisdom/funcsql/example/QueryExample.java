@@ -28,7 +28,7 @@ public class QueryExample {
 
         createTables(Database.getConnectionFactory().getConnection());
 
-        Query<User> userQuery = User.createQuery();
-        System.out.println(userQuery.where("name = '%s'", "hello").execute());
+//        Query<User> userQuery = User.createQuery();
+//        System.out.println(userQuery.where("name = '%s'", "hello").execute());
     }
 }

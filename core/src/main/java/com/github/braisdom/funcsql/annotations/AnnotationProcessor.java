@@ -2,6 +2,7 @@ package com.github.braisdom.funcsql.annotations;
 
 import com.sun.tools.javac.api.JavacTrees;
 import com.sun.tools.javac.code.Flags;
+import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.code.TypeTag;
 import com.sun.tools.javac.processing.JavacProcessingEnvironment;
 import com.sun.tools.javac.tree.JCTree;
@@ -21,6 +22,8 @@ import java.util.Set;
 @SupportedAnnotationTypes(value = {"com.github.braisdom.funcsql.annotations.DomainModel"})
 public class AnnotationProcessor extends AbstractProcessor {
 
+    private static final String FUNC_SQL_PACKAGE = "com.github.braisdom.funcsql";
+
     private JavacTrees trees;
     private TreeMaker treeMaker;
     private Names names;
@@ -32,7 +35,6 @@ public class AnnotationProcessor extends AbstractProcessor {
         this.trees = JavacTrees.instance(processingEnv);
         this.treeMaker = TreeMaker.instance(((JavacProcessingEnvironment) processingEnv).getContext());
         this.names = Names.instance(((JavacProcessingEnvironment) processingEnv).getContext());
-
     }
 
     @Override
@@ -42,11 +44,31 @@ public class AnnotationProcessor extends AbstractProcessor {
         elements.forEach(element -> {
             JCTree jcTree = trees.getTree(element);
             jcTree.accept(new TreeTranslator() {
+
                 @Override
                 public void visitClassDef(JCTree.JCClassDecl jcClassDecl) {
                     super.visitClassDef(jcClassDecl);
+
+                    JCTree.JCCompilationUnit imports = (JCTree.JCCompilationUnit) trees.getPath(element).getCompilationUnit();
+
+                    imports.defs = imports.defs.append(
+                            treeMaker.Import(
+                                    treeMaker.Select(
+                                            treeMaker.Ident(names.fromString("com.github.braisdom.funcsql")),
+                                            names.fromString("DefaultQuery")),
+                                    false)
+                    );
+
+                    imports.defs = imports.defs.append(
+                            treeMaker.Import(
+                                    treeMaker.Select(
+                                            treeMaker.Ident(names.fromString("com.github.braisdom.funcsql")),
+                                            names.fromString("Query")),
+                                    false)
+                    );
+
                     jcClassDecl.defs = jcClassDecl.defs.append(
-                            createFindByIdMethod()
+                            createQueryMethod(jcClassDecl, element)
                     );
                 }
             });
@@ -55,9 +77,41 @@ public class AnnotationProcessor extends AbstractProcessor {
         return true;
     }
 
+    private JCTree.JCMethodDecl createQueryMethod(JCTree.JCClassDecl jcClassDecl, Element element) {
+        ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
+        ListBuffer<JCTree.JCExpression> jcVariableExpressions = new ListBuffer<>();
+
+        jcVariableExpressions.append(
+                treeMaker.Select(
+                        treeMaker.Ident(names.fromString(element.getSimpleName().toString())),
+                        names.fromString("class")
+                )
+        );
+
+        jcStatements.append(
+                treeMaker.Return(treeMaker.NewClass(
+                        null,
+                        List.nil(), //泛型参数列表
+                        treeMaker.Ident(names.fromString("DefaultQuery")), //创建的类名
+                        jcVariableExpressions.toList(), //参数列表
+                        null //类定义，估计是用于创建匿名内部类
+                ))
+        );
+
+        return treeMaker.MethodDef(
+                treeMaker.Modifiers(Flags.PUBLIC + Flags.STATIC + Flags.FINAL),
+                names.fromString("createQuery"),
+                treeMaker.Ident(names.fromString("Query")),
+                List.nil(),
+                List.nil(),
+                List.nil(),
+                treeMaker.Block(0, jcStatements.toList()),
+                null
+        );
+    }
+
     private JCTree.JCMethodDecl createFindByIdMethod() {
         ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
-
 
         JCTree.JCBlock jcBlock = treeMaker.Block(0, jcStatements.toList());
 
