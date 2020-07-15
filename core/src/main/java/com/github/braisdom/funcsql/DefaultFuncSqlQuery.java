@@ -21,12 +21,12 @@ public class DefaultFuncSqlQuery<T> extends AbstractQuery<T>  {
     }
 
     @Override
-    public List<Row> executeRawly() throws SQLException {
+    public List<Row> executeCrudely() throws SQLException {
         return null;
     }
 
     @Override
-    public <C extends Class> List<C> executeRawly(C relevantDomainClass, Relation... relations) throws SQLException {
+    public <C extends Class> List<C> executeCrudely(C relevantDomainClass, Relation... relations) throws SQLException {
         return null;
     }
 }

@@ -3,6 +3,7 @@ package com.github.braisdom.funcsql;
 import com.github.braisdom.funcsql.annotations.DomainModel;
 import com.github.braisdom.funcsql.util.WordUtil;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -68,14 +69,9 @@ public abstract class AbstractQuery<T> implements Query<T> {
         return this;
     }
 
-    protected <C> List<C> executeInternally(Class<C> domainModelClass, String sql) throws SQLException {
-        ConnectionFactory connectionFactory = Database.getConnectionFactory();
+    protected <C> List<C> executeInternally(Connection connection, Class<C> domainModelClass, String sql) throws SQLException {
         SQLExecutor sqlExecutor = Database.getSqlExecutor();
-        List<C> objects = sqlExecutor.query(connectionFactory.getConnection(), sql, domainModelClass);
-
-        processAssociations(connectionFactory, sqlExecutor, domainModelClass, objects);
-
-        return objects;
+        return sqlExecutor.query(connection, sql, domainModelClass);
     }
 
     protected List<Row> executeRawInternally(String sql) throws SQLException {
@@ -85,46 +81,42 @@ public abstract class AbstractQuery<T> implements Query<T> {
         return sqlExecutor.query(connectionFactory.getConnection(), sql);
     }
 
-    protected void processAssociations(ConnectionFactory connectionFactory, SQLExecutor sqlExecutor,
-                                       Class rowClass, List rows) throws SQLException {
-        for (RelationDefinition relationDefinition : relationDefinitions) {
-            if (RelationType.BELONGS_TO.equals(relationDefinition.getRelationType()))
-                processBelongsTo(connectionFactory, sqlExecutor, relationDefinition, rowClass, rows);
-            else
-                processHasAny(connectionFactory, sqlExecutor, relationDefinition, rowClass, rows);
-        }
+    protected void processRelation(Connection connection, List rows, Relation relation) throws SQLException {
+        if (RelationType.BELONGS_TO.equals(relation.getRelationType()))
+            processBelongsTo(null, null, null, null, rows);
+        else
+            processHasAny(connection, rows, relation);
     }
 
-    protected void processHasAny(ConnectionFactory connectionFactory, SQLExecutor sqlExecutor,
-                                 RelationDefinition relationDefinition, Class rowClass, List rows) throws SQLException {
-        String foreignKey = relationDefinition.getForeignKey(rowClass);
-        String primaryKey = relationDefinition.getPrimaryKey(rowClass);
-        String relationTableName = getTableName(relationDefinition.getRelatedClass());
+    protected void processHasAny(Connection connection, List rows, Relation relation) throws SQLException {
+        SQLExecutor sqlExecutor = Database.getSqlExecutor();
+        String foreignKey = relation.getForeignKey();
+        String primaryKey = relation.getPrimaryKey();
+        String relationTableName = getTableName(relation.getRelatedClass());
 
         SQLGenerator sqlGenerator = Database.getSQLGenerator();
 
         Map<Object, List<RawRelationObject>> baseRows = (Map<Object, List<RawRelationObject>>) rows.stream()
-                .map(row -> new RawRelationObject(rowClass, primaryKey, row))
+                .map(row -> new RawRelationObject(domainModelClass, primaryKey, row))
                 .collect(Collectors.groupingBy(RawRelationObject::getValue));
 
-        String relationConditions = relationDefinition.getConditions() == null
+        String relationConditions = relation.getCondition() == null
                 ? String.format(" %s IN (%s) ", foreignKey, quote(baseRows.keySet().toArray()))
-                : relationDefinition.getConditions();
+                : String.format(" %s IN (%s) AND (%s)", foreignKey, quote(baseRows.keySet().toArray()), relation.getCondition());
         String childTableQuerySql = sqlGenerator.createQuerySQL(relationTableName, null, relationConditions,
                 null, null, null, -1, -1);
 
-        List<Object> relations = sqlExecutor.query(connectionFactory.getConnection(), childTableQuerySql,
-                relationDefinition.getRelatedClass());
+        List<Object> relations = sqlExecutor.query(connection, childTableQuerySql,
+                relation.getRelatedClass());
 
         Map<Object, List<RawRelationObject>> relationRows = relations.stream()
-                .map(row -> new RawRelationObject(relationDefinition.getRelatedClass(), foreignKey, row))
+                .map(row -> new RawRelationObject(relation.getRelatedClass(), foreignKey, row))
                 .collect(Collectors.groupingBy(RawRelationObject::getValue));
 
         for (Object key : baseRows.keySet()) {
             List<RawRelationObject> relationObjects = relationRows.get(key);
             if (relationObjects != null)
-                baseRows.get(key).forEach(baseRow -> baseRow.setRelations(relationDefinition.getRelationType(),
-                        relationDefinition.getRelatedClass(), relationObjects));
+                baseRows.get(key).forEach(baseRow -> baseRow.setRelations(relation, relationObjects));
         }
     }
 
@@ -154,8 +146,7 @@ public abstract class AbstractQuery<T> implements Query<T> {
         for (Object key : baseRows.keySet()) {
             List<RawRelationObject> baseObjects = relationRows.get(key);
             if (baseObjects != null)
-                baseRows.get(key).forEach(baseRow -> baseRow.setRelations(relationDefinition.getRelationType(),
-                        relationDefinition.getRelatedClass(), baseObjects));
+                baseRows.get(key).forEach(baseRow -> baseRow.setRelations(null, baseObjects));
         }
     }
 

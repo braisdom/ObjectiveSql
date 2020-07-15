@@ -6,6 +6,8 @@ import com.github.braisdom.funcsql.Query;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import static com.github.braisdom.funcsql.example.User.R_USER_PROFILE;
+
 public class QueryExample {
 
     private static void createTables(Connection connection) throws SQLException {
@@ -28,7 +30,7 @@ public class QueryExample {
 
         createTables(Database.getConnectionFactory().getConnection());
 
-//        Query<User> userQuery = User.createQuery();
-//        System.out.println(userQuery.where("name = '%s'", "hello").execute());
+        Query<User> userQuery = User.createQuery();
+        System.out.println(userQuery.where("name = '%s'", "hello").execute(R_USER_PROFILE));
     }
 }

@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-class RawRelationObject {
+final class RawRelationObject {
 
     private final Class baseClass;
     public final String key;
@@ -38,10 +38,10 @@ class RawRelationObject {
         }
     }
 
-    public void setRelations(RelationType relationType, Class relationClass, List<RawRelationObject> rawRelationObjects) {
-        String fieldName = getRelationName(relationType, relationClass);
+    public void setRelations(Relation relation, List<RawRelationObject> rawRelationObjects) {
+        String fieldName = relation.getName();
 
-        if (RelationType.HAS_ONE.equals(relationType) || RelationType.BELONGS_TO.equals(relationType)) {
+        if (RelationType.HAS_ONE.equals(relation.getRelationType()) || RelationType.BELONGS_TO.equals(relation.getRelationType())) {
             if (rawRelationObjects.size() > 1)
                 throw new RelationException(String.format("The %s has too many relations", key));
 
