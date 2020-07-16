@@ -11,15 +11,31 @@ public class RelationDefinition {
 
     public static final String DEFAULT_PRIMARY_KEY = "id";
 
+    private final Class baseClass;
+    private final String fieldName;
     private final Field relationField;
     private final Relation relation;
 
-    public RelationDefinition(Field relationField, Relation relation) {
+    public RelationDefinition(Class baseClass, String fieldName, Field relationField, Relation relation) {
         Objects.requireNonNull(relationField, "The relationField cannot be null");
         Objects.requireNonNull(relation, String.format("The %s has no relation annotation",
                 relationField.getName()));
+        this.baseClass = baseClass;
+        this.fieldName = fieldName;
         this.relationField = relationField;
         this.relation = relation;
+    }
+
+    public Class getBaseClass() {
+        return baseClass;
+    }
+
+    public Class getRelationClass() {
+        return relationField.getType();
+    }
+
+    public String getFieldName() {
+        return fieldName;
     }
 
     public String getPrimaryKey() {
@@ -31,23 +47,25 @@ public class RelationDefinition {
 
     public String getForeignKey() {
         if (StringUtil.isBlank(relation.foreignKey())) {
-            if(RelationType.HAS_MANY.equals(relation.relationType())) {
-                String typeName = relationField.getType().getGenericSuperclass().getTypeName();
-            }else {
-                return WordUtil.underscore(relationField.getName());
+            if (RelationType.HAS_MANY.equals(relation.relationType())
+                    || RelationType.HAS_ONE.equals(relation.relationType())) {
+                String rawForeignKey = baseClass.getSimpleName();
+                return String.format("%s_%s", WordUtil.underscore(rawForeignKey), DEFAULT_PRIMARY_KEY);
+            } else {
+                String rawForeignKey = relationField.getType().getSimpleName();
+                return String.format("%s_%s", WordUtil.underscore(rawForeignKey), DEFAULT_PRIMARY_KEY);
             }
         } else
             return relation.foreignKey();
-        return null;
     }
 
-    public static final RelationDefinition createRelation(Class clazz, String fieldName) {
+    public static final RelationDefinition createRelation(Class baseClass, String fieldName) {
         try {
-            Field field = clazz.getField(fieldName);
+            Field field = baseClass.getDeclaredField(fieldName);
             Relation relation = field.getAnnotation(Relation.class);
-            return new RelationDefinition(field, relation);
+            return new RelationDefinition(baseClass, fieldName, field, relation);
         } catch (NoSuchFieldException ex) {
-            throw new RelationException(String.format("The %s has no field '%s' (%s)", clazz.getName(),
+            throw new RelationException(String.format("The %s has no field '%s' (%s)", baseClass.getSimpleName(),
                     fieldName, ex.getMessage()), ex);
         }
     }
