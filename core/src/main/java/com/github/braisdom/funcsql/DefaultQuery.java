@@ -11,7 +11,7 @@ public class DefaultQuery<T> extends AbstractQuery<T> {
     }
 
     @Override
-    public List<T> execute(RelationDefinition... relationDefinitions) throws SQLException {
+    public List<T> execute(Relationship... relationships) throws SQLException {
         SQLGenerator sqlGenerator = Database.getSQLGenerator();
         ConnectionFactory connectionFactory = Database.getConnectionFactory();
         Connection connection = connectionFactory.getConnection();
@@ -20,9 +20,9 @@ public class DefaultQuery<T> extends AbstractQuery<T> {
 
         List<T> rows = executeInternally(connection, domainModelClass, sql);
 
-        if (relationDefinitions.length > 0) {
-            for(RelationDefinition relationDefinition : relationDefinitions)
-                processRelation(connection, rows, relationDefinition);
+        if (relationships.length > 0) {
+            for(Relationship relationship : relationships)
+                processRelation(connection, rows, relationship);
         }
 
         return rows;
@@ -34,7 +34,7 @@ public class DefaultQuery<T> extends AbstractQuery<T> {
     }
 
     @Override
-    public <C extends Class> List<C> executeCrudely(C relevantDomainClass, RelationDefinition... relationDefinitions) throws SQLException {
+    public <C extends Class> List<C> executeCrudely(C relevantDomainClass, Relationship... relationships) throws SQLException {
         SQLGenerator sqlGenerator = Database.getSQLGenerator();
         String sql = sqlGenerator.createQuerySQL(getTableName(relevantDomainClass), projection, filter, groupBy,
                 having, orderBy, offset, limit);

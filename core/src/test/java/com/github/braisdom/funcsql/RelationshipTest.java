@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-public class RelationDefinitionTest {
+public class RelationshipTest {
 
     @DomainModel
     public static class TestDomainModel {
@@ -27,36 +27,36 @@ public class RelationDefinitionTest {
 
     @Test
     public void testDefaultPrimaryKey() {
-        RelationDefinition relationDefinition = RelationDefinition
+        Relationship relationship = Relationship
                 .createRelation(TestDomainModel.class, "testRelativeModels");
-        Assertions.assertEquals(relationDefinition.getPrimaryKey(), "id");
+        Assertions.assertEquals(relationship.getPrimaryKey(), "id");
     }
 
     @Test
     public void testGivenPrimaryKey() {
-        RelationDefinition relationDefinition = RelationDefinition
+        Relationship relationship = Relationship
                 .createRelation(TestDomainModel.class, "testRelativeModels2");
-        Assertions.assertEquals(relationDefinition.getPrimaryKey(), "test_id");
+        Assertions.assertEquals(relationship.getPrimaryKey(), "test_id");
     }
 
     @Test
     public void testHasAnyDefaultForeignKey() {
-        RelationDefinition relationDefinition = RelationDefinition
+        Relationship relationship = Relationship
                 .createRelation(TestDomainModel.class, "testRelativeModels2");
-        Assertions.assertEquals(relationDefinition.getForeignKey(), "test_domain_model_id");
+        Assertions.assertEquals(relationship.getForeignKey(), "test_domain_model_id");
     }
 
     @Test
     public void testGivenForeignKey() {
-        RelationDefinition relationDefinition = RelationDefinition
+        Relationship relationship = Relationship
                 .createRelation(TestDomainModel.class, "testRelativeModels2");
-        Assertions.assertEquals(relationDefinition.getForeignKey(), "given_foreign_id");
+        Assertions.assertEquals(relationship.getForeignKey(), "given_foreign_id");
     }
 
     @Test
     public void testBelongsToDefaultForeignKey() {
-        RelationDefinition relationDefinition = RelationDefinition
+        Relationship relationship = Relationship
                 .createRelation(TestRelativeModel.class, "testDomainModel");
-        Assertions.assertEquals(relationDefinition.getForeignKey(), "test_domain_model_id");
+        Assertions.assertEquals(relationship.getForeignKey(), "test_domain_model_id");
     }
 }

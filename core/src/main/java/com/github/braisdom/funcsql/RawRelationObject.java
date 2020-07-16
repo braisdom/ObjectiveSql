@@ -1,25 +1,17 @@
 package com.github.braisdom.funcsql;
 
-import com.github.braisdom.funcsql.util.StringUtil;
-import org.springframework.beans.BeanUtils;
-
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.List;
-import java.util.stream.Collectors;
-
 final class RawRelationObject {
 
-    private final RelationDefinition relationDefinition;
+    private final Relationship relationship;
     public final Object row;
 
-    public RawRelationObject(RelationDefinition relationDefinition, Object row) {
-        this.relationDefinition = relationDefinition;
+    public RawRelationObject(Relationship relationship, Object row) {
+        this.relationship = relationship;
         this.row = row;
     }
 
 //    public Object getValue() {
-//        String fieldName = relationDefinition.getPrimaryName();
+//        String fieldName = relationship.getPrimaryName();
 //        try {
 //            PropertyDescriptor propertyDescriptor = BeanUtils.getPropertyDescriptor(row.getClass(), fieldName);
 //            return propertyDescriptor.getReadMethod().invoke(row);
@@ -32,19 +24,19 @@ final class RawRelationObject {
 //        }
 //    }
 //
-//    public void setRelations(RelationDefinition relationDefinition, List<RawRelationObject> rawRelationObjects) {
-//        String fieldName = relationDefinition.getFieldName();
+//    public void setRelations(Relationship relationship, List<RawRelationObject> rawRelationObjects) {
+//        String fieldName = relationship.getFieldName();
 //
-//        if (RelationType.HAS_ONE.equals(relationDefinition.getRelationType()) || RelationType.BELONGS_TO.equals(relationDefinition.getRelationType())) {
+//        if (RelationType.HAS_ONE.equals(relationship.getRelationType()) || RelationType.BELONGS_TO.equals(relationship.getRelationType())) {
 //            if (rawRelationObjects.size() > 1)
-//                throw new RelationException(String.format("The %s has too many relations", relationDefinition.getPrimaryName()));
+//                throw new RelationException(String.format("The %s has too many relations", relationship.getPrimaryName()));
 //
 //            if (rawRelationObjects.size() == 1) {
-//                invokeWriteMethod(relationDefinition.getBaseClass(), fieldName, rawRelationObjects.get(0).getRow());
+//                invokeWriteMethod(relationship.getBaseClass(), fieldName, rawRelationObjects.get(0).getRow());
 //            }
 //        } else {
 //            List rows = rawRelationObjects.stream().map(o -> o.getRow()).collect(Collectors.toList());
-//            invokeWriteMethod(relationDefinition.getBaseClass(), fieldName, rows);
+//            invokeWriteMethod(relationship.getBaseClass(), fieldName, rows);
 //        }
 //    }
 //
