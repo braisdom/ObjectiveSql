@@ -9,8 +9,8 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.github.braisdom.funcsql</groupId>
-    <artifactId>example</artifactId>
+    <groupId>com.github.braisdom</groupId>
+    <artifactId>funcsql-example</artifactId>
     <version>1.0</version>
 
     <dependencies>
@@ -20,10 +20,9 @@
             <version>1.18.12</version>
         </dependency>
         <dependency>
-            <groupId>com.github.braisdom.funcsql</groupId>
-            <artifactId>core</artifactId>
+            <groupId>com.github.braisdom</groupId>
+            <artifactId>funcsql-core</artifactId>
             <version>1.0</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.xerial</groupId>

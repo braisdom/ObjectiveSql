@@ -102,10 +102,10 @@ public abstract class AbstractQuery<T> implements Query<T> {
         String relationConditions = relation.getCondition() == null
                 ? String.format(" %s IN (%s) ", foreignKey, quote(baseRows.keySet().toArray()))
                 : String.format(" %s IN (%s) AND (%s)", foreignKey, quote(baseRows.keySet().toArray()), relation.getCondition());
-        String childTableQuerySql = sqlGenerator.createQuerySQL(relationTableName, null, relationConditions,
+        String relationTableQuerySql = sqlGenerator.createQuerySQL(relationTableName, null, relationConditions,
                 null, null, null, -1, -1);
 
-        List<Object> relations = sqlExecutor.query(connection, childTableQuerySql,
+        List<Object> relations = sqlExecutor.query(connection, relationTableQuerySql,
                 relation.getRelatedClass());
 
         Map<Object, List<RawRelationObject>> relationRows = relations.stream()
