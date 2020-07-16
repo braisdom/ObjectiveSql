@@ -11,5 +11,5 @@ public @interface DomainModel {
 
     String tableName() default "";
 
-    String sqlFile() default "";
+    String sqlFileName() default "";
 }

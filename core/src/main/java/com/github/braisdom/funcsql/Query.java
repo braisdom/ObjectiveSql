@@ -19,9 +19,9 @@ public interface Query<T> {
 
     Query orderBy(String orderBy);
 
-    List<T> execute(Relation... relations) throws SQLException;
+    List<T> execute(RelationDefinition... relationDefinitions) throws SQLException;
 
     List<Row> executeCrudely() throws SQLException;
 
-    <C extends Class> List<C> executeCrudely(C relevantDomainClass, Relation... relations) throws SQLException;
+    <C extends Class> List<C> executeCrudely(C relevantDomainClass, RelationDefinition... relationDefinitions) throws SQLException;
 }

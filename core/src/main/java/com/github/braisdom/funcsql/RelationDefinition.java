@@ -1,119 +1,54 @@
 package com.github.braisdom.funcsql;
 
-import com.github.braisdom.funcsql.annotations.BelongsTo;
-import com.github.braisdom.funcsql.annotations.PrimaryKey;
-import com.github.braisdom.funcsql.annotations.RelatedTo;
+import com.github.braisdom.funcsql.annotations.Relation;
+import com.github.braisdom.funcsql.util.StringUtil;
+import com.github.braisdom.funcsql.util.WordUtil;
 
-import java.util.Arrays;
+import java.lang.reflect.Field;
 import java.util.Objects;
 
 public class RelationDefinition {
 
-    private RelationType relationType;
-    private Class relatedClass;
-    private String conditions;
+    public static final String DEFAULT_PRIMARY_KEY = "id";
 
-    public RelationDefinition(RelationType relationType, Class relatedClass) {
-        Objects.requireNonNull(relatedClass, "The relationType cannot be null");
-        Objects.requireNonNull(relatedClass, "The base cannot be null");
+    private final Field relationField;
+    private final Relation relation;
 
-        this.relationType = relationType;
-        this.relatedClass = relatedClass;
+    public RelationDefinition(Field relationField, Relation relation) {
+        Objects.requireNonNull(relationField, "The relationField cannot be null");
+        Objects.requireNonNull(relation, String.format("The %s has no relation annotation",
+                relationField.getName()));
+        this.relationField = relationField;
+        this.relation = relation;
     }
 
-    public String getBelongsToPrimaryKey(Class baseClass) {
-//        BelongsTo[] primaryKeys = (BelongsTo[]) baseClass.getAnnotationsByType(BelongsTo.class);
-//        if (primaryKeys.length == 1)
-//            return primaryKeys[0].primaryKey();
-//        else if (primaryKeys.length > 0) {
-//            BelongsTo[] rawPrimaryKeys = (BelongsTo[]) Arrays.stream(primaryKeys)
-//                    .filter(primaryKey -> primaryKey.base().equals(baseClass))
-//                    .toArray();
-//            if (rawPrimaryKeys.length == 1)
-//                return rawPrimaryKeys[0].primaryKey();
-//            else
-//                throw new RelationException("Cannot find belongs primary key for " + baseClass.getName()
-//                        + " from " + relatedClass.getName());
-//        } else
-//            throw new RelationException("Cannot find belongs primary key for " + baseClass.getName()
-//                    + " from " + relatedClass.getName());
-
-        return null;
+    public String getPrimaryKey() {
+        if (StringUtil.isBlank(relation.primaryKey()))
+            return DEFAULT_PRIMARY_KEY;
+        else
+            return relation.primaryKey();
     }
 
-    public String getBelongsToForeignKey(Class baseClass) {
-//        BelongsTo[] primaryKeys = (BelongsTo[]) baseClass.getAnnotationsByType(BelongsTo.class);
-//        if (primaryKeys.length == 1)
-//            return primaryKeys[0].foreignKey();
-//        else if (primaryKeys.length > 0) {
-//            BelongsTo[] rawPrimaryKeys = (BelongsTo[]) Arrays.stream(primaryKeys)
-//                    .filter(primaryKey -> primaryKey.base().equals(baseClass))
-//                    .toArray();
-//            if (rawPrimaryKeys.length == 1)
-//                return rawPrimaryKeys[0].foreignKey();
-//            else
-//                throw new RelationException("Cannot find belongs primary key for " + baseClass.getName()
-//                        + " from " + relatedClass.getName());
-//        } else
-//            throw new RelationException("Cannot find belongs primary key for " + baseClass.getName()
-//                    + " from " + relatedClass.getName());
-        return null;
-    }
-
-    public String getPrimaryKey(Class baseClass) {
-//        PrimaryKey[] primaryKeys = (PrimaryKey[]) baseClass.getAnnotationsByType(PrimaryKey.class);
-//
-//        if (primaryKeys.length == 1)
-//            return primaryKeys[0].value();
-//        else if (primaryKeys.length > 0) {
-//            PrimaryKey[] rawPrimaryKeys = (PrimaryKey[]) Arrays.stream(primaryKeys)
-//                    .filter(primaryKey -> primaryKey.relatedClass().equals(baseClass))
-//                    .toArray();
-//            if (rawPrimaryKeys.length == 1)
-//                return rawPrimaryKeys[0].value();
-//            else
-//                throw new RelationException("Cannot find primary key for " + baseClass.getName()
-//                        + " from " + relatedClass.getName());
-//        } else
-//            throw new RelationException("Cannot find primary key for " + baseClass.getName()
-//                    + " from " + relatedClass.getName());
-        return null;
-    }
-
-    public String getForeignKey(Class parentClass) {
-        RelatedTo[] relatedTos = (RelatedTo[]) relatedClass.getAnnotationsByType(RelatedTo.class);
-
-        if (relatedTos.length == 1)
-            return relatedTos[0].foreignKey();
-        else if (relatedTos.length > 0) {
-            RelatedTo[] rawForeignKeys = (RelatedTo[]) Arrays.stream(relatedTos)
-                    .filter(primaryKey -> primaryKey.base().equals(parentClass))
-                    .toArray();
-            if (rawForeignKeys.length == 1)
-                return rawForeignKeys[0].foreignKey();
-            else
-                throw new RelationException("Cannot find foreign key for " + parentClass.getName()
-                        + " from " + relatedClass.getName());
+    public String getForeignKey() {
+        if (StringUtil.isBlank(relation.foreignKey())) {
+            if(RelationType.HAS_MANY.equals(relation.relationType())) {
+                String typeName = relationField.getType().getGenericSuperclass().getTypeName();
+            }else {
+                return WordUtil.underscore(relationField.getName());
+            }
         } else
-            throw new RelationException("Cannot find foreign key for " + parentClass.getName()
-                    + " from " + relatedClass.getName());
+            return relation.foreignKey();
+        return null;
     }
 
-    public RelationType getRelationType() {
-        return relationType;
-    }
-
-
-    public Class getRelatedClass() {
-        return relatedClass;
-    }
-
-    public String getConditions() {
-        return conditions;
-    }
-
-    public RelationDefinition setConditions(String conditions) {
-        this.conditions = conditions;
-        return this;
+    public static final RelationDefinition createRelation(Class clazz, String fieldName) {
+        try {
+            Field field = clazz.getField(fieldName);
+            Relation relation = field.getAnnotation(Relation.class);
+            return new RelationDefinition(field, relation);
+        } catch (NoSuchFieldException ex) {
+            throw new RelationException(String.format("The %s has no field '%s' (%s)", clazz.getName(),
+                    fieldName, ex.getMessage()), ex);
+        }
     }
 }

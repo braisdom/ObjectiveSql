@@ -2,7 +2,7 @@ package com.github.braisdom.funcsql.example;
 
 import com.github.braisdom.funcsql.DefaultQuery;
 import com.github.braisdom.funcsql.Query;
-import com.github.braisdom.funcsql.Relation;
+import com.github.braisdom.funcsql.RelationDefinition;
 import com.github.braisdom.funcsql.RelationType;
 import com.github.braisdom.funcsql.annotations.*;
 import lombok.Data;
@@ -10,23 +10,21 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-@DomainModel
+@DomainModel(tableName = "users")
 public class User {
 
-    public static final Relation R_USER_PROFILE = new Relation(RelationType.HAS_MANY,
-            "userProfiles", User.class, UserProfile.class, "id", "id",
-            "user_id", null);
+    public static final RelationDefinition R_USER_PROFILE = RelationDefinition.createRelation(User.class, null);
 
     @Queryable
     @Column("id")
     private int id;
+
     @Queryable
     private String name;
 
-    @HasMany(primaryKey = "id", foreignKey = "user_id")
+    @Relation(relationType = RelationType.HAS_MANY)
     private List<UserProfile> userProfiles;
 
-    @HasOne
     private Domain domain;
 
     public static Query<User> createQuery() {

@@ -1,8 +1,10 @@
 package com.github.braisdom.funcsql.example;
 
+import com.github.braisdom.funcsql.annotations.DomainModel;
 import lombok.Data;
 
 @Data
+@DomainModel
 public class UserProfile {
 
     private int id;

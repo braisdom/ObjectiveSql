@@ -10,8 +10,6 @@ import java.util.stream.Collectors;
 
 public abstract class AbstractQuery<T> implements Query<T> {
 
-    private List<RelationDefinition> relationDefinitions = new ArrayList<>();
-
     protected final Class<T> domainModelClass;
 
     protected int limit = -1;
@@ -81,71 +79,35 @@ public abstract class AbstractQuery<T> implements Query<T> {
         return sqlExecutor.query(connectionFactory.getConnection(), sql);
     }
 
-    protected void processRelation(Connection connection, List rows, Relation relation) throws SQLException {
-        if (RelationType.BELONGS_TO.equals(relation.getRelationType()))
-            processBelongsTo(connection, rows, relation);
-        else
-            processHasAny(connection, rows, relation);
-    }
-
-    protected void processHasAny(Connection connection, List rows, Relation relation) throws SQLException {
-        SQLExecutor sqlExecutor = Database.getSqlExecutor();
-        String foreignKey = relation.getForeignKey();
-        String relationTableName = getTableName(relation.getRelatedClass());
-
-        SQLGenerator sqlGenerator = Database.getSQLGenerator();
-
-        Map<Object, List<RawRelationObject>> baseRows = (Map<Object, List<RawRelationObject>>) rows.stream()
-                .map(row -> new RawRelationObject(relation, row))
-                .collect(Collectors.groupingBy(RawRelationObject::getValue));
-
-        String relationConditions = relation.getCondition() == null
-                ? String.format(" %s IN (%s) ", foreignKey, quote(baseRows.keySet().toArray()))
-                : String.format(" %s IN (%s) AND (%s)", foreignKey, quote(baseRows.keySet().toArray()), relation.getCondition());
-        String relationTableQuerySql = sqlGenerator.createQuerySQL(relationTableName, null, relationConditions,
-                null, null, null, -1, -1);
-
-        List<Object> relations = sqlExecutor.query(connection, relationTableQuerySql,
-                relation.getRelatedClass());
-
-        Map<Object, List<RawRelationObject>> relationRows = relations.stream()
-                .map(row -> new RawRelationObject(relation, row))
-                .collect(Collectors.groupingBy(RawRelationObject::getValue));
-
-        for (Object key : baseRows.keySet()) {
-            List<RawRelationObject> relationObjects = relationRows.get(key);
-            if (relationObjects != null)
-                baseRows.get(key).forEach(baseRow -> baseRow.setRelations(relation, relationObjects));
-        }
-    }
-
-    protected void processBelongsTo(Connection connection, List rows, Relation relation) throws SQLException {
-        SQLExecutor sqlExecutor = Database.getSqlExecutor();
-        String foreignKey = relation.getForeignKey();
-        String relationTableName = getTableName(relation.getRelatedClass());
-
-        SQLGenerator sqlGenerator = Database.getSQLGenerator();
-
-        Map<Object, List<RawRelationObject>> relationRows = (Map<Object, List<RawRelationObject>>) rows.stream()
-                .map(row -> new RawRelationObject(null, row))
-                .collect(Collectors.groupingBy(RawRelationObject::getValue));
-
-        String baseConditions = String.format(" %s IN (%s) ", foreignKey, quote(relationRows.keySet().toArray()));
-        String baseTableQuerySql = sqlGenerator.createQuerySQL(relationTableName, null, baseConditions,
-                null, null, null, -1, -1);
-
-        List<Object> rawBaseObjects = sqlExecutor.query(connection, baseTableQuerySql,
-                relation.getRelatedClass());
-
-        Map<Object, List<RawRelationObject>> baseRows = rawBaseObjects.stream()
-                .map(row -> new RawRelationObject(null, row))
-                .collect(Collectors.groupingBy(RawRelationObject::getValue));
-
-        for (Object key : baseRows.keySet()) {
-            List<RawRelationObject> baseObjects = relationRows.get(key);
-            if (baseObjects != null)
-                baseRows.get(key).forEach(baseRow -> baseRow.setRelations(null, baseObjects));
-        }
+    protected void processRelation(Connection connection, List rows, RelationDefinition relationDefinition) throws SQLException {
+//        SQLExecutor sqlExecutor = Database.getSqlExecutor();
+//        String foreignKey = relationDefinition.getForeignKey();
+//        String relationTableName = getTableName(relationDefinition.getRelatedClass());
+//
+//        SQLGenerator sqlGenerator = Database.getSQLGenerator();
+//
+//        Map<Object, List<RawRelationObject>> baseRows = (Map<Object, List<RawRelationObject>>) rows.stream()
+//                .map(row -> new RawRelationObject(relationDefinition, row))
+//                .collect(Collectors.groupingBy(RawRelationObject::getValue));
+//
+//        String relationConditions = relationDefinition.getCondition() == null
+//                ? String.format(" %s IN (%s) ", foreignKey, quote(baseRows.keySet().toArray()))
+//                : String.format(" %s IN (%s) AND (%s)", foreignKey, quote(baseRows.keySet().toArray()), relationDefinition.getCondition());
+//        String relationTableQuerySql = sqlGenerator.createQuerySQL(relationTableName, null, relationConditions,
+//                null, null, null, -1, -1);
+//
+//        List<Object> relations = sqlExecutor.query(connection, relationTableQuerySql,
+//                relationDefinition.getRelatedClass());
+//
+//        Map<Object, List<RawRelationObject>> relationRows = relations.stream()
+//                .map(row -> new RawRelationObject(relationDefinition, row))
+//                .collect(Collectors.groupingBy(RawRelationObject::getValue));
+//
+//        for (Object key : baseRows.keySet()) {
+//            List<RawRelationObject> relationObjects = relationRows.get(key);
+//            if (relationObjects != null)
+//                baseRows.get(key).forEach(baseRow -> baseRow.setRelations(relationDefinition, relationObjects));
+//        }
     }
 
     protected String getTableName(Class tableClass) {
