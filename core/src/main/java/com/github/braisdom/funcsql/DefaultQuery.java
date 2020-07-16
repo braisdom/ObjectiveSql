@@ -29,12 +29,12 @@ public class DefaultQuery<T> extends AbstractQuery<T> {
     }
 
     @Override
-    public List<Row> executeCrudely() throws SQLException {
+    public List<Row> executeRawly() throws SQLException {
         return null;
     }
 
     @Override
-    public <C extends Class> List<C> executeCrudely(C relevantDomainClass, Relationship... relationships) throws SQLException {
+    public <C extends Class> List<C> execute(C relevantDomainClass, Relationship... relationships) throws SQLException {
         SQLGenerator sqlGenerator = Database.getSQLGenerator();
         String sql = sqlGenerator.createQuerySQL(getTableName(relevantDomainClass), projection, filter, groupBy,
                 having, orderBy, offset, limit);
