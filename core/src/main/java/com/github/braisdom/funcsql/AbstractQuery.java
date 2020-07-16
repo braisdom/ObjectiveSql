@@ -1,7 +1,6 @@
 package com.github.braisdom.funcsql;
 
-import com.github.braisdom.funcsql.annotations.DomainModel;
-import com.github.braisdom.funcsql.util.WordUtil;
+import com.github.braisdom.funcsql.util.AnnotationUtil;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -110,15 +109,7 @@ public abstract class AbstractQuery<T> implements Query<T> {
     }
 
     protected String getTableName(Class tableClass) {
-        String tableName;
-        DomainModel domainModel = (DomainModel) (tableClass == null ? null : tableClass.getAnnotation(DomainModel.class));
-
-        if (domainModel != null)
-            tableName = domainModel.tableName();
-        else
-            tableName = WordUtil.tableize(tableClass.getSimpleName());
-
-        return tableName;
+        return AnnotationUtil.getTableName(tableClass);
     }
 
     protected String quote(Object... values) {

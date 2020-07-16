@@ -20,10 +20,8 @@ public class DefaultQuery<T> extends AbstractQuery<T> {
 
         List<T> rows = executeInternally(connection, domainModelClass, sql);
 
-        if (relationships.length > 0) {
-            for(Relationship relationship : relationships)
-                processRelation(connection, rows, relationship);
-        }
+        if (relationships.length > 0)
+            return new RelationshipNetwork(connection, domainModelClass, rows, relationships).process();
 
         return rows;
     }

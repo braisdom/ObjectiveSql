@@ -1,6 +1,7 @@
 package com.github.braisdom.funcsql;
 
 import com.github.braisdom.funcsql.annotations.Relation;
+import com.github.braisdom.funcsql.util.AnnotationUtil;
 import com.github.braisdom.funcsql.util.StringUtil;
 import com.github.braisdom.funcsql.util.WordUtil;
 
@@ -19,6 +20,7 @@ public class Relationship {
         Objects.requireNonNull(relationField, "The relationField cannot be null");
         Objects.requireNonNull(relation, String.format("The %s has no relation annotation",
                 relationField.getName()));
+
         this.baseClass = baseClass;
         this.relationField = relationField;
         this.relation = relation;
@@ -37,24 +39,11 @@ public class Relationship {
     }
 
     public String getPrimaryKey() {
-        if (StringUtil.isBlank(relation.primaryKey())) {
-            return DEFAULT_PRIMARY_KEY;
-        } else
-            return relation.primaryKey();
+        return AnnotationUtil.getPrimaryKey(relation);
     }
 
     public String getForeignKey() {
-        if (StringUtil.isBlank(relation.foreignKey())) {
-            if (RelationType.HAS_MANY.equals(relation.relationType())
-                    || RelationType.HAS_ONE.equals(relation.relationType())) {
-                String rawForeignKey = baseClass.getSimpleName();
-                return String.format("%s_%s", WordUtil.underscore(rawForeignKey), DEFAULT_PRIMARY_KEY);
-            } else {
-                String rawForeignKey = getRelationClass().getSimpleName();
-                return String.format("%s_%s", WordUtil.underscore(rawForeignKey), DEFAULT_PRIMARY_KEY);
-            }
-        } else
-            return relation.foreignKey();
+        return AnnotationUtil.getForeignKey(baseClass, getRelationClass(), relation);
     }
 
     public static final Relationship createRelation(Class baseClass, String fieldName) {
