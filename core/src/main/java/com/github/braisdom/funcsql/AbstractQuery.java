@@ -109,7 +109,7 @@ public abstract class AbstractQuery<T> implements Query<T> {
     }
 
     protected String getTableName(Class tableClass) {
-        return AnnotationUtil.getTableName(tableClass);
+        return Table.getTableName(tableClass);
     }
 
     protected String quote(Object... values) {

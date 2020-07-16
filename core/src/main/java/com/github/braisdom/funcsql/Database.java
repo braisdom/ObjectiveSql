@@ -1,11 +1,12 @@
 package com.github.braisdom.funcsql;
 
+import com.github.braisdom.funcsql.annotations.DomainModel;
+import com.github.braisdom.funcsql.util.WordUtil;
+
 import java.util.Objects;
 
 @SuppressWarnings("ALL")
 public final class Database {
-
-    public static final String DEFAULT_PRIMARY_KEY = "id";
 
     private static SQLGenerator sqlGenerator = new GeneralSQLGenerator();
     private static SQLExecutor sqlExecutor = new DefaultSQLExecutor();
@@ -17,13 +18,13 @@ public final class Database {
         Database.connectionFactory = connectionFactory;
     }
 
-    public static void setSqlExecutor(SQLExecutor sqlExecutor) {
+    public static void installSqlExecutor(SQLExecutor sqlExecutor) {
         Objects.requireNonNull(connectionFactory, "The sqlExecutor cannot be null");
 
         Database.sqlExecutor = sqlExecutor;
     }
 
-    public static void setSQLGenerator(SQLGenerator sqlGenerator) {
+    public static void installSQLGenerator(SQLGenerator sqlGenerator) {
         Objects.requireNonNull(connectionFactory, "The sqlGenerator cannot be null");
 
         Database.sqlGenerator = sqlGenerator;
@@ -42,5 +43,4 @@ public final class Database {
             throw new IllegalStateException("The connectionFactory must be not null");
         return connectionFactory;
     }
-
 }

@@ -1,9 +1,13 @@
 package com.github.braisdom.funcsql;
 
 import com.github.braisdom.funcsql.annotations.Relation;
-import com.github.braisdom.funcsql.util.AnnotationUtil;
+import com.github.braisdom.funcsql.util.StringUtil;
+import com.github.braisdom.funcsql.util.WordUtil;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.Collection;
 import java.util.Objects;
 
 public class Relationship {
@@ -27,23 +31,64 @@ public class Relationship {
     }
 
     public Class getRelatedClass() {
+        if (Collection.class.isAssignableFrom(relationField.getType())) {
+            ParameterizedType parameterizedType = (ParameterizedType) relationField.getGenericType();
+            Type[] genericTypes = parameterizedType.getActualTypeArguments();
+
+            if (genericTypes.length == 0)
+                throw new RelationException(String.format("The %s of %s has no generic type",
+                        relationField.getName(), getBaseClass().getSimpleName()));
+
+            try {
+                return Class.forName(((Type) genericTypes[0]).getTypeName());
+            } catch (ClassNotFoundException e) {
+                throw new RelationException(e.getMessage(), e);
+            }
+        }
         return relationField.getType();
     }
 
-    public String getFieldName() {
-        return relationField.getName();
-    }
-
     public String getPrimaryKey() {
-        return AnnotationUtil.getPrimaryKey(relation, getRelatedClass());
+        if (StringUtil.isBlank(relation.primaryKey()))
+            return Table.DEFAULT_PRIMARY_KEY;
+        else
+            return relation.primaryKey();
     }
 
     public String getForeignKey() {
-        return AnnotationUtil.getForeignKey(baseClass, getRelatedClass(), relation);
+        if (StringUtil.isBlank(relation.foreignKey())) {
+            if (isPrimaryRelation()) {
+                String rawForeignKey = baseClass.getSimpleName();
+                return Table.encodeDefaultKey(WordUtil.underscore(rawForeignKey));
+            } else {
+                String rawForeignKey = getRelatedClass().getSimpleName();
+                return Table.encodeDefaultKey(WordUtil.underscore(rawForeignKey));
+            }
+        } else
+            return relation.foreignKey();
+    }
+
+    public String getPrimaryFieldName() {
+        if (StringUtil.isBlank(relation.foreignFieldName())) {
+            return Table.DEFAULT_PRIMARY_KEY;
+        }else
+            return relation.primaryFieldName();
     }
 
     public String getForeignFieldName() {
-        return AnnotationUtil.getForeignFieldName(baseClass, getRelatedClass(), relation);
+        if (StringUtil.isBlank(relation.foreignFieldName())) {
+            if (StringUtil.isBlank(relation.foreignKey())) {
+                if (isPrimaryRelation()) {
+                    String rawForeignName = getRelatedClass().getSimpleName();
+                    return WordUtil.camelize(rawForeignName, true);
+                } else {
+                    String rawForeignName = getRelatedClass().getSimpleName();
+                    return WordUtil.camelize(rawForeignName, true);
+                }
+            } else
+                return WordUtil.camelize(relation.foreignKey(), true);
+        } else
+            return relation.foreignFieldName();
     }
 
     public static final Relationship createRelation(Class baseClass, String fieldName) {
@@ -55,5 +100,10 @@ public class Relationship {
             throw new RelationException(String.format("The %s has no field '%s' (%s)", baseClass.getSimpleName(),
                     fieldName, ex.getMessage()), ex);
         }
+    }
+
+    protected boolean isPrimaryRelation() {
+        return RelationType.HAS_MANY.equals(relation.relationType())
+                || RelationType.HAS_ONE.equals(relation.relationType());
     }
 }

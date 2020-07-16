@@ -35,29 +35,20 @@ public final class AnnotationUtil {
     }
 
     public static final String getForeignFieldName(Class baseClass, Class relationClass, Relation relation) {
-        if (StringUtil.isBlank(relation.foreignKey())) {
-            if (RelationType.HAS_MANY.equals(relation.relationType())
-                    || RelationType.HAS_ONE.equals(relation.relationType())) {
-                String rawForeignName = relationClass.getSimpleName();
-                return WordUtil.camelize(rawForeignName, true);
-            } else {
-                String rawForeignName = baseClass.getSimpleName();
-                return WordUtil.camelize(rawForeignName, true);
-            }
+        if (StringUtil.isBlank(relation.foreignFieldName())) {
+            if (StringUtil.isBlank(relation.foreignKey())) {
+                if (RelationType.HAS_MANY.equals(relation.relationType())) {
+                    String rawForeignName = relationClass.getSimpleName();
+                    return WordUtil.camelize(WordUtil.pluralize(rawForeignName), true);
+                } else if(RelationType.HAS_ONE.equals(relation.relationType())) {
+                    return null;
+                } else {
+                    String rawForeignName = baseClass.getSimpleName();
+                    return WordUtil.camelize(rawForeignName, true);
+                }
+            } else
+                return WordUtil.camelize(relation.foreignKey(), true);
         } else
             return relation.foreignFieldName();
-    }
-
-    public static final String getTableName(Class baseClass) {
-        String tableName;
-        DomainModel domainModel = (DomainModel) (baseClass == null
-                ? null : baseClass.getAnnotation(DomainModel.class));
-
-        if (domainModel != null)
-            tableName = domainModel.tableName();
-        else
-            tableName = WordUtil.tableize(baseClass.getSimpleName());
-
-        return tableName;
     }
 }

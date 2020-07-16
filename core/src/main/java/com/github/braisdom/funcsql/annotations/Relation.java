@@ -14,6 +14,8 @@ public @interface Relation {
 
     String primaryKey() default "";
 
+    String primaryFieldName() default "";
+
     String foreignKey() default "";
 
     String foreignFieldName() default "";
