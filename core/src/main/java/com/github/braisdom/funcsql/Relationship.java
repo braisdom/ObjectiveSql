@@ -79,7 +79,7 @@ public class Relationship {
         if (StringUtil.isBlank(relation.foreignFieldName())) {
             if (StringUtil.isBlank(relation.foreignKey())) {
                 if (isPrimaryRelation()) {
-                    String rawForeignName = getRelatedClass().getSimpleName();
+                    String rawForeignName = getBaseClass().getSimpleName();
                     return WordUtil.camelize(rawForeignName, true);
                 } else {
                     String rawForeignName = getRelatedClass().getSimpleName();
@@ -95,6 +95,8 @@ public class Relationship {
         try {
             Field field = baseClass.getDeclaredField(fieldName);
             Relation relation = field.getAnnotation(Relation.class);
+            if(relation == null)
+                throw new RelationException(String.format("The %s has not relation", field));
             return new Relationship(baseClass, field, relation);
         } catch (NoSuchFieldException ex) {
             throw new RelationException(String.format("The %s has no field '%s' (%s)", baseClass.getSimpleName(),

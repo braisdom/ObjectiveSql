@@ -26,7 +26,7 @@ public class QueryExample {
 
 
     public static void main(String[] args) throws SQLException {
-        Database.setConnectionFactory(new SqliteConnectionFactory());
+        Database.installConnectionFactory(new SqliteConnectionFactory());
 
         createTables(Database.getConnectionFactory().getConnection());
 

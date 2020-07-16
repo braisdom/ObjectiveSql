@@ -7,8 +7,7 @@ public final class Table {
 
     public static final String DEFAULT_PRIMARY_KEY = "id";
     public static final String DEFAULT_KEY_SUFFIX = "id";
-
-
+    
     public static final String getTableName(Class baseClass) {
         String tableName;
         DomainModel domainModel = (DomainModel) (baseClass == null

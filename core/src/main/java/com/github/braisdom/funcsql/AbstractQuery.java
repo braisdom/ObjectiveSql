@@ -1,7 +1,5 @@
 package com.github.braisdom.funcsql;
 
-import com.github.braisdom.funcsql.util.AnnotationUtil;
-
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.*;

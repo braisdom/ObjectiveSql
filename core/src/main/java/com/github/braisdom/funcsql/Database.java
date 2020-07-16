@@ -1,8 +1,5 @@
 package com.github.braisdom.funcsql;
 
-import com.github.braisdom.funcsql.annotations.DomainModel;
-import com.github.braisdom.funcsql.util.WordUtil;
-
 import java.util.Objects;
 
 @SuppressWarnings("ALL")
@@ -12,7 +9,7 @@ public final class Database {
     private static SQLExecutor sqlExecutor = new DefaultSQLExecutor();
     private static ConnectionFactory connectionFactory;
 
-    public static void setConnectionFactory(ConnectionFactory connectionFactory) {
+    public static void installConnectionFactory(ConnectionFactory connectionFactory) {
         Objects.requireNonNull(connectionFactory, "The connectionFactory cannot be null");
 
         Database.connectionFactory = connectionFactory;
