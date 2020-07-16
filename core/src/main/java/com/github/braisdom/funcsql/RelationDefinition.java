@@ -12,16 +12,14 @@ public class RelationDefinition {
     public static final String DEFAULT_PRIMARY_KEY = "id";
 
     private final Class baseClass;
-    private final String fieldName;
     private final Field relationField;
     private final Relation relation;
 
-    public RelationDefinition(Class baseClass, String fieldName, Field relationField, Relation relation) {
+    public RelationDefinition(Class baseClass, Field relationField, Relation relation) {
         Objects.requireNonNull(relationField, "The relationField cannot be null");
         Objects.requireNonNull(relation, String.format("The %s has no relation annotation",
                 relationField.getName()));
         this.baseClass = baseClass;
-        this.fieldName = fieldName;
         this.relationField = relationField;
         this.relation = relation;
     }
@@ -35,13 +33,13 @@ public class RelationDefinition {
     }
 
     public String getFieldName() {
-        return fieldName;
+        return relationField.getName();
     }
 
     public String getPrimaryKey() {
-        if (StringUtil.isBlank(relation.primaryKey()))
+        if (StringUtil.isBlank(relation.primaryKey())) {
             return DEFAULT_PRIMARY_KEY;
-        else
+        } else
             return relation.primaryKey();
     }
 
@@ -52,7 +50,7 @@ public class RelationDefinition {
                 String rawForeignKey = baseClass.getSimpleName();
                 return String.format("%s_%s", WordUtil.underscore(rawForeignKey), DEFAULT_PRIMARY_KEY);
             } else {
-                String rawForeignKey = relationField.getType().getSimpleName();
+                String rawForeignKey = getRelationClass().getSimpleName();
                 return String.format("%s_%s", WordUtil.underscore(rawForeignKey), DEFAULT_PRIMARY_KEY);
             }
         } else
@@ -63,7 +61,7 @@ public class RelationDefinition {
         try {
             Field field = baseClass.getDeclaredField(fieldName);
             Relation relation = field.getAnnotation(Relation.class);
-            return new RelationDefinition(baseClass, fieldName, field, relation);
+            return new RelationDefinition(baseClass, field, relation);
         } catch (NoSuchFieldException ex) {
             throw new RelationException(String.format("The %s has no field '%s' (%s)", baseClass.getSimpleName(),
                     fieldName, ex.getMessage()), ex);
