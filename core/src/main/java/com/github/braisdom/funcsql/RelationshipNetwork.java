@@ -12,7 +12,13 @@ public class RelationshipNetwork {
     private final List rows;
     private final Relationship[] relationships;
 
-    private final Map<Class, List> relationshipMap;
+    private final Map<String, List> relationshipMap;
+
+    private class NetworkNode {
+        private Class relatedClass;
+        private String key;
+        private Map<Object, List> arrangeRows;
+    }
 
     public RelationshipNetwork(Connection connection, Class baseClass, List rows, Relationship[] relationships) {
         this.connection = connection;
@@ -21,11 +27,9 @@ public class RelationshipNetwork {
         this.relationships = relationships;
 
         this.relationshipMap = new HashMap<>();
-        this.relationshipMap.put(baseClass, rows);
     }
 
     public List process() {
-
         return null;
     }
 }

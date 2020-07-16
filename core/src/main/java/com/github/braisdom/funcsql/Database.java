@@ -5,6 +5,8 @@ import java.util.Objects;
 @SuppressWarnings("ALL")
 public final class Database {
 
+    public static final String DEFAULT_PRIMARY_KEY = "id";
+
     private static SQLGenerator sqlGenerator = new GeneralSQLGenerator();
     private static SQLExecutor sqlExecutor = new DefaultSQLExecutor();
     private static ConnectionFactory connectionFactory;

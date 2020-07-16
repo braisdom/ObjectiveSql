@@ -8,8 +8,6 @@ import java.util.Objects;
 
 public class Relationship {
 
-    public static final String DEFAULT_PRIMARY_KEY = "id";
-
     private final Class baseClass;
     private final Field relationField;
     private final Relation relation;
@@ -37,11 +35,15 @@ public class Relationship {
     }
 
     public String getPrimaryKey() {
-        return AnnotationUtil.getPrimaryKey(relation);
+        return AnnotationUtil.getPrimaryKey(relation, getRelatedClass());
     }
 
     public String getForeignKey() {
         return AnnotationUtil.getForeignKey(baseClass, getRelatedClass(), relation);
+    }
+
+    public String getForeignFieldName() {
+        return AnnotationUtil.getForeignFieldName(baseClass, getRelatedClass(), relation);
     }
 
     public static final Relationship createRelation(Class baseClass, String fieldName) {

@@ -16,5 +16,7 @@ public @interface Relation {
 
     String foreignKey() default "";
 
+    String foreignFieldName() default "";
+
     String condition() default "";
 }
