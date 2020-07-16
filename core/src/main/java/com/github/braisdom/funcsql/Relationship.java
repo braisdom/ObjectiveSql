@@ -2,8 +2,6 @@ package com.github.braisdom.funcsql;
 
 import com.github.braisdom.funcsql.annotations.Relation;
 import com.github.braisdom.funcsql.util.AnnotationUtil;
-import com.github.braisdom.funcsql.util.StringUtil;
-import com.github.braisdom.funcsql.util.WordUtil;
 
 import java.lang.reflect.Field;
 import java.util.Objects;
@@ -30,7 +28,7 @@ public class Relationship {
         return baseClass;
     }
 
-    public Class getRelationClass() {
+    public Class getRelatedClass() {
         return relationField.getType();
     }
 
@@ -43,7 +41,7 @@ public class Relationship {
     }
 
     public String getForeignKey() {
-        return AnnotationUtil.getForeignKey(baseClass, getRelationClass(), relation);
+        return AnnotationUtil.getForeignKey(baseClass, getRelatedClass(), relation);
     }
 
     public static final Relationship createRelation(Class baseClass, String fieldName) {

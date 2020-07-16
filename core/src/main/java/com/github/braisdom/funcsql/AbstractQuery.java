@@ -78,11 +78,11 @@ public abstract class AbstractQuery<T> implements Query<T> {
     }
 
     protected void processRelation(Connection connection, List rows, Relationship relationship) throws SQLException {
-//        SQLExecutor sqlExecutor = Database.getSqlExecutor();
-//        String foreignKey = relationship.getForeignKey();
-//        String relationTableName = getTableName(relationship.getRelatedClass());
-//
-//        SQLGenerator sqlGenerator = Database.getSQLGenerator();
+        SQLExecutor sqlExecutor = Database.getSqlExecutor();
+        String foreignKey = relationship.getForeignKey();
+        String relationTableName = getTableName(relationship.getRelatedClass());
+
+        SQLGenerator sqlGenerator = Database.getSQLGenerator();
 //
 //        Map<Object, List<RawRelationObject>> baseRows = (Map<Object, List<RawRelationObject>>) rows.stream()
 //                .map(row -> new RawRelationObject(relationship, row))
