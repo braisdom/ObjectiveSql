@@ -42,7 +42,7 @@ public class RelationshipTest {
     @Test
     public void testHasAnyDefaultForeignKey() {
         Relationship relationship = Relationship
-                .createRelation(TestDomainModel.class, "testRelativeModels2");
+                .createRelation(TestDomainModel.class, "testRelativeModels");
         Assertions.assertEquals(relationship.getForeignKey(), "test_domain_model_id");
     }
 
