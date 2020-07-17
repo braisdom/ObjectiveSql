@@ -1,5 +1,7 @@
 package com.github.braisdom.funcsql;
 
+import com.github.braisdom.funcsql.relation.Relationship;
+
 import java.sql.SQLException;
 import java.util.List;
 

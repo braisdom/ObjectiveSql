@@ -1,6 +1,6 @@
 package com.github.braisdom.funcsql.annotations;
 
-import com.github.braisdom.funcsql.RelationType;
+import com.github.braisdom.funcsql.relation.RelationType;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

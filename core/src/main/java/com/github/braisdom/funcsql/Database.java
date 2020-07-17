@@ -7,6 +7,8 @@ public final class Database {
 
     private static SQLGenerator sqlGenerator = new GeneralSQLGenerator();
     private static SQLExecutor sqlExecutor = new DefaultSQLExecutor();
+    private static ScalarQuoter scalarQuoter = new DefaultScalarQuoter();
+
     private static ConnectionFactory connectionFactory;
 
     public static void installConnectionFactory(ConnectionFactory connectionFactory) {
@@ -27,6 +29,12 @@ public final class Database {
         Database.sqlGenerator = sqlGenerator;
     }
 
+    public static void installScalarQuoter(ScalarQuoter scalarQuoter) {
+        Objects.requireNonNull(connectionFactory, "The scalarQuoter cannot be null");
+
+        Database.scalarQuoter = scalarQuoter;
+    }
+
     public static SQLGenerator getSQLGenerator() {
         return sqlGenerator;
     }
@@ -35,24 +43,13 @@ public final class Database {
         return sqlExecutor;
     }
 
+    public static ScalarQuoter getScalarQuoter() {
+        return scalarQuoter;
+    }
+
     public static ConnectionFactory getConnectionFactory() {
         if(connectionFactory == null)
             throw new IllegalStateException("The connectionFactory must be not null");
         return connectionFactory;
-    }
-
-    public static String quote(Object... values) {
-        StringBuilder sb = new StringBuilder();
-
-        for (Object value : values) {
-            if (value instanceof Integer || value instanceof Long ||
-                    value instanceof Float || value instanceof Double)
-                sb.append(String.valueOf(value));
-            else
-                sb.append(String.format("'%s'", String.valueOf(value)));
-            sb.append(",");
-        }
-        sb.delete(sb.length() - 1, sb.length());
-        return sb.toString();
     }
 }

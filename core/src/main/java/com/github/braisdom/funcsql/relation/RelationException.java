@@ -1,4 +1,4 @@
-package com.github.braisdom.funcsql;
+package com.github.braisdom.funcsql.relation;
 
 public class RelationException extends RuntimeException {
 

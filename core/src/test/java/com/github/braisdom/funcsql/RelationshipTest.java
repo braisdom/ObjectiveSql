@@ -2,6 +2,8 @@ package com.github.braisdom.funcsql;
 
 import com.github.braisdom.funcsql.annotations.DomainModel;
 import com.github.braisdom.funcsql.annotations.Relation;
+import com.github.braisdom.funcsql.relation.RelationType;
+import com.github.braisdom.funcsql.relation.Relationship;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

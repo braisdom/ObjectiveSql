@@ -2,8 +2,8 @@ package com.github.braisdom.funcsql.example;
 
 import com.github.braisdom.funcsql.DefaultQuery;
 import com.github.braisdom.funcsql.Query;
-import com.github.braisdom.funcsql.Relationship;
-import com.github.braisdom.funcsql.RelationType;
+import com.github.braisdom.funcsql.relation.Relationship;
+import com.github.braisdom.funcsql.relation.RelationType;
 import com.github.braisdom.funcsql.annotations.*;
 import lombok.Data;
 

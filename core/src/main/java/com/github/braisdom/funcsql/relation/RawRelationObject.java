@@ -1,4 +1,4 @@
-package com.github.braisdom.funcsql;
+package com.github.braisdom.funcsql.relation;
 
 final class RawRelationObject {
 

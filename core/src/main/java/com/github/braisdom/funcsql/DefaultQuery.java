@@ -1,5 +1,8 @@
 package com.github.braisdom.funcsql;
 
+import com.github.braisdom.funcsql.relation.Relationship;
+import com.github.braisdom.funcsql.relation.RelationshipNetwork;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -21,7 +24,7 @@ public class DefaultQuery<T> extends AbstractQuery<T> {
         List<T> rows = executeInternally(connection, domainModelClass, sql);
 
         if (relationships.length > 0)
-            return new RelationshipNetwork(connection, domainModelClass, rows, relationships).process();
+            new RelationshipNetwork(connection, domainModelClass, rows, relationships).process();
 
         return rows;
     }

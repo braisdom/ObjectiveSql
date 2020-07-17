@@ -1,5 +1,6 @@
-package com.github.braisdom.funcsql;
+package com.github.braisdom.funcsql.relation;
 
+import com.github.braisdom.funcsql.Table;
 import com.github.braisdom.funcsql.annotations.Relation;
 import com.github.braisdom.funcsql.util.StringUtil;
 import com.github.braisdom.funcsql.util.WordUtil;
