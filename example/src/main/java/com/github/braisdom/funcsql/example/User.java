@@ -13,7 +13,7 @@ import java.util.List;
 @DomainModel(tableName = "users")
 public class User {
 
-    public static final Relationship R_USER_PROFILE = Relationship.createRelation(User.class, null);
+    public static final Relationship MR_USER_PROFILE = Relationship.createRelation(User.class, "userProfiles");
 
     @Queryable
     @Column("id")

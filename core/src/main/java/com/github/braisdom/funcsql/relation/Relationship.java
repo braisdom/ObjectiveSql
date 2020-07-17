@@ -44,13 +44,13 @@ public class Relationship {
             Type[] genericTypes = parameterizedType.getActualTypeArguments();
 
             if (genericTypes.length == 0)
-                throw new RelationException(String.format("The %s of %s has no generic type",
+                throw new RelationalException(String.format("The %s of %s has no generic type",
                         relationField.getName(), getBaseClass().getSimpleName()));
 
             try {
                 return Class.forName(((Type) genericTypes[0]).getTypeName());
             } catch (ClassNotFoundException e) {
-                throw new RelationException(e.getMessage(), e);
+                throw new RelationalException(e.getMessage(), e);
             }
         }
         return relationField.getType();
@@ -115,10 +115,10 @@ public class Relationship {
             Field field = baseClass.getDeclaredField(fieldName);
             Relation relation = field.getAnnotation(Relation.class);
             if(relation == null)
-                throw new RelationException(String.format("The %s has not relation", field));
+                throw new RelationalException(String.format("The %s has not relation", field));
             return new Relationship(baseClass, field, relation);
         } catch (NoSuchFieldException ex) {
-            throw new RelationException(String.format("The %s has no field '%s' (%s)", baseClass.getSimpleName(),
+            throw new RelationalException(String.format("The %s has no field '%s' (%s)", baseClass.getSimpleName(),
                     fieldName, ex.getMessage()), ex);
         }
     }
