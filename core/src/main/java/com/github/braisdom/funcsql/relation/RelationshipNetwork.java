@@ -10,22 +10,36 @@ public class RelationshipNetwork {
     private final Connection connection;
     private final Class baseClass;
 
-    private final Map<String, List> relationshipMap;
+    private final Map<String, List> relationObjectsMap;
+    private final Map<String, List> groupedObjectsMap;
 
     private class NetworkNode {
+        private Class baseClass;
         private Class relatedClass;
-        private String key;
+        private String relationType;
         private Map<Object, List> arrangeRows;
+
+        public boolean equals(Object other) {
+            if (other instanceof NetworkNode) {
+                NetworkNode otherNode = (NetworkNode) other;
+                return baseClass.equals(otherNode.baseClass) && relatedClass.equals(otherNode.relatedClass);
+            } else
+                return false;
+        }
     }
 
     public RelationshipNetwork(Connection connection, Class baseClass) {
         this.connection = connection;
         this.baseClass = baseClass;
 
-        this.relationshipMap = new HashMap<>();
+        this.relationObjectsMap = new HashMap<>();
+        this.groupedObjectsMap = new HashMap<>();
     }
 
-    public List calculate(List rows, Relationship[] relationships) {
+    public List process(List rows, Relationship[] relationships) {
+        for(Relationship relationship : relationships) {
+
+        }
         return null;
     }
 }

@@ -24,7 +24,6 @@ public class QueryExample {
                 "(2, 'profile_2', 2)");
     }
 
-
     public static void main(String[] args) throws SQLException {
         Database.installConnectionFactory(new SqliteConnectionFactory());
 

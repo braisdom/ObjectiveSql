@@ -105,7 +105,7 @@ public class Relationship {
             return relation.foreignFieldName();
     }
 
-    protected boolean isPrimaryRelation() {
+    public boolean isPrimaryRelation() {
         return RelationType.HAS_MANY.equals(relation.relationType())
                 || RelationType.HAS_ONE.equals(relation.relationType());
     }
