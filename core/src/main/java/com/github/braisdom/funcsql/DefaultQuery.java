@@ -18,13 +18,14 @@ public class DefaultQuery<T> extends AbstractQuery<T> {
         SQLGenerator sqlGenerator = Database.getSQLGenerator();
         ConnectionFactory connectionFactory = Database.getConnectionFactory();
         Connection connection = connectionFactory.getConnection();
+
         String sql = sqlGenerator.createQuerySQL(getTableName(domainModelClass), projection, filter, groupBy,
                 having, orderBy, offset, limit);
 
         List<T> rows = executeInternally(connection, domainModelClass, sql);
 
         if (relationships.length > 0)
-            new RelationshipNetwork(connection, domainModelClass, rows, relationships).process();
+            new RelationshipNetwork(connection, domainModelClass).calculate(rows, relationships);
 
         return rows;
     }

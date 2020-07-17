@@ -27,6 +27,13 @@ public class Relationship {
         this.relation = relation;
     }
 
+    /**
+     * The baseClass is relevant by RelationType and is relative, returns parent table class
+     * when the RelationType is 'has many' or 'has one', otherwise, child table class.
+     *
+     * @return the parent table class or child table class
+     * @see RelationType
+     */
     public Class getBaseClass() {
         return baseClass;
     }

@@ -9,8 +9,6 @@ public class RelationshipNetwork {
 
     private final Connection connection;
     private final Class baseClass;
-    private final List rows;
-    private final Relationship[] relationships;
 
     private final Map<String, List> relationshipMap;
 
@@ -20,16 +18,14 @@ public class RelationshipNetwork {
         private Map<Object, List> arrangeRows;
     }
 
-    public RelationshipNetwork(Connection connection, Class baseClass, List rows, Relationship[] relationships) {
+    public RelationshipNetwork(Connection connection, Class baseClass) {
         this.connection = connection;
         this.baseClass = baseClass;
-        this.rows = rows;
-        this.relationships = relationships;
 
         this.relationshipMap = new HashMap<>();
     }
 
-    public List process() {
+    public List calculate(List rows, Relationship[] relationships) {
         return null;
     }
 }
