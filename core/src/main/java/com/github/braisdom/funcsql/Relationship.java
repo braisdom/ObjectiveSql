@@ -49,9 +49,12 @@ public class Relationship {
     }
 
     public String getPrimaryKey() {
-        if (StringUtil.isBlank(relation.primaryKey()))
-            return Table.DEFAULT_PRIMARY_KEY;
-        else
+        if (StringUtil.isBlank(relation.primaryKey())) {
+            if(isPrimaryRelation())
+                return Table.getPrimaryKey(getBaseClass());
+            else
+                return Table.getPrimaryKey(getRelatedClass());
+        } else
             return relation.primaryKey();
     }
 
@@ -70,7 +73,10 @@ public class Relationship {
 
     public String getPrimaryFieldName() {
         if (StringUtil.isBlank(relation.foreignFieldName())) {
-            return Table.DEFAULT_PRIMARY_KEY;
+            if(isPrimaryRelation())
+                return Table.getPrimaryField(getBaseClass()).getName();
+            else
+                return Table.getPrimaryField(getRelatedClass()).getName();
         }else
             return relation.primaryFieldName();
     }
@@ -91,6 +97,11 @@ public class Relationship {
             return relation.foreignFieldName();
     }
 
+    protected boolean isPrimaryRelation() {
+        return RelationType.HAS_MANY.equals(relation.relationType())
+                || RelationType.HAS_ONE.equals(relation.relationType());
+    }
+
     public static final Relationship createRelation(Class baseClass, String fieldName) {
         try {
             Field field = baseClass.getDeclaredField(fieldName);
@@ -102,10 +113,5 @@ public class Relationship {
             throw new RelationException(String.format("The %s has no field '%s' (%s)", baseClass.getSimpleName(),
                     fieldName, ex.getMessage()), ex);
         }
-    }
-
-    protected boolean isPrimaryRelation() {
-        return RelationType.HAS_MANY.equals(relation.relationType())
-                || RelationType.HAS_ONE.equals(relation.relationType());
     }
 }

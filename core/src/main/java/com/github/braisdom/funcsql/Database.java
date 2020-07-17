@@ -40,4 +40,19 @@ public final class Database {
             throw new IllegalStateException("The connectionFactory must be not null");
         return connectionFactory;
     }
+
+    public static String quote(Object... values) {
+        StringBuilder sb = new StringBuilder();
+
+        for (Object value : values) {
+            if (value instanceof Integer || value instanceof Long ||
+                    value instanceof Float || value instanceof Double)
+                sb.append(String.valueOf(value));
+            else
+                sb.append(String.format("'%s'", String.valueOf(value)));
+            sb.append(",");
+        }
+        sb.delete(sb.length() - 1, sb.length());
+        return sb.toString();
+    }
 }
