@@ -4,14 +4,17 @@ import com.github.braisdom.funcsql.Table;
 import com.github.braisdom.funcsql.annotations.Relation;
 import com.github.braisdom.funcsql.util.StringUtil;
 import com.github.braisdom.funcsql.util.WordUtil;
+import org.apache.commons.beanutils.PropertyUtils;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
-public class Relationship {
+public final class Relationship {
 
     private final Class baseClass;
     private final Field relationField;
@@ -28,7 +31,7 @@ public class Relationship {
     }
 
     /**
-     * The baseClass is relevant by RelationType and is relative, returns parent table class
+     * The <code>baseClass</code> is relevant by RelationType and is relative, returns parent table class
      * when the RelationType is 'has many' or 'has one', otherwise, child table class.
      *
      * @return the parent table class or child table class
@@ -48,17 +51,21 @@ public class Relationship {
                         relationField.getName(), getBaseClass().getSimpleName()));
 
             try {
-                return Class.forName(((Type) genericTypes[0]).getTypeName());
+                return Class.forName((genericTypes[0]).getTypeName());
             } catch (ClassNotFoundException e) {
                 throw new RelationalException(e.getMessage(), e);
             }
-        }
-        return relationField.getType();
+        } else
+            return relationField.getType();
+    }
+
+    public String getRelationCondition() {
+        return relation.condition();
     }
 
     public String getPrimaryKey() {
         if (StringUtil.isBlank(relation.primaryKey())) {
-            if(isPrimaryRelation())
+            if (isBelongsTo())
                 return Table.getPrimaryKey(getBaseClass());
             else
                 return Table.getPrimaryKey(getRelatedClass());
@@ -68,7 +75,7 @@ public class Relationship {
 
     public String getForeignKey() {
         if (StringUtil.isBlank(relation.foreignKey())) {
-            if (isPrimaryRelation()) {
+            if (isBelongsTo()) {
                 String rawForeignKey = baseClass.getSimpleName();
                 return Table.encodeDefaultKey(WordUtil.underscore(rawForeignKey));
             } else {
@@ -81,18 +88,18 @@ public class Relationship {
 
     public String getPrimaryFieldName() {
         if (StringUtil.isBlank(relation.foreignFieldName())) {
-            if(isPrimaryRelation())
+            if (isBelongsTo())
                 return Table.getPrimaryField(getBaseClass()).getName();
             else
                 return Table.getPrimaryField(getRelatedClass()).getName();
-        }else
+        } else
             return relation.primaryFieldName();
     }
 
     public String getForeignFieldName() {
         if (StringUtil.isBlank(relation.foreignFieldName())) {
             if (StringUtil.isBlank(relation.foreignKey())) {
-                if (isPrimaryRelation()) {
+                if (isBelongsTo()) {
                     String rawForeignName = getBaseClass().getSimpleName();
                     return WordUtil.camelize(rawForeignName, true);
                 } else {
@@ -105,16 +112,64 @@ public class Relationship {
             return relation.foreignFieldName();
     }
 
-    public boolean isPrimaryRelation() {
-        return RelationType.HAS_MANY.equals(relation.relationType())
-                || RelationType.HAS_ONE.equals(relation.relationType());
+    public boolean isBelongsTo() {
+        return RelationType.BELONGS_TO.equals(relation.relationType());
+    }
+
+    public static final Object getAssociatedKey(Relationship relationship, Object row) {
+        String fieldName = relationship.isBelongsTo()
+                ? relationship.getPrimaryFieldName() : relationship.getForeignFieldName();
+        Class clazz = row.getClass();
+        try {
+            return PropertyUtils.getProperty(row, fieldName);
+        } catch (IllegalAccessException e) {
+            throw new RelationalException(StringUtil.encodeExceptionMessage(e,
+                    String.format("Read %s from %s access error", fieldName, clazz.getSimpleName())), e);
+        } catch (InvocationTargetException e) {
+            throw new RelationalException(StringUtil.encodeExceptionMessage(e,
+                    String.format("Read %s from % invocation error", fieldName, clazz.getSimpleName())), e);
+        } catch (NoSuchMethodException e) {
+            throw new RelationalException(StringUtil.encodeExceptionMessage(e,
+                    String.format("The %s has no %s error", clazz.getSimpleName(), fieldName)), e);
+        }
+    }
+
+    public static void setRelationalObjects(Relationship relationship, Object row, List associatedObject) {
+        String fieldName = relationship.isBelongsTo()
+                ? relationship.getPrimaryFieldName() : relationship.getForeignFieldName();
+        if (relationship.isBelongsTo()) {
+            invokeWriteMethod(row, fieldName, associatedObject);
+        } else {
+            if (associatedObject.size() > 1)
+                throw new RelationalException(String.format("The %s has too many relations", relationship.getPrimaryFieldName()));
+
+            if (associatedObject.size() == 1)
+                invokeWriteMethod(row, fieldName, associatedObject.get(0));
+            else
+                invokeWriteMethod(row, fieldName, null);
+        }
+    }
+
+    private static void invokeWriteMethod(Object row, String fieldName, Object value) {
+        try {
+            PropertyUtils.setProperty(row, fieldName, value);
+        } catch (IllegalAccessException e) {
+            throw new RelationalException(StringUtil.encodeExceptionMessage(e,
+                    String.format("Read %s access error", fieldName)), e);
+        } catch (InvocationTargetException e) {
+            throw new RelationalException(StringUtil.encodeExceptionMessage(e,
+                    String.format("Read %s invocation error", fieldName)), e);
+        } catch (NoSuchMethodException e) {
+            throw new RelationalException(StringUtil.encodeExceptionMessage(e,
+                    String.format("Read %s unknown error (%s)", fieldName, e.getMessage())), e);
+        }
     }
 
     public static final Relationship createRelation(Class baseClass, String fieldName) {
         try {
             Field field = baseClass.getDeclaredField(fieldName);
             Relation relation = field.getAnnotation(Relation.class);
-            if(relation == null)
+            if (relation == null)
                 throw new RelationalException(String.format("The %s has not relation", field));
             return new Relationship(baseClass, field, relation);
         } catch (NoSuchFieldException ex) {

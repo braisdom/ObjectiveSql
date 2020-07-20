@@ -104,7 +104,7 @@ public abstract class AbstractQuery<T> implements Query<T> {
 //        for (Object key : baseRows.keySet()) {
 //            List<RawRelationObject> relationObjects = relationRows.get(key);
 //            if (relationObjects != null)
-//                baseRows.get(key).forEach(baseRow -> baseRow.setRelations(relationship, relationObjects));
+//                baseRows.get(key).forEach(baseRow -> baseRow.setRelationalObjects(relationship, relationObjects));
 //        }
     }
 

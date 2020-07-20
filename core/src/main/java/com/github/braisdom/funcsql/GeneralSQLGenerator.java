@@ -9,6 +9,11 @@ public class GeneralSQLGenerator implements SQLGenerator {
     private static final String SELECT_STATEMENT = "SELECT %s FROM %s";
 
     @Override
+    public String createQuerySQL(String tableName, String projections, String filter) {
+        return createQuerySQL(tableName, projections, filter, null, null, null, -1, -1);
+    }
+
+    @Override
     public String createQuerySQL(String tableName, String projections, String filter, String groupBy,
                                  String having, String orderBy, int offset, int limit) {
         Objects.requireNonNull(tableName, "The tableName cannot be null");
@@ -49,5 +54,21 @@ public class GeneralSQLGenerator implements SQLGenerator {
     @Override
     public String createDeleteSQL(String tableName, String filter) {
         return null;
+    }
+
+    @Override
+    public String quote(Object... scalars) {
+        StringBuilder sb = new StringBuilder();
+
+        for (Object value : scalars) {
+            if (value instanceof Integer || value instanceof Long ||
+                    value instanceof Float || value instanceof Double)
+                sb.append(String.valueOf(value));
+            else
+                sb.append(String.format("'%s'", String.valueOf(value)));
+            sb.append(",");
+        }
+        sb.delete(sb.length() - 1, sb.length());
+        return sb.toString();
     }
 }

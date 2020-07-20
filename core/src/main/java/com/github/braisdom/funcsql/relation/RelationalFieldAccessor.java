@@ -7,22 +7,22 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-final class RelationalAssembler {
+public final class RelationalFieldAccessor {
 
     private final Relationship relationship;
     private final Object row;
 
-    public RelationalAssembler(Relationship relationship, Object row) {
+    public RelationalFieldAccessor(Relationship relationship, Object row) {
         this.relationship = relationship;
         this.row = row;
     }
 
     public Object getRelationalValue() {
-        String fieldName = relationship.isPrimaryRelation()
+        String fieldName = relationship.isBelongsTo()
                 ? relationship.getPrimaryFieldName() : relationship.getForeignFieldName();
-        Class clazz = relationship.isPrimaryRelation() ? relationship.getBaseClass() : relationship.getRelatedClass();
+        Class clazz = row.getClass();
         try {
-            return PropertyUtils.getProperty(clazz, fieldName);
+            return PropertyUtils.getProperty(row, fieldName);
         } catch (IllegalAccessException e) {
             throw new RelationalException(StringUtil.encodeExceptionMessage(e,
                     String.format("Read %s from %s access error", fieldName, clazz.getSimpleName())), e);
@@ -35,24 +35,25 @@ final class RelationalAssembler {
         }
     }
 
-    public void setRelations(Relationship relationship, List<RelationalAssembler> rawRelationObjects) {
-        String fieldName = relationship.isPrimaryRelation()
+    public void setRelationalObjects(List<RelationalFieldAccessor> relationalObjects) {
+        String fieldName = relationship.isBelongsTo()
                 ? relationship.getPrimaryFieldName() : relationship.getForeignFieldName();
-        if (relationship.isPrimaryRelation()) {
-            if (rawRelationObjects.size() > 1)
+        if (relationship.isBelongsTo()) {
+            if (relationalObjects.size() > 1)
                 throw new RelationalException(String.format("The %s has too many relations", relationship.getPrimaryFieldName()));
 
-            if (rawRelationObjects.size() == 1)
-                invokeWriteMethod(relationship.getBaseClass(), fieldName, rawRelationObjects.get(0).getRow());
+            if (relationalObjects.size() == 1)
+                invokeWriteMethod(fieldName, relationalObjects.get(0).getRow());
             else
-                invokeWriteMethod(relationship.getBaseClass(), fieldName, null);
+                invokeWriteMethod(fieldName, null);
         } else {
-            List rows = rawRelationObjects.stream().map(o -> o.getRow()).collect(Collectors.toList());
-            invokeWriteMethod(relationship.getBaseClass(), fieldName, rows);
+            List rows = relationalObjects.stream().map(o -> o.getRow()).collect(Collectors.toList());
+            if(rows.size() > 0)
+                invokeWriteMethod(fieldName, rows.get(0));
         }
     }
 
-    private void invokeWriteMethod(Class clazz, String fieldName, Object value) {
+    private void invokeWriteMethod(String fieldName, Object value) {
         try {
             PropertyUtils.setProperty(row, fieldName, value);
         } catch (IllegalAccessException e) {
