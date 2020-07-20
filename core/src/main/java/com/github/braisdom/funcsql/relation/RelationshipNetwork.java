@@ -36,21 +36,23 @@ public class RelationshipNetwork {
     }
 
     private void setupAssociatedObjects(Class baseClass, Relationship relationship, Relationship[] relationships) throws SQLException {
-        final String associatedFieldName = relationship.isBelongsTo()
-                ? relationship.getForeignFieldName() : relationship.getPrimaryFieldName();
-        final String selfFieldName = relationship.getAssociatedFieldName();
+        final String baseFieldName = relationship.getBaseFieldName();
+        final String associatedFieldName = relationship.getAssociatedFieldName();
 
         Class childClass = relationship.getRelatedClass();
         List baseObjects = getCachedObjects(baseClass);
 
-        List associatedKeys = (List) baseObjects.stream()
-                .map(r -> Relationship.getAssociatedValue(relationship, r, associatedFieldName)).distinct()
+        List associatedValues = (List) baseObjects.stream()
+                .map(r -> Relationship.getAssociatedValue(r, baseFieldName)).distinct()
                 .collect(Collectors.toList());
         List associatedObjects = queryObjects(relationship.getRelatedClass(), relationship,
-                associatedFieldName, associatedKeys.toArray());
+                baseFieldName, associatedValues.toArray());
+        Map<Object, List> relationRows = (Map<Object, List>) associatedObjects.stream()
+                .collect(Collectors.groupingBy(r -> Relationship.getAssociatedValue(r, associatedFieldName)));
+
         catchObjects(childClass, associatedObjects);
 
-        associatedObjects.forEach(o -> Relationship.setRelationalObjects(relationship, o, selfFieldName, associatedObjects));
+        baseObjects.forEach(o -> Relationship.setRelationalObjects(relationship, o, baseFieldName, associatedObjects));
 
         Relationship childRelationship = (Relationship) Arrays.stream(relationships)
                 .filter(r -> r.getBaseClass().equals(childClass)).toArray()[0];

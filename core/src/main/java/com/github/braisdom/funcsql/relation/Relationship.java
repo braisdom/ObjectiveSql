@@ -41,10 +41,6 @@ public final class Relationship {
         return baseClass;
     }
 
-    public String getAssociatedFieldName() {
-        return relationField.getName();
-    }
-
     public Class getRelatedClass() {
         if (Collection.class.isAssignableFrom(relationField.getType())) {
             ParameterizedType parameterizedType = (ParameterizedType) relationField.getGenericType();
@@ -90,17 +86,14 @@ public final class Relationship {
             return relation.foreignKey();
     }
 
-    public String getPrimaryFieldName() {
+    public String getBaseFieldName() {
         if (StringUtil.isBlank(relation.foreignFieldName())) {
-            if (isBelongsTo())
-                return Table.getPrimaryField(getBaseClass()).getName();
-            else
-                return Table.getPrimaryField(getRelatedClass()).getName();
+            return relationField.getName();
         } else
             return relation.primaryFieldName();
     }
 
-    public String getForeignFieldName() {
+    public String getAssociatedFieldName() {
         if (StringUtil.isBlank(relation.foreignFieldName())) {
             if (StringUtil.isBlank(relation.foreignKey())) {
                 if (isBelongsTo()) {
@@ -120,7 +113,7 @@ public final class Relationship {
         return RelationType.BELONGS_TO.equals(relation.relationType());
     }
 
-    public static final Object getAssociatedValue(Relationship relationship, Object row, String fieldName) {
+    public static final Object getAssociatedValue(Object row, String fieldName) {
         Class clazz = row.getClass();
         try {
             return PropertyUtils.getProperty(row, fieldName);

@@ -19,7 +19,7 @@ public final class RelationalFieldAccessor {
 
     public Object getRelationalValue() {
         String fieldName = relationship.isBelongsTo()
-                ? relationship.getPrimaryFieldName() : relationship.getForeignFieldName();
+                ? relationship.getBaseFieldName() : relationship.getAssociatedFieldName();
         Class clazz = row.getClass();
         try {
             return PropertyUtils.getProperty(row, fieldName);
@@ -37,10 +37,10 @@ public final class RelationalFieldAccessor {
 
     public void setRelationalObjects(List<RelationalFieldAccessor> relationalObjects) {
         String fieldName = relationship.isBelongsTo()
-                ? relationship.getPrimaryFieldName() : relationship.getForeignFieldName();
+                ? relationship.getBaseFieldName() : relationship.getAssociatedFieldName();
         if (relationship.isBelongsTo()) {
             if (relationalObjects.size() > 1)
-                throw new RelationalException(String.format("The %s has too many relations", relationship.getPrimaryFieldName()));
+                throw new RelationalException(String.format("The %s has too many relations", relationship.getBaseFieldName()));
 
             if (relationalObjects.size() == 1)
                 invokeWriteMethod(fieldName, relationalObjects.get(0).getRow());
