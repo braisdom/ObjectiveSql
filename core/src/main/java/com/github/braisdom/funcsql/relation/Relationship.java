@@ -41,6 +41,10 @@ public final class Relationship {
         return baseClass;
     }
 
+    public String getAssociatedFieldName() {
+        return relationField.getName();
+    }
+
     public Class getRelatedClass() {
         if (Collection.class.isAssignableFrom(relationField.getType())) {
             ParameterizedType parameterizedType = (ParameterizedType) relationField.getGenericType();
@@ -116,9 +120,7 @@ public final class Relationship {
         return RelationType.BELONGS_TO.equals(relation.relationType());
     }
 
-    public static final Object getAssociatedKey(Relationship relationship, Object row) {
-        String fieldName = relationship.isBelongsTo()
-                ? relationship.getPrimaryFieldName() : relationship.getForeignFieldName();
+    public static final Object getAssociatedValue(Relationship relationship, Object row, String fieldName) {
         Class clazz = row.getClass();
         try {
             return PropertyUtils.getProperty(row, fieldName);
@@ -134,19 +136,17 @@ public final class Relationship {
         }
     }
 
-    public static void setRelationalObjects(Relationship relationship, Object row, List associatedObject) {
-        String fieldName = relationship.isBelongsTo()
-                ? relationship.getPrimaryFieldName() : relationship.getForeignFieldName();
+    public static void setRelationalObjects(Relationship relationship, Object row, String fieldName, List associatedObjects) {
         if (relationship.isBelongsTo()) {
-            invokeWriteMethod(row, fieldName, associatedObject);
-        } else {
-            if (associatedObject.size() > 1)
-                throw new RelationalException(String.format("The %s has too many relations", relationship.getPrimaryFieldName()));
+            if (associatedObjects.size() > 1)
+                throw new RelationalException(String.format("The %s[belongs_to] has too many relations", fieldName));
 
-            if (associatedObject.size() == 1)
-                invokeWriteMethod(row, fieldName, associatedObject.get(0));
+            if (associatedObjects.size() == 1)
+                invokeWriteMethod(row, fieldName, associatedObjects.get(0));
             else
                 invokeWriteMethod(row, fieldName, null);
+        } else {
+            invokeWriteMethod(row, fieldName, associatedObjects);
         }
     }
 

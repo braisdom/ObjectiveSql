@@ -4,6 +4,7 @@ import com.github.braisdom.funcsql.Database;
 import com.github.braisdom.funcsql.SQLExecutor;
 import com.github.braisdom.funcsql.SQLGenerator;
 import com.github.braisdom.funcsql.Table;
+import com.github.braisdom.funcsql.util.StringUtil;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -27,41 +28,46 @@ public class RelationshipNetwork {
         this.relationObjectsMap = new HashMap<>();
     }
 
-    public void process(List rows, Relationship[] relationships) {
+    public void process(List rows, Relationship[] relationships) throws SQLException {
         Relationship sourceRelationship = getRelation(baseClass, relationships);
 
-        catchObjects(baseClass, wrapObject(sourceRelationship, rows));
+        catchObjects(baseClass, rows);
         setupAssociatedObjects(baseClass, sourceRelationship, relationships);
     }
 
-    private void setupAssociatedObjects(Class baseClass, Relationship relationship, Relationship[] relationships) {
-        List<RelationalFieldAccessor> baseObjects = getCachedObjects(baseClass);
-        Map<Object, List<RelationalFieldAccessor>> groupedObjects = baseObjects.stream()
-                .collect(Collectors.groupingBy(RelationalFieldAccessor::getRelationalValue));
+    private void setupAssociatedObjects(Class baseClass, Relationship relationship, Relationship[] relationships) throws SQLException {
+        final String associatedFieldName = relationship.isBelongsTo()
+                ? relationship.getForeignFieldName() : relationship.getPrimaryFieldName();
+        final String selfFieldName = relationship.getAssociatedFieldName();
 
         Class childClass = relationship.getRelatedClass();
+        List baseObjects = getCachedObjects(baseClass);
+
+        List associatedKeys = (List) baseObjects.stream()
+                .map(r -> Relationship.getAssociatedValue(relationship, r, associatedFieldName)).distinct()
+                .collect(Collectors.toList());
+        List associatedObjects = queryObjects(relationship.getRelatedClass(), relationship,
+                associatedFieldName, associatedKeys.toArray());
+        catchObjects(childClass, associatedObjects);
+
+        associatedObjects.forEach(o -> Relationship.setRelationalObjects(relationship, o, selfFieldName, associatedObjects));
+
         Relationship childRelationship = (Relationship) Arrays.stream(relationships)
                 .filter(r -> r.getBaseClass().equals(childClass)).toArray()[0];
         if(childRelationship != null)
             setupAssociatedObjects(childClass, relationship, relationships);
     }
 
-    protected List<RelationalFieldAccessor> wrapObject(Relationship relationship, List objects) {
-        return (List<RelationalFieldAccessor>) objects.stream()
-                .map(o -> new RelationalFieldAccessor(relationship, o))
-                .collect(Collectors.toList());
-    }
-
     protected List queryObjects(Class clazz, Relationship relationship, String associatedKey,
-                                List associatedValues) throws SQLException {
-        SQLExecutor sqlExecutor = Database.getSqlExecutor();
+                                Object[] associatedValues) throws SQLException {
         String relationTableName = Table.getTableName(clazz);
 
+        SQLExecutor sqlExecutor = Database.getSqlExecutor();
         SQLGenerator sqlGenerator = Database.getSQLGenerator();
 
-        String relationConditions = relationship.getRelationCondition() == null
-                ? String.format(" %s IN (%s) ", associatedKey, associatedValues.toArray())
-                : String.format(" %s IN (%s) AND (%s)", associatedKey, quote(associatedValues.toArray()),
+        String relationConditions = StringUtil.isBlank(relationship.getRelationCondition())
+                ? String.format(" %s IN (%s) ", associatedKey, quote(associatedValues))
+                : String.format(" %s IN (%s) AND (%s)", associatedKey, quote(associatedValues),
                     relationship.getRelationCondition());
         String relationTableQuerySql = sqlGenerator.createQuerySQL(relationTableName, null, relationConditions);
 
@@ -81,8 +87,9 @@ public class RelationshipNetwork {
     }
 
     private Relationship getRelation(Class clazz, Relationship[] relationships) {
-        Relationship[] filteredRelations = (Relationship[]) Arrays.stream(relationships)
-                .filter(r -> r.getBaseClass().equals(clazz)).toArray();
+        Relationship[] filteredRelations = Arrays.stream(relationships)
+                .filter(r -> r.getBaseClass().equals(clazz))
+                .collect(Collectors.toList()).toArray(new Relationship[]{});
         if(filteredRelations.length > 0)
             return filteredRelations[0];
         return null;
