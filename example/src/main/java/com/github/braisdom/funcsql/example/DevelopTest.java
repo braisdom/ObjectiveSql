@@ -1,7 +1,6 @@
 package com.github.braisdom.funcsql.example;
 
 import com.github.braisdom.funcsql.Database;
-import com.github.braisdom.funcsql.Delete;
 import com.github.braisdom.funcsql.Update;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,9 +9,9 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 public class DevelopTest {
-    @Before
+    //@Before
     public void before() throws SQLException {
-        Database.installConnectionFactory(new MySQLConnectionFactory());
+//        Database.installConnectionFactory(new MySQLConnectionFactory());
         Connection connection = Database.getConnectionFactory().getConnection();
 
         try {
@@ -30,13 +29,8 @@ public class DevelopTest {
 
     @Test
     public void testUpdate() throws SQLException {
+//        Database.installConnectionFactory(new MySQLConnectionFactory());
         Update update = User.createUpdate();
-        update.set("role_id = %s", 5).where("name = '%s'", "hello").execute();
-    }
-
-    @Test
-    public void testDelete() throws SQLException {
-        Delete delete = User.createDelete();
-        delete.where("name = '%s'", "hello").execute();
+        update.set("role_id = %s", 3).where("name = '%s'", "hello").execute();
     }
 }
