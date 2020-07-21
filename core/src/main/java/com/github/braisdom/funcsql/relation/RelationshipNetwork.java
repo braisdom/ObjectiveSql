@@ -38,16 +38,17 @@ public class RelationshipNetwork {
     private void setupAssociatedObjects(Class baseClass, Relationship relationship, Relationship[] relationships) throws SQLException {
         final String baseFieldName = relationship.getBaseFieldName();
         final String associatedFieldName = relationship.getAssociatedFieldName();
+        final String associationFilterColumnName = relationship.getAssociationColumnName();
 
         Class childClass = relationship.getRelatedClass();
         List baseObjects = getCachedObjects(baseClass);
 
-        List associatedValues = (List) baseObjects.stream()
+        List associatedFieldValues = (List) baseObjects.stream()
                 .map(r -> Relationship.getAssociatedValue(r, baseFieldName)).distinct()
                 .collect(Collectors.toList());
         List associatedObjects = queryObjects(relationship.getRelatedClass(), relationship,
-                baseFieldName, associatedValues.toArray());
-        Map<Object, List> relationRows = (Map<Object, List>) associatedObjects.stream()
+                associationFilterColumnName, associatedFieldValues.toArray());
+        Map<Object, List> groupedAssociatedObjects = (Map<Object, List>) associatedObjects.stream()
                 .collect(Collectors.groupingBy(r -> Relationship.getAssociatedValue(r, associatedFieldName)));
 
         catchObjects(childClass, associatedObjects);
@@ -60,7 +61,7 @@ public class RelationshipNetwork {
             setupAssociatedObjects(childClass, relationship, relationships);
     }
 
-    protected List queryObjects(Class clazz, Relationship relationship, String associatedKey,
+    protected List queryObjects(Class clazz, Relationship relationship, String associatedColumnName,
                                 Object[] associatedValues) throws SQLException {
         String relationTableName = Table.getTableName(clazz);
 
@@ -68,8 +69,8 @@ public class RelationshipNetwork {
         SQLGenerator sqlGenerator = Database.getSQLGenerator();
 
         String relationConditions = StringUtil.isBlank(relationship.getRelationCondition())
-                ? String.format(" %s IN (%s) ", associatedKey, quote(associatedValues))
-                : String.format(" %s IN (%s) AND (%s)", associatedKey, quote(associatedValues),
+                ? String.format(" %s IN (%s) ", associatedColumnName, quote(associatedValues))
+                : String.format(" %s IN (%s) AND (%s)", associatedColumnName, quote(associatedValues),
                     relationship.getRelationCondition());
         String relationTableQuerySql = sqlGenerator.createQuerySQL(relationTableName, null, relationConditions);
 

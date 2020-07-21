@@ -76,10 +76,10 @@ public final class Relationship {
     public String getForeignKey() {
         if (StringUtil.isBlank(relation.foreignKey())) {
             if (isBelongsTo()) {
-                String rawForeignKey = baseClass.getSimpleName();
+                String rawForeignKey = getRelatedClass().getSimpleName();
                 return Table.encodeDefaultKey(WordUtil.underscore(rawForeignKey));
             } else {
-                String rawForeignKey = getRelatedClass().getSimpleName();
+                String rawForeignKey = baseClass.getSimpleName();
                 return Table.encodeDefaultKey(WordUtil.underscore(rawForeignKey));
             }
         } else
@@ -87,26 +87,37 @@ public final class Relationship {
     }
 
     public String getBaseFieldName() {
-        if (StringUtil.isBlank(relation.foreignFieldName())) {
-            return relationField.getName();
+        if (StringUtil.isBlank(relation.baseFieldName())) {
+            if(isBelongsTo())
+                return relationField.getName();
+            else
+                return Table.getPrimaryField(baseClass).getName();
         } else
-            return relation.primaryFieldName();
+            return relation.baseFieldName();
+    }
+
+    public String getAssociationColumnName() {
+        if(isBelongsTo())
+            return getPrimaryKey();
+        else
+            return getForeignKey();
     }
 
     public String getAssociatedFieldName() {
-        if (StringUtil.isBlank(relation.foreignFieldName())) {
-            if (StringUtil.isBlank(relation.foreignKey())) {
-                if (isBelongsTo()) {
+        if (StringUtil.isBlank(relation.associatedFieldName())) {
+            if (isBelongsTo()) {
+                return Table.getPrimaryField(getRelatedClass()).getName();
+            } else {
+                if (StringUtil.isBlank(relation.foreignKey())) {
                     String rawForeignName = getBaseClass().getSimpleName();
-                    return WordUtil.camelize(rawForeignName, true);
+                    return WordUtil.camelize(String.format("%s_%s",
+                            rawForeignName, Table.DEFAULT_PRIMARY_KEY), true);
                 } else {
-                    String rawForeignName = getRelatedClass().getSimpleName();
-                    return WordUtil.camelize(rawForeignName, true);
+                    return WordUtil.camelize(relation.foreignKey(), true);
                 }
-            } else
-                return WordUtil.camelize(relation.foreignKey(), true);
+            }
         } else
-            return relation.foreignFieldName();
+            return relation.associatedFieldName();
     }
 
     public boolean isBelongsTo() {

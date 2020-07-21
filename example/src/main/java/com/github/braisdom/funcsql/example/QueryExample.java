@@ -26,7 +26,6 @@ public class QueryExample {
 
     public static void main(String[] args) throws SQLException {
         Database.installConnectionFactory(new SqliteConnectionFactory());
-
         createTables(Database.getConnectionFactory().getConnection());
 
         Query<User> userQuery = User.createQuery();

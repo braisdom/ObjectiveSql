@@ -16,9 +16,8 @@ public class User {
     public static final Relationship MR_USER_PROFILE = Relationship
             .createRelation(User.class, "userProfiles");
 
-    @Queryable
-    @Column("id")
-    private int id;
+    @PrimaryKey
+    private int userId;
 
     @Queryable
     private String name;
@@ -27,6 +26,11 @@ public class User {
     private List<UserProfile> userProfiles;
 
     private Domain domain;
+
+    @Transactional
+    public static User register(User rawUser) {
+        return null;
+    }
 
     public static Query<User> createQuery() {
         return new DefaultQuery(User.class);
