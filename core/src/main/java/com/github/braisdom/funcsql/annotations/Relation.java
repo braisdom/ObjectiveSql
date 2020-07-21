@@ -14,11 +14,11 @@ public @interface Relation {
 
     String primaryKey() default "";
 
-    String baseFieldName() default "";
+    String primaryFieldName() default "";
 
     String foreignKey() default "";
 
-    String associatedFieldName() default "";
+    String foreignFieldName() default "";
 
     String condition() default "";
 }
