@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class RelationshipNetwork {
+public class RelationshipNetwork implements RelationProcessor.Context{
 
     private final Connection connection;
     private final Class baseClass;
@@ -35,30 +35,18 @@ public class RelationshipNetwork {
         setupAssociatedObjects(baseClass, sourceRelationship, relationships);
     }
 
+    @Override
+    public List getRelatedObjects(Class clazz, String associationColumn) {
+        return null;
+    }
+
     private void setupAssociatedObjects(Class baseClass, Relationship relationship, Relationship[] relationships) throws SQLException {
-        final String baseFieldName = relationship.getBaseFieldName();
-        final String associatedFieldName = relationship.getAssociatedFieldName();
-        final String associationFilterColumnName = relationship.getAssociationColumnName();
 
-        Class childClass = relationship.getRelatedClass();
-        List baseObjects = getCachedObjects(baseClass);
-
-        List associatedFieldValues = (List) baseObjects.stream()
-                .map(r -> Relationship.getAssociatedValue(r, associatedFieldName)).distinct()
-                .collect(Collectors.toList());
-        List associatedObjects = queryObjects(relationship.getRelatedClass(), relationship,
-                associationFilterColumnName, associatedFieldValues.toArray());
-        Map<Object, List> groupedAssociatedObjects = (Map<Object, List>) associatedObjects.stream()
-                .collect(Collectors.groupingBy(r -> Relationship.getAssociatedValue(r, associatedFieldName)));
-
-        catchObjects(childClass, associatedObjects);
-
-        baseObjects.forEach(o -> Relationship.setRelationalObjects(relationship, o, baseFieldName, associatedObjects));
-
+        final Class childClass = relationship.getRelatedClass();
         Relationship childRelationship = (Relationship) Arrays.stream(relationships)
                 .filter(r -> r.getBaseClass().equals(childClass)).toArray()[0];
         if(childRelationship != null)
-            setupAssociatedObjects(childClass, relationship, relationships);
+            setupAssociatedObjects(childClass, childRelationship, relationships);
     }
 
     protected List queryObjects(Class clazz, Relationship relationship, String associatedColumnName,

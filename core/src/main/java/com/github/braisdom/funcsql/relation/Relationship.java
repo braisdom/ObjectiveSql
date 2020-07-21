@@ -59,6 +59,10 @@ public final class Relationship {
             return relationField.getType();
     }
 
+    public Field getRelationField() {
+        return relationField;
+    }
+
     public String getRelationCondition() {
         return relation.condition();
     }
@@ -86,33 +90,34 @@ public final class Relationship {
             return relation.foreignKey();
     }
 
-    public String getBaseFieldName() {
-        if (StringUtil.isBlank(relation.baseFieldName())) {
-            return relationField.getName();
-        } else
-            return relation.baseFieldName();
-    }
-
-    public String getAssociationColumnName() {
-        if(isBelongsTo())
-            return getPrimaryKey();
-        else
-            return getForeignKey();
-    }
-
-    public String getAssociatedFieldName() {
-        if (StringUtil.isBlank(relation.associatedFieldName())) {
-            if (isBelongsTo()) {
+    public String getPrimaryAssociationFieldName() {
+        if (StringUtil.isBlank(relation.primaryFieldName())) {
+            if(isBelongsTo())
                 return Table.getPrimaryField(getRelatedClass()).getName();
-            } else {
+            else
                 return Table.getPrimaryField(getBaseClass()).getName();
+        } else
+            return relation.primaryFieldName();
+    }
+
+    public String getForeignFieldName() {
+        if (StringUtil.isBlank(relation.foreignFieldName())) {
+            if (isBelongsTo()) {
+                return relationField.getName();
+            } else {
+                String rawForeignFieldName = WordUtil.underscore(getBaseClass().getName());
+                return WordUtil.camelize(Table.encodeDefaultKey(rawForeignFieldName), true);
             }
         } else
-            return relation.associatedFieldName();
+            return relation.foreignFieldName();
     }
 
     public boolean isBelongsTo() {
         return RelationType.BELONGS_TO.equals(relation.relationType());
+    }
+
+    public RelationProcessor createProcessor() {
+        return null;
     }
 
     public static final Object getAssociatedValue(Object row, String fieldName) {
