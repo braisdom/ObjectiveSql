@@ -54,6 +54,7 @@ public class AnnotationProcessor extends AbstractProcessor {
 
                     processImport(element);
                     processQueryMethod(jcClassDecl, element);
+                    processUpdateMethod(jcClassDecl, element);
                 }
             });
         });
@@ -69,6 +70,12 @@ public class AnnotationProcessor extends AbstractProcessor {
                                 treeMaker.Ident(names.fromString("com.github.braisdom.funcsql")),
                                 names.fromString("DefaultQuery")),
                         false)
+        ).append(
+                treeMaker.Import(
+                        treeMaker.Select(
+                                treeMaker.Ident(names.fromString("com.github.braisdom.funcsql")),
+                                names.fromString("DefaultUpdate")),
+                        false)
         );
 
         imports.defs = imports.defs.append(
@@ -76,6 +83,12 @@ public class AnnotationProcessor extends AbstractProcessor {
                         treeMaker.Select(
                                 treeMaker.Ident(names.fromString("com.github.braisdom.funcsql")),
                                 names.fromString("Query")),
+                        false)
+        ).append(
+                treeMaker.Import(
+                        treeMaker.Select(
+                                treeMaker.Ident(names.fromString("com.github.braisdom.funcsql")),
+                                names.fromString("Update")),
                         false)
         );
     }
@@ -108,6 +121,44 @@ public class AnnotationProcessor extends AbstractProcessor {
                 treeMaker.Modifiers(Flags.PUBLIC + Flags.STATIC + Flags.FINAL),
                 names.fromString("createQuery"),
                 treeMaker.Ident(names.fromString("Query")),
+                List.nil(),
+                List.nil(),
+                List.nil(),
+                treeMaker.Block(0, jcStatements.toList()),
+                null
+        );
+
+        jcClassDecl.defs = jcClassDecl.defs.append(methodDecl);
+    }
+
+    private void processUpdateMethod(JCTree.JCClassDecl jcClassDecl, Element element) {
+        if(methodsCache.contains("createUpdate"))
+            return;
+
+        ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
+        ListBuffer<JCTree.JCExpression> jcVariableExpressions = new ListBuffer<>();
+
+        jcVariableExpressions.append(
+                treeMaker.Select(
+                        treeMaker.Ident(names.fromString(element.getSimpleName().toString())),
+                        names.fromString("class")
+                )
+        );
+
+        jcStatements.append(
+                treeMaker.Return(treeMaker.NewClass(
+                        null,
+                        List.nil(), //泛型参数列表
+                        treeMaker.Ident(names.fromString("DefaultUpdate")), //创建的类名
+                        jcVariableExpressions.toList(), //参数列表
+                        null //类定义，估计是用于创建匿名内部类
+                ))
+        );
+
+        JCTree.JCMethodDecl methodDecl = treeMaker.MethodDef(
+                treeMaker.Modifiers(Flags.PUBLIC + Flags.STATIC + Flags.FINAL),
+                names.fromString("createUpdate"),
+                treeMaker.Ident(names.fromString("Update")),
                 List.nil(),
                 List.nil(),
                 List.nil(),

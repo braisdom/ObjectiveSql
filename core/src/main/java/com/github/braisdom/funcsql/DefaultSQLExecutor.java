@@ -41,12 +41,12 @@ public class DefaultSQLExecutor<T> implements SQLExecutor<T> {
     }
 
     @Override
-    public int update(Connection connection, String sql) {
-        return 0;
+    public int update(Connection connection, String sql) throws SQLException {
+        return queryRunner.update(connection, sql);
     }
 
     @Override
-    public int insert(Connection connection, String sql) {
+    public int insert(Connection connection, String sql) throws SQLException {
         return 0;
     }
 

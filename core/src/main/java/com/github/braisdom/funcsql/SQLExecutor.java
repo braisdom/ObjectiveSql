@@ -10,7 +10,7 @@ public interface SQLExecutor<T> {
 
     List<Row> query(Connection connection, String sql) throws SQLException;
 
-    int update(Connection connection, String sql);
+    int update(Connection connection, String sql) throws SQLException;
 
-    int insert(Connection connection, String sql);
+    int insert(Connection connection, String sql) throws SQLException;
 }
