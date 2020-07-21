@@ -50,6 +50,11 @@ public class DefaultSQLExecutor<T> implements SQLExecutor<T> {
         return 0;
     }
 
+    @Override
+    public int delete(Connection connection, String sql) throws SQLException {
+        return queryRunner.update(connection, sql);
+    }
+
     private Map<String, String> prepareColumnToPropertyOverrides(Class<T> rowClass) {
         Map<String, String> columnToPropertyOverrides = new HashMap<>();
         Field[] fields = rowClass.getDeclaredFields();

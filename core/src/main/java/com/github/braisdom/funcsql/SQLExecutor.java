@@ -13,4 +13,6 @@ public interface SQLExecutor<T> {
     int update(Connection connection, String sql) throws SQLException;
 
     int insert(Connection connection, String sql) throws SQLException;
+
+    int delete(Connection connection, String sql) throws SQLException;
 }
