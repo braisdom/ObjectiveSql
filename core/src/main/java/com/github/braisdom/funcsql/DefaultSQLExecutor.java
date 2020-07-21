@@ -43,4 +43,8 @@ public class DefaultSQLExecutor<T> implements SQLExecutor<T> {
     public int insert(Connection connection, String sql) {
         return 0;
     }
+
+    private Map<String, String> prepareColumnToPropertyOverrides(Class<T> rowClass) {
+        return null;
+    }
 }

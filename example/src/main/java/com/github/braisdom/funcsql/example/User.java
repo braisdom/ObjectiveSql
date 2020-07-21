@@ -16,10 +16,11 @@ public class User {
     public static final Relationship MR_USER_PROFILE = Relationship
             .createRelation(User.class, "userProfiles");
 
-    @PrimaryKey
+    @PrimaryKey("id")
     private int userId;
 
     @Queryable
+    @Column("user_name")
     private String name;
 
     @Relation(relationType = RelationType.HAS_MANY)
