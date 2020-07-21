@@ -71,8 +71,8 @@ public class RelationshipNetwork implements RelationProcessor.Context {
         SQLGenerator sqlGenerator = Database.getSQLGenerator();
 
         String relationConditions = StringUtil.isBlank(condition)
-                ? String.format(" %s IN (%s) ", associatedColumnName, quote(associatedValues))
-                : String.format(" %s IN (%s) AND (%s)", associatedColumnName, quote(associatedValues),
+                ? String.format(" %s IN (%s) ", associatedColumnName, sqlGenerator.quote(associatedValues))
+                : String.format(" %s IN (%s) AND (%s)", associatedColumnName, sqlGenerator.quote(associatedValues),
                 condition);
         String relationTableQuerySql = sqlGenerator.createQuerySQL(relationTableName, null, relationConditions);
 
@@ -81,33 +81,5 @@ public class RelationshipNetwork implements RelationProcessor.Context {
 
     protected void catchObjects(Class clazz, List objects) {
         this.relationObjectsMap.put(clazz, objects);
-    }
-
-    private Relationship getRelation(Class clazz, Relationship[] relationships) {
-        Relationship[] filteredRelations = Arrays.stream(relationships)
-                .filter(r -> r.getBaseClass().equals(clazz))
-                .collect(Collectors.toList()).toArray(new Relationship[]{});
-        if (filteredRelations.length > 0)
-            return filteredRelations[0];
-        return null;
-    }
-
-    private String quote(Object... values) {
-        StringBuilder sb = new StringBuilder();
-
-        for (Object value : values) {
-            if (value instanceof Integer || value instanceof Long ||
-                    value instanceof Float || value instanceof Double)
-                sb.append(String.valueOf(value));
-            else
-                sb.append(String.format("'%s'", String.valueOf(value)));
-            sb.append(",");
-        }
-        sb.delete(sb.length() - 1, sb.length());
-        return sb.toString();
-    }
-
-    private String encodeGroupKey(Class clazz, String fieldName) {
-        return String.format("%s_%s", clazz.getName(), fieldName);
     }
 }
