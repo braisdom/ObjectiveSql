@@ -1,12 +1,16 @@
 package com.github.braisdom.funcsql.relation;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public interface RelationProcessor {
 
     interface Context {
-        List getRelatedObjects(Class clazz, String associationColumn);
+        List queryRelatedObjects(Class clazz, String associationColumn,
+                                 Object[] associatedValues, String condition) throws SQLException;
+
+        List getObjects(Class clazz);
     }
 
-    void process(Context context, List rows, Relationship relationship);
+    void process(Context context, Relationship relationship) throws SQLException;
 }

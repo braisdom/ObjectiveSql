@@ -117,10 +117,12 @@ public final class Relationship {
     }
 
     public RelationProcessor createProcessor() {
-        return null;
+        if(isBelongsTo())
+            return new BelongsToProcessor();
+        return new HasAnyProcessor();
     }
 
-    public static final Object getAssociatedValue(Object row, String fieldName) {
+    public static final Object getFieldValue(Object row, String fieldName) {
         Class clazz = row.getClass();
         try {
             return PropertyUtils.getProperty(row, fieldName);

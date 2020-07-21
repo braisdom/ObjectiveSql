@@ -28,6 +28,22 @@ public class RelationshipNetwork implements RelationProcessor.Context{
         this.relationObjectsMap = new HashMap<>();
     }
 
+    @Override
+    public List queryRelatedObjects(Class clazz, String associationColumn,
+                                    Object[] associatedValues, String condition) throws SQLException {
+        List cachedObjects = relationObjectsMap.get(clazz);
+        if(cachedObjects == null) {
+            cachedObjects = queryObjects(clazz, associationColumn, associatedValues, condition);
+            relationObjectsMap.put(clazz, cachedObjects);
+        }
+        return cachedObjects;
+    }
+
+    @Override
+    public List getObjects(Class clazz) {
+        return relationObjectsMap.get(clazz);
+    }
+
     public void process(List rows, Relationship[] relationships) throws SQLException {
         Relationship sourceRelationship = getRelation(baseClass, relationships);
 
@@ -35,12 +51,8 @@ public class RelationshipNetwork implements RelationProcessor.Context{
         setupAssociatedObjects(baseClass, sourceRelationship, relationships);
     }
 
-    @Override
-    public List getRelatedObjects(Class clazz, String associationColumn) {
-        return null;
-    }
-
     private void setupAssociatedObjects(Class baseClass, Relationship relationship, Relationship[] relationships) throws SQLException {
+        RelationProcessor relationProcessor = relationship.createProcessor();
 
         final Class childClass = relationship.getRelatedClass();
         Relationship childRelationship = (Relationship) Arrays.stream(relationships)
@@ -49,28 +61,20 @@ public class RelationshipNetwork implements RelationProcessor.Context{
             setupAssociatedObjects(childClass, childRelationship, relationships);
     }
 
-    protected List queryObjects(Class clazz, Relationship relationship, String associatedColumnName,
-                                Object[] associatedValues) throws SQLException {
+    protected List queryObjects(Class clazz, String associatedColumnName,
+                                Object[] associatedValues, String condition) throws SQLException {
         String relationTableName = Table.getTableName(clazz);
 
         SQLExecutor sqlExecutor = Database.getSqlExecutor();
         SQLGenerator sqlGenerator = Database.getSQLGenerator();
 
-        String relationConditions = StringUtil.isBlank(relationship.getRelationCondition())
+        String relationConditions = StringUtil.isBlank(condition)
                 ? String.format(" %s IN (%s) ", associatedColumnName, quote(associatedValues))
                 : String.format(" %s IN (%s) AND (%s)", associatedColumnName, quote(associatedValues),
-                    relationship.getRelationCondition());
+                    condition);
         String relationTableQuerySql = sqlGenerator.createQuerySQL(relationTableName, null, relationConditions);
 
         return sqlExecutor.query(connection, relationTableQuerySql, clazz);
-    }
-
-    protected boolean isObjectLoaded(Class clazz) {
-        return this.relationObjectsMap.containsKey(clazz);
-    }
-
-    protected List getCachedObjects(Class clazz) {
-        return this.relationObjectsMap.get(clazz);
     }
 
     protected void catchObjects(Class clazz, List objects) {
