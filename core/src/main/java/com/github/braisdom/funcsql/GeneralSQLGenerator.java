@@ -8,6 +8,7 @@ public class GeneralSQLGenerator implements SQLGenerator {
 
     private static final String SELECT_STATEMENT = "SELECT %s FROM %s";
     private static final String UPDATE_STATEMENT = "UPDATE %s SET %s WHERE %s";
+    private static final String DELETE_STATEMENT = "DELETE FROM %s WHERE %s";
 
     @Override
     public String createQuerySQL(String tableName, String projections, String filter) {
@@ -62,7 +63,12 @@ public class GeneralSQLGenerator implements SQLGenerator {
 
     @Override
     public String createDeleteSQL(String tableName, String filter) {
-        return null;
+        Objects.requireNonNull(tableName, "The tableName cannot be null");
+
+        if (StringUtil.isBlank(filter))
+            throw new NullPointerException("The filter cannot be null when deleting");
+
+        return String.format(DELETE_STATEMENT, tableName, filter);
     }
 
     @Override
