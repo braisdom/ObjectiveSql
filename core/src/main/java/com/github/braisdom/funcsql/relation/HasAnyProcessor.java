@@ -22,10 +22,16 @@ public class HasAnyProcessor implements RelationProcessor {
                 .distinct()
                 .collect(Collectors.toList());
 
-        List relatedObjects = context.queryRelatedObjects(relatedClass,
+        List rawRelatedObjects = context.queryRelatedObjects(relatedClass,
                 foreignKey, associatedKeys.toArray(), relationship.getRelationCondition());
-        Map<Object, List> groupedRelatedObjects = (Map<Object, List>) relatedObjects
+        Map<Object, List> groupedRelatedObjects = (Map<Object, List>) rawRelatedObjects
                 .stream().collect(Collectors.groupingBy(o -> Relationship.getFieldValue(o, foreignFieldName)));
+
+        baseObjects.stream().forEach(o -> {
+            Object primaryValue = Relationship.getFieldValue(o, primaryFieldName);
+            List relatedObjects = groupedRelatedObjects.get(primaryValue);
+            Relationship.setRelationalObjects(relationship, o, associatedFieldName, relatedObjects);
+        });
     }
 
 }

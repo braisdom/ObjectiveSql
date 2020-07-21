@@ -45,10 +45,10 @@ public class RelationshipNetwork implements RelationProcessor.Context{
     }
 
     public void process(List rows, Relationship[] relationships) throws SQLException {
-        Relationship sourceRelationship = getRelation(baseClass, relationships);
-
         catchObjects(baseClass, rows);
-        setupAssociatedObjects(baseClass, sourceRelationship, relationships);
+
+        for(Relationship relationship:relationships)
+            relationship.createProcessor().process(this, relationship);
     }
 
     private void setupAssociatedObjects(Class baseClass, Relationship relationship, Relationship[] relationships) throws SQLException {

@@ -1,11 +1,11 @@
 package com.github.braisdom.funcsql.relation;
 
-import java.util.List;
+import java.sql.SQLException;
 
 public class BelongsToProcessor implements RelationProcessor {
 
     @Override
-    public void process(Context context, List rows, Relationship relationship) {
+    public void process(Context context, Relationship relationship) throws SQLException {
 
     }
 }
