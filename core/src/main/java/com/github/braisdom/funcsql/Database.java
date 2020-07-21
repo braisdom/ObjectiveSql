@@ -17,13 +17,13 @@ public final class Database {
     }
 
     public static void installSqlExecutor(SQLExecutor sqlExecutor) {
-        Objects.requireNonNull(connectionFactory, "The sqlExecutor cannot be null");
+        Objects.requireNonNull(sqlExecutor, "The sqlExecutor cannot be null");
 
         Database.sqlExecutor = sqlExecutor;
     }
 
     public static void installSQLGenerator(SQLGenerator sqlGenerator) {
-        Objects.requireNonNull(connectionFactory, "The sqlGenerator cannot be null");
+        Objects.requireNonNull(sqlGenerator, "The sqlGenerator cannot be null");
 
         Database.sqlGenerator = sqlGenerator;
     }
