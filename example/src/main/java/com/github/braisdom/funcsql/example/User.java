@@ -17,7 +17,7 @@ public class User {
             .createRelation(User.class, "userProfiles");
 
     @PrimaryKey("id")
-    private int userId;
+    private int id;
 
     @Queryable
     private String name;
@@ -34,5 +34,12 @@ public class User {
 
     public static Query<User> createQuery() {
         return new DefaultQuery(User.class);
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "name='" + name + '\'' +
+                '}';
     }
 }

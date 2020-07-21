@@ -10,7 +10,7 @@ import lombok.Data;
 @DomainModel
 public class UserProfile {
 
-    public static final Relationship RBE_USER_PROFILE = Relationship
+    public static final Relationship RBE_USER = Relationship
             .createRelation(UserProfile.class, "user");
 
     private int id;
@@ -20,36 +20,10 @@ public class UserProfile {
     @Relation(relationType = RelationType.BELONGS_TO)
     private User user;
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getUserId() {
-        return userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public UserProfile setUser(User user) {
-        this.user = user;
-        return this;
+    @Override
+    public String toString() {
+        return "UserProfile{" +
+                "name='" + name + '\'' +
+                '}';
     }
 }

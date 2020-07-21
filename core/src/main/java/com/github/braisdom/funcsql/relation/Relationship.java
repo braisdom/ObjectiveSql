@@ -103,7 +103,8 @@ public final class Relationship {
     public String getForeignFieldName() {
         if (StringUtil.isBlank(relation.foreignFieldName())) {
             if (isBelongsTo()) {
-                return relationField.getName();
+                String rawForeignFieldName = WordUtil.underscore(getRelatedClass().getSimpleName());
+                return WordUtil.camelize(Table.encodeDefaultKey(rawForeignFieldName), true);
             } else {
                 String rawForeignFieldName = WordUtil.underscore(getBaseClass().getSimpleName());
                 return WordUtil.camelize(Table.encodeDefaultKey(rawForeignFieldName), true);

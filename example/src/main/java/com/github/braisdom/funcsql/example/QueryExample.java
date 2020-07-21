@@ -5,9 +5,10 @@ import com.github.braisdom.funcsql.Query;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 
 import static com.github.braisdom.funcsql.example.User.RHM_USER_PROFILE;
-import static com.github.braisdom.funcsql.example.UserProfile.RBE_USER_PROFILE;
+import static com.github.braisdom.funcsql.example.UserProfile.RBE_USER;
 
 public class QueryExample {
 
@@ -29,8 +30,8 @@ public class QueryExample {
         Database.installConnectionFactory(new SqliteConnectionFactory());
         createTables(Database.getConnectionFactory().getConnection());
 
-        Query<User> userQuery = User.createQuery();
-        System.out.println(userQuery.limit(2).execute(RHM_USER_PROFILE, RBE_USER_PROFILE));
+        Query<UserProfile> userQuery = UserProfile.createQuery();
+        List<UserProfile> users = userQuery.limit(2).execute(RBE_USER);
         System.out.println();
     }
 }
