@@ -13,14 +13,13 @@ import java.util.List;
 @DomainModel(tableName = "users")
 public class User {
 
-    public static final Relationship MR_USER_PROFILE = Relationship
+    public static final Relationship RHM_USER_PROFILE = Relationship
             .createRelation(User.class, "userProfiles");
 
     @PrimaryKey("id")
     private int userId;
 
     @Queryable
-    @Column("user_name")
     private String name;
 
     @Relation(relationType = RelationType.HAS_MANY)

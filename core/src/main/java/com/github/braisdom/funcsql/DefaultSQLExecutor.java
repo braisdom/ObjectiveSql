@@ -18,8 +18,6 @@ import java.util.stream.Collectors;
 
 public class DefaultSQLExecutor<T> implements SQLExecutor<T> {
 
-    private static final RowProcessor DEFAULT_ROW_PROCESSOR = new BasicRowProcessor(new GenerousBeanProcessor());
-
     private final QueryRunner queryRunner;
 
     public DefaultSQLExecutor() {
@@ -58,6 +56,7 @@ public class DefaultSQLExecutor<T> implements SQLExecutor<T> {
         Arrays.stream(fields).forEach(field -> {
             PrimaryKey primaryKey = field.getAnnotation(PrimaryKey.class);
             Column column = field.getAnnotation(Column.class);
+
             if(primaryKey != null)
                 columnToPropertyOverrides.put(primaryKey.value(), field.getName());
             else if(column != null)

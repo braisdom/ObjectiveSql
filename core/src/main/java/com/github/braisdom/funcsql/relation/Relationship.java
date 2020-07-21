@@ -88,10 +88,7 @@ public final class Relationship {
 
     public String getBaseFieldName() {
         if (StringUtil.isBlank(relation.baseFieldName())) {
-            if(isBelongsTo())
-                return relationField.getName();
-            else
-                return Table.getPrimaryField(baseClass).getName();
+            return relationField.getName();
         } else
             return relation.baseFieldName();
     }
@@ -108,13 +105,7 @@ public final class Relationship {
             if (isBelongsTo()) {
                 return Table.getPrimaryField(getRelatedClass()).getName();
             } else {
-                if (StringUtil.isBlank(relation.foreignKey())) {
-                    String rawForeignName = getBaseClass().getSimpleName();
-                    return WordUtil.camelize(String.format("%s_%s",
-                            rawForeignName, Table.DEFAULT_PRIMARY_KEY), true);
-                } else {
-                    return WordUtil.camelize(relation.foreignKey(), true);
-                }
+                return Table.getPrimaryField(getBaseClass()).getName();
             }
         } else
             return relation.associatedFieldName();

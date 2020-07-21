@@ -44,7 +44,7 @@ public class RelationshipNetwork {
         List baseObjects = getCachedObjects(baseClass);
 
         List associatedFieldValues = (List) baseObjects.stream()
-                .map(r -> Relationship.getAssociatedValue(r, baseFieldName)).distinct()
+                .map(r -> Relationship.getAssociatedValue(r, associatedFieldName)).distinct()
                 .collect(Collectors.toList());
         List associatedObjects = queryObjects(relationship.getRelatedClass(), relationship,
                 associationFilterColumnName, associatedFieldValues.toArray());
