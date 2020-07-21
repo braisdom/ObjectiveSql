@@ -52,10 +52,10 @@ public class GeneralSQLGenerator implements SQLGenerator {
         Objects.requireNonNull(tableName, "The tableName cannot be null");
 
         if (StringUtil.isBlank(update))
-            throw new NullPointerException("The column cannot be null for updating");
+            throw new NullPointerException("The columns for updating is required");
 
         if (StringUtil.isBlank(filter))
-            throw new NullPointerException("The filter behind where cannot be null for updating");
+            throw new NullPointerException("The filter cannot be null when updating");
 
         return String.format(UPDATE_STATEMENT, tableName, update, filter);
     }
