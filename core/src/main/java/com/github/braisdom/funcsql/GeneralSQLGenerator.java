@@ -7,6 +7,7 @@ import java.util.Objects;
 public class GeneralSQLGenerator implements SQLGenerator {
 
     private static final String SELECT_STATEMENT = "SELECT %s FROM %s";
+    private static final String UPDATE_STATEMENT = "UPDATE %s SET %s WHERE %s";
 
     @Override
     public String createQuerySQL(String tableName, String projections, String filter) {
@@ -32,7 +33,7 @@ public class GeneralSQLGenerator implements SQLGenerator {
             sql.append(" GROUP BY ").append(groupBy);
 
         if(!StringUtil.isBlank(having))
-            sql.append(" HAVING ").append(groupBy);
+            sql.append(" HAVING ").append(having);
 
         if(!StringUtil.isBlank(orderBy))
             sql.append(" ORDER BY ").append(orderBy);
@@ -48,7 +49,15 @@ public class GeneralSQLGenerator implements SQLGenerator {
 
     @Override
     public String createUpdateSQL(String tableName, String update, String filter) {
-        return null;
+        Objects.requireNonNull(tableName, "The tableName cannot be null");
+
+        if (StringUtil.isBlank(update))
+            throw new NullPointerException("The column cannot be null for updating");
+
+        if (StringUtil.isBlank(filter))
+            throw new NullPointerException("The filter behind where cannot be null for updating");
+
+        return String.format(UPDATE_STATEMENT, tableName, update, filter);
     }
 
     @Override
