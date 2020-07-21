@@ -8,13 +8,10 @@ import com.github.braisdom.funcsql.util.StringUtil;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
-public class RelationshipNetwork implements RelationProcessor.Context{
+public class RelationshipNetwork implements RelationProcessor.Context {
 
     private final Connection connection;
     private final Class baseClass;
@@ -32,7 +29,7 @@ public class RelationshipNetwork implements RelationProcessor.Context{
     public List queryRelatedObjects(Class clazz, String associationColumn,
                                     Object[] associatedValues, String condition) throws SQLException {
         List cachedObjects = relationObjectsMap.get(clazz);
-        if(cachedObjects == null) {
+        if (cachedObjects == null) {
             cachedObjects = queryObjects(clazz, associationColumn, associatedValues, condition);
             relationObjectsMap.put(clazz, cachedObjects);
         }
@@ -47,18 +44,23 @@ public class RelationshipNetwork implements RelationProcessor.Context{
     public void process(List rows, Relationship[] relationships) throws SQLException {
         catchObjects(baseClass, rows);
 
-        for(Relationship relationship:relationships)
-            relationship.createProcessor().process(this, relationship);
+        List<Relationship> baseRelationships = Arrays.stream(relationships)
+                .filter(r -> r.getBaseClass().equals(baseClass)).collect(Collectors.toList());
+
+        for (Relationship relationship : baseRelationships)
+            setupAssociatedObjects(relationship, new ArrayList<>(Arrays.asList(relationships)));
     }
 
-    private void setupAssociatedObjects(Class baseClass, Relationship relationship, Relationship[] relationships) throws SQLException {
+    private void setupAssociatedObjects(Relationship relationship, List<Relationship> relationships) throws SQLException {
         RelationProcessor relationProcessor = relationship.createProcessor();
+        relationProcessor.process(this, relationship);
+        relationships.remove(relationship);
 
         final Class childClass = relationship.getRelatedClass();
-        Relationship childRelationship = (Relationship) Arrays.stream(relationships)
-                .filter(r -> r.getBaseClass().equals(childClass)).toArray()[0];
-        if(childRelationship != null)
-            setupAssociatedObjects(childClass, childRelationship, relationships);
+        Relationship[] childRelationships = relationships.stream()
+                .filter(r -> r.getBaseClass().equals(childClass)).toArray(Relationship[]::new);
+        if (childRelationships.length > 0)
+            setupAssociatedObjects(childRelationships[0], relationships);
     }
 
     protected List queryObjects(Class clazz, String associatedColumnName,
@@ -71,7 +73,7 @@ public class RelationshipNetwork implements RelationProcessor.Context{
         String relationConditions = StringUtil.isBlank(condition)
                 ? String.format(" %s IN (%s) ", associatedColumnName, quote(associatedValues))
                 : String.format(" %s IN (%s) AND (%s)", associatedColumnName, quote(associatedValues),
-                    condition);
+                condition);
         String relationTableQuerySql = sqlGenerator.createQuerySQL(relationTableName, null, relationConditions);
 
         return sqlExecutor.query(connection, relationTableQuerySql, clazz);
@@ -85,7 +87,7 @@ public class RelationshipNetwork implements RelationProcessor.Context{
         Relationship[] filteredRelations = Arrays.stream(relationships)
                 .filter(r -> r.getBaseClass().equals(clazz))
                 .collect(Collectors.toList()).toArray(new Relationship[]{});
-        if(filteredRelations.length > 0)
+        if (filteredRelations.length > 0)
             return filteredRelations[0];
         return null;
     }

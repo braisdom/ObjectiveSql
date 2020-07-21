@@ -30,13 +30,13 @@ public class DevelopTest {
 
     @Test
     public void testUpdate() throws SQLException {
-        Update update = User.createUpdate();
-        update.set("role_id = %s", 5).where("name = '%s'", "hello").execute();
+//        Update update = User.createUpdate();
+//        update.set("role_id = %s", 5).where("name = '%s'", "hello").execute();
     }
 
     @Test
     public void testDelete() throws SQLException {
-        Delete delete = User.createDelete();
-        delete.where("name = '%s'", "hello").execute();
+//        Delete delete = User.createDelete();
+//        delete.where("name = '%s'", "hello").execute();
     }
 }

@@ -31,5 +31,6 @@ public class QueryExample {
 
         Query<User> userQuery = User.createQuery();
         System.out.println(userQuery.limit(2).execute(RHM_USER_PROFILE, RBE_USER_PROFILE));
+        System.out.println();
     }
 }
