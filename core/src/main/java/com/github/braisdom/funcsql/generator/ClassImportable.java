@@ -1,4 +1,4 @@
-package com.github.braisdom.funcsql.annotations.generator;
+package com.github.braisdom.funcsql.generator;
 
 public interface ClassImportable {
 

@@ -1,4 +1,4 @@
-package com.github.braisdom.funcsql.annotations.generator;
+package com.github.braisdom.funcsql.generator;
 
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
