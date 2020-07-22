@@ -20,10 +20,8 @@ public class DefaultQuery<T> extends AbstractQuery<T> {
 
         try {
             SQLGenerator sqlGenerator = Database.getSQLGenerator();
-
             String sql = sqlGenerator.createQuerySQL(getTableName(domainModelClass), projection, filter, groupBy,
                     having, orderBy, offset, limit);
-
             List<T> rows = executeInternally(connection, domainModelClass, sql);
 
             if (relationships.length > 0)
