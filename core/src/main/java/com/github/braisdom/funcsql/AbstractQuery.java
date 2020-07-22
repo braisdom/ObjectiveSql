@@ -1,10 +1,8 @@
 package com.github.braisdom.funcsql;
 
-import com.github.braisdom.funcsql.relation.Relationship;
-
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.List;
 
 public abstract class AbstractQuery<T> implements Query<T> {
 
@@ -77,53 +75,7 @@ public abstract class AbstractQuery<T> implements Query<T> {
         return sqlExecutor.query(connectionFactory.getConnection(), sql);
     }
 
-    protected void processRelation(Connection connection, List rows, Relationship relationship) throws SQLException {
-        SQLExecutor sqlExecutor = Database.getSqlExecutor();
-        String foreignKey = relationship.getForeignKey();
-        String relationTableName = getTableName(relationship.getRelatedClass());
-
-        SQLGenerator sqlGenerator = Database.getSQLGenerator();
-//
-//        Map<Object, List<RawRelationObject>> baseRows = (Map<Object, List<RawRelationObject>>) rows.stream()
-//                .map(row -> new RawRelationObject(relationship, row))
-//                .collect(Collectors.groupingBy(RawRelationObject::getValue));
-//
-//        String relationConditions = relationship.getCondition() == null
-//                ? String.format(" %s IN (%s) ", foreignKey, quote(baseRows.keySet().toArray()))
-//                : String.format(" %s IN (%s) AND (%s)", foreignKey, quote(baseRows.keySet().toArray()), relationship.getCondition());
-//        String relationTableQuerySql = sqlGenerator.createQuerySQL(relationTableName, null, relationConditions,
-//                null, null, null, -1, -1);
-//
-//        List<Object> relations = sqlExecutor.query(connection, relationTableQuerySql,
-//                relationship.getRelatedClass());
-//
-//        Map<Object, List<RawRelationObject>> relationRows = relations.stream()
-//                .map(row -> new RawRelationObject(relationship, row))
-//                .collect(Collectors.groupingBy(RawRelationObject::getValue));
-//
-//        for (Object key : baseRows.keySet()) {
-//            List<RawRelationObject> relationObjects = relationRows.get(key);
-//            if (relationObjects != null)
-//                baseRows.get(key).forEach(baseRow -> baseRow.setRelationalObjects(relationship, relationObjects));
-//        }
-    }
-
     protected String getTableName(Class tableClass) {
         return Table.getTableName(tableClass);
-    }
-
-    protected String quote(Object... values) {
-        StringBuilder sb = new StringBuilder();
-
-        for (Object value : values) {
-            if (value instanceof Integer || value instanceof Long ||
-                    value instanceof Float || value instanceof Double)
-                sb.append(String.valueOf(value));
-            else
-                sb.append(String.format("'%s'", String.valueOf(value)));
-            sb.append(",");
-        }
-        sb.delete(sb.length() - 1, sb.length());
-        return sb.toString();
     }
 }
