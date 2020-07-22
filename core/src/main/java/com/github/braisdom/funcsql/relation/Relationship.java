@@ -2,12 +2,11 @@ package com.github.braisdom.funcsql.relation;
 
 import com.github.braisdom.funcsql.Table;
 import com.github.braisdom.funcsql.annotations.Relation;
+import com.github.braisdom.funcsql.beans.PropertyUtils;
 import com.github.braisdom.funcsql.util.StringUtil;
 import com.github.braisdom.funcsql.util.WordUtil;
-import org.apache.commons.beanutils.PropertyUtils;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
@@ -123,48 +122,17 @@ public final class Relationship {
         return new HasAnyProcessor();
     }
 
-    public static final Object getFieldValue(Object row, String fieldName) {
-        Class clazz = row.getClass();
-        try {
-            return PropertyUtils.getProperty(row, fieldName);
-        } catch (IllegalAccessException e) {
-            throw new RelationalException(StringUtil.encodeExceptionMessage(e,
-                    String.format("Read %s from %s access error", fieldName, clazz.getSimpleName())), e);
-        } catch (InvocationTargetException e) {
-            throw new RelationalException(StringUtil.encodeExceptionMessage(e,
-                    String.format("Read %s from % invocation error", fieldName, clazz.getSimpleName())), e);
-        } catch (NoSuchMethodException e) {
-            throw new RelationalException(StringUtil.encodeExceptionMessage(e,
-                    String.format("The %s has no %s error", clazz.getSimpleName(), fieldName)), e);
-        }
-    }
-
     public static void setRelationalObjects(Relationship relationship, Object row, String fieldName, List associatedObjects) {
         if (relationship.isBelongsTo()) {
             if (associatedObjects.size() > 1)
                 throw new RelationalException(String.format("The %s[belongs_to] has too many relations", fieldName));
 
             if (associatedObjects.size() == 1)
-                invokeWriteMethod(row, fieldName, associatedObjects.get(0));
+                PropertyUtils.write(row, fieldName, associatedObjects.get(0));
             else
-                invokeWriteMethod(row, fieldName, null);
+                PropertyUtils.write(row, fieldName, null);
         } else {
-            invokeWriteMethod(row, fieldName, associatedObjects);
-        }
-    }
-
-    private static void invokeWriteMethod(Object row, String fieldName, Object value) {
-        try {
-            PropertyUtils.setProperty(row, fieldName, value);
-        } catch (IllegalAccessException e) {
-            throw new RelationalException(StringUtil.encodeExceptionMessage(e,
-                    String.format("Read %s access error", fieldName)), e);
-        } catch (InvocationTargetException e) {
-            throw new RelationalException(StringUtil.encodeExceptionMessage(e,
-                    String.format("Read %s invocation error", fieldName)), e);
-        } catch (NoSuchMethodException e) {
-            throw new RelationalException(StringUtil.encodeExceptionMessage(e,
-                    String.format("Read %s unknown error (%s)", fieldName, e.getMessage())), e);
+            PropertyUtils.write(row, fieldName, associatedObjects);
         }
     }
 

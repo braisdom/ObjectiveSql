@@ -30,8 +30,8 @@ public class QueryExample {
         Database.installConnectionFactory(new SqliteConnectionFactory());
         createTables(Database.getConnectionFactory().getConnection());
 
-        Query<UserProfile> userQuery = UserProfile.createQuery();
-        List<UserProfile> users = userQuery.limit(2).execute(RBE_USER);
+        Query<User> userQuery = User.createQuery();
+        List<UserProfile> users = userQuery.limit(2).execute(RHM_USER_PROFILE);
         System.out.println();
     }
 }

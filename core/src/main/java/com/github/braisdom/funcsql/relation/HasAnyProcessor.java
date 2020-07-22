@@ -1,5 +1,7 @@
 package com.github.braisdom.funcsql.relation;
 
+import com.github.braisdom.funcsql.beans.PropertyUtils;
+
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
@@ -18,17 +20,17 @@ public class HasAnyProcessor implements RelationProcessor {
         List baseObjects = context.getObjects(relationship.getBaseClass());
 
         List associatedKeys = (List) baseObjects.stream()
-                .map(o -> Relationship.getFieldValue(o, primaryFieldName))
+                .map(o -> PropertyUtils.readDirectly(o, primaryFieldName))
                 .distinct()
                 .collect(Collectors.toList());
 
         List rawRelatedObjects = context.queryRelatedObjects(relatedClass,
                 foreignKey, associatedKeys.toArray(), relationship.getRelationCondition());
         Map<Object, List> groupedRelatedObjects = (Map<Object, List>) rawRelatedObjects
-                .stream().collect(Collectors.groupingBy(o -> Relationship.getFieldValue(o, foreignFieldName)));
+                .stream().collect(Collectors.groupingBy(o -> PropertyUtils.readDirectly(o, foreignFieldName)));
 
         baseObjects.stream().forEach(o -> {
-            Object primaryValue = Relationship.getFieldValue(o, primaryFieldName);
+            Object primaryValue = PropertyUtils.readDirectly(o, primaryFieldName);
             List relatedObjects = groupedRelatedObjects.get(primaryValue);
             Relationship.setRelationalObjects(relationship, o, associatedFieldName, relatedObjects);
         });
