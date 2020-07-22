@@ -8,7 +8,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 import static com.github.braisdom.funcsql.example.User.RHM_USER_PROFILE;
-import static com.github.braisdom.funcsql.example.UserProfile.RBE_USER;
 
 public class QueryExample {
 
