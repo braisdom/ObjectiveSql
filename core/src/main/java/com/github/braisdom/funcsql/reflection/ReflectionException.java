@@ -1,4 +1,4 @@
-package com.github.braisdom.funcsql.beans;
+package com.github.braisdom.funcsql.reflection;
 
 public class ReflectionException extends RuntimeException {
     public ReflectionException() {

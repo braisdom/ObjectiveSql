@@ -1,4 +1,4 @@
-package com.github.braisdom.funcsql.beans;
+package com.github.braisdom.funcsql.reflection;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;

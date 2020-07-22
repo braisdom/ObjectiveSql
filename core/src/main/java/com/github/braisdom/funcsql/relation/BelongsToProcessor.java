@@ -1,6 +1,6 @@
 package com.github.braisdom.funcsql.relation;
 
-import com.github.braisdom.funcsql.beans.PropertyUtils;
+import com.github.braisdom.funcsql.reflection.PropertyUtils;
 
 import java.sql.SQLException;
 import java.util.List;
