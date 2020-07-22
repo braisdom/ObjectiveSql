@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Persistence {
+public @interface Persistent {
 
-    boolean persistent() default true;
+    boolean value() default true;
 }
