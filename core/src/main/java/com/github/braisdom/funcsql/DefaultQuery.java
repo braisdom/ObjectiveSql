@@ -15,19 +15,25 @@ public class DefaultQuery<T> extends AbstractQuery<T> {
 
     @Override
     public List<T> execute(Relationship... relationships) throws SQLException {
-        SQLGenerator sqlGenerator = Database.getSQLGenerator();
         ConnectionFactory connectionFactory = Database.getConnectionFactory();
         Connection connection = connectionFactory.getConnection();
 
-        String sql = sqlGenerator.createQuerySQL(getTableName(domainModelClass), projection, filter, groupBy,
-                having, orderBy, offset, limit);
+        try {
+            SQLGenerator sqlGenerator = Database.getSQLGenerator();
 
-        List<T> rows = executeInternally(connection, domainModelClass, sql);
+            String sql = sqlGenerator.createQuerySQL(getTableName(domainModelClass), projection, filter, groupBy,
+                    having, orderBy, offset, limit);
 
-        if (relationships.length > 0)
-            new RelationshipNetwork(connection, domainModelClass).process(rows, relationships);
+            List<T> rows = executeInternally(connection, domainModelClass, sql);
 
-        return rows;
+            if (relationships.length > 0)
+                new RelationshipNetwork(connection, domainModelClass).process(rows, relationships);
+
+            return rows;
+        } finally {
+            if (connection != null)
+                connection.close();
+        }
     }
 
     @Override

@@ -25,9 +25,9 @@ public class DefaultSQLExecutor<T> implements SQLExecutor<T> {
     }
 
     @Override
-    public List<T> query(Connection connection, String sql, T rowClass) throws SQLException {
-        Map<String, String> columnToPropertyOverrides = prepareColumnToPropertyOverrides((Class<T>) rowClass);
-        ResultSetHandler<List<T>> handler = new BeanListHandler<T>((Class<T>) rowClass,
+    public List<T> query(Connection connection, String sql, Class<T> rowClass) throws SQLException {
+        Map<String, String> columnToPropertyOverrides = prepareColumnToPropertyOverrides(rowClass);
+        ResultSetHandler<List<T>> handler = new BeanListHandler<T>(rowClass,
                 new BasicRowProcessor(new BeanProcessor(columnToPropertyOverrides)));
         return queryRunner.query(connection, sql, handler);
     }

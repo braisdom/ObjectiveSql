@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface SQLExecutor<T> {
 
-    List<T> query(Connection connection, String sql, T rowClass) throws SQLException;
+    List<T> query(Connection connection, String sql, Class<T> rowClass) throws SQLException;
 
     List<Row> query(Connection connection, String sql) throws SQLException;
 
