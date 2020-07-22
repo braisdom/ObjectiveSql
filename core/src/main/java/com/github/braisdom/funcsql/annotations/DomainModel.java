@@ -17,6 +17,8 @@ public @interface DomainModel {
 
     String sqlFileName() default "";
 
+    boolean allFieldsPersistent() default true;
+
     Class<? extends Query> normalQueryClass() default DefaultQuery.class;
 
     Class<? extends Query> funcSqlQueryClass() default DefaultFuncSqlQuery.class;
