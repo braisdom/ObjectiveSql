@@ -32,7 +32,7 @@ public class User {
         return null;
     }
 
-    public static Query<User> createQuery() {
+    public static final Query<User> createQuery() {
         return new DefaultQuery(User.class);
     }
 

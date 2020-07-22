@@ -29,6 +29,25 @@ public class AnnotationProcessor extends AbstractProcessor {
     private TreeMaker treeMaker;
     private Names names;
 
+    private class ComparableMethod {
+
+        private final JCTree.JCMethodDecl methodDecl;
+
+        public ComparableMethod(JCTree.JCMethodDecl methodDecl) {
+            this.methodDecl = methodDecl;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if(obj instanceof ComparableMethod) {
+                ComparableMethod other = (ComparableMethod) obj;
+                return other.methodDecl.name.equals(methodDecl.name)
+                        && other.methodDecl.getParameters().size() == methodDecl.getParameters().size();
+            }
+            return super.equals(obj);
+        }
+    }
+
     static {
         methodGenerators.add(new BasicMethodGenerator());
     }
@@ -48,7 +67,7 @@ public class AnnotationProcessor extends AbstractProcessor {
 
         elements.forEach(element -> {
             JCTree jcTree = trees.getTree(element);
-            final java.util.List<String> methodsCache = new ArrayList<>();
+            final java.util.List<ComparableMethod> methodsCache = new ArrayList<>();
             final JCTree.JCCompilationUnit imports = (JCTree.JCCompilationUnit) trees.getPath(element).getCompilationUnit();
 
             jcTree.accept(new TreeTranslator() {
@@ -63,7 +82,7 @@ public class AnnotationProcessor extends AbstractProcessor {
                         JCTree.JCMethodDecl[] jcMethodDecls = methodGenerator.generate(treeMaker, names, element);
 
                         processImport(imports, importItems);
-                        processMethods(jcClassDecl, element, jcMethodDecls);
+                        processMethods(jcClassDecl, methodsCache, jcMethodDecls);
                     }
                 }
             });
@@ -72,9 +91,12 @@ public class AnnotationProcessor extends AbstractProcessor {
         return true;
     }
 
-    private void processMethods(JCTree.JCClassDecl jcClassDecl, Element element, JCTree.JCMethodDecl[] jcMethodDecls) {
-        for (JCTree.JCMethodDecl jcMethodDecl : jcMethodDecls)
-            jcClassDecl.defs = jcClassDecl.defs.append(jcMethodDecl);
+    private void processMethods(JCTree.JCClassDecl jcClassDecl, java.util.List<ComparableMethod> methodsCache,
+                                JCTree.JCMethodDecl[] jcMethodDecls) {
+        for (JCTree.JCMethodDecl jcMethodDecl : jcMethodDecls) {
+            if(!methodsCache.contains(new ComparableMethod(jcMethodDecl)))
+                jcClassDecl.defs = jcClassDecl.defs.append(jcMethodDecl);
+        }
     }
 
     private void processImport(JCTree.JCCompilationUnit imports, ClassImportable.ImportItem[] importItems) {
@@ -89,10 +111,10 @@ public class AnnotationProcessor extends AbstractProcessor {
         }
     }
 
-    private void cacheMethod(java.util.List<String> methodsCache, List<JCTree> defs) {
+    private void cacheMethod(java.util.List<ComparableMethod> methodsCache, List<JCTree> defs) {
         for (JCTree def : defs) {
             if(def.getKind() == Tree.Kind.METHOD) {
-                methodsCache.add(((JCTree.JCMethodDecl)def).getName().toString());
+                methodsCache.add(new ComparableMethod((JCTree.JCMethodDecl) def));
             }
         }
     }
