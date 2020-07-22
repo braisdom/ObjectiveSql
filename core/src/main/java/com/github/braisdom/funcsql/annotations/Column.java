@@ -9,7 +9,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Column {
 
-    String value();
+    String value() default "";
 
     boolean persistent() default true;
+
+    boolean updatable() default true;
 }
