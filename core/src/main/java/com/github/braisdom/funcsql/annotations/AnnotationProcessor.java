@@ -1,5 +1,8 @@
 package com.github.braisdom.funcsql.annotations;
 
+import com.github.braisdom.funcsql.annotations.generator.BasicMethodGenerator;
+import com.github.braisdom.funcsql.annotations.generator.ClassImportable;
+import com.github.braisdom.funcsql.annotations.generator.MethodGenerator;
 import com.sun.source.tree.Tree;
 import com.sun.tools.javac.api.JavacTrees;
 import com.sun.tools.javac.code.Flags;
@@ -22,13 +25,15 @@ import java.util.Set;
 @SupportedAnnotationTypes(value = {"com.github.braisdom.funcsql.annotations.DomainModel"})
 public class AnnotationProcessor extends AbstractProcessor {
 
-    private static final String FUNC_SQL_PACKAGE = "com.github.braisdom.funcsql";
-
-    private java.util.List<String> methodsCache = new ArrayList<>();
+    private static final java.util.List<MethodGenerator> methodGenerators = new ArrayList<>();
 
     private JavacTrees trees;
     private TreeMaker treeMaker;
     private Names names;
+
+    static {
+        methodGenerators.add(new BasicMethodGenerator());
+    }
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
@@ -41,21 +46,27 @@ public class AnnotationProcessor extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        Set<? extends Element> elements = roundEnv.getElementsAnnotatedWith(DomainModel.class);
+        final Set<? extends Element> elements = roundEnv.getElementsAnnotatedWith(DomainModel.class);
 
         elements.forEach(element -> {
             JCTree jcTree = trees.getTree(element);
+            final java.util.List<String> methodsCache = new ArrayList<>();
+            final JCTree.JCCompilationUnit imports = (JCTree.JCCompilationUnit) trees.getPath(element).getCompilationUnit();
+
             jcTree.accept(new TreeTranslator() {
 
                 @Override
                 public void visitClassDef(JCTree.JCClassDecl jcClassDecl) {
                     super.visitClassDef(jcClassDecl);
-                    cacheMethod(jcClassDecl.defs);
+                    cacheMethod(methodsCache, jcClassDecl.defs);
 
-                    processImport(element);
-                    processQueryMethod(jcClassDecl, element);
-                    processUpdateMethod(jcClassDecl, element);
-                    processDeleteMethod(jcClassDecl, element);
+                    for(MethodGenerator methodGenerator : methodGenerators) {
+                        ClassImportable.ImportItem[] importItems = methodGenerator.getImportItems();
+                        JCTree.JCMethodDecl[] jcMethodDecls = methodGenerator.generate(treeMaker, names, element);
+
+                        processImport(imports, importItems);
+                        processMethods(jcClassDecl, element, jcMethodDecls);
+                    }
                 }
             });
         });
@@ -63,53 +74,24 @@ public class AnnotationProcessor extends AbstractProcessor {
         return true;
     }
 
-    private void processImport(Element element) {
-        JCTree.JCCompilationUnit imports = (JCTree.JCCompilationUnit) trees.getPath(element).getCompilationUnit();
-        imports.defs = imports.defs.append(
-                treeMaker.Import(
-                        treeMaker.Select(
-                                treeMaker.Ident(names.fromString("com.github.braisdom.funcsql")),
-                                names.fromString("DefaultQuery")),
-                        false)
-        ).append(
-                treeMaker.Import(
-                        treeMaker.Select(
-                                treeMaker.Ident(names.fromString("com.github.braisdom.funcsql")),
-                                names.fromString("DefaultUpdate")),
-                        false)
-        ).append(
-                treeMaker.Import(
-                        treeMaker.Select(
-                                treeMaker.Ident(names.fromString("com.github.braisdom.funcsql")),
-                                names.fromString("DefaultDelete")),
-                        false)
-        );
+    private void processMethods(JCTree.JCClassDecl jcClassDecl, Element element, JCTree.JCMethodDecl[] jcMethodDecls) {
+        for (JCTree.JCMethodDecl jcMethodDecl : jcMethodDecls)
+            jcClassDecl.defs = jcClassDecl.defs.append(jcMethodDecl);
+    }
 
-        imports.defs = imports.defs.append(
-                treeMaker.Import(
-                        treeMaker.Select(
-                                treeMaker.Ident(names.fromString("com.github.braisdom.funcsql")),
-                                names.fromString("Query")),
-                        false)
-        ).append(
-                treeMaker.Import(
-                        treeMaker.Select(
-                                treeMaker.Ident(names.fromString("com.github.braisdom.funcsql")),
-                                names.fromString("Update")),
-                        false)
-        ).append(
-                treeMaker.Import(
-                        treeMaker.Select(
-                                treeMaker.Ident(names.fromString("com.github.braisdom.funcsql")),
-                                names.fromString("Delete")),
-                        false)
-        );
+    private void processImport(JCTree.JCCompilationUnit imports, ClassImportable.ImportItem[] importItems) {
+        for(ClassImportable.ImportItem importItem : importItems) {
+            imports.defs = imports.defs.append(
+                    treeMaker.Import(
+                            treeMaker.Select(
+                                    treeMaker.Ident(names.fromString(importItem.getPackageName())),
+                                    names.fromString(importItem.getClassName())),
+                            false)
+            );
+        }
     }
 
     private void processQueryMethod(JCTree.JCClassDecl jcClassDecl, Element element) {
-        if(methodsCache.contains("createQuery"))
-            return;
-
         ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
         ListBuffer<JCTree.JCExpression> jcVariableExpressions = new ListBuffer<>();
 
@@ -145,9 +127,6 @@ public class AnnotationProcessor extends AbstractProcessor {
     }
 
     private void processUpdateMethod(JCTree.JCClassDecl jcClassDecl, Element element) {
-        if(methodsCache.contains("createUpdate"))
-            return;
-
         ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
         ListBuffer<JCTree.JCExpression> jcVariableExpressions = new ListBuffer<>();
 
@@ -183,9 +162,6 @@ public class AnnotationProcessor extends AbstractProcessor {
     }
 
     private void processDeleteMethod(JCTree.JCClassDecl jcClassDecl, Element element) {
-        if(methodsCache.contains("createDelete"))
-            return;
-
         ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
         ListBuffer<JCTree.JCExpression> jcVariableExpressions = new ListBuffer<>();
 
@@ -220,7 +196,7 @@ public class AnnotationProcessor extends AbstractProcessor {
         jcClassDecl.defs = jcClassDecl.defs.append(methodDecl);
     }
 
-    private void cacheMethod(List<JCTree> defs) {
+    private void cacheMethod(java.util.List<String> methodsCache, List<JCTree> defs) {
         for (JCTree def : defs) {
             if(def.getKind() == Tree.Kind.METHOD) {
                 methodsCache.add(((JCTree.JCMethodDecl)def).getName().toString());

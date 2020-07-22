@@ -2,6 +2,8 @@ package com.github.braisdom.funcsql.annotations.generator;
 
 public interface ClassImportable {
 
+    String FUNC_SQL_PACKAGE = "com.github.braisdom.funcsql";
+
     class ImportItem {
 
         private String packageName;

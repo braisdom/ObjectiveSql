@@ -1,5 +1,7 @@
 package com.github.braisdom.funcsql.annotations.generator;
 
+import com.github.braisdom.funcsql.DefaultQuery;
+import com.github.braisdom.funcsql.Query;
 import com.sun.tools.javac.code.Flags;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
@@ -12,9 +14,16 @@ import java.util.ArrayList;
 
 public class BasicMethodGenerator extends AbstractMethodGenerator {
 
+    private static final String METHOD_NAME_CREATE_QUERY = "createQuery";
+    private static final String METHOD_NAME_CREATE_PERSISTENCE = "createPersistence";
+
     @Override
     public ImportItem[] getImportItems() {
-        return new ImportItem[0];
+
+        addImportItem(DefaultQuery.class.getPackage().getName(), DefaultQuery.class.getSimpleName());
+        addImportItem(DefaultQuery.class.getPackage().getName(), Query.class.getSimpleName());
+
+        return super.getImportItems();
     }
 
     @Override
@@ -41,7 +50,7 @@ public class BasicMethodGenerator extends AbstractMethodGenerator {
                 treeMaker.Return(treeMaker.NewClass(
                         null,
                         List.nil(), //泛型参数列表
-                        treeMaker.Ident(names.fromString("DefaultQuery")), //创建的类名
+                        treeMaker.Ident(names.fromString(DefaultQuery.class.getSimpleName())), //创建的类名
                         jcVariableExpressions.toList(), //参数列表
                         null //类定义，估计是用于创建匿名内部类
                 ))
@@ -49,8 +58,8 @@ public class BasicMethodGenerator extends AbstractMethodGenerator {
 
         return treeMaker.MethodDef(
                 treeMaker.Modifiers(Flags.PUBLIC + Flags.STATIC + Flags.FINAL),
-                names.fromString("createQuery"),
-                treeMaker.Ident(names.fromString("Query")),
+                names.fromString(METHOD_NAME_CREATE_QUERY),
+                treeMaker.Ident(names.fromString(Query.class.getSimpleName())),
                 List.nil(),
                 List.nil(),
                 List.nil(),
