@@ -4,7 +4,7 @@ import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.Names;
 
-public interface MethodGenerator extends ClassAccessible {
+public interface MethodGenerator extends ClassImportable {
 
     JCTree.JCMethodDecl[] generate(TreeMaker treeMaker, Names names);
 }

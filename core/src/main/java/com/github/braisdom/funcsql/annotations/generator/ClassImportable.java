@@ -1,6 +1,6 @@
 package com.github.braisdom.funcsql.annotations.generator;
 
-public interface ClassAccessible {
+public interface ClassImportable {
 
     class ImportItem {
 

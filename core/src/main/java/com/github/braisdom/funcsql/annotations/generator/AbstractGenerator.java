@@ -1,9 +1,11 @@
 package com.github.braisdom.funcsql.annotations.generator;
 
+import com.sun.tools.javac.tree.TreeMaker;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractGenerator implements ClassAccessible {
+public abstract class AbstractGenerator implements ClassImportable {
 
     private final List<ImportItem> importItems;
 

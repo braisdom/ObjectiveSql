@@ -1,8 +1,6 @@
 package com.github.braisdom.funcsql.example;
 
 import com.github.braisdom.funcsql.Database;
-import com.github.braisdom.funcsql.Delete;
-import com.github.braisdom.funcsql.Update;
 import org.junit.Before;
 import org.junit.Test;
 
