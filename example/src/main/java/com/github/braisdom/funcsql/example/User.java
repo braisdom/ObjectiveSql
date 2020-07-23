@@ -1,10 +1,8 @@
 package com.github.braisdom.funcsql.example;
 
-import com.github.braisdom.funcsql.DefaultQuery;
-import com.github.braisdom.funcsql.Query;
-import com.github.braisdom.funcsql.relation.Relationship;
-import com.github.braisdom.funcsql.relation.RelationType;
 import com.github.braisdom.funcsql.annotations.*;
+import com.github.braisdom.funcsql.relation.RelationType;
+import com.github.braisdom.funcsql.relation.Relationship;
 import lombok.Data;
 
 import java.util.List;
@@ -17,7 +15,7 @@ public class User {
             .createRelation(User.class, "userProfiles");
 
     @PrimaryKey("id")
-    private int id;
+    private int userId;
 
     @Queryable
     private String name;
@@ -30,10 +28,6 @@ public class User {
     @Transactional
     public static User register(User rawUser) {
         return null;
-    }
-
-    public static final Query<User> createQuery() {
-        return new DefaultQuery(User.class);
     }
 
     @Override
