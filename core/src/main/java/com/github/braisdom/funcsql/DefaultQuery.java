@@ -2,13 +2,17 @@ package com.github.braisdom.funcsql;
 
 import com.github.braisdom.funcsql.relation.Relationship;
 import com.github.braisdom.funcsql.relation.RelationshipNetwork;
+import com.github.braisdom.funcsql.util.StringUtil;
 import org.apache.commons.dbutils.DbUtils;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Objects;
 
 public class DefaultQuery<T> extends AbstractQuery<T> {
+
+    private static final String SELECT_STATEMENT = "SELECT %s FROM %s";
 
     public DefaultQuery(Class<T> domainModelClass) {
         super(domainModelClass);
@@ -20,8 +24,7 @@ public class DefaultQuery<T> extends AbstractQuery<T> {
         Connection connection = connectionFactory.getConnection();
 
         try {
-            SQLGenerator sqlGenerator = Database.getSQLGenerator();
-            String sql = sqlGenerator.createQuerySQL(getTableName(domainModelClass), projection, filter, groupBy,
+            String sql = createQuerySQL(getTableName(domainModelClass), projection, filter, groupBy,
                     having, orderBy, offset, limit);
             List<T> rows = executeInternally(connection, domainModelClass, sql);
 
@@ -41,10 +44,56 @@ public class DefaultQuery<T> extends AbstractQuery<T> {
 
     @Override
     public <C extends Class> List<C> execute(C relevantDomainClass, Relationship... relationships) throws SQLException {
-        SQLGenerator sqlGenerator = Database.getSQLGenerator();
-        String sql = sqlGenerator.createQuerySQL(getTableName(relevantDomainClass), projection, filter, groupBy,
+        String sql = createQuerySQL(getTableName(relevantDomainClass), projection, filter, groupBy,
                 having, orderBy, offset, limit);
 
         return null;
+    }
+
+    private String createQuerySQL(String tableName, String projections, String filter, String groupBy,
+                                 String having, String orderBy, int offset, int limit) {
+        Objects.requireNonNull(tableName, "The tableName cannot be null");
+
+        StringBuilder sql = new StringBuilder();
+
+        projections = (projections == null || projections.length() < 0) ? "*" : projections;
+        String standardSql = String.format(SELECT_STATEMENT, projections, tableName);
+
+        sql.append(standardSql);
+
+        if(!StringUtil.isBlank(filter))
+            sql.append(" WHERE ").append(filter);
+
+        if(!StringUtil.isBlank(groupBy))
+            sql.append(" GROUP BY ").append(groupBy);
+
+        if(!StringUtil.isBlank(having))
+            sql.append(" HAVING ").append(having);
+
+        if(!StringUtil.isBlank(orderBy))
+            sql.append(" ORDER BY ").append(orderBy);
+
+        if(offset > 0)
+            sql.append(" OFFSET ").append(offset);
+
+        if(limit > 0)
+            sql.append(" LIMIT ").append(limit);
+
+        return sql.toString();
+    }
+
+    private String quote(Object... scalars) {
+        StringBuilder sb = new StringBuilder();
+
+        for (Object value : scalars) {
+            if (value instanceof Integer || value instanceof Long ||
+                    value instanceof Float || value instanceof Double)
+                sb.append(value);
+            else
+                sb.append(String.format("'%s'", String.valueOf(value)));
+            sb.append(",");
+        }
+        sb.delete(sb.length() - 1, sb.length());
+        return sb.toString();
     }
 }

@@ -8,7 +8,7 @@ import java.sql.SQLException;
 
 public class DefaultPersistence<T> extends AbstractPersistence<T> {
 
-    public DefaultPersistence(Class domainModelClass) {
+    public DefaultPersistence(Class<T> domainModelClass) {
         super(domainModelClass);
     }
 
@@ -17,7 +17,6 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
         ConnectionFactory connectionFactory = Database.getConnectionFactory();
         Connection connection = connectionFactory.getConnection();
         try {
-            SQLGenerator sqlGenerator = Database.getSQLGenerator();
             Field[] fields = getInsertableFields(getDomainModelClass());
 
         } finally {

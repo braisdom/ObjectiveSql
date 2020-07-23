@@ -5,8 +5,21 @@ import java.util.Objects;
 @SuppressWarnings("ALL")
 public final class Database {
 
-    private static SQLGenerator sqlGenerator = new GeneralSQLGenerator();
     private static SQLExecutor sqlExecutor = new DefaultSQLExecutor();
+
+    private static QueryFactory queryFactory = new QueryFactory() {
+        @Override
+        public <T> Query<T> createQuery(Class<T> clazz) {
+            return new DefaultQuery<>(clazz);
+        }
+    };
+
+    private static PersistenceFactory persistenceFactory = new PersistenceFactory() {
+        @Override
+        public <T> Persistence<T> createPersistence(Class<T> clazz) {
+            return new DefaultPersistence<>(clazz);
+        }
+    };
 
     private static ConnectionFactory connectionFactory;
 
@@ -22,14 +35,24 @@ public final class Database {
         Database.sqlExecutor = sqlExecutor;
     }
 
-    public static void installSQLGenerator(SQLGenerator sqlGenerator) {
-        Objects.requireNonNull(sqlGenerator, "The sqlGenerator cannot be null");
+    public static void installQueryFacotry(QueryFactory queryFactory) {
+        Objects.requireNonNull(sqlExecutor, "The queryFactory cannot be null");
 
-        Database.sqlGenerator = sqlGenerator;
+        Database.queryFactory = queryFactory;
     }
 
-    public static SQLGenerator getSQLGenerator() {
-        return sqlGenerator;
+    public static void installPersistenceFactory(PersistenceFactory persistenceFactory) {
+        Objects.requireNonNull(sqlExecutor, "The persistenceFactory cannot be null");
+
+        Database.persistenceFactory = persistenceFactory;
+    }
+
+    public static QueryFactory getQueryFactory() {
+        return queryFactory;
+    }
+
+    public static PersistenceFactory getPersistenceFactory() {
+        return persistenceFactory;
     }
 
     public static SQLExecutor getSqlExecutor() {
@@ -40,5 +63,20 @@ public final class Database {
         if(connectionFactory == null)
             throw new IllegalStateException("The connectionFactory must be not null");
         return connectionFactory;
+    }
+
+    public static String quote(Object... scalars) {
+        StringBuilder sb = new StringBuilder();
+
+        for (Object value : scalars) {
+            if (value instanceof Integer || value instanceof Long ||
+                    value instanceof Float || value instanceof Double)
+                sb.append(value);
+            else
+                sb.append(String.format("'%s'", String.valueOf(value)));
+            sb.append(",");
+        }
+        sb.delete(sb.length() - 1, sb.length());
+        return sb.toString();
     }
 }

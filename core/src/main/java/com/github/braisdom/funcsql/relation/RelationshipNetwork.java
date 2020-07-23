@@ -2,7 +2,6 @@ package com.github.braisdom.funcsql.relation;
 
 import com.github.braisdom.funcsql.Database;
 import com.github.braisdom.funcsql.SQLExecutor;
-import com.github.braisdom.funcsql.SQLGenerator;
 import com.github.braisdom.funcsql.Table;
 import com.github.braisdom.funcsql.util.StringUtil;
 
@@ -12,6 +11,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class RelationshipNetwork implements RelationProcessor.Context {
+
+    private static final String SELECT_RELATION_STATEMENT = "SELECT * FROM %s WHERE %s";
 
     private final Connection connection;
     private final Class baseClass;
@@ -68,13 +69,12 @@ public class RelationshipNetwork implements RelationProcessor.Context {
         String relationTableName = Table.getTableName(clazz);
 
         SQLExecutor sqlExecutor = Database.getSqlExecutor();
-        SQLGenerator sqlGenerator = Database.getSQLGenerator();
 
         String relationConditions = StringUtil.isBlank(condition)
-                ? String.format(" %s IN (%s) ", associatedColumnName, sqlGenerator.quote(associatedValues))
-                : String.format(" %s IN (%s) AND (%s)", associatedColumnName, sqlGenerator.quote(associatedValues),
+                ? String.format(" %s IN (%s) ", associatedColumnName, Database.quote(associatedValues))
+                : String.format(" %s IN (%s) AND (%s)", associatedColumnName, Database.quote(associatedValues),
                 condition);
-        String relationTableQuerySql = sqlGenerator.createQuerySQL(relationTableName, null, relationConditions);
+        String relationTableQuerySql = String.format(SELECT_RELATION_STATEMENT, relationTableName, relationConditions);
 
         return sqlExecutor.query(connection, relationTableQuerySql, clazz);
     }

@@ -6,6 +6,7 @@ import com.github.braisdom.funcsql.util.StringUtil;
 import com.github.braisdom.funcsql.util.WordUtil;
 
 import java.lang.reflect.Field;
+import java.util.Objects;
 
 public final class Table {
 
@@ -13,11 +14,13 @@ public final class Table {
     public static final String DEFAULT_KEY_SUFFIX = "id";
 
     public static final String getTableName(Class baseClass) {
-        String tableName;
-        DomainModel domainModel = (DomainModel) (baseClass == null
-                ? null : baseClass.getAnnotation(DomainModel.class));
+        Objects.requireNonNull(baseClass, "The baseClass cannot be null");
+        DomainModel domainModel = (DomainModel) baseClass.getAnnotation(DomainModel.class);
 
-        if (domainModel != null)
+        Objects.requireNonNull(domainModel, "The baseClass must have the DomainModel annotation");
+
+        String tableName;
+        if (!StringUtil.isBlank(domainModel.tableName()))
             tableName = domainModel.tableName();
         else
             tableName = WordUtil.tableize(baseClass.getSimpleName());
