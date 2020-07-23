@@ -78,7 +78,7 @@ public class GeneralSQLGenerator implements SQLGenerator {
         for (Object value : scalars) {
             if (value instanceof Integer || value instanceof Long ||
                     value instanceof Float || value instanceof Double)
-                sb.append(String.valueOf(value));
+                sb.append(value);
             else
                 sb.append(String.format("'%s'", String.valueOf(value)));
             sb.append(",");

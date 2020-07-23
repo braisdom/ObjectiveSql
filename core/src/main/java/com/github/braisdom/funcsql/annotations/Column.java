@@ -11,7 +11,7 @@ public @interface Column {
 
     String value() default "";
 
-    boolean persistent() default true;
+    boolean insertable() default true;
 
     boolean updatable() default true;
 }
