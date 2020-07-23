@@ -1,8 +1,7 @@
 package com.github.braisdom.funcsql.annotations;
 
-import com.github.braisdom.funcsql.generator.BasicMethodGenerator;
-import com.github.braisdom.funcsql.generator.ClassImportable;
-import com.github.braisdom.funcsql.generator.MethodGenerator;
+import com.github.braisdom.funcsql.generator.BasicMethodCodeGenerator;
+import com.github.braisdom.funcsql.generator.CodeGenerator;
 import com.sun.source.tree.Tree;
 import com.sun.tools.javac.api.JavacTrees;
 import com.sun.tools.javac.processing.JavacProcessingEnvironment;
@@ -23,7 +22,7 @@ import java.util.Set;
 @SupportedAnnotationTypes(value = {"com.github.braisdom.funcsql.annotations.DomainModel"})
 public class AnnotationProcessor extends AbstractProcessor {
 
-    private static final java.util.List<MethodGenerator> methodGenerators = new ArrayList<>();
+    private static final java.util.List<CodeGenerator> CODE_GENERATORS = new ArrayList<>();
 
     private JavacTrees trees;
     private TreeMaker treeMaker;
@@ -49,7 +48,7 @@ public class AnnotationProcessor extends AbstractProcessor {
     }
 
     static {
-        methodGenerators.add(new BasicMethodGenerator());
+        CODE_GENERATORS.add(new BasicMethodCodeGenerator());
     }
 
     @Override
@@ -77,9 +76,9 @@ public class AnnotationProcessor extends AbstractProcessor {
                     super.visitClassDef(jcClassDecl);
                     cacheMethod(methodsCache, jcClassDecl.defs);
 
-                    for(MethodGenerator methodGenerator : methodGenerators) {
-                        ClassImportable.ImportItem[] importItems = methodGenerator.getImportItems();
-                        JCTree.JCMethodDecl[] jcMethodDecls = methodGenerator.generate(treeMaker, names, element, jcClassDecl);
+                    for(CodeGenerator codeGenerator : CODE_GENERATORS) {
+                        CodeGenerator.ImportItem[] importItems = codeGenerator.getImportItems();
+                        JCTree.JCMethodDecl[] jcMethodDecls = codeGenerator.generate(treeMaker, names, element, jcClassDecl);
 
                         processImport(imports, importItems);
                         processMethods(jcClassDecl, methodsCache, jcMethodDecls);
@@ -99,8 +98,8 @@ public class AnnotationProcessor extends AbstractProcessor {
         }
     }
 
-    private void processImport(JCTree.JCCompilationUnit imports, ClassImportable.ImportItem[] importItems) {
-        for(ClassImportable.ImportItem importItem : importItems) {
+    private void processImport(JCTree.JCCompilationUnit imports, CodeGenerator.ImportItem[] importItems) {
+        for(CodeGenerator.ImportItem importItem : importItems) {
             imports.defs = imports.defs.append(
                     treeMaker.Import(
                             treeMaker.Select(

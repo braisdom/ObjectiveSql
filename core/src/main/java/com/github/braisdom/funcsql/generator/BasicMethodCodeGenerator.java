@@ -12,18 +12,14 @@ import com.sun.tools.javac.util.Names;
 import javax.lang.model.element.Element;
 import java.util.ArrayList;
 
-public class BasicMethodGenerator extends AbstractMethodGenerator {
+public class BasicMethodCodeGenerator extends AbstractCodeGenerator {
 
     private static final String METHOD_NAME_CREATE_QUERY = "createQuery";
     private static final String METHOD_NAME_CREATE_PERSISTENCE = "createPersistence";
 
-    @Override
-    public ImportItem[] getImportItems() {
-
+    public BasicMethodCodeGenerator() {
         addImportItem(DefaultQuery.class.getPackage().getName(), DefaultQuery.class.getSimpleName());
         addImportItem(DefaultQuery.class.getPackage().getName(), Query.class.getSimpleName());
-
-        return super.getImportItems();
     }
 
     @Override

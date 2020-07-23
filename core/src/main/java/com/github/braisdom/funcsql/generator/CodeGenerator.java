@@ -1,6 +1,12 @@
 package com.github.braisdom.funcsql.generator;
 
-public interface ClassImportable {
+import com.sun.tools.javac.tree.JCTree;
+import com.sun.tools.javac.tree.TreeMaker;
+import com.sun.tools.javac.util.Names;
+
+import javax.lang.model.element.Element;
+
+public interface CodeGenerator {
 
     class ImportItem {
 
@@ -22,4 +28,7 @@ public interface ClassImportable {
     }
 
     ImportItem[] getImportItems();
+
+    JCTree.JCMethodDecl[] generate(TreeMaker treeMaker, Names names,
+                                   Element element, JCTree.JCClassDecl jcClassDecl);
 }

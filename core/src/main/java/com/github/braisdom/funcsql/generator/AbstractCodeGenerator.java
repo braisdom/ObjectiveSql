@@ -3,11 +3,11 @@ package com.github.braisdom.funcsql.generator;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractGenerator implements ClassImportable {
+public abstract class AbstractCodeGenerator implements CodeGenerator {
 
     private final List<ImportItem> importItems;
 
-    public AbstractGenerator() {
+    public AbstractCodeGenerator() {
         importItems = new ArrayList<>();
     }
 
