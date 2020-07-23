@@ -3,6 +3,7 @@ package com.github.braisdom.funcsql.generator;
 import com.github.braisdom.funcsql.Database;
 import com.github.braisdom.funcsql.DefaultQuery;
 import com.github.braisdom.funcsql.Query;
+import com.github.braisdom.funcsql.QueryFactory;
 import com.sun.tools.javac.code.Flags;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
@@ -20,6 +21,8 @@ public class BasicMethodCodeGenerator extends AbstractCodeGenerator {
 
     public BasicMethodCodeGenerator() {
         addImportItem(Database.class.getPackage().getName(), Database.class.getSimpleName());
+        addImportItem(Query.class.getPackage().getName(), Query.class.getSimpleName());
+        addImportItem(QueryFactory.class.getPackage().getName(), QueryFactory.class.getSimpleName());
     }
 
     @Override
@@ -44,13 +47,34 @@ public class BasicMethodCodeGenerator extends AbstractCodeGenerator {
         );
 
         jcStatements.append(
-                treeMaker.Return(treeMaker.NewClass(
-                        null,
-                        List.nil(), //泛型参数列表
-                        treeMaker.Ident(names.fromString(DefaultQuery.class.getSimpleName())), //创建的类名
-                        jcVariableExpressions.toList(), //参数列表
-                        null //类定义，估计是用于创建匿名内部类
-                ))
+                treeMaker.VarDef(
+                        treeMaker.Modifiers(Flags.PARAMETER),
+                        names.fromString("queryFactory"),
+                        treeMaker.Ident(names.fromString(QueryFactory.class.getSimpleName())),
+                        treeMaker.Apply(List.nil(),
+                                treeMaker.Select(
+                                        treeMaker.Ident(names.fromString(Database.class.getSimpleName())),
+                                        names.fromString("getQueryFactory")
+                                )
+                                , List.nil()
+                        )
+                )
+        );
+
+        jcStatements.append(
+                treeMaker.Return(
+                        treeMaker.Apply(List.nil(),
+                                treeMaker.Select(
+                                        treeMaker.Ident(names.fromString("queryFactory")),
+                                        names.fromString("createQuery")
+                                )
+                                , List.of(
+                                        treeMaker.Select(
+                                                treeMaker.Ident(names.fromString(element.getSimpleName().toString())),
+                                                names.fromString("class")
+                                        )
+                                )
+                        ))
         );
 
         return treeMaker.MethodDef(
