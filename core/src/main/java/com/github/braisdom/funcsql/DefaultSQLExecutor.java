@@ -4,6 +4,7 @@ import com.github.braisdom.funcsql.annotations.Column;
 import com.github.braisdom.funcsql.annotations.PrimaryKey;
 import com.github.braisdom.funcsql.util.WordUtil;
 import org.apache.commons.dbutils.*;
+import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
 import org.apache.commons.dbutils.handlers.MapListHandler;
 
@@ -46,8 +47,11 @@ public class DefaultSQLExecutor<T> implements SQLExecutor<T> {
     }
 
     @Override
-    public int insert(Connection connection, String sql) throws SQLException {
-        return 0;
+    public T insert(Connection connection, String sql, Class<T> rowClass) throws SQLException {
+        Map<String, String> columnToPropertyOverrides = prepareColumnToPropertyOverrides(rowClass);
+        ResultSetHandler<T> handler = new BeanHandler<>(rowClass,
+                new BasicRowProcessor(new BeanProcessor(columnToPropertyOverrides)));
+        return queryRunner.insert(connection, sql, handler);
     }
 
     @Override
