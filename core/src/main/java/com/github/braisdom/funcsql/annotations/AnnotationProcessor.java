@@ -1,6 +1,6 @@
 package com.github.braisdom.funcsql.annotations;
 
-import com.github.braisdom.funcsql.generator.BasicMethodCodeGenerator;
+import com.github.braisdom.funcsql.generator.BasicMethodGenerator;
 import com.github.braisdom.funcsql.generator.CodeGenerator;
 import com.sun.source.tree.Tree;
 import com.sun.tools.javac.api.JavacTrees;
@@ -48,7 +48,7 @@ public class AnnotationProcessor extends AbstractProcessor {
     }
 
     static {
-        CODE_GENERATORS.add(new BasicMethodCodeGenerator());
+        CODE_GENERATORS.add(new BasicMethodGenerator());
     }
 
     @Override

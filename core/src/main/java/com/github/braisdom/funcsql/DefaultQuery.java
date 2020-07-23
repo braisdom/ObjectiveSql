@@ -3,7 +3,6 @@ package com.github.braisdom.funcsql;
 import com.github.braisdom.funcsql.relation.Relationship;
 import com.github.braisdom.funcsql.relation.RelationshipNetwork;
 import com.github.braisdom.funcsql.util.StringUtil;
-import org.apache.commons.dbutils.DbUtils;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -33,7 +32,8 @@ public class DefaultQuery<T> extends AbstractQuery<T> {
 
             return rows;
         } finally {
-            DbUtils.close(connection);
+            if(connection != null)
+                connection.close();
         }
     }
 

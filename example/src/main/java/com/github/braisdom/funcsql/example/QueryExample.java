@@ -31,6 +31,6 @@ public class QueryExample {
 
         Query<User> userQuery = User.createQuery();
         List<UserProfile> users = userQuery.limit(2).execute(RHM_USER_PROFILE);
-        System.out.println();
+        System.out.println(users);
     }
 }

@@ -4,14 +4,13 @@ import com.github.braisdom.funcsql.annotations.Column;
 import com.github.braisdom.funcsql.annotations.DomainModel;
 
 import java.lang.reflect.Field;
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
 public abstract class AbstractPersistence<T> implements Persistence<T> {
 
-    private static final String UPDATE_STATEMENT = "UPDATE %s SET %s WHERE %s";
-    private static final String DELETE_STATEMENT = "DELETE FROM %s WHERE %s";
+    private static final String UPDATE_STATEMENT = "UPDATE %s SET %s ";
+    private static final String DELETE_STATEMENT = "DELETE FROM %s ";
 
     private final static List<Class> COLUMNIZABLE_FIELD_TYPES = Arrays.asList(new Class[]{
             String.class, char.class,
@@ -19,8 +18,7 @@ public abstract class AbstractPersistence<T> implements Persistence<T> {
             Integer.class, int.class,
             Short.class, short.class,
             Float.class, float.class,
-            Double.class, double.class,
-            BigDecimal.class
+            Double.class, double.class
     });
 
     private final Class<T> domainModelClass;

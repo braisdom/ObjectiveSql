@@ -14,12 +14,12 @@ import com.sun.tools.javac.util.Names;
 import javax.lang.model.element.Element;
 import java.util.ArrayList;
 
-public class BasicMethodCodeGenerator extends AbstractCodeGenerator {
+public class BasicMethodGenerator extends AbstractCodeGenerator {
 
     private static final String METHOD_NAME_CREATE_QUERY = "createQuery";
     private static final String METHOD_NAME_CREATE_PERSISTENCE = "createPersistence";
 
-    public BasicMethodCodeGenerator() {
+    public BasicMethodGenerator() {
         addImportItem(Database.class.getPackage().getName(), Database.class.getSimpleName());
         addImportItem(Query.class.getPackage().getName(), Query.class.getSimpleName());
         addImportItem(QueryFactory.class.getPackage().getName(), QueryFactory.class.getSimpleName());
@@ -37,33 +37,26 @@ public class BasicMethodCodeGenerator extends AbstractCodeGenerator {
 
     private JCTree.JCMethodDecl createQueryMethod(TreeMaker treeMaker, Names names, Element element) {
         ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
-        ListBuffer<JCTree.JCExpression> jcVariableExpressions = new ListBuffer<>();
-
-        jcVariableExpressions.append(
-                treeMaker.Select(
-                        treeMaker.Ident(names.fromString(element.getSimpleName().toString())),
-                        names.fromString("class")
-                )
-        );
 
         jcStatements.append(
                 treeMaker.VarDef(
                         treeMaker.Modifiers(Flags.PARAMETER),
                         names.fromString("queryFactory"),
                         treeMaker.Ident(names.fromString(QueryFactory.class.getSimpleName())),
-                        treeMaker.Apply(List.nil(),
+                        treeMaker.Apply(
+                                List.nil(),
                                 treeMaker.Select(
                                         treeMaker.Ident(names.fromString(Database.class.getSimpleName())),
                                         names.fromString("getQueryFactory")
-                                )
-                                , List.nil()
+                                ), List.nil()
                         )
                 )
         );
 
         jcStatements.append(
                 treeMaker.Return(
-                        treeMaker.Apply(List.nil(),
+                        treeMaker.Apply(
+                                List.nil(),
                                 treeMaker.Select(
                                         treeMaker.Ident(names.fromString("queryFactory")),
                                         names.fromString("createQuery")

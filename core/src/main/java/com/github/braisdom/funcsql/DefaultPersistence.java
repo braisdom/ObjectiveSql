@@ -1,7 +1,5 @@
 package com.github.braisdom.funcsql;
 
-import org.apache.commons.dbutils.DbUtils;
-
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -17,10 +15,11 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
         ConnectionFactory connectionFactory = Database.getConnectionFactory();
         Connection connection = connectionFactory.getConnection();
         try {
-            Field[] fields = getInsertableFields(getDomainModelClass());
+            Field[] fields = getInsertableFields(dirtyObject.getClass());
 
         } finally {
-            DbUtils.close(connection);
+            if(connection != null)
+                connection.close();
         }
 
         return null;
