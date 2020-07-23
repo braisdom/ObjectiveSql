@@ -79,7 +79,7 @@ public class AnnotationProcessor extends AbstractProcessor {
 
                     for(MethodGenerator methodGenerator : methodGenerators) {
                         ClassImportable.ImportItem[] importItems = methodGenerator.getImportItems();
-                        JCTree.JCMethodDecl[] jcMethodDecls = methodGenerator.generate(treeMaker, names, element);
+                        JCTree.JCMethodDecl[] jcMethodDecls = methodGenerator.generate(treeMaker, names, element, jcClassDecl);
 
                         processImport(imports, importItems);
                         processMethods(jcClassDecl, methodsCache, jcMethodDecls);

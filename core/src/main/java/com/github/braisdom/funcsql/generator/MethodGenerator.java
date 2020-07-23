@@ -8,5 +8,6 @@ import javax.lang.model.element.Element;
 
 public interface MethodGenerator extends ClassImportable {
 
-    JCTree.JCMethodDecl[] generate(TreeMaker treeMaker, Names names, Element element);
+    JCTree.JCMethodDecl[] generate(TreeMaker treeMaker, Names names,
+                                   Element element, JCTree.JCClassDecl jcClassDecl);
 }
