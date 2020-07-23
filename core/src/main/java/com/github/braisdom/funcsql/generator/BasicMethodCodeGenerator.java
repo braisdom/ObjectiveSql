@@ -23,8 +23,8 @@ public class BasicMethodCodeGenerator extends AbstractCodeGenerator {
     }
 
     @Override
-    public JCTree.JCMethodDecl[] generate(TreeMaker treeMaker, Names names,
-                                          Element element, JCTree.JCClassDecl jcClassDecl) {
+    public JCTree.JCMethodDecl[] generateMethods(TreeMaker treeMaker, Names names,
+                                                 Element element, JCTree.JCClassDecl jcClassDecl) {
         java.util.List<JCTree.JCMethodDecl> methodDecls = new ArrayList<>();
 
         methodDecls.add(createQueryMethod(treeMaker, names, element));

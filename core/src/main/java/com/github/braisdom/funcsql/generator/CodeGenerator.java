@@ -29,6 +29,9 @@ public interface CodeGenerator {
 
     ImportItem[] getImportItems();
 
-    JCTree.JCMethodDecl[] generate(TreeMaker treeMaker, Names names,
-                                   Element element, JCTree.JCClassDecl jcClassDecl);
+    JCTree.JCVariableDecl[] generateVariables(TreeMaker treeMaker, Names names,
+                                          Element element, JCTree.JCClassDecl jcClassDecl);
+
+    JCTree.JCMethodDecl[] generateMethods(TreeMaker treeMaker, Names names,
+                                          Element element, JCTree.JCClassDecl jcClassDecl);
 }
