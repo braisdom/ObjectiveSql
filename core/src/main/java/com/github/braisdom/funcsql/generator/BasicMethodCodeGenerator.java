@@ -1,5 +1,6 @@
 package com.github.braisdom.funcsql.generator;
 
+import com.github.braisdom.funcsql.Database;
 import com.github.braisdom.funcsql.DefaultQuery;
 import com.github.braisdom.funcsql.Query;
 import com.sun.tools.javac.code.Flags;
@@ -18,8 +19,7 @@ public class BasicMethodCodeGenerator extends AbstractCodeGenerator {
     private static final String METHOD_NAME_CREATE_PERSISTENCE = "createPersistence";
 
     public BasicMethodCodeGenerator() {
-        addImportItem(DefaultQuery.class.getPackage().getName(), DefaultQuery.class.getSimpleName());
-        addImportItem(DefaultQuery.class.getPackage().getName(), Query.class.getSimpleName());
+        addImportItem(Database.class.getPackage().getName(), Database.class.getSimpleName());
     }
 
     @Override
