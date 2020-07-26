@@ -14,4 +14,6 @@ public @interface DomainModel {
     String sqlFileName() default "";
 
     boolean allFieldsPersistent() default true;
+
+    boolean disableGeneratedId() default false;
 }

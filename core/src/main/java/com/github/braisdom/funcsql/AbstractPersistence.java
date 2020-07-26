@@ -9,6 +9,7 @@ import java.util.List;
 
 public abstract class AbstractPersistence<T> implements Persistence<T> {
 
+    private static final String INSERT_TEMPLATE = "INSERT INTO %s (%s) VALUES (%s)";
     private static final String UPDATE_STATEMENT = "UPDATE %s SET %s ";
     private static final String DELETE_STATEMENT = "DELETE FROM %s ";
 
@@ -21,7 +22,7 @@ public abstract class AbstractPersistence<T> implements Persistence<T> {
             Double.class, double.class
     });
 
-    private final Class<T> domainModelClass;
+    protected final Class<T> domainModelClass;
 
     public AbstractPersistence(Class<T> domainModelClass) {
         this.domainModelClass = domainModelClass;
@@ -45,6 +46,15 @@ public abstract class AbstractPersistence<T> implements Persistence<T> {
             throw new PersistenceException(String.format("The %s has no primary field", domainModelClass.getSimpleName()));
 
         return primaryField;
+    }
+
+    protected String formatInsertSql(String tableName, String[] columnNames) {
+        String[] valuesPlaceHolder = Arrays.stream(columnNames).map(c -> "?").toArray(String[]::new);
+        return formatInsertSql(tableName, columnNames, String.join(",", valuesPlaceHolder));
+    }
+
+    protected String formatInsertSql(String tableName, String[] columnNames, String values) {
+        return String.format(INSERT_TEMPLATE, tableName, String.join(",", columnNames), values);
     }
 
     protected Field[] getColumnizableFields(Class domainModelClass, boolean insertable, boolean updatable) throws PersistenceException {

@@ -14,12 +14,12 @@ import com.sun.tools.javac.util.Names;
 import javax.lang.model.element.Element;
 import java.util.ArrayList;
 
-public class BasicMethodGenerator extends AbstractCodeGenerator {
+public class FactoryMethodGenerator extends AbstractCodeGenerator {
 
     private static final String METHOD_NAME_CREATE_QUERY = "createQuery";
     private static final String METHOD_NAME_CREATE_PERSISTENCE = "createPersistence";
 
-    public BasicMethodGenerator() {
+    public FactoryMethodGenerator() {
         addImportItem(Database.class.getPackage().getName(), Database.class.getSimpleName());
         addImportItem(Query.class.getPackage().getName(), Query.class.getSimpleName());
         addImportItem(QueryFactory.class.getPackage().getName(), QueryFactory.class.getSimpleName());
