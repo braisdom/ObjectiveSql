@@ -12,7 +12,7 @@ public interface SQLExecutor<T> {
 
     int update(Connection connection, String sql) throws SQLException;
 
-    T insert(Connection connection, String sql, Class<T> rowClass) throws SQLException;
+    T insert(Connection connection, String sql, Class<T> rowClass, Object... params) throws SQLException;
 
     int delete(Connection connection, String sql) throws SQLException;
 }

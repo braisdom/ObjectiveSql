@@ -47,11 +47,11 @@ public class DefaultSQLExecutor<T> implements SQLExecutor<T> {
     }
 
     @Override
-    public T insert(Connection connection, String sql, Class<T> rowClass) throws SQLException {
+    public T insert(Connection connection, String sql, Class<T> rowClass, Object... params) throws SQLException {
         Map<String, String> columnToPropertyOverrides = prepareColumnToPropertyOverrides(rowClass);
         ResultSetHandler<T> handler = new BeanHandler<>(rowClass,
                 new BasicRowProcessor(new BeanProcessor(columnToPropertyOverrides)));
-        return queryRunner.insert(connection, sql, handler);
+        return queryRunner.insert(connection, sql, handler, params);
     }
 
     @Override

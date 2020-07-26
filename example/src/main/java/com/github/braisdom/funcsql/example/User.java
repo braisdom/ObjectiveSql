@@ -23,8 +23,6 @@ public class User {
     @Relation(relationType = RelationType.HAS_MANY)
     private List<UserProfile> userProfiles;
 
-    private Domain domain;
-
     @Transactional
     public static User register(User rawUser) {
         return null;
