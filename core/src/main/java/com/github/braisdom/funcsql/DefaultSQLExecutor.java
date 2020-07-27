@@ -42,8 +42,8 @@ public class DefaultSQLExecutor<T> implements SQLExecutor<T> {
     }
 
     @Override
-    public int update(Connection connection, String sql) throws SQLException {
-        return queryRunner.update(connection, sql);
+    public int update(Connection connection, String sql, Object... params) throws SQLException {
+        return queryRunner.update(connection, sql, params);
     }
 
     @Override
@@ -52,6 +52,11 @@ public class DefaultSQLExecutor<T> implements SQLExecutor<T> {
         ResultSetHandler<T> handler = new BeanHandler<>(rowClass,
                 new BasicRowProcessor(new BeanProcessor(columnToPropertyOverrides)));
         return queryRunner.insert(connection, sql, handler, params);
+    }
+
+    @Override
+    public int insert(Connection connection, String sql, Class<T> rowClass, Object[][] params) throws SQLException {
+        return 0;
     }
 
     @Override
