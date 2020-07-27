@@ -5,6 +5,7 @@ import com.github.braisdom.funcsql.DefaultPersistence;
 import com.github.braisdom.funcsql.PersistenceException;
 import com.github.braisdom.funcsql.annotations.DomainModel;
 import com.github.braisdom.funcsql.annotations.Relation;
+import com.github.braisdom.funcsql.annotations.Volatile;
 import com.github.braisdom.funcsql.relation.RelationType;
 import lombok.Data;
 
@@ -22,6 +23,8 @@ public class PersistenceExample {
         private String no;
         private String name;
         private int gender;
+
+        @Volatile
         private String mobile;
 
         @Relation(relationType = RelationType.HAS_MANY)

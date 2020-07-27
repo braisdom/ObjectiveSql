@@ -2,6 +2,7 @@ package com.github.braisdom.funcsql;
 
 import com.github.braisdom.funcsql.annotations.Column;
 import com.github.braisdom.funcsql.annotations.DomainModel;
+import com.github.braisdom.funcsql.annotations.Volatile;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -42,7 +43,7 @@ public abstract class AbstractPersistence<T> implements Persistence<T> {
 
     protected Field getPrimaryField(Class domainModelClass) throws PersistenceException {
         Field primaryField = Table.getPrimaryField(domainModelClass);
-        if(primaryField == null)
+        if (primaryField == null)
             throw new PersistenceException(String.format("The %s has no primary field", domainModelClass.getSimpleName()));
 
         return primaryField;
@@ -66,18 +67,24 @@ public abstract class AbstractPersistence<T> implements Persistence<T> {
         if (domainModel.allFieldsPersistent()) {
             return Arrays.stream(fields).filter(field -> {
                 Column column = field.getAnnotation(Column.class);
-                if(column == null)
-                    return isColumnizable(field);
-                else
-                    return insertable ? column.insertable() : (updatable && column.updatable());
+                Volatile volatileAnnotation = field.getAnnotation(Volatile.class);
+                if (volatileAnnotation == null) {
+                    if (column == null)
+                        return isColumnizable(field);
+                    else
+                        return insertable ? column.insertable() : (updatable && column.updatable());
+                } else return false;
             }).toArray(Field[]::new);
         } else {
             return Arrays.stream(fields).filter(field -> {
                 Column column = field.getAnnotation(Column.class);
-                if(column == null)
-                    return false;
-                else
-                    return insertable ? column.insertable() : (updatable && column.updatable());
+                Volatile volatileAnnotation = field.getAnnotation(Volatile.class);
+                if (volatileAnnotation == null) {
+                    if (column == null)
+                        return false;
+                    else
+                        return insertable ? column.insertable() : (updatable && column.updatable());
+                } else return false;
             }).toArray(Field[]::new);
         }
     }
