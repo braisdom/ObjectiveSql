@@ -46,13 +46,13 @@ public class FactoryMethodGenerator implements CodeGenerator {
         jcStatements.append(
                 treeMaker.VarDef(
                         treeMaker.Modifiers(Flags.PARAMETER),
-                        names.fromString("queryFactory"),
-                        treeMaker.Ident(names.fromString(QueryFactory.class.getSimpleName())),
+                        names.fromString("persistenceFactory"),
+                        treeMaker.Ident(names.fromString(PersistenceFactory.class.getSimpleName())),
                         treeMaker.Apply(
                                 List.nil(),
                                 treeMaker.Select(
                                         treeMaker.Ident(names.fromString(Database.class.getSimpleName())),
-                                        names.fromString("getQueryFactory")
+                                        names.fromString("getPersistenceFactory")
                                 ), List.nil()
                         )
                 )
@@ -63,8 +63,8 @@ public class FactoryMethodGenerator implements CodeGenerator {
                         treeMaker.Apply(
                                 List.nil(),
                                 treeMaker.Select(
-                                        treeMaker.Ident(names.fromString("queryFactory")),
-                                        names.fromString("createQuery")
+                                        treeMaker.Ident(names.fromString("persistenceFactory")),
+                                        names.fromString("createPersistence")
                                 )
                                 , List.of(
                                         treeMaker.Select(
@@ -77,8 +77,8 @@ public class FactoryMethodGenerator implements CodeGenerator {
 
         return treeMaker.MethodDef(
                 treeMaker.Modifiers(Flags.PUBLIC + Flags.STATIC + Flags.FINAL),
-                names.fromString(METHOD_NAME_CREATE_QUERY),
-                treeMaker.Ident(names.fromString(Query.class.getSimpleName())),
+                names.fromString(METHOD_NAME_CREATE_PERSISTENCE),
+                treeMaker.Ident(names.fromString(Persistence.class.getSimpleName())),
                 List.nil(),
                 List.nil(),
                 List.nil(),

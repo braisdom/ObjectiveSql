@@ -2,6 +2,7 @@ package com.github.braisdom.funcsql.example;
 
 import com.github.braisdom.funcsql.Database;
 import com.github.braisdom.funcsql.DefaultPersistence;
+import com.github.braisdom.funcsql.Persistence;
 import com.github.braisdom.funcsql.PersistenceException;
 import com.github.braisdom.funcsql.annotations.DomainModel;
 import com.github.braisdom.funcsql.annotations.Relation;
@@ -101,8 +102,8 @@ public class PersistenceExample {
         .setGender(1)
         .setMobile("15011112222");
 
-        DefaultPersistence<Member> persistence = new DefaultPersistence(Member.class);
-        Member member = persistence.insert(newMember);
+        Persistence<Member> persistence = Member.createPersistence();
+        persistence.insert(newMember, false);
         System.out.println();
     }
 }
