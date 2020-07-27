@@ -15,8 +15,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
 
     @Override
     public void save(T dirtyObject, boolean skipValidation) throws SQLException, PersistenceException {
-        Field primary = Table.getPrimaryField(domainModelClass);
-        Object primaryValue = PropertyUtils.readDirectly(dirtyObject, primary);
+        Object primaryValue = requirePrimaryKey(dirtyObject);
         if (primaryValue == null)
             insert(dirtyObject, skipValidation);
         else update(dirtyObject);
@@ -71,11 +70,22 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
 
     @Override
     public int update(T dirtyObject) throws SQLException, PersistenceException {
+        Object primaryValue = requirePrimaryKey(dirtyObject);
+        Field primaryField = Table.getPrimaryField(domainModelClass);
+        Field[] fields = getUpdatableFields(domainModelClass);
+
         return 0;
     }
 
     @Override
     public int delete(T dirtyObject) throws SQLException, PersistenceException {
         return 0;
+    }
+
+    protected Object requirePrimaryKey(T object) throws PersistenceException {
+        Field primary = Table.getPrimaryField(domainModelClass);
+        if(primary == null)
+            throw new PersistenceException("The primary field(@PrimaryKey) must be specified in " + domainModelClass.getSimpleName());
+        return PropertyUtils.readDirectly(object, primary);
     }
 }

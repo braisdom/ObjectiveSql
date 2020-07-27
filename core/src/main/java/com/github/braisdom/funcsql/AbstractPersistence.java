@@ -62,8 +62,9 @@ public abstract class AbstractPersistence<T> implements Persistence<T> {
         DomainModel domainModel = (DomainModel) domainModelClass.getAnnotation(DomainModel.class);
         if (domainModel == null)
             throw new PersistenceException(String.format("The %s has no DomainModel annotation", domainModelClass.getSimpleName()));
-
+        Field primaryField = Table.getPrimaryField(domainModelClass);
         Field[] fields = domainModelClass.getDeclaredFields();
+
         if (domainModel.allFieldsPersistent()) {
             return Arrays.stream(fields).filter(field -> {
                 Column column = field.getAnnotation(Column.class);
@@ -72,7 +73,7 @@ public abstract class AbstractPersistence<T> implements Persistence<T> {
                     if (column == null)
                         return isColumnizable(field);
                     else
-                        return insertable ? column.insertable() : (updatable && column.updatable());
+                        return insertable ? column.insertable() : (updatable && column.updatable() && !field.equals(primaryField));
                 } else return false;
             }).toArray(Field[]::new);
         } else {
@@ -83,7 +84,7 @@ public abstract class AbstractPersistence<T> implements Persistence<T> {
                     if (column == null)
                         return false;
                     else
-                        return insertable ? column.insertable() : (updatable && column.updatable());
+                        return insertable ? column.insertable() : (updatable && column.updatable() && !field.equals(primaryField));
                 } else return false;
             }).toArray(Field[]::new);
         }
