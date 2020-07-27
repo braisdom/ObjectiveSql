@@ -1,7 +1,6 @@
 package com.github.braisdom.funcsql.generator;
 
 import com.github.braisdom.funcsql.Database;
-import com.github.braisdom.funcsql.DefaultQuery;
 import com.github.braisdom.funcsql.Query;
 import com.github.braisdom.funcsql.QueryFactory;
 import com.sun.tools.javac.code.Flags;
@@ -12,7 +11,6 @@ import com.sun.tools.javac.util.ListBuffer;
 import com.sun.tools.javac.util.Names;
 
 import javax.lang.model.element.Element;
-import java.util.ArrayList;
 
 public class FactoryMethodGenerator extends AbstractCodeGenerator {
 
@@ -28,11 +26,10 @@ public class FactoryMethodGenerator extends AbstractCodeGenerator {
     @Override
     public JCTree.JCMethodDecl[] generateMethods(TreeMaker treeMaker, Names names,
                                                  Element element, JCTree.JCClassDecl jcClassDecl) {
-        java.util.List<JCTree.JCMethodDecl> methodDecls = new ArrayList<>();
 
-        methodDecls.add(createQueryMethod(treeMaker, names, element));
+        addMethodDecl(createQueryMethod(treeMaker, names, element));
 
-        return methodDecls.toArray(new JCTree.JCMethodDecl[]{});
+        return super.generateMethods(treeMaker, names, element, jcClassDecl);
     }
 
     private JCTree.JCMethodDecl createQueryMethod(TreeMaker treeMaker, Names names, Element element) {

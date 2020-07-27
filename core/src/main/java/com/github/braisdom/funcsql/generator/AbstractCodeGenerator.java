@@ -11,9 +11,11 @@ import java.util.List;
 public abstract class AbstractCodeGenerator implements CodeGenerator {
 
     private final List<ImportItem> importItems;
+    private final java.util.List<JCTree.JCMethodDecl> methodDecls;
 
     public AbstractCodeGenerator() {
         importItems = new ArrayList<>();
+        methodDecls = new ArrayList<>();
     }
 
     @Override
@@ -23,6 +25,10 @@ public abstract class AbstractCodeGenerator implements CodeGenerator {
 
     protected void addImportItem(String packageName, String className) {
         importItems.add(new ImportItem(packageName, className));
+    }
+
+    protected void addMethodDecl(JCTree.JCMethodDecl methodDecl) {
+        methodDecls.add(methodDecl);
     }
 
     @Override
