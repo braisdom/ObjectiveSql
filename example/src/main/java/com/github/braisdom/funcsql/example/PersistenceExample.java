@@ -2,6 +2,7 @@ package com.github.braisdom.funcsql.example;
 
 import com.github.braisdom.funcsql.Database;
 import com.github.braisdom.funcsql.PersistenceException;
+import com.github.braisdom.funcsql.annotations.Column;
 import com.github.braisdom.funcsql.annotations.DomainModel;
 import com.github.braisdom.funcsql.annotations.Relation;
 import com.github.braisdom.funcsql.annotations.Volatile;
@@ -11,6 +12,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.util.List;
+import java.util.Map;
 
 public class PersistenceExample {
 
@@ -20,6 +22,8 @@ public class PersistenceExample {
         private String no;
         private String name;
         private int gender;
+
+        private Map extendedAttributes;
 
         @Volatile
         private String mobile;
@@ -77,7 +81,8 @@ public class PersistenceExample {
         } catch (SQLException ex) {
         }
 
-        connection.createStatement().execute("create table members (id INTEGER AUTOINCREMENT, no TEXT, name TEXT, gender INTEGER, mobile TEXT)");
+        connection.createStatement().execute("create table members (id INTEGER AUTOINCREMENT, no TEXT, " +
+                "name TEXT, gender INTEGER, mobile TEXT, extended_attributes TEXT)");
         connection.createStatement().execute("create table orders (id INTEGER AUTOINCREMENT, no TEXT, member_id INTEGER, " +
                 "amount REAL, quantity REAL, sales_at TEXT)");
         connection.createStatement().execute("create table order_lines (id integer AUTOINCREMENT, order_no TEXT, amount REAL, quantity REAL)");
