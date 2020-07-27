@@ -39,11 +39,6 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
     }
 
     @Override
-    public int update(T dirtyObject) throws SQLException, PersistenceException {
-        return 0;
-    }
-
-    @Override
     public int update(T dirtyObject, boolean ignoreNullValue) throws SQLException, PersistenceException {
         return 0;
     }

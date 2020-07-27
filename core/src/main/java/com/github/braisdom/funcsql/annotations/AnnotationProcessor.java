@@ -2,6 +2,7 @@ package com.github.braisdom.funcsql.annotations;
 
 import com.github.braisdom.funcsql.generator.FactoryMethodGenerator;
 import com.github.braisdom.funcsql.generator.CodeGenerator;
+import com.github.braisdom.funcsql.generator.PersistenceMethodGenerator;
 import com.github.braisdom.funcsql.generator.SetterGetterMethodGenerator;
 import com.sun.source.tree.Tree;
 import com.sun.tools.javac.api.JavacTrees;
@@ -50,6 +51,7 @@ public class AnnotationProcessor extends AbstractProcessor {
     static {
         CODE_GENERATORS.add(new FactoryMethodGenerator());
         CODE_GENERATORS.add(new SetterGetterMethodGenerator());
+        CODE_GENERATORS.add(new PersistenceMethodGenerator());
     }
 
     @Override

@@ -8,8 +8,6 @@ public interface Persistence<T> {
 
     int insert(T[] dirtyObject) throws SQLException, PersistenceException;
 
-    int update(T dirtyObject) throws SQLException, PersistenceException;
-
     int update(T dirtyObject, boolean ignoreNullValue) throws SQLException, PersistenceException;
 
     int delete(T dirtyObject) throws SQLException, PersistenceException;

@@ -6,13 +6,15 @@ import com.sun.tools.javac.util.Names;
 
 import javax.lang.model.element.Element;
 
-public class PersistenceMethodGenerator extends AbstractCodeGenerator implements CodeGenerator{
+public class PersistenceMethodGenerator implements CodeGenerator {
 
-    public PersistenceMethodGenerator() {
+    @Override
+    public ImportItem[] getImportItems() {
+        return new ImportItem[0];
     }
 
     @Override
     public JCTree.JCMethodDecl[] generateMethods(TreeMaker treeMaker, Names names, Element element, JCTree.JCClassDecl jcClassDecl) {
-        return super.generateMethods(treeMaker, names, element, jcClassDecl);
+        return new JCTree.JCMethodDecl[0];
     }
 }
