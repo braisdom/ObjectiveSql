@@ -102,6 +102,6 @@ public class PersistenceExample {
         .setGender(1)
         .setMobile("15011112222");
 
-        System.out.println(newMember.save(true));
+        newMember.save();
     }
 }

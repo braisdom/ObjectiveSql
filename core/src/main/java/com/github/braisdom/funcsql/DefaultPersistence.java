@@ -14,9 +14,12 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
     }
 
     @Override
-    public T save(T dirtyObject, boolean skipValidation) throws SQLException, PersistenceException {
-
-        return null;
+    public void save(T dirtyObject, boolean skipValidation) throws SQLException, PersistenceException {
+        Field primary = Table.getPrimaryField(domainModelClass);
+        Object primaryValue = PropertyUtils.readDirectly(dirtyObject, primary);
+        if (primaryValue == null)
+            insert(dirtyObject, skipValidation);
+        else update(dirtyObject);
     }
 
     @Override
@@ -34,7 +37,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
 
             return sqlExecutor.insert(connection, sql, domainModelClass, values);
         } finally {
-            if(connection != null)
+            if (connection != null)
                 connection.close();
         }
     }
@@ -45,7 +48,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
     }
 
     @Override
-    public int update(T dirtyObject, boolean ignoreNullValue) throws SQLException, PersistenceException {
+    public int update(T dirtyObject) throws SQLException, PersistenceException {
         return 0;
     }
 

@@ -2,6 +2,7 @@ package com.github.braisdom.funcsql.generator;
 
 import com.github.braisdom.funcsql.*;
 import com.sun.tools.javac.code.Flags;
+import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.List;
@@ -38,7 +39,7 @@ public class PersistenceMethodGenerator implements CodeGenerator {
         ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
 
         jcStatements.append(
-                treeMaker.Return(treeMaker.Apply(
+                treeMaker.Exec(treeMaker.Apply(
                         List.nil(),
                         treeMaker.Select(
                                 treeMaker.Ident(names.fromString("this")),
@@ -56,7 +57,7 @@ public class PersistenceMethodGenerator implements CodeGenerator {
         return treeMaker.MethodDef(
                 treeMaker.Modifiers(Flags.PUBLIC + Flags.FINAL),
                 names.fromString("save"),
-                treeMaker.Ident(names.fromString(element.getSimpleName().toString())),
+                treeMaker.Type(new Type.JCVoidType()),
                 List.nil(),
                 List.nil(),
                 List.of(
@@ -89,26 +90,24 @@ public class PersistenceMethodGenerator implements CodeGenerator {
         );
 
         jcStatements.append(
-                treeMaker.Return(
-                        treeMaker.TypeCast(
-                                treeMaker.Ident(names.fromString(element.getSimpleName().toString())),
-                                treeMaker.Apply(
-                                        List.nil(),
-                                        treeMaker.Select(
-                                                treeMaker.Ident(names.fromString("persistence")),
-                                                names.fromString("save")
-                                        )
-                                        , List.of(
-                                                treeMaker.Ident(names.fromString("this")),
-                                                treeMaker.Ident(names.fromString("skipValidation"))
-                                        )
-                                )))
+                treeMaker.Exec(
+                        treeMaker.Apply(
+                                List.nil(),
+                                treeMaker.Select(
+                                        treeMaker.Ident(names.fromString("persistence")),
+                                        names.fromString("save")
+                                )
+                                , List.of(
+                                        treeMaker.Ident(names.fromString("this")),
+                                        treeMaker.Ident(names.fromString("skipValidation"))
+                                )
+                        ))
         );
 
         return treeMaker.MethodDef(
                 treeMaker.Modifiers(Flags.PUBLIC + Flags.FINAL),
                 names.fromString("save"),
-                treeMaker.Ident(names.fromString(element.getSimpleName().toString())),
+                treeMaker.Type(new Type.JCVoidType()),
                 List.nil(),
                 List.of(param),
                 List.of(

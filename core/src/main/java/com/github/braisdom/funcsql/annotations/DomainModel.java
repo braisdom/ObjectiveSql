@@ -15,6 +15,8 @@ public @interface DomainModel {
 
     boolean fluent() default true;
 
+    boolean skipNullValueOnUpdating() default true;
+
     boolean allFieldsPersistent() default true;
 
     boolean disableGeneratedId() default false;
