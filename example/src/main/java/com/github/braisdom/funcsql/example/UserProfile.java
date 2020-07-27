@@ -6,16 +6,15 @@ import com.github.braisdom.funcsql.relation.RelationType;
 import com.github.braisdom.funcsql.relation.Relationship;
 import lombok.Data;
 
-@Data
 @DomainModel
 public class UserProfile {
 
     public static final Relationship RBE_USER = Relationship
             .createRelation(UserProfile.class, "user");
 
-    private int id;
+    private long id;
     private String name;
-    private int userId;
+    private long userId;
 
     @Relation(relationType = RelationType.BELONGS_TO)
     private User user;

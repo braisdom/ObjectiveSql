@@ -1,14 +1,12 @@
 package com.github.braisdom.funcsql.example;
 
 import com.github.braisdom.funcsql.annotations.DomainModel;
-import lombok.Data;
 
-@Data
 @DomainModel
 public class Domain {
 
-    private int id;
+    private long id;
     private String name;
-    private int userId;
+    private long userId;
 
 }

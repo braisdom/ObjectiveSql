@@ -7,7 +7,6 @@ import com.github.braisdom.funcsql.annotations.DomainModel;
 import com.github.braisdom.funcsql.annotations.Relation;
 import com.github.braisdom.funcsql.annotations.Volatile;
 import com.github.braisdom.funcsql.relation.RelationType;
-import lombok.Data;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -16,7 +15,6 @@ import java.util.List;
 
 public class PersistenceExample {
 
-    @Data
     @DomainModel
     public static class Member {
         private long id;
@@ -38,7 +36,6 @@ public class PersistenceExample {
         }
     }
 
-    @Data
     @DomainModel
     public static class Order {
         private long id;
@@ -59,7 +56,6 @@ public class PersistenceExample {
         }
     }
 
-    @Data
     @DomainModel
     public static class OrderLine {
         private long id;
@@ -96,11 +92,11 @@ public class PersistenceExample {
         createTables(Database.getConnectionFactory().getConnection());
 
         Member newMember = new Member();
-        newMember.setId(1);
-        newMember.setNo("100000");
-        newMember.setName("Lewis");
-        newMember.setGender(1);
-        newMember.setMobile("15011112222");
+//        newMember.setId(1);
+//        newMember.setNo("100000");
+//        newMember.setName("Lewis");
+//        newMember.setGender(1);
+//        newMember.setMobile("15011112222");
 
         DefaultPersistence<Member> persistence = new DefaultPersistence(Member.class);
         Member member = persistence.save(newMember);

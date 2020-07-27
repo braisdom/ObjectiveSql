@@ -7,7 +7,6 @@ import lombok.Data;
 
 import java.util.List;
 
-@Data
 @DomainModel(tableName = "users")
 public class User {
 
@@ -15,7 +14,7 @@ public class User {
             .createRelation(User.class, "userProfiles");
 
     @PrimaryKey("id")
-    private int userId;
+    private long userId;
 
     @Queryable
     private String name;

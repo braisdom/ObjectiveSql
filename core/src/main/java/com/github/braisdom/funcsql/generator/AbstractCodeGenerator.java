@@ -40,6 +40,6 @@ public abstract class AbstractCodeGenerator implements CodeGenerator {
     @Override
     public JCTree.JCMethodDecl[] generateMethods(TreeMaker treeMaker, Names names,
                                                  Element element, JCTree.JCClassDecl jcClassDecl) {
-        return new JCTree.JCMethodDecl[0];
+        return methodDecls.toArray(new JCTree.JCMethodDecl[]{});
     }
 }

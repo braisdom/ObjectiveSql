@@ -19,7 +19,6 @@ import javax.lang.model.element.TypeElement;
 import java.util.ArrayList;
 import java.util.Set;
 
-@SupportedSourceVersion(value = SourceVersion.RELEASE_8)
 @SupportedAnnotationTypes(value = {"com.github.braisdom.funcsql.annotations.DomainModel"})
 public class AnnotationProcessor extends AbstractProcessor {
 
@@ -92,11 +91,18 @@ public class AnnotationProcessor extends AbstractProcessor {
         return true;
     }
 
+    @Override
+    public SourceVersion getSupportedSourceVersion() {
+        return SourceVersion.latestSupported();
+    }
+
     private void processMethods(JCTree.JCClassDecl jcClassDecl, java.util.List<ComparableMethod> methodsCache,
                                 JCTree.JCMethodDecl[] jcMethodDecls) {
         for (JCTree.JCMethodDecl jcMethodDecl : jcMethodDecls) {
-            if(!methodsCache.contains(new ComparableMethod(jcMethodDecl)))
+            if(!methodsCache.contains(new ComparableMethod(jcMethodDecl))) {
                 jcClassDecl.defs = jcClassDecl.defs.append(jcMethodDecl);
+                cacheMethod(methodsCache, jcMethodDecl);
+            }
         }
     }
 
@@ -112,10 +118,14 @@ public class AnnotationProcessor extends AbstractProcessor {
         }
     }
 
+    private void cacheMethod(java.util.List<ComparableMethod> methodsCache, JCTree.JCMethodDecl methodDecl) {
+        methodsCache.add(new ComparableMethod(methodDecl));
+    }
+
     private void cacheMethod(java.util.List<ComparableMethod> methodsCache, List<JCTree> defs) {
         for (JCTree def : defs) {
             if(def.getKind() == Tree.Kind.METHOD) {
-                methodsCache.add(new ComparableMethod((JCTree.JCMethodDecl) def));
+                cacheMethod(methodsCache, (JCTree.JCMethodDecl) def);
             }
         }
     }
