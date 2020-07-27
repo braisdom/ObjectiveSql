@@ -6,3 +6,4 @@
 *.iml
 /.idea/vcs.xml
 /example.db
+/persistence.db
