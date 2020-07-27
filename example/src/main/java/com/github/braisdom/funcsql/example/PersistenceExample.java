@@ -1,8 +1,6 @@
 package com.github.braisdom.funcsql.example;
 
 import com.github.braisdom.funcsql.Database;
-import com.github.braisdom.funcsql.DefaultPersistence;
-import com.github.braisdom.funcsql.Persistence;
 import com.github.braisdom.funcsql.PersistenceException;
 import com.github.braisdom.funcsql.annotations.DomainModel;
 import com.github.braisdom.funcsql.annotations.Relation;
@@ -18,7 +16,7 @@ public class PersistenceExample {
 
     @DomainModel
     public static class Member {
-        private long id;
+        private Long id;
         private String no;
         private String name;
         private int gender;
@@ -39,7 +37,7 @@ public class PersistenceExample {
 
     @DomainModel
     public static class Order {
-        private long id;
+        private Long id;
         private String no;
         private long memberId;
         private float amount;
@@ -62,7 +60,7 @@ public class PersistenceExample {
 
     @DomainModel
     public static class OrderLine {
-        private long id;
+        private Long id;
         private String orderNo;
         private float amount;
         private float quantity;
@@ -79,10 +77,10 @@ public class PersistenceExample {
         } catch (SQLException ex) {
         }
 
-        connection.createStatement().execute("create table members (id INTEGER, no TEXT, name TEXT, gender INTEGER, mobile TEXT)");
-        connection.createStatement().execute("create table orders (id INTEGER, no TEXT, member_id INTEGER, " +
+        connection.createStatement().execute("create table members (id INTEGER AUTOINCREMENT, no TEXT, name TEXT, gender INTEGER, mobile TEXT)");
+        connection.createStatement().execute("create table orders (id INTEGER AUTOINCREMENT, no TEXT, member_id INTEGER, " +
                 "amount REAL, quantity REAL, sales_at TEXT)");
-        connection.createStatement().execute("create table order_lines (id integer, order_no TEXT, amount REAL, quantity REAL)");
+        connection.createStatement().execute("create table order_lines (id integer AUTOINCREMENT, order_no TEXT, amount REAL, quantity REAL)");
 
 //        connection.createStatement().execute("insert into members(id, no, name, gender, mobile) " +
 //                "values (1, '000001', 'Smith', 1, '15000000001'), (2, '000002', 'Lewis', 2, '15000000002')");
@@ -96,12 +94,16 @@ public class PersistenceExample {
         createTables(Database.getConnectionFactory().getConnection());
 
         Member newMember = new Member()
-        .setId(1)
+//        .setId(1)
         .setNo("100000")
-        .setName("Lewis")
+        .setName("Smith")
         .setGender(1)
         .setMobile("15011112222");
 
         newMember.save();
+
+//        Persistence<Member> memberPersistence = new DefaultPersistence<>(Member.class);
+//
+//        memberPersistence.update(newMember);
     }
 }

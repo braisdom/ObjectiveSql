@@ -1,6 +1,7 @@
 package com.github.braisdom.funcsql;
 
 import com.github.braisdom.funcsql.reflection.PropertyUtils;
+import com.github.braisdom.funcsql.util.ArrayUtil;
 
 import java.lang.reflect.Field;
 import java.sql.Connection;
@@ -26,11 +27,13 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
         ConnectionFactory connectionFactory = Database.getConnectionFactory();
         Connection connection = connectionFactory.getConnection();
         SQLExecutor<T> sqlExecutor = Database.getSqlExecutor();
+        ColumnValueIntervenor columnValueIntervenor = Table.getColumnValueIntervenor(domainModelClass);
         try {
             Field[] fields = getInsertableFields(dirtyObject.getClass());
             String[] columnNames = Arrays.stream(fields).map(f -> f.getName()).toArray(String[]::new);
             Object[] values = Arrays.stream(fields)
-                    .map(field -> PropertyUtils.readDirectly(dirtyObject, field)).toArray(Object[]::new);
+                    .map(field -> columnValueIntervenor.sleeping(field, PropertyUtils.readDirectly(dirtyObject, field)))
+                    .toArray(Object[]::new);
             String tableName = Table.getTableName(domainModelClass);
             String sql = formatInsertSql(tableName, columnNames);
 
@@ -43,6 +46,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
 
     @Override
     public int insert(T[] dirtyObject) throws SQLException, PersistenceException {
+        ColumnValueIntervenor columnValueIntervenor = Table.getColumnValueIntervenor(domainModelClass);
         ConnectionFactory connectionFactory = Database.getConnectionFactory();
         Connection connection = connectionFactory.getConnection();
         SQLExecutor<T> sqlExecutor = Database.getSqlExecutor();
@@ -54,7 +58,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
 
             for (int i = 0; i < dirtyObject.length; i++) {
                 for (int t = 0; t < fields.length; t++) {
-                    values[i][t] = PropertyUtils.readDirectly(dirtyObject[i], fields[t]);
+                    values[i][t] = columnValueIntervenor.sleeping(fields[t], PropertyUtils.readDirectly(dirtyObject[i], fields[t]));
                 }
             }
 
@@ -70,11 +74,25 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
 
     @Override
     public int update(T dirtyObject) throws SQLException, PersistenceException {
-        Object primaryValue = requirePrimaryKey(dirtyObject);
-        Field primaryField = Table.getPrimaryField(domainModelClass);
-        Field[] fields = getUpdatableFields(domainModelClass);
+        ColumnValueIntervenor columnValueIntervenor = Table.getColumnValueIntervenor(domainModelClass);
+        ConnectionFactory connectionFactory = Database.getConnectionFactory();
+        Connection connection = connectionFactory.getConnection();
+        SQLExecutor<T> sqlExecutor = Database.getSqlExecutor();
 
-        return 0;
+        Field primaryField = Table.getPrimaryField(domainModelClass);
+        Object primaryValue = columnValueIntervenor.sleeping(primaryField, requirePrimaryKey(dirtyObject));
+        Field[] fields = getUpdatableFields(domainModelClass);
+        Object[] values = Arrays.stream(fields)
+                .map(field -> PropertyUtils.readDirectly(dirtyObject, field)).toArray(Object[]::new);
+
+        StringBuilder updatesSql = new StringBuilder();
+        Arrays.stream(fields).forEach(field -> {
+            updatesSql.append(field.getName()).append("=").append("?").append(",");
+        });
+        updatesSql.delete(updatesSql.length() - 1, updatesSql.length());
+        String sql = formatUpdateSql(Table.getTableName(domainModelClass),
+                updatesSql.toString(), String.format("%s = ?", primaryField.getName()));
+        return sqlExecutor.update(connection, sql, ArrayUtil.appendElement(Object.class, values, primaryValue));
     }
 
     @Override
@@ -84,7 +102,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
 
     protected Object requirePrimaryKey(T object) throws PersistenceException {
         Field primary = Table.getPrimaryField(domainModelClass);
-        if(primary == null)
+        if (primary == null)
             throw new PersistenceException("The primary field(@PrimaryKey) must be specified in " + domainModelClass.getSimpleName());
         return PropertyUtils.readDirectly(object, primary);
     }

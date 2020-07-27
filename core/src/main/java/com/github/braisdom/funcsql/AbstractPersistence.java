@@ -11,8 +11,8 @@ import java.util.List;
 public abstract class AbstractPersistence<T> implements Persistence<T> {
 
     private static final String INSERT_TEMPLATE = "INSERT INTO %s (%s) VALUES (%s)";
-    private static final String UPDATE_STATEMENT = "UPDATE %s SET %s ";
-    private static final String DELETE_STATEMENT = "DELETE FROM %s ";
+    private static final String UPDATE_STATEMENT = "UPDATE %s SET %s WHERE %s";
+    private static final String DELETE_STATEMENT = "DELETE FROM %s WHERE %s";
 
     private final static List<Class> COLUMNIZABLE_FIELD_TYPES = Arrays.asList(new Class[]{
             String.class, char.class,
@@ -58,6 +58,10 @@ public abstract class AbstractPersistence<T> implements Persistence<T> {
         return String.format(INSERT_TEMPLATE, tableName, String.join(",", columnNames), values);
     }
 
+    protected String formatUpdateSql(String tableName, String updates, String predicate) {
+        return String.format(UPDATE_STATEMENT, tableName, updates, predicate);
+    }
+
     protected Field[] getColumnizableFields(Class domainModelClass, boolean insertable, boolean updatable) throws PersistenceException {
         DomainModel domainModel = (DomainModel) domainModelClass.getAnnotation(DomainModel.class);
         if (domainModel == null)
@@ -71,7 +75,7 @@ public abstract class AbstractPersistence<T> implements Persistence<T> {
                 Volatile volatileAnnotation = field.getAnnotation(Volatile.class);
                 if (volatileAnnotation == null) {
                     if (column == null)
-                        return isColumnizable(field);
+                        return isColumnizable(field) && !field.equals(primaryField);
                     else
                         return insertable ? column.insertable() : (updatable && column.updatable() && !field.equals(primaryField));
                 } else return false;
