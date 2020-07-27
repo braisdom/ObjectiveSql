@@ -102,7 +102,7 @@ public class PersistenceExample {
         .setMobile("15011112222");
 
         DefaultPersistence<Member> persistence = new DefaultPersistence(Member.class);
-        Member member = persistence.save(newMember);
+        Member member = persistence.insert(newMember);
         System.out.println();
     }
 }
