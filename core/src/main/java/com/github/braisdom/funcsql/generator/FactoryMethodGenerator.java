@@ -11,25 +11,32 @@ import com.sun.tools.javac.util.ListBuffer;
 import com.sun.tools.javac.util.Names;
 
 import javax.lang.model.element.Element;
+import java.util.ArrayList;
 
-public class FactoryMethodGenerator extends AbstractCodeGenerator {
+public class FactoryMethodGenerator implements CodeGenerator {
 
     private static final String METHOD_NAME_CREATE_QUERY = "createQuery";
     private static final String METHOD_NAME_CREATE_PERSISTENCE = "createPersistence";
 
-    public FactoryMethodGenerator() {
-        addImportItem(Database.class.getPackage().getName(), Database.class.getSimpleName());
-        addImportItem(Query.class.getPackage().getName(), Query.class.getSimpleName());
-        addImportItem(QueryFactory.class.getPackage().getName(), QueryFactory.class.getSimpleName());
+    @Override
+    public ImportItem[] getImportItems() {
+        java.util.List<ImportItem> importItems = new ArrayList<>();
+
+        importItems.add(new ImportItem(Database.class.getPackage().getName(), Database.class.getSimpleName()));
+        importItems.add(new ImportItem(Query.class.getPackage().getName(), Query.class.getSimpleName()));
+        importItems.add(new ImportItem(QueryFactory.class.getPackage().getName(), QueryFactory.class.getSimpleName()));
+
+        return importItems.toArray(new ImportItem[]{});
     }
 
     @Override
     public JCTree.JCMethodDecl[] generateMethods(TreeMaker treeMaker, Names names,
                                                  Element element, JCTree.JCClassDecl jcClassDecl) {
+        java.util.List<JCTree.JCMethodDecl> methodDecls = new ArrayList<>();
 
-        addMethodDecl(createQueryMethod(treeMaker, names, element));
+        methodDecls.add(createQueryMethod(treeMaker, names, element));
 
-        return super.generateMethods(treeMaker, names, element, jcClassDecl);
+        return methodDecls.toArray(new JCTree.JCMethodDecl[]{});
     }
 
     private JCTree.JCMethodDecl createQueryMethod(TreeMaker treeMaker, Names names, Element element) {

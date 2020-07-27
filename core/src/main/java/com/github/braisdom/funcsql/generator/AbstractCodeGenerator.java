@@ -27,10 +27,6 @@ public abstract class AbstractCodeGenerator implements CodeGenerator {
         importItems.add(new ImportItem(packageName, className));
     }
 
-    protected void addMethodDecl(JCTree.JCMethodDecl methodDecl) {
-        methodDecls.add(methodDecl);
-    }
-
     @Override
     public JCTree.JCVariableDecl[] generateVariables(TreeMaker treeMaker, Names names,
                                                      Element element, JCTree.JCClassDecl jcClassDecl) {

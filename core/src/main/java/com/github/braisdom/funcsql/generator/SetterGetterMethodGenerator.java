@@ -10,23 +10,26 @@ import com.sun.tools.javac.util.Names;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
+import java.util.ArrayList;
 import java.util.Arrays;
 
-public class SetterGetterMethodGenerator extends AbstractCodeGenerator {
+public class SetterGetterMethodGenerator implements CodeGenerator {
 
     @Override
     public JCTree.JCMethodDecl[] generateMethods(TreeMaker treeMaker, Names names,
                                                  Element element, JCTree.JCClassDecl jcClassDecl) {
+        java.util.List<JCTree.JCMethodDecl> methodDecls = new ArrayList<>();
+
         JCVariableDecl[] variableDecls = jcClassDecl.defs.stream()
                 .filter(d -> d instanceof JCVariableDecl && !((JCVariableDecl)d).getModifiers().getFlags().contains(Modifier.STATIC)
                 ).toArray(JCVariableDecl[]::new);
 
         Arrays.stream(variableDecls).forEach(jcVariableDecl -> {
-            addMethodDecl(createGetterMethod(treeMaker, names, jcVariableDecl));
-            addMethodDecl(createSetterMethod(treeMaker, names, element, jcVariableDecl));
+            methodDecls.add(createGetterMethod(treeMaker, names, jcVariableDecl));
+            methodDecls.add(createSetterMethod(treeMaker, names, element, jcVariableDecl));
         });
 
-        return super.generateMethods(treeMaker, names, element, jcClassDecl);
+        return methodDecls.toArray(new JCMethodDecl[]{});
     }
 
     private JCMethodDecl createGetterMethod(TreeMaker treeMaker, Names names, JCVariableDecl field) {
@@ -54,7 +57,7 @@ public class SetterGetterMethodGenerator extends AbstractCodeGenerator {
         return treeMaker.MethodDef(
                 treeMaker.Modifiers(Flags.PUBLIC),
                 names.fromString("set" + this.toTitleCase(field.getName().toString())),
-                (JCExpression) field.getType(),
+                treeMaker.Ident(names.fromString(element.getSimpleName().toString())),
                 // 泛型参数
                 List.nil(),
                 // 方法参数

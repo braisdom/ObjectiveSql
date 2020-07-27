@@ -48,6 +48,9 @@ public class PersistenceExample {
         @Relation(relationType = RelationType.BELONGS_TO)
         private Member member;
 
+        @Relation(relationType = RelationType.HAS_MANY)
+        private List<OrderLine> orderLines;
+
         @Override
         public String toString() {
             return "Order{" +
@@ -91,12 +94,12 @@ public class PersistenceExample {
         Database.installConnectionFactory(new SqliteConnectionFactory("persistence.db"));
         createTables(Database.getConnectionFactory().getConnection());
 
-        Member newMember = new Member();
-//        newMember.setId(1);
-//        newMember.setNo("100000");
-//        newMember.setName("Lewis");
-//        newMember.setGender(1);
-//        newMember.setMobile("15011112222");
+        Member newMember = new Member()
+        .setId(1)
+        .setNo("100000")
+        .setName("Lewis")
+        .setGender(1)
+        .setMobile("15011112222");
 
         DefaultPersistence<Member> persistence = new DefaultPersistence(Member.class);
         Member member = persistence.save(newMember);

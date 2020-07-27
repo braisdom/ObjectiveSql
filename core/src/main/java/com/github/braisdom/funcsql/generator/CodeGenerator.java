@@ -27,11 +27,17 @@ public interface CodeGenerator {
         }
     }
 
-    ImportItem[] getImportItems();
+    default ImportItem[] getImportItems() {
+        return new ImportItem[0];
+    }
 
-    JCTree.JCVariableDecl[] generateVariables(TreeMaker treeMaker, Names names,
-                                          Element element, JCTree.JCClassDecl jcClassDecl);
+    default JCTree.JCVariableDecl[] generateVariables(TreeMaker treeMaker, Names names,
+                                          Element element, JCTree.JCClassDecl jcClassDecl) {
+        return new JCTree.JCVariableDecl[0];
+    }
 
-    JCTree.JCMethodDecl[] generateMethods(TreeMaker treeMaker, Names names,
-                                          Element element, JCTree.JCClassDecl jcClassDecl);
+    default JCTree.JCMethodDecl[] generateMethods(TreeMaker treeMaker, Names names,
+                                          Element element, JCTree.JCClassDecl jcClassDecl) {
+        return new JCTree.JCMethodDecl[0];
+    }
 }
