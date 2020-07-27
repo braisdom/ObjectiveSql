@@ -147,7 +147,7 @@ class PropertyDescriptorCache<T> {
 			Object defaultObject = ClassUtils.createNewInstance(originalClass);
 			return PropertyUtils.read(defaultObject, propertyDescriptor);
 		} catch (RuntimeException e) {
-			throw new ReflectionException("Failed to determine default value for " + PropertyUtils.getQualifiedPropertyName(originalClass, propertyDescriptor), e);
+			throw new ReflectionException("Failed to determine default name for " + PropertyUtils.getQualifiedPropertyName(originalClass, propertyDescriptor), e);
 		}
 	}
 

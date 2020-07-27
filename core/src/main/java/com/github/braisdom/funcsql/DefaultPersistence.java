@@ -24,8 +24,8 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
             Object[] values = Arrays.stream(fields)
                     .map(field -> PropertyUtils.readDirectly(dirtyObject, field)).toArray(Object[]::new);
             String tableName = Table.getTableName(domainModelClass);
-
             String sql = formatInsertSql(tableName, columnNames);
+
             return sqlExecutor.insert(connection, sql, domainModelClass, values);
         } finally {
             if(connection != null)

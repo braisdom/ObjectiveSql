@@ -69,7 +69,7 @@ public class DefaultSQLExecutor<T> implements SQLExecutor<T> {
             if(primaryKey != null)
                 columnToPropertyOverrides.put(primaryKey.value(), field.getName());
             else if(column != null)
-                columnToPropertyOverrides.put(column.value(), field.getName());
+                columnToPropertyOverrides.put(column.name(), field.getName());
             else
                 columnToPropertyOverrides.put(WordUtil.underscore(field.getName()), field.getName());
         });
