@@ -1,5 +1,6 @@
 package com.github.braisdom.funcsql.example;
 
+import com.github.braisdom.funcsql.ColumnTransition;
 import com.github.braisdom.funcsql.Database;
 import com.github.braisdom.funcsql.PersistenceException;
 import com.github.braisdom.funcsql.annotations.Column;
@@ -7,7 +8,10 @@ import com.github.braisdom.funcsql.annotations.DomainModel;
 import com.github.braisdom.funcsql.annotations.Relation;
 import com.github.braisdom.funcsql.annotations.Volatile;
 import com.github.braisdom.funcsql.relation.RelationType;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
+import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Time;
@@ -23,6 +27,7 @@ public class PersistenceExample {
         private String name;
         private int gender;
 
+        @Column(transition = JsonColumnTransition.class)
         private Map extendedAttributes;
 
         @Volatile
@@ -71,6 +76,21 @@ public class PersistenceExample {
 
         @Relation(relationType = RelationType.BELONGS_TO)
         private Order order;
+    }
+
+    public static class JsonColumnTransition implements ColumnTransition {
+
+        private Gson gson = new GsonBuilder().create();
+
+        @Override
+        public Object sinking(Object object, Field field, Object fieldValue) {
+            return gson.toJson(fieldValue);
+        }
+
+        @Override
+        public Object rising(Object object, Field field, Object fieldValue) {
+            return gson.fromJson(String.valueOf(fieldValue), field.getType());
+        }
     }
 
     private static void createTables(Connection connection) throws SQLException {

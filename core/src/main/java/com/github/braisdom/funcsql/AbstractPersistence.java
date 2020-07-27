@@ -29,10 +29,6 @@ public abstract class AbstractPersistence<T> implements Persistence<T> {
         this.domainModelClass = domainModelClass;
     }
 
-    public Class<T> getDomainModelClass() {
-        return domainModelClass;
-    }
-
     protected Field[] getInsertableFields(Class domainModelClass) throws PersistenceException {
         return getColumnizableFields(domainModelClass, true, false);
     }
@@ -42,8 +38,12 @@ public abstract class AbstractPersistence<T> implements Persistence<T> {
     }
 
     protected Field getPrimaryField(Class domainModelClass) throws PersistenceException {
+        return this.getPrimaryField(domainModelClass, true);
+    }
+
+    protected Field getPrimaryField(Class domainModelClass, boolean ensureExists) throws PersistenceException {
         Field primaryField = Table.getPrimaryField(domainModelClass);
-        if (primaryField == null)
+        if (primaryField == null && ensureExists)
             throw new PersistenceException(String.format("The %s has no primary field", domainModelClass.getSimpleName()));
 
         return primaryField;
@@ -77,7 +77,8 @@ public abstract class AbstractPersistence<T> implements Persistence<T> {
                     if (column == null)
                         return isColumnizable(field) && !field.equals(primaryField);
                     else
-                        return insertable ? column.insertable() : (updatable && column.updatable() && !field.equals(primaryField));
+                        return insertable ? column.insertable() :
+                                (updatable && column.updatable() && !field.equals(primaryField));
                 } else return false;
             }).toArray(Field[]::new);
         } else {
@@ -88,10 +89,15 @@ public abstract class AbstractPersistence<T> implements Persistence<T> {
                     if (column == null)
                         return false;
                     else
-                        return insertable ? column.insertable() : (updatable && column.updatable() && !field.equals(primaryField));
+                        return insertable ? column.insertable() :
+                                (updatable && column.updatable() && !field.equals(primaryField));
                 } else return false;
             }).toArray(Field[]::new);
         }
+    }
+
+    protected boolean hasColumnAnnotation(Field field) {
+        return field.getAnnotation(Column.class) != null;
     }
 
     protected boolean isColumnizable(Field field) {
