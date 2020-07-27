@@ -61,7 +61,7 @@ public final class Database {
     
     public static ConnectionFactory getConnectionFactory() {
         if(connectionFactory == null)
-            throw new IllegalStateException("The connectionFactory must be not null");
+            throw new IllegalStateException("The connectionFactory cannot be null");
         return connectionFactory;
     }
 
