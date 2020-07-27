@@ -29,8 +29,43 @@ public class PersistenceMethodGenerator implements CodeGenerator {
         java.util.List<JCTree.JCMethodDecl> methodDecls = new ArrayList<>();
 
         methodDecls.add(createSaveMethod(treeMaker, names, element));
+        methodDecls.add(createSaveMethod2(treeMaker, names, element));
 
         return methodDecls.toArray(new JCTree.JCMethodDecl[]{});
+    }
+
+    private JCTree.JCMethodDecl createSaveMethod2(TreeMaker treeMaker, Names names, Element element) {
+        ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
+
+        jcStatements.append(
+                treeMaker.Return(treeMaker.Apply(
+                        List.nil(),
+                        treeMaker.Select(
+                                treeMaker.Ident(names.fromString("this")),
+                                names.fromString("save")
+                        )
+                        , List.of(
+                                treeMaker.Select(
+                                        treeMaker.Ident(names.fromString("Boolean")),
+                                        names.fromString("FALSE")
+                                )
+                        )
+                ))
+        );
+
+        return treeMaker.MethodDef(
+                treeMaker.Modifiers(Flags.PUBLIC + Flags.FINAL),
+                names.fromString("save"),
+                treeMaker.Ident(names.fromString(element.getSimpleName().toString())),
+                List.nil(),
+                List.nil(),
+                List.of(
+                        treeMaker.Throw(treeMaker.Ident(names.fromString("SQLException"))).getExpression(),
+                        treeMaker.Throw(treeMaker.Ident(names.fromString("PersistenceException"))).getExpression()
+                ),
+                treeMaker.Block(0, jcStatements.toList()),
+                null
+        );
     }
 
     private JCTree.JCMethodDecl createSaveMethod(TreeMaker treeMaker, Names names, Element element) {
@@ -61,7 +96,7 @@ public class PersistenceMethodGenerator implements CodeGenerator {
                                         List.nil(),
                                         treeMaker.Select(
                                                 treeMaker.Ident(names.fromString("persistence")),
-                                                names.fromString("insert")
+                                                names.fromString("save")
                                         )
                                         , List.of(
                                                 treeMaker.Ident(names.fromString("this")),
