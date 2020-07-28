@@ -2,17 +2,17 @@ package com.github.braisdom.funcsql;
 
 import com.github.braisdom.funcsql.annotations.Column;
 import com.github.braisdom.funcsql.annotations.DomainModel;
+import com.github.braisdom.funcsql.annotations.PrimaryKey;
 import com.github.braisdom.funcsql.annotations.Volatile;
+import com.github.braisdom.funcsql.reflection.ClassUtils;
 import com.github.braisdom.funcsql.reflection.PropertyUtils;
 import com.github.braisdom.funcsql.util.StringUtil;
 import com.github.braisdom.funcsql.util.WordUtil;
 
 import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
-public class BeanModelDescriptor implements DomainModelDescriptor {
+public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
 
     private final static List<Class> COLUMNIZABLE_FIELD_TYPES = Arrays.asList(new Class[]{
             String.class, char.class,
@@ -23,12 +23,40 @@ public class BeanModelDescriptor implements DomainModelDescriptor {
             Double.class, double.class
     });
 
-    private final Class<?> domainModelClass;
+    private final Class<T> domainModelClass;
+    private final Map<String, ColumnTransition> columnTransitionMap;
+    private final Map<String, Field> columnToField;
 
-    public BeanModelDescriptor(Class<?> domainModelClass) {
+    public BeanModelDescriptor(Class<T> domainModelClass) {
         Objects.requireNonNull(domainModelClass, "The domainModelClass cannot be null");
 
         this.domainModelClass = domainModelClass;
+        this.columnTransitionMap = new HashMap<>();
+        this.columnToField = new HashMap<>();
+
+        prepareColumnToPropertyOverrides(domainModelClass);
+        instantiateColumnTransitionMap(domainModelClass.getDeclaredFields());
+    }
+
+    @Override
+    public T newInstance() {
+        return ClassUtils.createNewInstance(domainModelClass);
+    }
+
+    @Override
+    public Class getDomainModelClass() {
+        return domainModelClass;
+    }
+
+    @Override
+    public DomainModelDescriptor getRelatedModeDescriptor(Class relatedClass) {
+        return new BeanModelDescriptor(relatedClass);
+    }
+
+    @Override
+    public String[] getColumns() {
+        return Arrays.stream(getColumnizableFields(domainModelClass, true, true))
+                .map(field -> getColumnName(field)).toArray(String[]::new);
     }
 
     @Override
@@ -42,23 +70,44 @@ public class BeanModelDescriptor implements DomainModelDescriptor {
     }
 
     @Override
-    public String[] getColumnNames(boolean insertable, boolean updatable) {
-        return Arrays.stream(getColumnizableFields(domainModelClass, insertable, updatable))
+    public Object getPrimaryValue(Object domainObject) {
+        return PropertyUtils.readDirectly(domainObject, getPrimaryKey());
+    }
+
+    @Override
+    public String[] getInsertableColumns() {
+        return Arrays.stream(getColumnizableFields(domainModelClass, true, false))
                 .map(field -> getColumnName(field)).toArray(String[]::new);
     }
 
     @Override
-    public Object getValue(Object modelObject, String columnName) {
-        return PropertyUtils.readDirectly(modelObject, columnName);
+    public String[] getUpdatableColumns() {
+        return Arrays.stream(getColumnizableFields(domainModelClass, false, true))
+                .map(field -> getColumnName(field)).toArray(String[]::new);
     }
 
     @Override
-    public void setValue(Object modelObject, String columnName, Object columnValue) {
-        PropertyUtils.writeDirectly(modelObject, columnName, columnValue);
+    public String getFieldName(String columnName) {
+        return columnToField.get(columnName).getName();
     }
 
     @Override
-    public ColumnTransition getColumnTransition(String columnName) {
+    public Class getFieldType(String columnName) {
+        return columnToField.get(columnName).getType();
+    }
+
+    @Override
+    public Object getValue(T modelObject, String fieldName) {
+        return PropertyUtils.readDirectly(modelObject, fieldName);
+    }
+
+    @Override
+    public void setValue(T modelObject, String fieldName, Object fieldValue) {
+        PropertyUtils.writeDirectly(modelObject, fieldName, fieldValue);
+    }
+
+    @Override
+    public ColumnTransition getColumnTransition(String fieldName) {
         return null;
     }
 
@@ -74,9 +123,9 @@ public class BeanModelDescriptor implements DomainModelDescriptor {
                 if (volatileAnnotation == null) {
                     if (column == null)
                         return isColumnizable(field) && !field.equals(primaryField);
-                    else
-                        return insertable ? column.insertable() :
-                                (updatable && column.updatable() && !field.equals(primaryField));
+                    else {
+                        return ensureColumnizable(column, field, primaryField, insertable, updatable);
+                    }
                 } else return false;
             }).toArray(Field[]::new);
         } else {
@@ -87,8 +136,7 @@ public class BeanModelDescriptor implements DomainModelDescriptor {
                     if (column == null)
                         return false;
                     else
-                        return insertable ? column.insertable() :
-                                (updatable && column.updatable() && !field.equals(primaryField));
+                        return ensureColumnizable(column, field, primaryField, insertable, updatable);
                 } else return false;
             }).toArray(Field[]::new);
         }
@@ -96,12 +144,49 @@ public class BeanModelDescriptor implements DomainModelDescriptor {
 
     protected String getColumnName(Field field) {
         Column column = field.getAnnotation(Column.class);
-        if(column != null && !StringUtil.isBlank(column.name()))
+        if (column != null && !StringUtil.isBlank(column.name()))
             return column.name();
         else return WordUtil.underscore(field.getName());
     }
 
     protected boolean isColumnizable(Field field) {
         return COLUMNIZABLE_FIELD_TYPES.contains(field.getType());
+    }
+
+    private boolean ensureColumnizable(Column column, Field field, Field primaryField,
+                                       boolean insertable, boolean updatable) {
+        if (insertable && updatable)
+            return true;
+        else if (insertable) {
+            return column.insertable();
+        } else if (updatable) {
+            return (updatable && column.updatable() && !field.equals(primaryField));
+        } else return false;
+    }
+
+    private void prepareColumnToPropertyOverrides(Class<T> rowClass) {
+        Field[] fields = rowClass.getDeclaredFields();
+        Arrays.stream(fields).forEach(field -> {
+            PrimaryKey primaryKey = field.getAnnotation(PrimaryKey.class);
+            Column column = field.getAnnotation(Column.class);
+
+            if (primaryKey != null) {
+                columnToField.put(primaryKey.name(), field);
+            } else if (column != null) {
+                columnToField.put(column.name(), field);
+            } else {
+                columnToField.put(WordUtil.underscore(field.getName()), field);
+            }
+        });
+    }
+
+    private Map<String, ColumnTransition> instantiateColumnTransitionMap(Field[] fields) {
+        Arrays.stream(fields).forEach(field -> {
+            Column column = field.getAnnotation(Column.class);
+            if (column != null && !column.transition().equals(ColumnTransition.class))
+                columnTransitionMap.put(field.getName(), ClassUtils.createNewInstance(column.transition()));
+        });
+
+        return columnTransitionMap;
     }
 }

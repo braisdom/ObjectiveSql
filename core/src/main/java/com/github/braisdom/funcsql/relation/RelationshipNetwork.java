@@ -1,6 +1,7 @@
 package com.github.braisdom.funcsql.relation;
 
 import com.github.braisdom.funcsql.Database;
+import com.github.braisdom.funcsql.DomainModelDescriptor;
 import com.github.braisdom.funcsql.SQLExecutor;
 import com.github.braisdom.funcsql.Table;
 import com.github.braisdom.funcsql.util.StringUtil;
@@ -15,13 +16,13 @@ public class RelationshipNetwork implements RelationProcessor.Context {
     private static final String SELECT_RELATION_STATEMENT = "SELECT * FROM %s WHERE %s";
 
     private final Connection connection;
-    private final Class baseClass;
+    private final DomainModelDescriptor domainModelDescriptor;
 
     private final Map<Class, List> relationObjectsMap;
 
-    public RelationshipNetwork(Connection connection, Class baseClass) {
+    public RelationshipNetwork(Connection connection, DomainModelDescriptor domainModelDescriptor) {
         this.connection = connection;
-        this.baseClass = baseClass;
+        this.domainModelDescriptor = domainModelDescriptor;
 
         this.relationObjectsMap = new HashMap<>();
     }
@@ -43,10 +44,10 @@ public class RelationshipNetwork implements RelationProcessor.Context {
     }
 
     public void process(List rows, Relationship[] relationships) throws SQLException {
-        catchObjects(baseClass, rows);
+        catchObjects(domainModelDescriptor.getDomainModelClass(), rows);
 
         List<Relationship> baseRelationships = Arrays.stream(relationships)
-                .filter(r -> r.getBaseClass().equals(baseClass)).collect(Collectors.toList());
+                .filter(r -> r.getBaseClass().equals(domainModelDescriptor.getDomainModelClass())).collect(Collectors.toList());
 
         for (Relationship relationship : baseRelationships)
             setupAssociatedObjects(relationship, new ArrayList<>(Arrays.asList(relationships)));
@@ -76,7 +77,7 @@ public class RelationshipNetwork implements RelationProcessor.Context {
                 condition);
         String relationTableQuerySql = String.format(SELECT_RELATION_STATEMENT, relationTableName, relationConditions);
 
-        return sqlExecutor.query(connection, relationTableQuerySql, clazz);
+        return sqlExecutor.query(connection, relationTableQuerySql, domainModelDescriptor.getRelatedModeDescriptor(clazz));
     }
 
     protected void catchObjects(Class clazz, List objects) {

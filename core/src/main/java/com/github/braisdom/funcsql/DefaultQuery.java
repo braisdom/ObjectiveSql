@@ -17,18 +17,23 @@ public class DefaultQuery<T> extends AbstractQuery<T> {
         super(domainModelClass);
     }
 
+    public DefaultQuery(DomainModelDescriptor<T> domainModelDescriptor) {
+        super(domainModelDescriptor);
+    }
+
     @Override
     public List<T> execute(Relationship... relationships) throws SQLException {
         ConnectionFactory connectionFactory = Database.getConnectionFactory();
         Connection connection = connectionFactory.getConnection();
 
         try {
-            String sql = createQuerySQL(getTableName(domainModelClass), projection, filter, groupBy,
+            String tableName = domainModelDescriptor.getTableName();
+            String sql = createQuerySQL(tableName, projection, filter, groupBy,
                     having, orderBy, offset, limit);
-            List<T> rows = executeInternally(connection, domainModelClass, sql);
+            List<T> rows = executeInternally(connection, sql);
 
             if (relationships.length > 0)
-                new RelationshipNetwork(connection, domainModelClass).process(rows, relationships);
+                new RelationshipNetwork(connection, domainModelDescriptor).process(rows, relationships);
 
             return rows;
         } finally {

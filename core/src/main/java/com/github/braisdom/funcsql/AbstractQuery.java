@@ -6,7 +6,7 @@ import java.util.List;
 
 public abstract class AbstractQuery<T> implements Query<T> {
 
-    protected final Class<T> domainModelClass;
+    protected final DomainModelDescriptor<T> domainModelDescriptor;
 
     protected int limit = -1;
     protected int offset = -1;
@@ -18,7 +18,11 @@ public abstract class AbstractQuery<T> implements Query<T> {
     protected String having;
 
     public AbstractQuery(Class<T> domainModelClass) {
-        this.domainModelClass = domainModelClass;
+        this(new BeanModelDescriptor<>(domainModelClass));
+    }
+
+    public AbstractQuery(DomainModelDescriptor<T> domainModelDescriptor) {
+        this.domainModelDescriptor = domainModelDescriptor;
     }
 
     @Override
@@ -63,9 +67,9 @@ public abstract class AbstractQuery<T> implements Query<T> {
         return this;
     }
 
-    protected <C> List<C> executeInternally(Connection connection, Class<C> domainModelClass, String sql) throws SQLException {
+    protected <C> List<C> executeInternally(Connection connection, String sql) throws SQLException {
         SQLExecutor sqlExecutor = Database.getSqlExecutor();
-        return sqlExecutor.query(connection, sql, domainModelClass);
+        return sqlExecutor.query(connection, sql, domainModelDescriptor);
     }
 
     protected List<Row> executeRawInternally(String sql) throws SQLException {

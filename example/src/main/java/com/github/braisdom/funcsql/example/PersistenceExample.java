@@ -2,6 +2,7 @@ package com.github.braisdom.funcsql.example;
 
 import com.github.braisdom.funcsql.ColumnTransition;
 import com.github.braisdom.funcsql.Database;
+import com.github.braisdom.funcsql.DomainModelDescriptor;
 import com.github.braisdom.funcsql.PersistenceException;
 import com.github.braisdom.funcsql.annotations.Column;
 import com.github.braisdom.funcsql.annotations.DomainModel;
@@ -11,7 +12,6 @@ import com.github.braisdom.funcsql.relation.RelationType;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Time;
@@ -27,22 +27,13 @@ public class PersistenceExample {
         private String no;
         private String name;
         private int gender;
+        private String mobile;
 
         @Column(transition = JsonColumnTransition.class)
         private Map extendedAttributes;
 
         @Volatile
-        private String mobile;
-
-        @Relation(relationType = RelationType.HAS_MANY)
-        private List<Order> orders;
-
-        @Override
-        public String toString() {
-            return "Member{" +
-                    "name='" + name + '\'' +
-                    '}';
-        }
+        private String otherInfo;
     }
 
     @DomainModel
@@ -59,13 +50,6 @@ public class PersistenceExample {
 
         @Relation(relationType = RelationType.HAS_MANY)
         private List<OrderLine> orderLines;
-
-        @Override
-        public String toString() {
-            return "Order{" +
-                    "no='" + no + '\'' +
-                    '}';
-        }
     }
 
     @DomainModel
@@ -84,13 +68,13 @@ public class PersistenceExample {
         private Gson gson = new GsonBuilder().create();
 
         @Override
-        public Object sinking(Object object, Field field, Object fieldValue) {
+        public Object sinking(Object object, DomainModelDescriptor domainModelDescriptor, String fieldName, Object fieldValue) {
             return gson.toJson(fieldValue);
         }
 
         @Override
-        public Object rising(Object object, Field field, Object fieldValue) {
-            return gson.fromJson(String.valueOf(fieldValue), field.getType());
+        public Object rising(Object object, DomainModelDescriptor domainModelDescriptor, String fieldName, Object fieldValue) {
+            return gson.fromJson(String.valueOf(fieldValue), domainModelDescriptor.getFieldType(fieldName));
         }
     }
 

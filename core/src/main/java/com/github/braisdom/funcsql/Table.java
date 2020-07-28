@@ -8,12 +8,15 @@ import com.github.braisdom.funcsql.util.WordUtil;
 import java.lang.reflect.Field;
 import java.util.Objects;
 
+/**
+ *
+ * @author braisdom
+ * @since 1.0
+ */
 public final class Table {
 
     public static final String DEFAULT_PRIMARY_KEY = "id";
     public static final String DEFAULT_KEY_SUFFIX = "id";
-
-    public static final ColumnTransition DEFAULT_TRANSITION = new ColumnTransition() {};
 
     public static final String getTableName(Class baseClass) {
         Objects.requireNonNull(baseClass, "The baseClass cannot be null");
@@ -35,10 +38,10 @@ public final class Table {
         for(Field field:fields) {
             PrimaryKey primaryKey = field.getDeclaredAnnotation(PrimaryKey.class);
             if(primaryKey != null) {
-                if(StringUtil.isBlank(primaryKey.value()))
+                if(StringUtil.isBlank(primaryKey.name()))
                     return WordUtil.underscore(field.getName());
                 else
-                    return primaryKey.value();
+                    return primaryKey.name();
             }
         }
         return Table.DEFAULT_PRIMARY_KEY;
@@ -66,7 +69,7 @@ public final class Table {
                 defaultField = field;
         }
 
-        return defaultField == null ? primaryField : defaultField;
+        return primaryField == null ? defaultField : primaryField;
     }
 
     public static final String encodeDefaultKey(String name) {

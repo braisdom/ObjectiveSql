@@ -1,16 +1,32 @@
 package com.github.braisdom.funcsql;
 
-public interface DomainModelDescriptor {
+public interface DomainModelDescriptor<T> {
+
+    T newInstance();
 
     String getTableName();
 
     String getPrimaryKey();
 
-    String[] getColumnNames(boolean insertable, boolean updatable);
+    Object getPrimaryValue(T domainObject);
 
-    Object getValue(Object modelObject, String columnName);
+    Class getDomainModelClass();
 
-    void setValue(Object modelObject, String columnName, Object columnValue);
+    DomainModelDescriptor getRelatedModeDescriptor(Class relatedClass);
 
-    ColumnTransition getColumnTransition(String columnName);
+    String[] getColumns();
+
+    String[] getInsertableColumns();
+
+    String[] getUpdatableColumns();
+
+    String getFieldName(String columnName);
+
+    Class getFieldType(String fieldName);
+
+    Object getValue(T modelObject, String fieldName);
+
+    void setValue(T modelObject, String fieldName, Object fieldValue);
+
+    ColumnTransition getColumnTransition(String fieldName);
 }
