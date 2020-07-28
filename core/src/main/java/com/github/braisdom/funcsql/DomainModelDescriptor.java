@@ -1,10 +1,12 @@
 package com.github.braisdom.funcsql;
 
-public interface DomainModelMetadata {
+public interface DomainModelDescriptor {
 
     String getTableName();
 
-    String[] getColumnNames();
+    String getPrimaryKey();
+
+    String[] getColumnNames(boolean insertable, boolean updatable);
 
     Object getValue(Object modelObject, String columnName);
 
