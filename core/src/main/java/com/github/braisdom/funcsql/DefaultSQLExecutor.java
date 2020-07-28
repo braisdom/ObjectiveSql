@@ -107,22 +107,16 @@ class DomainModelHandler implements ResultSetHandler<Object> {
     @Override
     public Object handle(ResultSet rs) throws SQLException {
         Object bean = domainModelDescriptor.newInstance();
+        ResultSetMetaData metaData = rs.getMetaData();
+        int columnCount = metaData.getColumnCount();
 
-        try {
-            ResultSetMetaData metaData = rs.getMetaData();
-            int columnCount = metaData.getColumnCount();
-
-            for (int i = 1; i <= columnCount; i++) {
-                String columnName = metaData.getColumnName(i);
-                String fieldName = domainModelDescriptor.getFieldName(columnName);
-                if (fieldName != null)
-                    domainModelDescriptor.setValue(bean, fieldName, rs.getObject(columnName));
-            }
-
-            return bean;
-        } catch (SQLException ex) {
-            // TODO log it
-            return null;
+        for (int i = 1; i <= columnCount; i++) {
+            String columnName = metaData.getColumnName(i);
+            String fieldName = domainModelDescriptor.getFieldName(columnName);
+            if (fieldName != null)
+                domainModelDescriptor.setValue(bean, fieldName, rs.getObject(columnName));
         }
+
+        return bean;
     }
 }
