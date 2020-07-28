@@ -1,6 +1,6 @@
 package com.github.braisdom.funcsql.generator;
 
-import com.github.braisdom.funcsql.*;
+import com.github.braisdom.funcsql.Persistence;
 import com.sun.tools.javac.code.Flags;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
@@ -10,17 +10,15 @@ import com.sun.tools.javac.util.ListBuffer;
 import com.sun.tools.javac.util.Names;
 
 import javax.lang.model.element.Element;
-import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class PersistenceMethodGenerator implements CodeGenerator {
+public class PersistenceMethodGenerator extends AbstractCodeGenerator {
 
     @Override
     public ImportItem[] getImportItems() {
         java.util.List<ImportItem> importItems = new ArrayList<>();
 
-        importItems.add(new ImportItem(SQLException.class.getPackage().getName(), SQLException.class.getSimpleName()));
-        importItems.add(new ImportItem(PersistenceException.class.getPackage().getName(), PersistenceException.class.getSimpleName()));
+        importItems.addAll(createPersistenceExceptionImport());
 
         return importItems.toArray(new ImportItem[]{});
     }
@@ -110,10 +108,7 @@ public class PersistenceMethodGenerator implements CodeGenerator {
                 treeMaker.Type(new Type.JCVoidType()),
                 List.nil(),
                 List.of(param),
-                List.of(
-                        treeMaker.Throw(treeMaker.Ident(names.fromString("SQLException"))).getExpression(),
-                        treeMaker.Throw(treeMaker.Ident(names.fromString("PersistenceException"))).getExpression()
-                        ),
+                createPersistenceException(treeMaker, names),
                 treeMaker.Block(0, jcStatements.toList()),
                 null
         );
