@@ -4,6 +4,8 @@ import com.github.braisdom.funcsql.annotations.Column;
 import com.github.braisdom.funcsql.reflection.ClassUtils;
 import com.github.braisdom.funcsql.reflection.PropertyUtils;
 import com.github.braisdom.funcsql.util.ArrayUtil;
+import com.github.braisdom.funcsql.util.StringUtil;
+import com.github.braisdom.funcsql.util.WordUtil;
 
 import java.lang.reflect.Field;
 import java.sql.Connection;
@@ -36,7 +38,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
             Field[] fields = getInsertableFields(dirtyObject.getClass());
             Map<String, ColumnTransition<T>> columnTransitionMap = instantiateColumnTransitionMap(fields);
 
-            String[] columnNames = Arrays.stream(fields).map(f -> f.getName()).toArray(String[]::new);
+            String[] columnNames = Arrays.stream(fields).map(field -> getColumnName(field)).toArray(String[]::new);
             String tableName = Table.getTableName(domainModelClass);
             String sql = formatInsertSql(tableName, columnNames);
 
@@ -67,7 +69,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
             Map<String, ColumnTransition<T>> columnTransitionMap = instantiateColumnTransitionMap(fields);
 
             Object[][] values = new Object[dirtyObject.length][fields.length];
-            String[] columnNames = Arrays.stream(fields).map(f -> f.getName()).toArray(String[]::new);
+            String[] columnNames = Arrays.stream(fields).map(field -> getColumnName(field)).toArray(String[]::new);
 
             for (int i = 0; i < dirtyObject.length; i++) {
                 for (int t = 0; t < fields.length; t++) {
@@ -114,7 +116,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
         StringBuilder updatesSql = new StringBuilder();
 
         Arrays.stream(fields).forEach(field -> {
-            updatesSql.append(field.getName()).append("=").append("?").append(",");
+            updatesSql.append(getColumnName(field)).append("=").append("?").append(",");
         });
 
         updatesSql.delete(updatesSql.length() - 1, updatesSql.length());
@@ -127,6 +129,13 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
     @Override
     public int delete(T dirtyObject) throws SQLException, PersistenceException {
         return 0;
+    }
+
+    protected String getColumnName(Field field) {
+        Column column = field.getAnnotation(Column.class);
+        if(column != null && !StringUtil.isBlank(column.name()))
+            return column.name();
+        else return WordUtil.underscore(field.getName());
     }
 
     protected Object requirePrimaryKey(T object) throws PersistenceException {

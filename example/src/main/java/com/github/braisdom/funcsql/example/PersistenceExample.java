@@ -15,6 +15,7 @@ import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Time;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -101,11 +102,11 @@ public class PersistenceExample {
         } catch (SQLException ex) {
         }
 
-        connection.createStatement().execute("create table members (id INTEGER AUTOINCREMENT, no TEXT, " +
+        connection.createStatement().execute("create table members (id INTEGER, no TEXT, " +
                 "name TEXT, gender INTEGER, mobile TEXT, extended_attributes TEXT)");
-        connection.createStatement().execute("create table orders (id INTEGER AUTOINCREMENT, no TEXT, member_id INTEGER, " +
+        connection.createStatement().execute("create table orders (id INTEGER, no TEXT, member_id INTEGER, " +
                 "amount REAL, quantity REAL, sales_at TEXT)");
-        connection.createStatement().execute("create table order_lines (id integer AUTOINCREMENT, order_no TEXT, amount REAL, quantity REAL)");
+        connection.createStatement().execute("create table order_lines (id integer, order_no TEXT, amount REAL, quantity REAL)");
 
 //        connection.createStatement().execute("insert into members(id, no, name, gender, mobile) " +
 //                "values (1, '000001', 'Smith', 1, '15000000001'), (2, '000002', 'Lewis', 2, '15000000002')");
@@ -118,12 +119,16 @@ public class PersistenceExample {
         Database.installConnectionFactory(new SqliteConnectionFactory("persistence.db"));
         createTables(Database.getConnectionFactory().getConnection());
 
+        Map<String, String> extendedAttributes = new HashMap<>();
+
+        extendedAttributes.put("name", "hello");
+
         Member newMember = new Member()
-//        .setId(1)
-        .setNo("100000")
-        .setName("Smith")
-        .setGender(1)
-        .setMobile("15011112222");
+                .setNo("100000")
+                .setName("Smith")
+                .setGender(1)
+                .setExtendedAttributes(extendedAttributes)
+                .setMobile("15011112222");
 
         newMember.save();
 
