@@ -29,7 +29,7 @@ public class DefaultSQLExecutor<T> implements SQLExecutor<T> {
     }
 
     @Override
-    public List<T> query(Connection connection, String sql,  DomainModelDescriptor domainModelDescriptor) throws SQLException {
+    public List<T> query(Connection connection, String sql, DomainModelDescriptor domainModelDescriptor) throws SQLException {
         String[] columnNames = domainModelDescriptor.getColumns();
         ResultSetHandler handler = new DomainModelListHandler(domainModelDescriptor, columnNames);
         return (List<T>) queryRunner.query(connection, sql, handler);
@@ -51,10 +51,8 @@ public class DefaultSQLExecutor<T> implements SQLExecutor<T> {
     @Override
     public T insert(Connection connection, String sql,
                     DomainModelDescriptor domainModelDescriptor, Object... params) throws SQLException {
-        String[] columnNames = domainModelDescriptor.getInsertableColumns();
-        ResultSetHandler handler = new DomainModelHandler(domainModelDescriptor, columnNames);
-
-        return (T) queryRunner.insert(connection, sql, handler, params);
+        return (T) queryRunner.insert(connection, sql,
+                new DomainModelHandler(domainModelDescriptor), params);
     }
 
     @Override
@@ -113,10 +111,14 @@ class DomainModelListHandler implements ResultSetHandler<List> {
 
     private Object createBean(ResultSet rs) throws SQLException {
         Object bean = domainModelDescriptor.newInstance();
+        ResultSetMetaData metaData = rs.getMetaData();
+        int columnCount = metaData.getColumnCount();
 
-        for (String columnName : columnNames) {
+        for (int i = 1; i <= columnCount; i++) {
+            String columnName = metaData.getColumnName(i);
             String fieldName = domainModelDescriptor.getFieldName(columnName);
-            domainModelDescriptor.setValue(bean, fieldName, rs.getObject(columnName));
+            if(fieldName != null)
+                domainModelDescriptor.setValue(bean, fieldName, rs.getObject(columnName));
         }
 
         return bean;
@@ -126,22 +128,24 @@ class DomainModelListHandler implements ResultSetHandler<List> {
 class DomainModelHandler implements ResultSetHandler<Object> {
 
     private final DomainModelDescriptor domainModelDescriptor;
-    private final String[] columnNames;
 
-    public DomainModelHandler(DomainModelDescriptor domainModelDescriptor, String[] columnNames) {
+    public DomainModelHandler(DomainModelDescriptor domainModelDescriptor) {
         this.domainModelDescriptor = domainModelDescriptor;
-        this.columnNames = columnNames;
     }
 
     @Override
     public Object handle(ResultSet rs) throws SQLException {
         Object bean = domainModelDescriptor.newInstance();
+        ResultSetMetaData metaData = rs.getMetaData();
+        int columnCount = metaData.getColumnCount();
 
-        for (String columnName : columnNames) {
+        for (int i = 1; i <= columnCount; i++) {
+            String columnName = metaData.getColumnName(i);
             String fieldName = domainModelDescriptor.getFieldName(columnName);
-            domainModelDescriptor.setValue(bean, fieldName, rs.getObject(columnName));
+            if(fieldName != null)
+                domainModelDescriptor.setValue(bean, fieldName, rs.getObject(columnName));
         }
 
-        return rs.next() ? bean : null;
+        return bean;
     }
 }

@@ -87,8 +87,9 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
     }
 
     @Override
-    public String getFieldName(String columnName) {
-        return columnToField.get(columnName).getName();
+    public String getFieldName(String fieldName) {
+        Field field = columnToField.get(fieldName);
+        return field == null ? null : field.getName();
     }
 
     @Override
@@ -122,7 +123,7 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
                 Volatile volatileAnnotation = field.getAnnotation(Volatile.class);
                 if (volatileAnnotation == null) {
                     if (column == null)
-                        return isColumnizable(field) && !field.equals(primaryField);
+                        return isColumnizable(field);
                     else {
                         return ensureColumnizable(column, field, primaryField, insertable, updatable);
                     }
@@ -171,9 +172,13 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
             Column column = field.getAnnotation(Column.class);
 
             if (primaryKey != null) {
-                columnToField.put(primaryKey.name(), field);
+                String columnName = StringUtil.isBlank(primaryKey.name())
+                        ? WordUtil.underscore(field.getName()) : primaryKey.name();
+                columnToField.put(columnName, field);
             } else if (column != null) {
-                columnToField.put(column.name(), field);
+                String columnName = StringUtil.isBlank(column.name())
+                        ? WordUtil.underscore(field.getName()) : primaryKey.name();
+                columnToField.put(columnName, field);
             } else {
                 columnToField.put(WordUtil.underscore(field.getName()), field);
             }
