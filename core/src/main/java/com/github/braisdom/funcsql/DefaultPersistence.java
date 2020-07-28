@@ -53,7 +53,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
 
             return sqlExecutor.insert(connection, sql, domainModelClass, values);
         } finally {
-            if (connection != null)
+            if (connection != null && !connection.isClosed())
                 connection.close();
         }
     }
@@ -87,7 +87,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
 
             return sqlExecutor.insert(connection, sql, domainModelClass, values);
         } finally {
-            if (connection != null)
+            if (connection != null && !connection.isClosed())
                 connection.close();
         }
     }
