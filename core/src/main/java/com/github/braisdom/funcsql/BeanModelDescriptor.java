@@ -109,7 +109,7 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
 
     @Override
     public ColumnTransition getColumnTransition(String fieldName) {
-        return null;
+        return columnTransitionMap.get(fieldName);
     }
 
     protected Field[] getColumnizableFields(Class domainModelClass, boolean insertable, boolean updatable) {

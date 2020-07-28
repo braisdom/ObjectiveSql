@@ -1,23 +1,16 @@
 package com.github.braisdom.funcsql;
 
-import com.github.braisdom.funcsql.annotations.Column;
-import com.github.braisdom.funcsql.annotations.PrimaryKey;
-import com.github.braisdom.funcsql.util.WordUtil;
-import org.apache.commons.dbutils.*;
-import org.apache.commons.dbutils.handlers.BeanHandler;
-import org.apache.commons.dbutils.handlers.BeanListHandler;
+import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.dbutils.handlers.MapListHandler;
 
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.sql.*;
-import java.util.*;
-import java.util.Date;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class DefaultSQLExecutor<T> implements SQLExecutor<T> {
@@ -30,9 +23,8 @@ public class DefaultSQLExecutor<T> implements SQLExecutor<T> {
 
     @Override
     public List<T> query(Connection connection, String sql, DomainModelDescriptor domainModelDescriptor) throws SQLException {
-        String[] columnNames = domainModelDescriptor.getColumns();
-        ResultSetHandler handler = new DomainModelListHandler(domainModelDescriptor, columnNames);
-        return (List<T>) queryRunner.query(connection, sql, handler);
+        return (List<T>) queryRunner.query(connection, sql,
+                new DomainModelListHandler(domainModelDescriptor));
     }
 
     @Override
@@ -65,42 +57,21 @@ public class DefaultSQLExecutor<T> implements SQLExecutor<T> {
     public int delete(Connection connection, String sql) throws SQLException {
         return queryRunner.update(connection, sql);
     }
-
-    private Map<String, String> prepareColumnToPropertyOverrides(Class<T> rowClass) {
-        Map<String, String> columnToPropertyOverrides = new HashMap<>();
-        Field[] fields = rowClass.getDeclaredFields();
-        Arrays.stream(fields).forEach(field -> {
-            PrimaryKey primaryKey = field.getAnnotation(PrimaryKey.class);
-            Column column = field.getAnnotation(Column.class);
-
-            if (primaryKey != null)
-                columnToPropertyOverrides.put(primaryKey.name(), field.getName());
-            else if (column != null)
-                columnToPropertyOverrides.put(column.name(), field.getName());
-            else
-                columnToPropertyOverrides.put(WordUtil.underscore(field.getName()), field.getName());
-        });
-        return columnToPropertyOverrides;
-    }
 }
 
 class DomainModelListHandler implements ResultSetHandler<List> {
 
     private final DomainModelDescriptor domainModelDescriptor;
-    private final String[] columnNames;
 
-    public DomainModelListHandler(DomainModelDescriptor domainModelDescriptor, String[] columnNames) {
+    public DomainModelListHandler(DomainModelDescriptor domainModelDescriptor) {
         this.domainModelDescriptor = domainModelDescriptor;
-        this.columnNames = columnNames;
     }
 
     @Override
     public List handle(ResultSet rs) throws SQLException {
         List results = new ArrayList();
 
-        if (!rs.next()) {
-            return results;
-        }
+        if (!rs.next()) return results;
 
         do {
             results.add(createBean(rs));
@@ -117,7 +88,7 @@ class DomainModelListHandler implements ResultSetHandler<List> {
         for (int i = 1; i <= columnCount; i++) {
             String columnName = metaData.getColumnName(i);
             String fieldName = domainModelDescriptor.getFieldName(columnName);
-            if(fieldName != null)
+            if (fieldName != null)
                 domainModelDescriptor.setValue(bean, fieldName, rs.getObject(columnName));
         }
 
@@ -136,16 +107,22 @@ class DomainModelHandler implements ResultSetHandler<Object> {
     @Override
     public Object handle(ResultSet rs) throws SQLException {
         Object bean = domainModelDescriptor.newInstance();
-        ResultSetMetaData metaData = rs.getMetaData();
-        int columnCount = metaData.getColumnCount();
 
-        for (int i = 1; i <= columnCount; i++) {
-            String columnName = metaData.getColumnName(i);
-            String fieldName = domainModelDescriptor.getFieldName(columnName);
-            if(fieldName != null)
-                domainModelDescriptor.setValue(bean, fieldName, rs.getObject(columnName));
+        try {
+            ResultSetMetaData metaData = rs.getMetaData();
+            int columnCount = metaData.getColumnCount();
+
+            for (int i = 1; i <= columnCount; i++) {
+                String columnName = metaData.getColumnName(i);
+                String fieldName = domainModelDescriptor.getFieldName(columnName);
+                if (fieldName != null)
+                    domainModelDescriptor.setValue(bean, fieldName, rs.getObject(columnName));
+            }
+
+            return bean;
+        } catch (SQLException ex) {
+            // TODO log it
+            return null;
         }
-
-        return bean;
     }
 }

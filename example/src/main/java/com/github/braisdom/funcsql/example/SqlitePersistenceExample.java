@@ -9,7 +9,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PersistenceExample {
+public class SqlitePersistenceExample {
 
     private static void createTables(Connection connection) throws SQLException {
 
@@ -34,7 +34,7 @@ public class PersistenceExample {
         extendedAttributes.put("name", "hello");
 
         Domains.Member newMember = new Domains.Member()
-                .setNo("100000")
+                .setNo("200000")
                 .setName("Smith")
                 .setGender(1)
                 .setExtendedAttributes(extendedAttributes)
