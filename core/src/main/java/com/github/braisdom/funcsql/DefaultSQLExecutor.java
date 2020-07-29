@@ -1,13 +1,11 @@
 package com.github.braisdom.funcsql;
 
+import com.github.braisdom.funcsql.transition.ColumnTransitional;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.dbutils.handlers.MapListHandler;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +22,7 @@ public class DefaultSQLExecutor<T> implements SQLExecutor<T> {
     @Override
     public List<T> query(Connection connection, String sql, DomainModelDescriptor domainModelDescriptor) throws SQLException {
         return (List<T>) queryRunner.query(connection, sql,
-                new DomainModelListHandler(domainModelDescriptor));
+                new DomainModelListHandler(domainModelDescriptor, connection.getMetaData()));
     }
 
     @Override
@@ -44,7 +42,7 @@ public class DefaultSQLExecutor<T> implements SQLExecutor<T> {
     public T insert(Connection connection, String sql,
                     DomainModelDescriptor domainModelDescriptor, Object... params) throws SQLException {
         return (T) queryRunner.insert(connection, sql,
-                new DomainModelHandler(domainModelDescriptor), params);
+                new DomainModelHandler(domainModelDescriptor, connection.getMetaData()), params);
     }
 
     @Override
@@ -62,9 +60,12 @@ public class DefaultSQLExecutor<T> implements SQLExecutor<T> {
 class DomainModelListHandler implements ResultSetHandler<List> {
 
     private final DomainModelDescriptor domainModelDescriptor;
+    private final DatabaseMetaData databaseMetaData;
 
-    public DomainModelListHandler(DomainModelDescriptor domainModelDescriptor) {
+    public DomainModelListHandler(DomainModelDescriptor domainModelDescriptor,
+                                  DatabaseMetaData databaseMetaData) {
         this.domainModelDescriptor = domainModelDescriptor;
+        this.databaseMetaData = databaseMetaData;
     }
 
     @Override
@@ -103,9 +104,11 @@ class DomainModelListHandler implements ResultSetHandler<List> {
 class DomainModelHandler implements ResultSetHandler<Object> {
 
     private final DomainModelDescriptor domainModelDescriptor;
+    private final DatabaseMetaData databaseMetaData;
 
-    public DomainModelHandler(DomainModelDescriptor domainModelDescriptor) {
+    public DomainModelHandler(DomainModelDescriptor domainModelDescriptor, DatabaseMetaData databaseMetaData) {
         this.domainModelDescriptor = domainModelDescriptor;
+        this.databaseMetaData = databaseMetaData;
     }
 
     @Override

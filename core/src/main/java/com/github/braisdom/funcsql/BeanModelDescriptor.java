@@ -6,6 +6,7 @@ import com.github.braisdom.funcsql.annotations.PrimaryKey;
 import com.github.braisdom.funcsql.annotations.Volatile;
 import com.github.braisdom.funcsql.reflection.ClassUtils;
 import com.github.braisdom.funcsql.reflection.PropertyUtils;
+import com.github.braisdom.funcsql.transition.ColumnTransitional;
 import com.github.braisdom.funcsql.util.StringUtil;
 import com.github.braisdom.funcsql.util.WordUtil;
 

@@ -1,5 +1,7 @@
 package com.github.braisdom.funcsql;
 
+import com.github.braisdom.funcsql.transition.ColumnTransitional;
+
 public interface DomainModelDescriptor<T> {
 
     T newInstance();

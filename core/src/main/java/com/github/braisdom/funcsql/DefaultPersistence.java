@@ -1,6 +1,7 @@
 package com.github.braisdom.funcsql;
 
 import com.github.braisdom.funcsql.reflection.PropertyUtils;
+import com.github.braisdom.funcsql.transition.ColumnTransitional;
 import com.github.braisdom.funcsql.util.ArrayUtil;
 
 import java.sql.Connection;

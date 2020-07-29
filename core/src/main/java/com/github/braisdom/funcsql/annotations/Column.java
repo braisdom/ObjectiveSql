@@ -1,6 +1,6 @@
 package com.github.braisdom.funcsql.annotations;
 
-import com.github.braisdom.funcsql.ColumnTransitional;
+import com.github.braisdom.funcsql.transition.ColumnTransitional;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
