@@ -14,6 +14,7 @@
  */
 package com.github.braisdom.funcsql.generator;
 
+import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.JCTree.JCExpression;
 import com.sun.tools.javac.tree.JCTree.JCVariableDecl;
 import com.sun.tools.javac.util.List;
@@ -35,6 +36,7 @@ class FieldBuilder {
     return new FieldBuilder();
   }
 
+  private JCTree.JCAnnotation[] annotations = {};
   private Class<?> type;
   private String name;
   private long modifiers;
@@ -55,6 +57,11 @@ class FieldBuilder {
     return this;
   }
 
+  FieldBuilder withAnnotations(JCTree.JCAnnotation... annotations) {
+    this.annotations = annotations;
+    return this;
+  }
+
   FieldBuilder withArgs(JCExpression... newArgs) {
     args = List.from(newArgs);
     return this;
@@ -62,9 +69,14 @@ class FieldBuilder {
 
   JCVariableDecl buildWith(JavacNode node) {
     JavacTreeMaker treeMaker = node.getTreeMaker();
+    JCTree.JCModifiers jcModifiers = treeMaker.Modifiers(modifiers);
     JCExpression classType = chainDots(node, splitNameOf(type));
-    JCExpression newVar = treeMaker.NewClass(null, null, classType, args, null);
-    return treeMaker.VarDef(treeMaker.Modifiers(modifiers), node.toName(name), classType, null);
+
+    for(JCTree.JCAnnotation annotation : annotations) {
+      jcModifiers.annotations = jcModifiers.annotations.append(annotation);
+    }
+
+    return treeMaker.VarDef(jcModifiers, node.toName(name), classType, null);
   }
 
   private FieldBuilder() {}
