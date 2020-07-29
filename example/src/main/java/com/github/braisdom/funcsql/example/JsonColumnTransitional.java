@@ -1,11 +1,11 @@
 package com.github.braisdom.funcsql.example;
 
-import com.github.braisdom.funcsql.ColumnTransition;
+import com.github.braisdom.funcsql.ColumnTransitional;
 import com.github.braisdom.funcsql.DomainModelDescriptor;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-public class JsonColumnTransition implements ColumnTransition {
+public class JsonColumnTransitional implements ColumnTransitional {
 
     private Gson gson = new GsonBuilder().create();
 

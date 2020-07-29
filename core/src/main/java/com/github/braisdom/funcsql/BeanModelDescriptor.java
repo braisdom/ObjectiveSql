@@ -24,7 +24,7 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
     });
 
     private final Class<T> domainModelClass;
-    private final Map<String, ColumnTransition> columnTransitionMap;
+    private final Map<String, ColumnTransitional> columnTransitionMap;
     private final Map<String, Field> columnToField;
 
     public BeanModelDescriptor(Class<T> domainModelClass) {
@@ -117,7 +117,7 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
     }
 
     @Override
-    public ColumnTransition getColumnTransition(String fieldName) {
+    public ColumnTransitional getColumnTransition(String fieldName) {
         return columnTransitionMap.get(fieldName);
     }
 
@@ -194,10 +194,10 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
         });
     }
 
-    private Map<String, ColumnTransition> instantiateColumnTransitionMap(Field[] fields) {
+    private Map<String, ColumnTransitional> instantiateColumnTransitionMap(Field[] fields) {
         Arrays.stream(fields).forEach(field -> {
             Column column = field.getAnnotation(Column.class);
-            if (column != null && !column.transition().equals(ColumnTransition.class))
+            if (column != null && !column.transition().equals(ColumnTransitional.class))
                 columnTransitionMap.put(field.getName(), ClassUtils.createNewInstance(column.transition()));
         });
 

@@ -1,6 +1,6 @@
 package com.github.braisdom.funcsql;
 
-public interface ColumnTransition<T> {
+public interface ColumnTransitional<T> {
 
     default Object sinking(T object, DomainModelDescriptor domainModelDescriptor, String fieldName, Object fieldValue) {
         return fieldValue;

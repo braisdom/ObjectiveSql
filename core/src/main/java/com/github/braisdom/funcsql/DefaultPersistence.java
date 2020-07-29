@@ -40,9 +40,9 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
                     .map(columnName -> {
                         String fieldName = domainModelDescriptor.getFieldName(columnName);
 
-                        ColumnTransition<T> columnTransition = domainModelDescriptor.getColumnTransition(fieldName);
-                        if (columnTransition != null) {
-                            return columnTransition.sinking(dirtyObject, domainModelDescriptor,
+                        ColumnTransitional<T> columnTransitional = domainModelDescriptor.getColumnTransition(fieldName);
+                        if (columnTransitional != null) {
+                            return columnTransitional.sinking(dirtyObject, domainModelDescriptor,
                                     fieldName, PropertyUtils.readDirectly(dirtyObject, fieldName));
                         } else return PropertyUtils.readDirectly(dirtyObject, fieldName);
                     })
@@ -68,10 +68,10 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
 
             for (int i = 0; i < dirtyObject.length; i++) {
                 for (int t = 0; t < columnNames.length; t++) {
-                    ColumnTransition<T> columnTransition = domainModelDescriptor.getColumnTransition(columnNames[t]);
+                    ColumnTransitional<T> columnTransitional = domainModelDescriptor.getColumnTransition(columnNames[t]);
                     String fieldName = domainModelDescriptor.getFieldName(columnNames[t]);
-                    if (columnTransition != null)
-                        values[i][t] = columnTransition.sinking(dirtyObject[i], domainModelDescriptor, fieldName,
+                    if (columnTransitional != null)
+                        values[i][t] = columnTransitional.sinking(dirtyObject[i], domainModelDescriptor, fieldName,
                                 PropertyUtils.readDirectly(dirtyObject[i], fieldName));
                     else
                         values[i][t] = PropertyUtils.readDirectly(dirtyObject[i], fieldName);
@@ -102,9 +102,9 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
         Object[] values = Arrays.stream(columnNames)
                 .map(columnName -> {
                     String fieldName = domainModelDescriptor.getFieldName(columnName);
-                    ColumnTransition<T> columnTransition = domainModelDescriptor.getColumnTransition(fieldName);
-                    if (columnTransition != null)
-                        return columnTransition.sinking(dirtyObject, domainModelDescriptor,
+                    ColumnTransitional<T> columnTransitional = domainModelDescriptor.getColumnTransition(fieldName);
+                    if (columnTransitional != null)
+                        return columnTransitional.sinking(dirtyObject, domainModelDescriptor,
                                 fieldName, PropertyUtils.readDirectly(dirtyObject, fieldName));
                     else return PropertyUtils.readDirectly(dirtyObject, fieldName);
                 })

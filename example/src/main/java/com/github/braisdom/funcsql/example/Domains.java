@@ -7,8 +7,8 @@ import com.github.braisdom.funcsql.annotations.Volatile;
 import com.github.braisdom.funcsql.relation.RelationType;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.SQLException;
-import java.sql.Time;
 import java.util.List;
 import java.util.Map;
 
@@ -27,7 +27,7 @@ public final class Domains {
         @Relation(relationType = RelationType.HAS_MANY)
         private List<Order> orders;
 
-        @Column(transition = JsonColumnTransition.class)
+        @Column(transition = JsonColumnTransitional.class)
         private Map extendedAttributes;
 
         @Volatile
@@ -41,7 +41,7 @@ public final class Domains {
         private long memberId;
         private float amount;
         private float quantity;
-        private Time salesAt;
+        private Date salesAt;
 
         @Relation(relationType = RelationType.BELONGS_TO)
         private Member member;

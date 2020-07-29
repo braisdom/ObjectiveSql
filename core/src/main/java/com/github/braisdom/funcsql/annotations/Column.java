@@ -1,6 +1,6 @@
 package com.github.braisdom.funcsql.annotations;
 
-import com.github.braisdom.funcsql.ColumnTransition;
+import com.github.braisdom.funcsql.ColumnTransitional;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -13,7 +13,7 @@ public @interface Column {
 
     String name() default "";
 
-    Class<? extends ColumnTransition> transition() default ColumnTransition.class;
+    Class<? extends ColumnTransitional> transition() default ColumnTransitional.class;
 
     boolean insertable() default true;
 

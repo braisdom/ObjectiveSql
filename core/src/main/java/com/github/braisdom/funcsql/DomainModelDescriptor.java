@@ -30,5 +30,5 @@ public interface DomainModelDescriptor<T> {
 
     void setValue(T modelObject, String fieldName, Object fieldValue);
 
-    ColumnTransition getColumnTransition(String fieldName);
+    ColumnTransitional getColumnTransition(String fieldName);
 }
