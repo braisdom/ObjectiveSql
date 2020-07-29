@@ -32,10 +32,10 @@ public class QueryExample {
         Domains.createTables(connection);
         prepareData(connection);
 
-        Query<Domains.Member> memberQuery = Domains.Member.createQuery();
-
-        List<Domains.Member> members = memberQuery.execute();
-
-        System.out.println(members);
+//        Query<Domains.Member> memberQuery = Domains.Member.createQuery();
+//
+//        List<Domains.Member> members = memberQuery.execute();
+//
+//        System.out.println(members);
     }
 }

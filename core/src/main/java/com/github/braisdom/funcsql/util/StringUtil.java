@@ -9,4 +9,8 @@ public final class StringUtil {
     public static String encodeExceptionMessage(Exception ex, String addition) {
         return String.format("%s: %s", addition, ex.getMessage());
     }
+
+    public static String[] splitNameOf(Class<?> type) {
+        return type.getName().split("\\.");
+    }
 }

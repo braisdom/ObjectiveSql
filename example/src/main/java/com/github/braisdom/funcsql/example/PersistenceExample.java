@@ -14,14 +14,14 @@ public class PersistenceExample {
         Map<String, String> extendedAttributes = new HashMap<>();
         extendedAttributes.put("name", "hello");
 
-        Domains.Member newMember = new Domains.Member()
-                .setNo("200000")
-                .setName("Smith")
-                .setGender(1)
-                .setExtendedAttributes(extendedAttributes)
-                .setMobile("15011112222");
-
-        newMember.save();
+//        Domains.Member newMember = new Domains.Member()
+//                .setNo("200000")
+//                .setName("Smith")
+//                .setGender(1)
+//                .setExtendedAttributes(extendedAttributes)
+//                .setMobile("15011112222");
+//
+//        newMember.save();
     }
 
     public static void main(String args[]) throws SQLException, PersistenceException {

@@ -15,11 +15,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.18.12</version>
-        </dependency>
-        <dependency>
             <groupId>com.github.braisdom</groupId>
             <artifactId>funcsql-core</artifactId>
             <version>1.0</version>
@@ -53,11 +48,15 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.5.1</version>
                 <configuration>
+                    <!--<annotationProcessors>-->
+                        <!--<annotationProcessor>-->
+                            <!--lombok.core.AnnotationProcessor</annotationProcessor>-->
+                    <!--</annotationProcessors>-->
                     <source>1.8</source>
                     <target>1.8</target>
+                    <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
-
         </plugins>
     </build>
 

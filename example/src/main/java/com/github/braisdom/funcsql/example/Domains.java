@@ -5,6 +5,7 @@ import com.github.braisdom.funcsql.annotations.DomainModel;
 import com.github.braisdom.funcsql.annotations.Relation;
 import com.github.braisdom.funcsql.annotations.Volatile;
 import com.github.braisdom.funcsql.relation.RelationType;
+import lombok.Data;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -18,7 +19,6 @@ public final class Domains {
 
     @DomainModel
     public static class Member {
-        private Integer id;
         private String no;
         private String name;
         private int gender;
@@ -36,7 +36,6 @@ public final class Domains {
 
     @DomainModel
     public static class Order {
-        private Integer id;
         private String no;
         private long memberId;
         private float amount;
@@ -52,7 +51,6 @@ public final class Domains {
 
     @DomainModel
     public static class OrderLine {
-        private Integer id;
         private String orderNo;
         private float amount;
         private float quantity;
