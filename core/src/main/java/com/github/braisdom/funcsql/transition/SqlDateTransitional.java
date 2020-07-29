@@ -5,7 +5,7 @@ import com.github.braisdom.funcsql.DomainModelDescriptor;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSetMetaData;
 
-public class SqlDateTransitional<T> implements ColumnTransitional <T> {
+public class SqlDateTransitional<T> implements ColumnTransitional<T> {
 
     @Override
     public Object sinking(DatabaseMetaData databaseMetaData, ResultSetMetaData resultSetMetaData,
@@ -15,7 +15,7 @@ public class SqlDateTransitional<T> implements ColumnTransitional <T> {
 
     @Override
     public Object rising(DatabaseMetaData databaseMetaData, ResultSetMetaData resultSetMetaData,
-                         T object, DomainModelDescriptor domainModelDescriptor, String fieldName, Object fieldValue) {
+                         T object, DomainModelDescriptor domainModelDescriptor, String columnName, Object fieldValue) {
         return null;
     }
 }

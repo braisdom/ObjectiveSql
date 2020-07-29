@@ -15,6 +15,10 @@ public @interface DomainModel {
 
     boolean fluent() default true;
 
+    Class<?> primaryClass() default Integer.class;
+
+    String primaryName() default "id";
+
     boolean skipNullValueOnUpdating() default true;
 
     boolean allFieldsPersistent() default true;
