@@ -94,7 +94,8 @@ class DomainModelListHandler implements ResultSetHandler<List> {
             if (fieldName != null)
                 domainModelDescriptor.setValue(bean, fieldName,
                         columnTransitional == null ? rs.getObject(columnName)
-                                : columnTransitional.rising(bean, domainModelDescriptor, fieldName, rs.getObject(columnName)));
+                                : columnTransitional.rising(databaseMetaData, metaData, bean,
+                                domainModelDescriptor, fieldName, rs.getObject(columnName)));
         }
 
         return bean;
@@ -125,7 +126,8 @@ class DomainModelHandler implements ResultSetHandler<Object> {
             if (fieldName != null)
                 domainModelDescriptor.setValue(bean, fieldName,
                         columnTransitional == null ? rs.getObject(columnName)
-                                : columnTransitional.rising(bean, domainModelDescriptor, fieldName, rs.getObject(columnName)));
+                                : columnTransitional.rising(databaseMetaData, metaData, bean,
+                                domainModelDescriptor, fieldName, rs.getObject(columnName)));
         }
 
         return bean;
