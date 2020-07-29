@@ -17,7 +17,9 @@ public @interface DomainModel {
 
     Class<?> primaryClass() default Integer.class;
 
-    String primaryName() default "id";
+    String primaryColumnName() default "id";
+
+    String primaryFieldName() default "id";
 
     boolean skipNullValueOnUpdating() default true;
 
