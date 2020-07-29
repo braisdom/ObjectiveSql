@@ -14,16 +14,15 @@
  */
 package com.github.braisdom.funcsql.generator;
 
+import com.sun.tools.javac.tree.JCTree.JCExpression;
+import com.sun.tools.javac.tree.JCTree.JCVariableDecl;
+import com.sun.tools.javac.util.List;
+import lombok.javac.JavacNode;
+import lombok.javac.JavacTreeMaker;
+
 import static com.github.braisdom.funcsql.util.StringUtil.splitNameOf;
 import static com.sun.tools.javac.util.List.nil;
 import static lombok.javac.handlers.JavacHandlerUtil.chainDots;
-import lombok.javac.JavacNode;
-
-import com.sun.tools.javac.tree.JCTree.JCExpression;
-import com.sun.tools.javac.tree.JCTree.JCVariableDecl;
-import com.sun.tools.javac.tree.*;
-import com.sun.tools.javac.util.List;
-import lombok.javac.JavacTreeMaker;
 
 /**
  * Simplifies creation of fields.
