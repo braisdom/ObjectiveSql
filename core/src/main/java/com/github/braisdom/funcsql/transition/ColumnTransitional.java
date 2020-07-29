@@ -7,7 +7,7 @@ import java.sql.ResultSetMetaData;
 
 public interface ColumnTransitional<T> {
 
-    default Object sinking(DatabaseMetaData databaseMetaData, ResultSetMetaData resultSetMetaData,
+    default Object sinking(DatabaseMetaData databaseMetaData,
                            T object, DomainModelDescriptor domainModelDescriptor,
                            String fieldName, Object fieldValue) {
         return fieldValue;

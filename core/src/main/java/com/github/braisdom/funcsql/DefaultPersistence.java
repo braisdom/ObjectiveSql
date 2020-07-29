@@ -3,6 +3,7 @@ package com.github.braisdom.funcsql;
 import com.github.braisdom.funcsql.reflection.PropertyUtils;
 import com.github.braisdom.funcsql.transition.ColumnTransitional;
 import com.github.braisdom.funcsql.util.ArrayUtil;
+import com.github.braisdom.funcsql.util.FunctionWithThrowable;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -38,15 +39,17 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
             String sql = formatInsertSql(tableName, columnNames);
 
             Object[] values = Arrays.stream(columnNames)
-                    .map(columnName -> {
-                        String fieldName = domainModelDescriptor.getFieldName(columnName);
+                    .map(
+                            FunctionWithThrowable.castFunctionWithThrowable(columnName -> {
+                                String fieldName = domainModelDescriptor.getFieldName(columnName);
 
-                        ColumnTransitional<T> columnTransitional = domainModelDescriptor.getColumnTransition(fieldName);
-                        if (columnTransitional != null) {
-                            return columnTransitional.sinking(dirtyObject, domainModelDescriptor,
-                                    fieldName, PropertyUtils.readDirectly(dirtyObject, fieldName));
-                        } else return PropertyUtils.readDirectly(dirtyObject, fieldName);
-                    })
+                                ColumnTransitional<T> columnTransitional = domainModelDescriptor.getColumnTransition(fieldName);
+                                if (columnTransitional != null) {
+                                    return columnTransitional.sinking(connection.getMetaData(),
+                                            dirtyObject, domainModelDescriptor,
+                                            fieldName, PropertyUtils.readDirectly(dirtyObject, fieldName));
+                                } else return PropertyUtils.readDirectly(dirtyObject, fieldName);
+                            }))
                     .toArray(Object[]::new);
 
             return sqlExecutor.insert(connection, sql, domainModelDescriptor, values);
@@ -72,7 +75,8 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
                     ColumnTransitional<T> columnTransitional = domainModelDescriptor.getColumnTransition(columnNames[t]);
                     String fieldName = domainModelDescriptor.getFieldName(columnNames[t]);
                     if (columnTransitional != null)
-                        values[i][t] = columnTransitional.sinking(dirtyObject[i], domainModelDescriptor, fieldName,
+                        values[i][t] = columnTransitional.sinking(connection.getMetaData(),
+                                dirtyObject[i], domainModelDescriptor, fieldName,
                                 PropertyUtils.readDirectly(dirtyObject[i], fieldName));
                     else
                         values[i][t] = PropertyUtils.readDirectly(dirtyObject[i], fieldName);
@@ -101,14 +105,16 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
         String[] columnNames = domainModelDescriptor.getUpdatableColumns();
 
         Object[] values = Arrays.stream(columnNames)
-                .map(columnName -> {
-                    String fieldName = domainModelDescriptor.getFieldName(columnName);
-                    ColumnTransitional<T> columnTransitional = domainModelDescriptor.getColumnTransition(fieldName);
-                    if (columnTransitional != null)
-                        return columnTransitional.sinking(dirtyObject, domainModelDescriptor,
-                                fieldName, PropertyUtils.readDirectly(dirtyObject, fieldName));
-                    else return PropertyUtils.readDirectly(dirtyObject, fieldName);
-                })
+                .map(
+                        FunctionWithThrowable.castFunctionWithThrowable(columnName -> {
+                            String fieldName = domainModelDescriptor.getFieldName(columnName);
+                            ColumnTransitional<T> columnTransitional = domainModelDescriptor.getColumnTransition(fieldName);
+                            if (columnTransitional != null)
+                                return columnTransitional.sinking(connection.getMetaData(), dirtyObject, domainModelDescriptor,
+                                        fieldName, PropertyUtils.readDirectly(dirtyObject, fieldName));
+                            else return PropertyUtils.readDirectly(dirtyObject, fieldName);
+                        })
+                )
                 .toArray(Object[]::new);
 
         StringBuilder updatesSql = new StringBuilder();

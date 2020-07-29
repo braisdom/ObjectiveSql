@@ -8,8 +8,8 @@ import java.sql.ResultSetMetaData;
 public class SqlDateTransitional<T> implements ColumnTransitional<T> {
 
     @Override
-    public Object sinking(DatabaseMetaData databaseMetaData, ResultSetMetaData resultSetMetaData,
-                          T object, DomainModelDescriptor domainModelDescriptor, String fieldName, Object fieldValue) {
+    public Object sinking(DatabaseMetaData databaseMetaData, T object,
+                          DomainModelDescriptor domainModelDescriptor, String fieldName, Object fieldValue) {
         return null;
     }
 

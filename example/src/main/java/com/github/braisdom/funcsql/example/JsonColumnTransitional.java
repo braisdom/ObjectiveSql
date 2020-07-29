@@ -13,8 +13,8 @@ public class JsonColumnTransitional implements ColumnTransitional {
     private Gson gson = new GsonBuilder().create();
 
     @Override
-    public Object sinking(DatabaseMetaData databaseMetaData, ResultSetMetaData resultSetMetaData,
-                          Object object, DomainModelDescriptor domainModelDescriptor, String fieldName, Object fieldValue) {
+    public Object sinking(DatabaseMetaData databaseMetaData, Object object,
+                          DomainModelDescriptor domainModelDescriptor, String fieldName, Object fieldValue) {
         return gson.toJson(fieldValue);
     }
 
