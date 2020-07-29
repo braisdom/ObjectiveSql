@@ -88,8 +88,12 @@ class DomainModelListHandler implements ResultSetHandler<List> {
         for (int i = 1; i <= columnCount; i++) {
             String columnName = metaData.getColumnName(i);
             String fieldName = domainModelDescriptor.getFieldName(columnName);
+            ColumnTransition columnTransition = domainModelDescriptor.getColumnTransition(fieldName);
+
             if (fieldName != null)
-                domainModelDescriptor.setValue(bean, fieldName, rs.getObject(columnName));
+                domainModelDescriptor.setValue(bean, fieldName,
+                        columnTransition == null ? rs.getObject(columnName)
+                                : columnTransition.rising(bean, domainModelDescriptor, fieldName, rs.getObject(columnName)));
         }
 
         return bean;
@@ -113,8 +117,12 @@ class DomainModelHandler implements ResultSetHandler<Object> {
         for (int i = 1; i <= columnCount; i++) {
             String columnName = metaData.getColumnName(i);
             String fieldName = domainModelDescriptor.getFieldName(columnName);
+            ColumnTransition columnTransition = domainModelDescriptor.getColumnTransition(fieldName);
+
             if (fieldName != null)
-                domainModelDescriptor.setValue(bean, fieldName, rs.getObject(columnName));
+                domainModelDescriptor.setValue(bean, fieldName,
+                        columnTransition == null ? rs.getObject(columnName)
+                                : columnTransition.rising(bean, domainModelDescriptor, fieldName, rs.getObject(columnName)));
         }
 
         return bean;

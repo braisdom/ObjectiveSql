@@ -18,11 +18,14 @@ public final class Domains {
 
     @DomainModel
     public static class Member {
-        private Long id;
+        private Integer id;
         private String no;
         private String name;
         private int gender;
         private String mobile;
+
+        @Relation(relationType = RelationType.HAS_MANY)
+        private List<Order> orders;
 
         @Column(transition = JsonColumnTransition.class)
         private Map extendedAttributes;
@@ -33,7 +36,7 @@ public final class Domains {
 
     @DomainModel
     public static class Order {
-        private Long id;
+        private Integer id;
         private String no;
         private long memberId;
         private float amount;
@@ -49,7 +52,7 @@ public final class Domains {
 
     @DomainModel
     public static class OrderLine {
-        private Long id;
+        private Integer id;
         private String orderNo;
         private float amount;
         private float quantity;

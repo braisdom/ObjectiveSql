@@ -17,10 +17,6 @@ public class DefaultQuery<T> extends AbstractQuery<T> {
         super(domainModelClass);
     }
 
-    public DefaultQuery(DomainModelDescriptor<T> domainModelDescriptor) {
-        super(domainModelDescriptor);
-    }
-
     @Override
     public List<T> execute(Relationship... relationships) throws SQLException {
         ConnectionFactory connectionFactory = Database.getConnectionFactory();

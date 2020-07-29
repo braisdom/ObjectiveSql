@@ -16,6 +16,6 @@ public class JsonColumnTransition implements ColumnTransition {
 
     @Override
     public Object rising(Object object, DomainModelDescriptor domainModelDescriptor, String fieldName, Object fieldValue) {
-        return gson.fromJson(String.valueOf(fieldValue), domainModelDescriptor.getFieldType(fieldName));
+        return gson.fromJson(String.valueOf(fieldValue), domainModelDescriptor.getFieldTypeByFieldName(fieldName));
     }
 }

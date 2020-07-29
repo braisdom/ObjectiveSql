@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SqlitePersistenceExample {
+public class PersistenceExample {
 
     private static void saveCreate() throws SQLException, PersistenceException {
         Map<String, String> extendedAttributes = new HashMap<>();

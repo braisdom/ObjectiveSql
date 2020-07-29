@@ -98,6 +98,15 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
     }
 
     @Override
+    public Class getFieldTypeByFieldName(String fieldName) {
+        try {
+            return domainModelClass.getDeclaredField(fieldName).getType();
+        }catch (NoSuchFieldException ex) {
+            throw new IllegalStateException(ex.getMessage(), ex);
+        }
+    }
+
+    @Override
     public Object getValue(T modelObject, String fieldName) {
         return PropertyUtils.readDirectly(modelObject, fieldName);
     }
