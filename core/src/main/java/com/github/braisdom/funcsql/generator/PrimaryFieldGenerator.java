@@ -5,10 +5,14 @@ import com.github.braisdom.funcsql.annotations.PrimaryKey;
 import com.sun.tools.javac.code.Flags;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.List;
+import lombok.AccessLevel;
+import lombok.core.AST;
 import lombok.core.AnnotationValues;
 import lombok.javac.JavacAnnotationHandler;
 import lombok.javac.JavacNode;
 import lombok.javac.JavacTreeMaker;
+import lombok.javac.handlers.HandleGetter;
+import lombok.javac.handlers.HandleSetter;
 import lombok.javac.handlers.JavacHandlerUtil;
 import org.mangosdk.spi.ProviderFor;
 
@@ -26,7 +30,8 @@ public class PrimaryFieldGenerator extends JavacAnnotationHandler<DomainModel> {
 
         JCTree.JCAnnotation annotation = treeMaker.Annotation(
                 chainDots(typeNode, splitNameOf(PrimaryKey.class)),
-                List.of(treeMaker.Assign(treeMaker.Ident(typeNode.toName("name")), treeMaker.Literal(domainModel.primaryColumnName()))));
+                List.of(treeMaker.Assign(treeMaker.Ident(typeNode.toName("name")),
+                        treeMaker.Literal(domainModel.primaryColumnName()))));
 
         JCTree.JCVariableDecl fieldDecl = FieldBuilder.newField()
                 .ofType(domainModel.primaryClass())
@@ -34,6 +39,16 @@ public class PrimaryFieldGenerator extends JavacAnnotationHandler<DomainModel> {
                 .withAnnotations(annotation)
                 .withName(domainModel.primaryFieldName())
                 .buildWith(typeNode);
+
+        JavacNode fieldNode = new JavacNode(javacNode.getAst(), fieldDecl, null, AST.Kind.FIELD) {
+            @Override
+            public JavacNode up() {
+                return typeNode;
+            }
+        };
+
+        new HandleGetter().generateGetterForField(fieldNode,null, AccessLevel.PUBLIC, false);
+        new HandleSetter().generateSetterForField(fieldNode, typeNode, AccessLevel.PUBLIC);
 
         JavacHandlerUtil.injectField(typeNode, fieldDecl);
     }
