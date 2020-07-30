@@ -1,6 +1,6 @@
 package com.github.braisdom.funcsql;
 
-public class DomainModelException extends Exception {
+public class DomainModelException extends RuntimeException {
     public DomainModelException() {
     }
 

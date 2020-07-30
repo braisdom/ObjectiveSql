@@ -31,6 +31,9 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
     public BeanModelDescriptor(Class<T> domainModelClass) {
         Objects.requireNonNull(domainModelClass, "The domainModelClass cannot be null");
 
+        if(Table.getPrimaryKey(domainModelClass) == null)
+            throw new DomainModelException(String.format("The %s has no primary key", domainModelClass.getSimpleName()));
+
         this.domainModelClass = domainModelClass;
         this.columnTransitionMap = new HashMap<>();
         this.columnToField = new HashMap<>();
