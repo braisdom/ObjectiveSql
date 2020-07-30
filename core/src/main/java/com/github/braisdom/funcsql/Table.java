@@ -33,18 +33,15 @@ public final class Table {
         return tableName;
     }
 
-    public static final String getPrimaryKey(Class tableClass) {
+    public static final PrimaryKey getPrimaryKey(Class tableClass) {
         Field[] fields = tableClass.getDeclaredFields();
         for(Field field:fields) {
             PrimaryKey primaryKey = field.getDeclaredAnnotation(PrimaryKey.class);
             if(primaryKey != null) {
-                if(StringUtil.isBlank(primaryKey.name()))
-                    return WordUtil.underscore(field.getName());
-                else
-                    return primaryKey.name();
+                return primaryKey;
             }
         }
-        return Table.DEFAULT_PRIMARY_KEY;
+        return null;
     }
 
     public static final boolean isPrimaryField(Field field) {

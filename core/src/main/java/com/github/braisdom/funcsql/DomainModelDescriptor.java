@@ -1,5 +1,6 @@
 package com.github.braisdom.funcsql;
 
+import com.github.braisdom.funcsql.annotations.PrimaryKey;
 import com.github.braisdom.funcsql.transition.ColumnTransitional;
 
 public interface DomainModelDescriptor<T> {
@@ -8,7 +9,7 @@ public interface DomainModelDescriptor<T> {
 
     String getTableName();
 
-    String getPrimaryKey();
+    PrimaryKey getPrimaryKey();
 
     Object getPrimaryValue(T domainObject);
 

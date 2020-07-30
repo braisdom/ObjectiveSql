@@ -66,13 +66,13 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
     }
 
     @Override
-    public String getPrimaryKey() {
+    public PrimaryKey getPrimaryKey() {
         return Table.getPrimaryKey(domainModelClass);
     }
 
     @Override
     public Object getPrimaryValue(Object domainObject) {
-        return PropertyUtils.readDirectly(domainObject, getPrimaryKey());
+        return PropertyUtils.readDirectly(domainObject, getPrimaryKey().name());
     }
 
     @Override

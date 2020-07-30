@@ -1,6 +1,7 @@
 package com.github.braisdom.funcsql.relation;
 
 import com.github.braisdom.funcsql.Table;
+import com.github.braisdom.funcsql.annotations.PrimaryKey;
 import com.github.braisdom.funcsql.annotations.Relation;
 import com.github.braisdom.funcsql.reflection.PropertyUtils;
 import com.github.braisdom.funcsql.util.StringUtil;
@@ -61,10 +62,17 @@ public final class Relationship {
 
     public String getPrimaryKey() {
         if (StringUtil.isBlank(relation.primaryKey())) {
-            if (isBelongsTo())
-                return Table.getPrimaryKey(getBaseClass());
-            else
-                return Table.getPrimaryKey(getRelatedClass());
+            if (isBelongsTo()) {
+                PrimaryKey primaryKey = Table.getPrimaryKey(getBaseClass());
+                if(primaryKey == null)
+                    throw new IllegalStateException(String.format("The %s has no primary key", getBaseClass().getSimpleName()));
+                return primaryKey.name();
+            } else {
+                PrimaryKey primaryKey = Table.getPrimaryKey(getRelatedClass());
+                if(primaryKey == null)
+                    throw new IllegalStateException(String.format("The %s has no primary key", getRelatedClass().getSimpleName()));
+                return primaryKey.name();
+            }
         } else
             return relation.primaryKey();
     }

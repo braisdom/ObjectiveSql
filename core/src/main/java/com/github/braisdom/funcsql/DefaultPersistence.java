@@ -1,5 +1,6 @@
 package com.github.braisdom.funcsql;
 
+import com.github.braisdom.funcsql.annotations.PrimaryKey;
 import com.github.braisdom.funcsql.reflection.PropertyUtils;
 import com.github.braisdom.funcsql.transition.ColumnTransitional;
 import com.github.braisdom.funcsql.util.ArrayUtil;
@@ -24,7 +25,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
         Object primaryValue = domainModelDescriptor.getPrimaryValue(dirtyObject);
         if (primaryValue == null)
             insert(dirtyObject, skipValidation);
-        else update(dirtyObject);
+        else update(dirtyObject, skipValidation);
     }
 
     @Override
@@ -60,7 +61,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
     }
 
     @Override
-    public int insert(T[] dirtyObject) throws SQLException, PersistenceException {
+    public int insert(T[] dirtyObject, boolean skipValidation) throws SQLException, PersistenceException {
         ConnectionFactory connectionFactory = Database.getConnectionFactory();
         Connection connection = connectionFactory.getConnection();
         SQLExecutor<T> sqlExecutor = Database.getSqlExecutor();
@@ -94,12 +95,17 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
     }
 
     @Override
-    public int update(T dirtyObject) throws SQLException, PersistenceException {
+    public int update(T dirtyObject, boolean skipValidation) throws SQLException, PersistenceException {
         ConnectionFactory connectionFactory = Database.getConnectionFactory();
         Connection connection = connectionFactory.getConnection();
         SQLExecutor<T> sqlExecutor = Database.getSqlExecutor();
 
-        String primaryKey = domainModelDescriptor.getPrimaryKey();
+        PrimaryKey primaryKey = domainModelDescriptor.getPrimaryKey();
+
+        if(primaryKey == null)
+            throw new PersistenceException(String.format("The %s has no primary key(@PrimaryKey)",
+                    domainModelDescriptor.getDomainModelClass().getSimpleName()));
+
         Object primaryValue = domainModelDescriptor.getPrimaryValue(dirtyObject);
 
         String[] columnNames = domainModelDescriptor.getUpdatableColumns();
