@@ -1,8 +1,6 @@
 package com.github.braisdom.funcsql.generator;
 
-import com.github.braisdom.funcsql.Database;
-import com.github.braisdom.funcsql.Persistence;
-import com.github.braisdom.funcsql.PersistenceFactory;
+import com.github.braisdom.funcsql.*;
 import com.github.braisdom.funcsql.annotations.DomainModel;
 import com.github.braisdom.funcsql.annotations.PrimaryKey;
 import com.sun.tools.javac.code.Flags;
@@ -24,7 +22,7 @@ import static com.github.braisdom.funcsql.util.StringUtil.splitNameOf;
 import static lombok.javac.handlers.JavacHandlerUtil.*;
 
 @ProviderFor(JavacAnnotationHandler.class)
-public class PrimaryFieldGenerator extends JavacAnnotationHandler<DomainModel> {
+public class DomainModeCodeGenerator extends JavacAnnotationHandler<DomainModel> {
 
     @Override
     public void handle(AnnotationValues<DomainModel> annotationValues, JCTree.JCAnnotation jcAnnotation, JavacNode javacNode) {
@@ -55,9 +53,58 @@ public class PrimaryFieldGenerator extends JavacAnnotationHandler<DomainModel> {
         new HandleSetter().generateSetterForField(fieldNode, typeNode, AccessLevel.PUBLIC);
 
         JCTree.JCMethodDecl createPersistenceMethod = createPersistenceMethod(treeMaker, typeNode);
+        JCTree.JCMethodDecl createQueryMethod = createQueryMethod(treeMaker, typeNode);
 
         injectMethod(typeNode, createPersistenceMethod);
+        injectMethod(typeNode, createQueryMethod);
         injectField(typeNode, fieldDecl);
+    }
+
+    private JCTree.JCMethodDecl createQueryMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
+        ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
+
+        jcStatements.append(
+                treeMaker.VarDef(
+                        treeMaker.Modifiers(Flags.PARAMETER),
+                        typeNode.toName("queryFactory"),
+                        chainDots(typeNode, splitNameOf(QueryFactory.class)),
+                        treeMaker.Apply(
+                                List.nil(),
+                                treeMaker.Select(
+                                        chainDots(typeNode, splitNameOf(Database.class)),
+                                        typeNode.toName("getQueryFactory")
+                                ), List.nil()
+                        )
+                )
+        );
+
+        jcStatements.append(
+                treeMaker.Return(
+                        treeMaker.Apply(
+                                List.nil(),
+                                treeMaker.Select(
+                                        treeMaker.Ident(typeNode.toName("queryFactory")),
+                                        typeNode.toName("createQuery")
+                                )
+                                , List.of(
+                                        treeMaker.Select(
+                                                treeMaker.Ident(typeNode.toName(typeNode.getName())),
+                                                typeNode.toName("class")
+                                        )
+                                )
+                        ))
+        );
+
+        return treeMaker.MethodDef(
+                treeMaker.Modifiers(Flags.PUBLIC + Flags.STATIC + Flags.FINAL),
+                typeNode.toName("createQuery"),
+                chainDots(typeNode, splitNameOf(Query.class)),
+                List.nil(),
+                List.nil(),
+                List.nil(),
+                treeMaker.Block(0, jcStatements.toList()),
+                null
+        );
     }
 
     private JCTree.JCMethodDecl createPersistenceMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
