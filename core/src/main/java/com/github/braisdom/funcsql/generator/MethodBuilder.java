@@ -15,6 +15,9 @@
 package com.github.braisdom.funcsql.generator;
 
 import static com.sun.tools.javac.util.List.nil;
+import static lombok.javac.Javac.CTC_VOID;
+
+import lombok.javac.Javac;
 import lombok.javac.JavacNode;
 
 import com.sun.tools.javac.tree.JCTree.JCBlock;
@@ -84,7 +87,11 @@ class MethodBuilder {
 
   JCMethodDecl buildWith(JavacNode node) {
     JavacTreeMaker treeMaker = node.getTreeMaker();
-    return treeMaker.MethodDef(treeMaker.Modifiers(modifiers), node.toName(name), returnType,
-        List.<JCTypeParameter> nil(), parameters, throwsClauses, body, defaultValue);
+    if(returnType == null)
+      returnType = treeMaker.Type(Javac.createVoidType(node.getTreeMaker(), CTC_VOID));
+
+    return treeMaker.MethodDef(treeMaker.Modifiers(modifiers), node.toName(name),
+            returnType, List.<JCTypeParameter>nil(), parameters, throwsClauses,
+            body, null);
   }
 }
