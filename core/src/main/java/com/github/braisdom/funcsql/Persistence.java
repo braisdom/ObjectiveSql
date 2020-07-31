@@ -12,5 +12,5 @@ public interface Persistence<T> {
 
     int update(T dirtyObject, boolean skipValidation) throws SQLException, PersistenceException;
 
-    int delete(T dirtyObject) throws SQLException, PersistenceException;
+    int delete(Object id) throws SQLException, PersistenceException;
 }

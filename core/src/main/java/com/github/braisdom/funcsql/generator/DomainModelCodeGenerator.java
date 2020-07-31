@@ -67,6 +67,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
         JCMethodDecl saveMethod = handleCreateSaveMethod(treeMaker, typeNode);
         JCMethodDecl save2Method = handleCreateSave2Method(treeMaker, typeNode);
         JCMethodDecl createMethod = handleCreateMethod(treeMaker, typeNode);
+        JCMethodDecl create2Method = handleCreate2Method(treeMaker, typeNode);
 
         generateFieldSG(typeNode, handleGetter, handleSetter);
 
@@ -74,6 +75,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
         injectMethod(typeNode, createQueryMethod);
         injectMethod(typeNode, save2Method);
         injectMethod(typeNode, saveMethod);
+        injectMethod(typeNode, create2Method);
         injectMethod(typeNode, createMethod);
 
         injectField(typeNode, iDFieldDecl);
@@ -242,6 +244,31 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 .withThrowsClauses(createPersistenceExceptions(treeMaker, typeNode))
                 .withReturnType(treeMaker.Ident(modelClassName))
                 .withBody(treeMaker.Block(0, jcStatements.toList()))
+                .buildWith(typeNode);
+    }
+
+    private JCTree.JCMethodDecl handleCreate2Method(JavacTreeMaker treeMaker, JavacNode typeNode) {
+        ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
+        Name modelClassName = typeNode.toName(typeNode.getName());
+        JCVariableDecl dirtyObjectVar = FieldBuilder.newField(typeNode)
+                .ofType(treeMaker.Ident(modelClassName))
+                .withName("dirtyObject")
+                .withModifiers(Flags.PARAMETER)
+                .build();
+        JCTree.JCIdent dirtyObjectRef = treeMaker.Ident(typeNode.toName("dirtyObject"));
+        JCTree.JCMethodInvocation thisSaveInv = treeMaker.Apply(List.nil(),
+                treeMaker.Select(treeMaker.Ident(typeNode.toName("this")),
+                        typeNode.toName("create")), List.of(dirtyObjectRef, treeMaker.Literal(false)));
+
+        jcStatements.append(treeMaker.Return(thisSaveInv));
+
+        return MethodBuilder.newMethod()
+                .withModifiers(Flags.PUBLIC | Flags.FINAL)
+                .withName("create")
+                .withParameters(List.of(dirtyObjectVar))
+                .withBody(treeMaker.Block(0, jcStatements.toList()))
+                .withReturnType(treeMaker.Ident(modelClassName))
+                .withThrowsClauses(createPersistenceExceptions(treeMaker, typeNode))
                 .buildWith(typeNode);
     }
 

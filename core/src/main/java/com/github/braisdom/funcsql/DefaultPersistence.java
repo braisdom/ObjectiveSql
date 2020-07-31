@@ -137,7 +137,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
     }
 
     @Override
-    public int delete(T dirtyObject) throws SQLException, PersistenceException {
+    public int delete(Object id) throws SQLException, PersistenceException {
         return 0;
     }
 }
