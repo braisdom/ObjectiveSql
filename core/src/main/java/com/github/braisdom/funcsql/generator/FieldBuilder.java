@@ -14,7 +14,6 @@
  */
 package com.github.braisdom.funcsql.generator;
 
-import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.JCTree.JCExpression;
 import com.sun.tools.javac.tree.JCTree.JCVariableDecl;
@@ -25,7 +24,6 @@ import lombok.javac.JavacTreeMaker;
 import static com.github.braisdom.funcsql.util.StringUtil.splitNameOf;
 import static com.sun.tools.javac.util.List.nil;
 import static lombok.javac.handlers.JavacHandlerUtil.chainDots;
-import static lombok.javac.handlers.JavacHandlerUtil.genJavaLangTypeRef;
 
 /**
  * Simplifies creation of fields.
@@ -77,7 +75,7 @@ class FieldBuilder {
     for(JCTree.JCAnnotation annotation : annotations) {
       jcModifiers.annotations = jcModifiers.annotations.append(annotation);
     }
-
+    treeMaker.at(node.get().pos);
     return treeMaker.VarDef(jcModifiers, node.toName(name), classType, null);
   }
 
