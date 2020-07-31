@@ -89,7 +89,6 @@ class MethodBuilder {
     JavacTreeMaker treeMaker = node.getTreeMaker();
     if(returnType == null)
       returnType = treeMaker.Type(Javac.createVoidType(node.getTreeMaker(), CTC_VOID));
-    treeMaker.at(node.get().pos + 1);
     return treeMaker.MethodDef(treeMaker.Modifiers(modifiers), node.toName(name),
             returnType, List.<JCTypeParameter>nil(), parameters, throwsClauses,
             body, null);

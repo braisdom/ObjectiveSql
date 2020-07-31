@@ -59,18 +59,39 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
             }
         };
 
-        new HandleGetter().generateGetterForField(fieldNode,null, AccessLevel.PUBLIC, false);
+        new HandleGetter().generateGetterForField(fieldNode, null, AccessLevel.PUBLIC, false);
         new HandleSetter().generateSetterForField(fieldNode, typeNode, AccessLevel.PUBLIC);
 
         JCMethodDecl createPersistenceMethod = createPersistenceMethod(treeMaker, typeNode);
         JCMethodDecl createQueryMethod = createQueryMethod(treeMaker, typeNode);
         JCMethodDecl saveMethod = createSaveMethod(treeMaker, typeNode);
+        JCMethodDecl save2Method = createSave2Method(treeMaker, typeNode);
 
         injectMethod(typeNode, createPersistenceMethod);
         injectMethod(typeNode, createQueryMethod);
+        injectMethod(typeNode, save2Method);
         injectMethod(typeNode, saveMethod);
 
         injectField(typeNode, fieldDecl);
+    }
+
+    private JCTree.JCMethodDecl createSave2Method(JavacTreeMaker treeMaker, JavacNode typeNode) {
+        ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
+        JCTree.JCMethodInvocation thisSaveInv = treeMaker.Apply(List.nil(),
+                treeMaker.Select(treeMaker.Ident(typeNode.toName("this")),
+                        typeNode.toName("save")), List.of(treeMaker.Literal(false)));
+
+        jcStatements.append(treeMaker.Exec(thisSaveInv));
+
+        List<JCExpression> exceptions = List.of(treeMaker.Throw(chainDots(typeNode, splitNameOf(SQLException.class))).getExpression(),
+                treeMaker.Throw(chainDots(typeNode, splitNameOf(PersistenceException.class))).getExpression());
+
+        return MethodBuilder.newMethod()
+                .withModifiers(Flags.PUBLIC | Flags.FINAL)
+                .withName("save")
+                .withBody(treeMaker.Block(0, jcStatements.toList()))
+                .withThrowsClauses(exceptions)
+                .buildWith(typeNode);
     }
 
     private JCTree.JCMethodDecl createSaveMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
@@ -80,46 +101,33 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 .withName("skipValidation")
                 .withModifiers(Flags.PARAMETER)
                 .buildWith(typeNode);
+        JCTree.JCMethodInvocation createPersistenceInv = treeMaker.Apply(List.nil(),
+                treeMaker.Select(treeMaker.Ident(typeNode.toName("this")),
+                        typeNode.toName("createPersistence")), List.nil());
+        JCExpression createPersistenceType = chainDots(typeNode, splitNameOf(Persistence.class));
 
-        jcStatements.append(
-                treeMaker.VarDef(
-                        treeMaker.Modifiers(Flags.PARAMETER),
-                        typeNode.toName("persistence"),
-                        chainDots(typeNode, splitNameOf(Persistence.class)),
-                        treeMaker.Apply(
-                                List.nil(),
-                                treeMaker.Select(
-                                        treeMaker.Ident(typeNode.toName("this")),
-                                        typeNode.toName("createPersistence")
-                                ), List.nil()
-                        )
-                )
+        jcStatements.append(treeMaker.VarDef(treeMaker.Modifiers(Flags.PARAMETER),
+                typeNode.toName("persistence"), createPersistenceType, createPersistenceInv));
+
+        JCTree.JCFieldAccess saveAcc = treeMaker.Select(
+                treeMaker.Ident(typeNode.toName("persistence")),
+                typeNode.toName("save")
         );
 
-        jcStatements.append(
-                treeMaker.Exec(
-                        treeMaker.Apply(
-                                List.nil(),
-                                treeMaker.Select(
-                                        treeMaker.Ident(typeNode.toName("persistence")),
-                                        typeNode.toName("save")
-                                )
-                                , List.of(
-                                        treeMaker.Ident(typeNode.toName("this")),
-                                        treeMaker.Ident(typeNode.toName("skipValidation"))
-                                )
-                        ))
-        );
+        List<JCTree.JCExpression> saveParameters = List.of(treeMaker.Ident(typeNode.toName("this")),
+                treeMaker.Ident(typeNode.toName("skipValidation")));
+
+        jcStatements.append(treeMaker.Exec(treeMaker.Apply(List.nil(), saveAcc, saveParameters)));
+
+        List<JCExpression> exceptions = List.of(treeMaker.Throw(chainDots(typeNode, splitNameOf(SQLException.class))).getExpression(),
+                treeMaker.Throw(chainDots(typeNode, splitNameOf(PersistenceException.class))).getExpression());
 
         return MethodBuilder.newMethod()
                 .withModifiers(Flags.PUBLIC | Flags.FINAL)
                 .withName("save")
                 .withParameters(List.of(parameter))
                 .withBody(treeMaker.Block(0, jcStatements.toList()))
-                .withThrowsClauses(List.of(
-                        treeMaker.Throw(chainDots(typeNode, splitNameOf(SQLException.class))).getExpression(),
-                        treeMaker.Throw(chainDots(typeNode, splitNameOf(PersistenceException.class))).getExpression()
-                ))
+                .withThrowsClauses(exceptions)
                 .buildWith(typeNode);
     }
 
@@ -132,7 +140,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 typeNode.toName("getQueryFactory"));
 
         JCExpression createQueryFactoryInv = treeMaker.Select(
-                treeMaker.Ident(typeNode.toName(typeNode.getName())),typeNode.toName("class"));
+                treeMaker.Ident(typeNode.toName(typeNode.getName())), typeNode.toName("class"));
         JCExpression createQueryInv = treeMaker.Select(
                 treeMaker.Ident(typeNode.toName("queryFactory")), typeNode.toName("createQuery"));
 
