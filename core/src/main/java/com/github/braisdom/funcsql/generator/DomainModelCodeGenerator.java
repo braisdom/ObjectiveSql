@@ -21,6 +21,7 @@ import lombok.javac.JavacNode;
 import lombok.javac.JavacTreeMaker;
 import lombok.javac.handlers.HandleGetter;
 import lombok.javac.handlers.HandleSetter;
+import lombok.javac.handlers.JavacHandlerUtil;
 import org.kohsuke.MetaInfServices;
 
 import javax.lang.model.element.Element;
@@ -70,13 +71,31 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
         JCMethodDecl create2Method = handleCreate2Method(treeMaker, typeNode);
 
         generateFieldSG(typeNode, handleGetter, handleSetter);
+        MemberExistsResult notExists = MemberExistsResult.NOT_EXISTS;
 
-        injectMethod(typeNode, createPersistenceMethod);
-        injectMethod(typeNode, createQueryMethod);
-        injectMethod(typeNode, save2Method);
-        injectMethod(typeNode, saveMethod);
-        injectMethod(typeNode, create2Method);
-        injectMethod(typeNode, createMethod);
+        if(notExists.equals(JavacHandlerUtil.methodExists(createPersistenceMethod.name.toString(),
+                typeNode, createPersistenceMethod.params.length())))
+            injectMethod(typeNode, createPersistenceMethod);
+
+        if(notExists.equals(JavacHandlerUtil.methodExists(createQueryMethod.name.toString(),
+                typeNode, createQueryMethod.params.length())))
+            injectMethod(typeNode, createQueryMethod);
+
+        if(notExists.equals(JavacHandlerUtil.methodExists(save2Method.name.toString(),
+                typeNode, save2Method.params.length())))
+            injectMethod(typeNode, save2Method);
+
+        if(notExists.equals(JavacHandlerUtil.methodExists(saveMethod.name.toString(),
+                typeNode, saveMethod.params.length())))
+            injectMethod(typeNode, saveMethod);
+
+        if(notExists.equals(JavacHandlerUtil.methodExists(create2Method.name.toString(),
+                typeNode, create2Method.params.length())))
+            injectMethod(typeNode, create2Method);
+
+        if(notExists.equals(JavacHandlerUtil.methodExists(createMethod.name.toString(),
+                typeNode, createMethod.params.length())))
+            injectMethod(typeNode, createMethod);
 
         injectField(typeNode, iDFieldDecl);
     }
