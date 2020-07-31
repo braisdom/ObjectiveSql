@@ -4,6 +4,7 @@ import com.github.braisdom.funcsql.*;
 import com.github.braisdom.funcsql.annotations.DomainModel;
 import com.github.braisdom.funcsql.annotations.PrimaryKey;
 import com.sun.tools.javac.code.Flags;
+import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.JCTree.JCAnnotation;
 import com.sun.tools.javac.tree.JCTree.JCExpression;
@@ -22,6 +23,7 @@ import lombok.javac.handlers.HandleGetter;
 import lombok.javac.handlers.HandleSetter;
 import org.kohsuke.MetaInfServices;
 
+import javax.lang.model.element.Element;
 import java.sql.SQLException;
 
 import static com.github.braisdom.funcsql.util.StringUtil.splitNameOf;
@@ -64,6 +66,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
         JCMethodDecl createQueryMethod = handleCreateQueryMethod(treeMaker, typeNode);
         JCMethodDecl saveMethod = handleCreateSaveMethod(treeMaker, typeNode);
         JCMethodDecl save2Method = handleCreateSave2Method(treeMaker, typeNode);
+        JCMethodDecl createMethod = handleCreateMethod(treeMaker, typeNode);
 
         generateFieldSG(typeNode, handleGetter, handleSetter);
 
@@ -71,6 +74,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
         injectMethod(typeNode, createQueryMethod);
         injectMethod(typeNode, save2Method);
         injectMethod(typeNode, saveMethod);
+        injectMethod(typeNode, createMethod);
 
         injectField(typeNode, iDFieldDecl);
     }
@@ -101,14 +105,11 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
 
         jcStatements.append(treeMaker.Exec(thisSaveInv));
 
-        List<JCExpression> exceptions = List.of(treeMaker.Throw(chainDots(typeNode, splitNameOf(SQLException.class))).getExpression(),
-                treeMaker.Throw(chainDots(typeNode, splitNameOf(PersistenceException.class))).getExpression());
-
         return MethodBuilder.newMethod()
                 .withModifiers(Flags.PUBLIC | Flags.FINAL)
                 .withName("save")
                 .withBody(treeMaker.Block(0, jcStatements.toList()))
-                .withThrowsClauses(exceptions)
+                .withThrowsClauses(createPersistenceExceptions(treeMaker, typeNode))
                 .buildWith(typeNode);
     }
 
@@ -137,15 +138,12 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
 
         jcStatements.append(treeMaker.Exec(treeMaker.Apply(List.nil(), saveAcc, saveParameters)));
 
-        List<JCExpression> exceptions = List.of(treeMaker.Throw(chainDots(typeNode, splitNameOf(SQLException.class))).getExpression(),
-                treeMaker.Throw(chainDots(typeNode, splitNameOf(PersistenceException.class))).getExpression());
-
         return MethodBuilder.newMethod()
                 .withModifiers(Flags.PUBLIC | Flags.FINAL)
                 .withName("save")
                 .withParameters(List.of(parameter))
                 .withBody(treeMaker.Block(0, jcStatements.toList()))
-                .withThrowsClauses(exceptions)
+                .withThrowsClauses(createPersistenceExceptions(treeMaker, typeNode))
                 .buildWith(typeNode);
     }
 
@@ -200,10 +198,16 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
 
     private JCTree.JCMethodDecl handleCreateMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
         ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
-
-        JCVariableDecl parameter = FieldBuilder.newField(typeNode)
-                .ofType(Boolean.class)
+        Name modelClassName = typeNode.toName(typeNode.getName());
+        JCVariableDecl dirtyObjectVar = FieldBuilder.newField(typeNode)
+                .ofType(treeMaker.Ident(modelClassName))
                 .withName("dirtyObject")
+                .withModifiers(Flags.PARAMETER)
+                .build();
+
+        JCVariableDecl skipValidationVar = FieldBuilder.newField(typeNode)
+                .ofType(Boolean.class)
+                .withName("skipValidation")
                 .withModifiers(Flags.PARAMETER)
                 .build();
 
@@ -211,22 +215,38 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
         JCExpression persistenceFactoryRef = chainDots(typeNode, splitNameOf(PersistenceFactory.class));
         JCExpression getPersistenceFactoryRef = treeMaker.Select(
                 chainDots(typeNode, splitNameOf(Database.class)), typeNode.toName("getPersistenceFactory"));
-
         jcStatements.append(treeMaker.VarDef(treeMaker.Modifiers(Flags.PARAMETER), persistenceFactoryName,
                 persistenceFactoryRef, treeMaker.Apply(List.nil(), getPersistenceFactoryRef, List.nil())));
 
+        Name persistenceName = typeNode.toName("persistence");
+        JCExpression persistenceRef = genTypeRef(typeNode, Persistence.class.getName());
         JCExpression createPersistenceRef = treeMaker.Select(
                 treeMaker.Ident(typeNode.toName("persistenceFactory")), typeNode.toName("createPersistence"));
-        JCExpression modelClassRef = treeMaker.Select(treeMaker.Ident(typeNode.toName(typeNode.getName())), typeNode.toName("class"));
+        JCExpression modelClassRef = treeMaker.Select(treeMaker.Ident(modelClassName), typeNode.toName("class"));
+        JCTree.JCModifiers persistenceModifier = treeMaker.Modifiers(Flags.PARAMETER);
+        jcStatements.append(treeMaker.VarDef(persistenceModifier, persistenceName,
+                persistenceRef, treeMaker.Apply(List.nil(), createPersistenceRef, List.of(modelClassRef))));
 
-        jcStatements.append(treeMaker.Return(treeMaker.Apply(List.nil(), createPersistenceRef, List.of(modelClassRef))));
+        JCExpression insertRef = treeMaker.Select(
+                treeMaker.Ident(typeNode.toName("persistence")), typeNode.toName("insert"));
+        JCExpression skipValidationRef = treeMaker.Ident(typeNode.toName("skipValidation"));
+        JCExpression dirtyObjectRef = treeMaker.Ident(typeNode.toName("dirtyObject"));
+        JCTree.JCMethodInvocation returnInv = treeMaker.Apply(List.nil(), insertRef, List.of(dirtyObjectRef, skipValidationRef));
+        JCTree.JCIdent returnValueType = treeMaker.Ident(modelClassName);
+        jcStatements.append(treeMaker.Return(treeMaker.TypeCast(returnValueType, returnInv)));
 
         return MethodBuilder.newMethod()
                 .withModifiers(Flags.PUBLIC | Flags.STATIC | Flags.FINAL)
-                .withName("createPersistence")
-                .withParameters(List.of(parameter))
-                .withReturnType(chainDots(typeNode, splitNameOf(Persistence.class)))
+                .withName("create")
+                .withParameters(List.of(dirtyObjectVar, skipValidationVar))
+                .withThrowsClauses(createPersistenceExceptions(treeMaker, typeNode))
+                .withReturnType(treeMaker.Ident(modelClassName))
                 .withBody(treeMaker.Block(0, jcStatements.toList()))
                 .buildWith(typeNode);
+    }
+
+    private List<JCExpression> createPersistenceExceptions(JavacTreeMaker treeMaker, JavacNode typeNode) {
+        return List.of(treeMaker.Throw(chainDots(typeNode, splitNameOf(SQLException.class))).getExpression(),
+                treeMaker.Throw(chainDots(typeNode, splitNameOf(PersistenceException.class))).getExpression());
     }
 }
