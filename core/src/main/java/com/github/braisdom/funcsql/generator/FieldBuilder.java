@@ -32,17 +32,28 @@ import static lombok.javac.handlers.JavacHandlerUtil.chainDots;
  */
 class FieldBuilder {
 
-  static FieldBuilder newField() {
-    return new FieldBuilder();
+  private JavacNode node;
+
+  static FieldBuilder newField(JavacNode node) {
+    return new FieldBuilder(node);
   }
 
   private JCTree.JCAnnotation[] annotations = {};
-  private Class<?> type;
+  private JCExpression type;
   private String name;
   private long modifiers;
   private List<JCExpression> args = nil();
 
+  private FieldBuilder(JavacNode node) {
+    this.node = node;
+  }
+
   FieldBuilder ofType(Class<?> newType) {
+    type = chainDots(node, splitNameOf(newType));
+    return this;
+  }
+
+  FieldBuilder ofType(JCExpression newType) {
     type = newType;
     return this;
   }
@@ -67,16 +78,15 @@ class FieldBuilder {
     return this;
   }
 
-  JCVariableDecl buildWith(JavacNode node) {
+  JCVariableDecl build() {
     JavacTreeMaker treeMaker = node.getTreeMaker();
     JCTree.JCModifiers jcModifiers = treeMaker.Modifiers(modifiers);
-    JCExpression classType = chainDots(node, splitNameOf(type));
 
     for(JCTree.JCAnnotation annotation : annotations) {
       jcModifiers.annotations = jcModifiers.annotations.append(annotation);
     }
     treeMaker.at(node.get().pos);
-    return treeMaker.VarDef(jcModifiers, node.toName(name), classType, null);
+    return treeMaker.VarDef(jcModifiers, node.toName(name), type, null);
   }
 
   private FieldBuilder() {}
