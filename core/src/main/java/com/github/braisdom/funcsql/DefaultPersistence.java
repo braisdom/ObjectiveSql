@@ -62,7 +62,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
     }
 
     @Override
-    public int insert(T[] dirtyObject, boolean skipValidation) throws SQLException, PersistenceException {
+    public int[] insert(T[] dirtyObject, boolean skipValidation) throws SQLException, PersistenceException {
         ConnectionFactory connectionFactory = Database.getConnectionFactory();
         Connection connection = connectionFactory.getConnection();
         SQLExecutor<T> sqlExecutor = Database.getSqlExecutor();

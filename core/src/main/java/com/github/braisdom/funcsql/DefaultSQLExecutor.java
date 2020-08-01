@@ -46,9 +46,9 @@ public class DefaultSQLExecutor<T> implements SQLExecutor<T> {
     }
 
     @Override
-    public int insert(Connection connection, String sql,
+    public int[] insert(Connection connection, String sql,
                       DomainModelDescriptor domainModelDescriptor, Object[][] params) throws SQLException {
-        return queryRunner.insertBatch(connection, sql, new DomainModelHandler(domainModelDescriptor, connection.getMetaData()), params);
+        return queryRunner.insertBatch(connection, sql, params);
     }
 
     @Override

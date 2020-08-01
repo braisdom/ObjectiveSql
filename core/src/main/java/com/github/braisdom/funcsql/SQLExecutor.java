@@ -14,7 +14,7 @@ public interface SQLExecutor<T> {
 
     T insert(Connection connection, String sql, DomainModelDescriptor domainModelDescriptor, Object... params) throws SQLException;
 
-    int insert(Connection connection, String sql, DomainModelDescriptor domainModelDescriptor, Object[][] params) throws SQLException;
+    int[] insert(Connection connection, String sql, DomainModelDescriptor domainModelDescriptor, Object[][] params) throws SQLException;
 
     int delete(Connection connection, String sql) throws SQLException;
 

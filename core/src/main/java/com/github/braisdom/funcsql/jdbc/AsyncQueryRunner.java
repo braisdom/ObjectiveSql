@@ -621,35 +621,35 @@ public class AsyncQueryRunner extends AbstractQueryRunner {
     }
 
     /**
-     * {@link QueryRunner#insertBatch(String, ResultSetHandler, Object[][])} asynchronously.
+     * {@link QueryRunner#insertBatch(String, Object[][])} asynchronously.
      *
-     * @see QueryRunner#insertBatch(String, ResultSetHandler, Object[][])
+     * @see QueryRunner#insertBatch(String, Object[][])
      * @throws SQLException if a database access error occurs
      * @since 1.6
      */
-    public <T> Future<T> insertBatch(final String sql, final ResultSetHandler<T> rsh, final Object[][] params) throws SQLException {
-        return executorService.submit(new Callable<T>() {
+    public Future<int[]> insertBatch(final String sql, final Object[][] params) throws SQLException {
+        return executorService.submit(new Callable<int[]>() {
 
             @Override
-            public T call() throws Exception {
-                return queryRunner.insertBatch(sql, rsh, params);
+            public int[] call() throws Exception {
+                return queryRunner.insertBatch(sql, params);
             }
         });
     }
 
     /**
-     * {@link QueryRunner#insertBatch(Connection, String, ResultSetHandler, Object[][])} asynchronously.
+     * {@link QueryRunner#insertBatch(Connection, String, Object[][])} asynchronously.
      *
-     * @see QueryRunner#insertBatch(Connection, String, ResultSetHandler, Object[][])
+     * @see QueryRunner#insertBatch(Connection, String,  Object[][])
      * @throws SQLException if a database access error occurs
      * @since 1.6
      */
-    public <T> Future<T> insertBatch(final Connection conn, final String sql, final ResultSetHandler<T> rsh, final Object[][] params) throws SQLException {
-        return executorService.submit(new Callable<T>() {
+    public Future<int[]> insertBatch(final Connection conn, final String sql, final Object[][] params) throws SQLException {
+        return executorService.submit(new Callable<int[]>() {
 
             @Override
-            public T call() throws Exception {
-                return queryRunner.insertBatch(conn, sql, rsh, params);
+            public int[] call() throws Exception {
+                return queryRunner.insertBatch(conn, sql, params);
             }
         });
     }
