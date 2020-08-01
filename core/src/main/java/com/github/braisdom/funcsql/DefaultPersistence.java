@@ -9,6 +9,7 @@ import com.github.braisdom.funcsql.util.FunctionWithThrowable;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.Map;
 
 public class DefaultPersistence<T> extends AbstractPersistence<T> {
 
@@ -134,6 +135,21 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
                 updatesSql.toString(), String.format("%s = ?", primaryKey));
         return sqlExecutor.update(connection, sql,
                 ArrayUtil.appendElement(Object.class, values, primaryValue));
+    }
+
+    @Override
+    public int update(String updates, String criteria) throws SQLException, PersistenceException {
+        return 0;
+    }
+
+    @Override
+    public int update(Map updates, String criteria) throws SQLException, PersistenceException {
+        return 0;
+    }
+
+    @Override
+    public int delete(String criteria) throws SQLException, PersistenceException {
+        return 0;
     }
 
     @Override
