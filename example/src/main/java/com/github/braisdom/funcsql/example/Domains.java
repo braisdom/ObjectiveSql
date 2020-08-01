@@ -68,10 +68,11 @@ public final class Domains {
         connection.createStatement().execute("drop table if exists orders");
         connection.createStatement().execute("drop table if exists order_lines");
 
-        connection.createStatement().execute("create table members (id INTEGER, no TEXT, " +
+        connection.createStatement().execute("create table members (id INTEGER PRIMARY KEY AUTOINCREMENT, no TEXT, " +
                 "name TEXT, gender INTEGER, mobile TEXT, extended_attributes TEXT)");
-        connection.createStatement().execute("create table orders (id INTEGER, no TEXT, member_id INTEGER, " +
+        connection.createStatement().execute("create table orders (id INTEGER PRIMARY KEY AUTOINCREMENT, no TEXT, member_id INTEGER, " +
                 "amount REAL, quantity REAL, sales_at TEXT)");
-        connection.createStatement().execute("create table order_lines (id integer, order_no TEXT, amount REAL, quantity REAL)");
+        connection.createStatement().execute("create table order_lines (id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "order_no TEXT, amount REAL, quantity REAL)");
     }
 }

@@ -1,9 +1,9 @@
 package com.github.braisdom.funcsql;
 
+import com.github.braisdom.funcsql.jdbc.QueryRunner;
+import com.github.braisdom.funcsql.jdbc.ResultSetHandler;
+import com.github.braisdom.funcsql.jdbc.handlers.MapListHandler;
 import com.github.braisdom.funcsql.transition.ColumnTransitional;
-import org.apache.commons.dbutils.QueryRunner;
-import org.apache.commons.dbutils.ResultSetHandler;
-import org.apache.commons.dbutils.handlers.MapListHandler;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -48,7 +48,7 @@ public class DefaultSQLExecutor<T> implements SQLExecutor<T> {
     @Override
     public int insert(Connection connection, String sql,
                       DomainModelDescriptor domainModelDescriptor, Object[][] params) throws SQLException {
-        return 0;
+        return queryRunner.insertBatch(connection, sql, new DomainModelHandler(domainModelDescriptor, connection.getMetaData()), params);
     }
 
     @Override

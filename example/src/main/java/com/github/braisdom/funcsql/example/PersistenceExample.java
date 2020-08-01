@@ -15,7 +15,6 @@ public class PersistenceExample {
         extendedAttributes.put("name", "hello world");
 
         Domains.Member newMember = new Domains.Member()
-                .setId(1)
                 .setNo("200000")
                 .setName("Smith")
                 .setGender(1)
