@@ -43,8 +43,13 @@ public class PersistenceExample {
     }
 
     private static void updateSmithMember() throws SQLException, PersistenceException {
+        Map<String, Object> extendedAttributes = new HashMap<>();
+        extendedAttributes.put("hobbies", new String[]{"Play football", "Cooking"});
+        extendedAttributes.put("age", 28);
+
         Domains.Member newMember = new Domains.Member()
-                .setName("Smith => Jackson");
+                .setName("Smith => Jackson")
+                .setExtendedAttributes(extendedAttributes);
 
         Domains.Member.update(12, newMember);
     }

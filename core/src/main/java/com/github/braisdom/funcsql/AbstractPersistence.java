@@ -30,4 +30,8 @@ public abstract class AbstractPersistence<T> implements Persistence<T> {
     protected String formatUpdateSql(String tableName, String updates, String predicate) {
         return String.format(UPDATE_STATEMENT, tableName, updates, predicate);
     }
+
+    protected String formatDeleteSql(String tableName, String predicate) {
+        return String.format(DELETE_STATEMENT, tableName, predicate);
+    }
 }

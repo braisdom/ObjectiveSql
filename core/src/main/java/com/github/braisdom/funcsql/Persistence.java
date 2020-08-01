@@ -15,9 +15,7 @@ public interface Persistence<T> {
 
     int update(String updates, String predication) throws SQLException, PersistenceException;
 
-    int update(Map updates, String predication) throws SQLException, PersistenceException;
-
     int delete(Object id) throws SQLException, PersistenceException;
 
-    int delete(String criteria) throws SQLException, PersistenceException;
+    int delete(String predication) throws SQLException, PersistenceException;
 }

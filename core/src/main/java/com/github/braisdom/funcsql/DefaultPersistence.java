@@ -153,8 +153,8 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
         Objects.requireNonNull(updates, "The updates cannot be null");
         Objects.requireNonNull(predication, "The predication cannot be null");
 
-        ensureNotBlank(updates.toString(), "updates");
-        ensureNotBlank(updates.toString(), "predication");
+        ensureNotBlank(updates, "updates");
+        ensureNotBlank(updates, "predication");
 
         ConnectionFactory connectionFactory = Database.getConnectionFactory();
         Connection connection = connectionFactory.getConnection();
@@ -166,13 +166,17 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
     }
 
     @Override
-    public int update(Map updates, String predication) throws SQLException, PersistenceException {
-        return 0;
-    }
+    public int delete(String predication) throws SQLException, PersistenceException {
+        Objects.requireNonNull(predication, "The criteria cannot be null");
 
-    @Override
-    public int delete(String criteria) throws SQLException, PersistenceException {
-        return 0;
+        ensureNotBlank(predication, "predication");
+
+        ConnectionFactory connectionFactory = Database.getConnectionFactory();
+        Connection connection = connectionFactory.getConnection();
+        SQLExecutor<T> sqlExecutor = Database.getSqlExecutor();
+
+        String sql = formatDeleteSql(domainModelDescriptor.getTableName(), predication);
+        return sqlExecutor.delete(connection, sql);
     }
 
     @Override
