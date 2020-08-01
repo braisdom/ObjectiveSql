@@ -273,13 +273,12 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 .build();
         JCTree.JCIdent dirtyObjectRef = treeMaker.Ident(typeNode.toName("dirtyObject"));
         JCTree.JCMethodInvocation thisSaveInv = treeMaker.Apply(List.nil(),
-                treeMaker.Select(treeMaker.Ident(typeNode.toName("this")),
-                        typeNode.toName("create")), List.of(dirtyObjectRef, treeMaker.Literal(false)));
+                treeMaker.Ident(typeNode.toName("create")), List.of(dirtyObjectRef, treeMaker.Literal(false)));
 
         jcStatements.append(treeMaker.Return(thisSaveInv));
 
         return MethodBuilder.newMethod()
-                .withModifiers(Flags.PUBLIC | Flags.FINAL)
+                .withModifiers(Flags.PUBLIC | Flags.FINAL | Flags.STATIC)
                 .withName("create")
                 .withParameters(List.of(dirtyObjectVar))
                 .withBody(treeMaker.Block(0, jcStatements.toList()))

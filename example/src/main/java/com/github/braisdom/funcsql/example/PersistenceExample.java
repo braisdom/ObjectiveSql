@@ -22,7 +22,7 @@ public class PersistenceExample {
                 .setExtendedAttributes(extendedAttributes)
                 .setMobile("15011112222");
 
-        newMember.save();
+        Domains.Member.create(newMember);
     }
 
     public static void main(String args[]) throws SQLException, PersistenceException {
@@ -35,8 +35,5 @@ public class PersistenceExample {
         Domains.createTables(Database.getConnectionFactory().getConnection());
 
         createMember();
-//        Persistence<Member> memberPersistence = new DefaultPersistence<>(Member.class);
-//
-//        memberPersistence.update(newMember);
     }
 }
