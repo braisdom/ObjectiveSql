@@ -10,22 +10,23 @@ import java.util.Map;
 
 public class PersistenceExample {
 
-    private static void create() throws SQLException, PersistenceException {
+    private static void createMember() throws SQLException, PersistenceException {
         Map<String, String> extendedAttributes = new HashMap<>();
-        extendedAttributes.put("name", "hello");
+        extendedAttributes.put("name", "hello world");
 
-//        Domains.Member newMember = new Domains.Member()
-//                .setNo("200000")
-//                .setName("Smith")
-//                .setGender(1)
-//                .setExtendedAttributes(extendedAttributes)
-//                .setMobile("15011112222");
-//
-//        newMember.save();
+        Domains.Member newMember = new Domains.Member()
+                .setId(1)
+                .setNo("200000")
+                .setName("Smith")
+                .setGender(1)
+                .setExtendedAttributes(extendedAttributes)
+                .setMobile("15011112222");
+
+        newMember.save();
     }
 
     public static void main(String args[]) throws SQLException, PersistenceException {
-        File file = new File("persistence.db");
+        File file = new File("persistence_example.db");
 
         if (file.exists())
             file.delete();
@@ -33,7 +34,7 @@ public class PersistenceExample {
         Database.installConnectionFactory(new SqliteConnectionFactory(file.getPath()));
         Domains.createTables(Database.getConnectionFactory().getConnection());
 
-        create();
+        createMember();
 //        Persistence<Member> memberPersistence = new DefaultPersistence<>(Member.class);
 //
 //        memberPersistence.update(newMember);

@@ -134,7 +134,6 @@ public final class ArrayUtil {
         final T[] result;
         final int end;
         if (array != null) {
-            if (contains(array, element)) return array;
             end = array.length;
             result = (T[])Array.newInstance(kind, end + 1);
             System.arraycopy(array, 0, result, 0, end);

@@ -62,6 +62,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 }
             };
 
+            injectField(typeNode, iDFieldDecl);
             handleGetter.generateGetterForField(fieldNode, null, AccessLevel.PUBLIC, false);
             HandleSetter.createSetter(Flags.PUBLIC, fieldNode, treeMaker, toSetterName(fieldNode), domainModel.fluent(),
                     typeNode, List.nil(), List.nil());
@@ -93,8 +94,6 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
 
         if (!JCTreeUtil.containsMethod(classDecl.sym, createMethod, false))
             injectMethod(typeNode, createMethod);
-
-        injectField(typeNode, iDFieldDecl);
     }
 
     private void generateFieldSG(JavacTreeMaker treeMaker, DomainModel domainModel, JavacNode typeNode, HandleGetter handleGetter) {

@@ -87,6 +87,7 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
     @Override
     public String[] getUpdatableColumns() {
         return Arrays.stream(getColumnizableFields(domainModelClass, false, true))
+                .filter(field -> field.getAnnotation(PrimaryKey.class) == null)
                 .map(field -> getColumnName(field)).toArray(String[]::new);
     }
 

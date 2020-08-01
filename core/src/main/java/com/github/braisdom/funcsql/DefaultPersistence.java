@@ -132,9 +132,8 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
 
         updatesSql.delete(updatesSql.length() - 1, updatesSql.length());
         String sql = formatUpdateSql(domainModelDescriptor.getTableName(),
-                updatesSql.toString(), String.format("%s = ?", primaryKey));
-        return sqlExecutor.update(connection, sql,
-                ArrayUtil.appendElement(Object.class, values, primaryValue));
+                updatesSql.toString(), String.format("%s = ?", primaryKey.name()));
+        return sqlExecutor.update(connection, sql, ArrayUtil.appendElement(Object.class, values, primaryValue));
     }
 
     @Override
