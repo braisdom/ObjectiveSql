@@ -7,21 +7,23 @@ import java.util.List;
 
 public class JCTreeUtil {
 
-    public static boolean containsMethod(Symbol.ClassSymbol classSymbol, JCTree.JCMethodDecl methodDecl) {
+    public static boolean containsMethod(Symbol.ClassSymbol classSymbol, JCTree.JCMethodDecl methodDecl, boolean recursive) {
         List<Symbol> methodSymbols = classSymbol.getEnclosedElements();
         String methodName = methodDecl.name.toString();
         int paramCount = methodDecl.params.size();
 
-        for(Symbol symbol : methodSymbols) {
-            if(symbol instanceof Symbol.MethodSymbol) {
+        for (Symbol symbol : methodSymbols) {
+            if (symbol instanceof Symbol.MethodSymbol) {
                 Symbol.MethodSymbol methodSymbol = (Symbol.MethodSymbol) symbol;
-                if(methodName.equals(methodSymbol.name.toString()) && paramCount == methodDecl.params.size())
+                if (methodName.equals(methodSymbol.name.toString()) && paramCount == methodDecl.params.size())
                     return true;
             }
         }
-        Symbol.TypeSymbol superclass = classSymbol.getSuperclass().tsym;
-        if("java.lang.Object".equals(superclass.toString()))
-            return false;
-        else return containsMethod((Symbol.ClassSymbol) superclass, methodDecl);
+        if (recursive) {
+            Symbol.TypeSymbol superclass = classSymbol.getSuperclass().tsym;
+            if ("java.lang.Object".equals(superclass.toString()))
+                return false;
+            else return containsMethod((Symbol.ClassSymbol) superclass, methodDecl, recursive);
+        } else return false;
     }
 }

@@ -1,6 +1,8 @@
 package com.github.braisdom.funcsql.example;
 
+import com.github.braisdom.funcsql.Database;
 import com.github.braisdom.funcsql.Persistence;
+import com.github.braisdom.funcsql.PersistenceFactory;
 import com.github.braisdom.funcsql.annotations.Column;
 import com.github.braisdom.funcsql.annotations.DomainModel;
 import com.github.braisdom.funcsql.annotations.Relation;
@@ -19,14 +21,8 @@ public final class Domains {
     private Domains() {
     }
 
-    public static class Model {
-        public static Persistence createPersistence() {
-            return null;
-        }
-    }
-
     @DomainModel
-    public static class Member extends Model {
+    public static class Member {
         private String no;
         private String name;
         private int gender;
@@ -43,7 +39,7 @@ public final class Domains {
     }
 
     @DomainModel
-    public static class Order extends Model {
+    public static class Order {
         private String no;
         private long memberId;
         private float amount;
@@ -58,7 +54,7 @@ public final class Domains {
     }
 
     @DomainModel
-    public static class OrderLine extends Model {
+    public static class OrderLine {
         private String orderNo;
         private float amount;
         private float quantity;

@@ -74,22 +74,22 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
 
         generateFieldSG(typeNode, handleGetter, handleSetter);
 
-        if (!JCTreeUtil.containsMethod(classDecl.sym, createPersistenceMethod))
+        if (!JCTreeUtil.containsMethod(classDecl.sym, createPersistenceMethod, false))
             injectMethod(typeNode, createPersistenceMethod);
 
-        if (!JCTreeUtil.containsMethod(classDecl.sym, createQueryMethod))
+        if (!JCTreeUtil.containsMethod(classDecl.sym, createQueryMethod, false))
             injectMethod(typeNode, createQueryMethod);
 
-        if (!JCTreeUtil.containsMethod(classDecl.sym, save2Method))
+        if (!JCTreeUtil.containsMethod(classDecl.sym, save2Method, false))
             injectMethod(typeNode, save2Method);
 
-        if (!JCTreeUtil.containsMethod(classDecl.sym, saveMethod))
+        if (!JCTreeUtil.containsMethod(classDecl.sym, saveMethod, false))
             injectMethod(typeNode, saveMethod);
 
-        if (!JCTreeUtil.containsMethod(classDecl.sym, create2Method))
+        if (!JCTreeUtil.containsMethod(classDecl.sym, create2Method, false))
             injectMethod(typeNode, create2Method);
 
-        if (!JCTreeUtil.containsMethod(classDecl.sym, createMethod))
+        if (!JCTreeUtil.containsMethod(classDecl.sym, createMethod, false))
             injectMethod(typeNode, createMethod);
 
         injectField(typeNode, iDFieldDecl);
