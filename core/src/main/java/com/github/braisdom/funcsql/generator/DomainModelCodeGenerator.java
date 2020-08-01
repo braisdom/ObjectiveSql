@@ -3,6 +3,7 @@ package com.github.braisdom.funcsql.generator;
 import com.github.braisdom.funcsql.*;
 import com.github.braisdom.funcsql.annotations.DomainModel;
 import com.github.braisdom.funcsql.annotations.PrimaryKey;
+import com.github.braisdom.funcsql.util.JCTreeUtil;
 import com.sun.tools.javac.code.Flags;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.tree.JCTree;
@@ -36,6 +37,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
     @Override
     public void handle(AnnotationValues<DomainModel> annotationValues, JCAnnotation jcAnnotation, JavacNode javacNode) {
         JavacNode typeNode = javacNode.up();
+        JCTree.JCClassDecl classDecl = (JCTree.JCClassDecl) typeNode.get();
         HandleGetter handleGetter = new HandleGetter();
         HandleSetter handleSetter = new HandleSetter();
         JavacTreeMaker treeMaker = typeNode.getTreeMaker();
@@ -71,30 +73,23 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
         JCMethodDecl create2Method = handleCreate2Method(treeMaker, typeNode);
 
         generateFieldSG(typeNode, handleGetter, handleSetter);
-        MemberExistsResult notExists = MemberExistsResult.NOT_EXISTS;
 
-        if(notExists.equals(JavacHandlerUtil.methodExists(createPersistenceMethod.name.toString(),
-                typeNode, createPersistenceMethod.params.length())))
+        if (!JCTreeUtil.containsMethod(classDecl.sym, createPersistenceMethod))
             injectMethod(typeNode, createPersistenceMethod);
 
-        if(notExists.equals(JavacHandlerUtil.methodExists(createQueryMethod.name.toString(),
-                typeNode, createQueryMethod.params.length())))
+        if (!JCTreeUtil.containsMethod(classDecl.sym, createQueryMethod))
             injectMethod(typeNode, createQueryMethod);
 
-        if(notExists.equals(JavacHandlerUtil.methodExists(save2Method.name.toString(),
-                typeNode, save2Method.params.length())))
+        if (!JCTreeUtil.containsMethod(classDecl.sym, save2Method))
             injectMethod(typeNode, save2Method);
 
-        if(notExists.equals(JavacHandlerUtil.methodExists(saveMethod.name.toString(),
-                typeNode, saveMethod.params.length())))
+        if (!JCTreeUtil.containsMethod(classDecl.sym, saveMethod))
             injectMethod(typeNode, saveMethod);
 
-        if(notExists.equals(JavacHandlerUtil.methodExists(create2Method.name.toString(),
-                typeNode, create2Method.params.length())))
+        if (!JCTreeUtil.containsMethod(classDecl.sym, create2Method))
             injectMethod(typeNode, create2Method);
 
-        if(notExists.equals(JavacHandlerUtil.methodExists(createMethod.name.toString(),
-                typeNode, createMethod.params.length())))
+        if (!JCTreeUtil.containsMethod(classDecl.sym, createMethod))
             injectMethod(typeNode, createMethod);
 
         injectField(typeNode, iDFieldDecl);
@@ -295,4 +290,5 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
         return List.of(treeMaker.Throw(chainDots(typeNode, splitNameOf(SQLException.class))).getExpression(),
                 treeMaker.Throw(chainDots(typeNode, splitNameOf(PersistenceException.class))).getExpression());
     }
+
 }

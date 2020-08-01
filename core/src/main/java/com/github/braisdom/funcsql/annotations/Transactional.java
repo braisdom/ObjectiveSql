@@ -11,4 +11,6 @@ public @interface Transactional {
 
     boolean rollback() default true;
 
+    Class<? extends Throwable>[] skipRollbackAt() default {};
+
 }
