@@ -152,12 +152,17 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
     public int update(String updates, String predication) throws SQLException, PersistenceException {
         Objects.requireNonNull(updates, "The updates cannot be null");
         Objects.requireNonNull(predication, "The predication cannot be null");
-        
+
         ensureNotBlank(updates.toString(), "updates");
         ensureNotBlank(updates.toString(), "predication");
 
+        ConnectionFactory connectionFactory = Database.getConnectionFactory();
+        Connection connection = connectionFactory.getConnection();
+        SQLExecutor<T> sqlExecutor = Database.getSqlExecutor();
 
-        return 0;
+        String sql = formatUpdateSql(domainModelDescriptor.getTableName(), updates, predication);
+
+        return sqlExecutor.update(connection, sql);
     }
 
     @Override

@@ -27,6 +27,7 @@ import java.sql.SQLException;
 import java.util.Arrays;
 
 import static com.github.braisdom.funcsql.util.StringUtil.splitNameOf;
+import static lombok.javac.Javac.CTC_BOOLEAN;
 import static lombok.javac.Javac.CTC_INT;
 import static lombok.javac.handlers.JavacHandlerUtil.*;
 
@@ -78,7 +79,8 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 handleCreateArrayMethod(treeMaker, typeNode),
                 handleCreateArray2Method(treeMaker, typeNode),
                 handleUpdateMethod(treeMaker, typeNode),
-                handleUpdate2Method(treeMaker, typeNode)
+                handleUpdate2Method(treeMaker, typeNode),
+                handleUpdate3Method(treeMaker, typeNode)
         };
 
         Arrays.stream(methodDeclArray).forEach(methodDecl -> {
@@ -208,17 +210,8 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
     private JCTree.JCMethodDecl handleCreateMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
         ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
         Name modelClassName = typeNode.toName(typeNode.getName());
-        JCVariableDecl dirtyObjectVar = FieldBuilder.newField(typeNode)
-                .ofType(treeMaker.Ident(modelClassName))
-                .withName("dirtyObject")
-                .withModifiers(Flags.PARAMETER)
-                .build();
-
-        JCVariableDecl skipValidationVar = FieldBuilder.newField(typeNode)
-                .ofType(Boolean.class)
-                .withName("skipValidation")
-                .withModifiers(Flags.PARAMETER)
-                .build();
+        JCVariableDecl dirtyObjectVar = createParameter(typeNode, treeMaker.Ident(modelClassName), "dirtyObject");
+        JCVariableDecl skipValidationVar = createParameter(typeNode, treeMaker.TypeIdent(CTC_BOOLEAN), "skipValidation");
 
         addPersistenceRefStatement(treeMaker, typeNode, jcStatements);
 
@@ -243,11 +236,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
     private JCTree.JCMethodDecl handleCreate2Method(JavacTreeMaker treeMaker, JavacNode typeNode) {
         ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
         Name modelClassName = typeNode.toName(typeNode.getName());
-        JCVariableDecl dirtyObjectVar = FieldBuilder.newField(typeNode)
-                .ofType(treeMaker.Ident(modelClassName))
-                .withName("dirtyObject")
-                .withModifiers(Flags.PARAMETER)
-                .build();
+        JCVariableDecl dirtyObjectVar = createParameter(typeNode, treeMaker.Ident(modelClassName), "dirtyObject");
         JCTree.JCIdent dirtyObjectRef = treeMaker.Ident(typeNode.toName("dirtyObject"));
         JCTree.JCMethodInvocation thisSaveInv = treeMaker.Apply(List.nil(),
                 treeMaker.Ident(typeNode.toName("create")), List.of(dirtyObjectRef, treeMaker.Literal(false)));
@@ -267,11 +256,8 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
     private JCTree.JCMethodDecl handleCreateArray2Method(JavacTreeMaker treeMaker, JavacNode typeNode) {
         ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
         Name modelClassName = typeNode.toName(typeNode.getName());
-        JCVariableDecl dirtyArrayObjectVar = FieldBuilder.newField(typeNode)
-                .ofType(treeMaker.TypeArray(treeMaker.Ident(modelClassName)))
-                .withName("dirtyObjects")
-                .withModifiers(Flags.PARAMETER)
-                .build();
+        JCVariableDecl dirtyArrayObjectVar = createParameter(typeNode, treeMaker.TypeArray(treeMaker.Ident(modelClassName)),
+                "dirtyObjects");
         JCTree.JCIdent dirtyObjectsRef = treeMaker.Ident(typeNode.toName("dirtyObjects"));
         JCTree.JCMethodInvocation thisSaveInv = treeMaker.Apply(List.nil(),
                 treeMaker.Ident(typeNode.toName("create")), List.of(dirtyObjectsRef, treeMaker.Literal(false)));
@@ -325,23 +311,9 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
     private JCTree.JCMethodDecl handleUpdateMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
         ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
         Name modelClassName = typeNode.toName(typeNode.getName());
-        JCVariableDecl idVar = FieldBuilder.newField(typeNode)
-                .ofType(genJavaLangTypeRef(typeNode, Object.class.getSimpleName()))
-                .withName("id")
-                .withModifiers(Flags.PARAMETER)
-                .build();
-
-        JCVariableDecl dirtyObjectVar = FieldBuilder.newField(typeNode)
-                .ofType(treeMaker.Ident(modelClassName))
-                .withName("dirtyObject")
-                .withModifiers(Flags.PARAMETER)
-                .build();
-
-        JCVariableDecl skipValidationVar = FieldBuilder.newField(typeNode)
-                .ofType(Boolean.class)
-                .withName("skipValidation")
-                .withModifiers(Flags.PARAMETER)
-                .build();
+        JCVariableDecl idVar = createParameter(typeNode, genJavaLangTypeRef(typeNode, Object.class.getSimpleName()), "id");
+        JCVariableDecl dirtyObjectVar = createParameter(typeNode, treeMaker.Ident(modelClassName), "dirtyObject");
+        JCVariableDecl skipValidationVar = createParameter(typeNode, treeMaker.TypeIdent(CTC_BOOLEAN), "skipValidation");
 
         addPersistenceRefStatement(treeMaker, typeNode, jcStatements);
 
@@ -349,6 +321,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
         JCExpression idRef = treeMaker.Ident(typeNode.toName("id"));
         JCExpression skipValidationRef = treeMaker.Ident(typeNode.toName("skipValidation"));
         JCExpression dirtyObjectRef = treeMaker.Ident(typeNode.toName("dirtyObject"));
+
         JCTree.JCMethodInvocation returnInv = treeMaker.Apply(List.nil(), updateRef, List.of(idRef, dirtyObjectRef, skipValidationRef));
         jcStatements.append(treeMaker.Return(returnInv));
 
@@ -392,6 +365,30 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 .buildWith(typeNode);
     }
 
+    private JCTree.JCMethodDecl handleUpdate3Method(JavacTreeMaker treeMaker, JavacNode typeNode) {
+        ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
+        JCVariableDecl updatesVar = createParameter(typeNode, genJavaLangTypeRef(typeNode, String.class.getSimpleName()), "updates");
+        JCVariableDecl predicationVar = createParameter(typeNode, genJavaLangTypeRef(typeNode, String.class.getSimpleName()), "predication");
+
+        addPersistenceRefStatement(treeMaker, typeNode, jcStatements);
+
+        JCExpression updateRef = treeMaker.Select(treeMaker.Ident(typeNode.toName("persistence")), typeNode.toName("update"));
+        JCExpression updatesRef = treeMaker.Ident(typeNode.toName("updates"));
+        JCExpression predicationRef = treeMaker.Ident(typeNode.toName("predication"));
+
+        JCTree.JCMethodInvocation returnInv = treeMaker.Apply(List.nil(), updateRef, List.of(updatesRef, predicationRef));
+        jcStatements.append(treeMaker.Return(returnInv));
+
+        return MethodBuilder.newMethod()
+                .withModifiers(Flags.PUBLIC | Flags.STATIC | Flags.FINAL)
+                .withName("update")
+                .withParameters(List.of(updatesVar, predicationVar))
+                .withThrowsClauses(createPersistenceExceptions(treeMaker, typeNode))
+                .withReturnType(treeMaker.TypeIdent(CTC_INT))
+                .withBody(treeMaker.Block(0, jcStatements.toList()))
+                .buildWith(typeNode);
+    }
+
     private void addPersistenceRefStatement(JavacTreeMaker treeMaker, JavacNode typeNode,
                                             ListBuffer<JCTree.JCStatement> jcStatements) {
         Name modelClassName = typeNode.toName(typeNode.getName());
@@ -416,6 +413,14 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
     private List<JCExpression> createPersistenceExceptions(JavacTreeMaker treeMaker, JavacNode typeNode) {
         return List.of(treeMaker.Throw(chainDots(typeNode, splitNameOf(SQLException.class))).getExpression(),
                 treeMaker.Throw(chainDots(typeNode, splitNameOf(PersistenceException.class))).getExpression());
+    }
+
+    private JCVariableDecl createParameter(JavacNode typeNode, JCExpression type, String name) {
+        return FieldBuilder.newField(typeNode)
+                .ofType(type)
+                .withName(name)
+                .withModifiers(Flags.PARAMETER)
+                .build();
     }
 
 }
