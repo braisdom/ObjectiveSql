@@ -14,6 +14,29 @@ public final class Database {
         }
     };
 
+    private static Quoter quoter = new Quoter() {
+        @Override
+        public String quoteColumn(String columnName) {
+            return columnName;
+        }
+
+        @Override
+        public String quoteValue(Object... values) {
+            StringBuilder sb = new StringBuilder();
+
+            for (Object value : values) {
+                if (value instanceof Integer || value instanceof Long ||
+                        value instanceof Float || value instanceof Double)
+                    sb.append(value);
+                else
+                    sb.append(String.format("'%s'", String.valueOf(value)));
+                sb.append(",");
+            }
+            sb.delete(sb.length() - 1, sb.length());
+            return sb.toString();
+        }
+    };
+
     private static PersistenceFactory persistenceFactory = new PersistenceFactory() {
         @Override
         public <T> Persistence<T> createPersistence(Class<T> clazz) {
@@ -47,6 +70,12 @@ public final class Database {
         Database.persistenceFactory = persistenceFactory;
     }
 
+    public static void installQuoter(Quoter quoter) {
+        Objects.requireNonNull(sqlExecutor, "The quoter cannot be null");
+
+        Database.quoter = quoter;
+    }
+
     public static QueryFactory getQueryFactory() {
         return queryFactory;
     }
@@ -58,25 +87,14 @@ public final class Database {
     public static SQLExecutor getSqlExecutor() {
         return sqlExecutor;
     }
-    
+
+    public static Quoter getQuoter() {
+        return quoter;
+    }
+
     public static ConnectionFactory getConnectionFactory() {
         if(connectionFactory == null)
             throw new IllegalStateException("The connectionFactory cannot be null");
         return connectionFactory;
-    }
-
-    public static String quote(Object... scalars) {
-        StringBuilder sb = new StringBuilder();
-
-        for (Object value : scalars) {
-            if (value instanceof Integer || value instanceof Long ||
-                    value instanceof Float || value instanceof Double)
-                sb.append(value);
-            else
-                sb.append(String.format("'%s'", String.valueOf(value)));
-            sb.append(",");
-        }
-        sb.delete(sb.length() - 1, sb.length());
-        return sb.toString();
     }
 }

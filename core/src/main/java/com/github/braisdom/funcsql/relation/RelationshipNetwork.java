@@ -1,9 +1,6 @@
 package com.github.braisdom.funcsql.relation;
 
-import com.github.braisdom.funcsql.Database;
-import com.github.braisdom.funcsql.DomainModelDescriptor;
-import com.github.braisdom.funcsql.SQLExecutor;
-import com.github.braisdom.funcsql.Table;
+import com.github.braisdom.funcsql.*;
 import com.github.braisdom.funcsql.util.StringUtil;
 
 import java.sql.Connection;
@@ -17,7 +14,6 @@ public class RelationshipNetwork implements RelationProcessor.Context {
 
     private final Connection connection;
     private final DomainModelDescriptor domainModelDescriptor;
-
     private final Map<Class, List> relationObjectsMap;
 
     public RelationshipNetwork(Connection connection, DomainModelDescriptor domainModelDescriptor) {
@@ -70,10 +66,11 @@ public class RelationshipNetwork implements RelationProcessor.Context {
         String relationTableName = Table.getTableName(clazz);
 
         SQLExecutor sqlExecutor = Database.getSqlExecutor();
+        Quoter quoter = Database.getQuoter();
 
         String relationConditions = StringUtil.isBlank(condition)
-                ? String.format(" %s IN (%s) ", associatedColumnName, Database.quote(associatedValues))
-                : String.format(" %s IN (%s) AND (%s)", associatedColumnName, Database.quote(associatedValues),
+                ? String.format(" %s IN (%s) ", associatedColumnName, quoter.quoteValue(associatedValues))
+                : String.format(" %s IN (%s) AND (%s)", associatedColumnName, quoter.quoteValue(associatedValues),
                 condition);
         String relationTableQuerySql = String.format(SELECT_RELATION_STATEMENT, relationTableName, relationConditions);
 
