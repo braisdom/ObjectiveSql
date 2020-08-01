@@ -5,7 +5,6 @@ import com.github.braisdom.funcsql.annotations.DomainModel;
 import com.github.braisdom.funcsql.annotations.PrimaryKey;
 import com.github.braisdom.funcsql.util.JCTreeUtil;
 import com.sun.tools.javac.code.Flags;
-import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.JCTree.JCAnnotation;
 import com.sun.tools.javac.tree.JCTree.JCExpression;
@@ -22,10 +21,8 @@ import lombok.javac.JavacNode;
 import lombok.javac.JavacTreeMaker;
 import lombok.javac.handlers.HandleGetter;
 import lombok.javac.handlers.HandleSetter;
-import lombok.javac.handlers.JavacHandlerUtil;
 import org.kohsuke.MetaInfServices;
 
-import javax.lang.model.element.Element;
 import java.sql.SQLException;
 import java.util.Arrays;
 
@@ -75,8 +72,8 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
         JCMethodDecl[] methodDeclArray = new JCMethodDecl[]{
                 handleCreatePersistenceMethod(treeMaker, typeNode),
                 handleCreateQueryMethod(treeMaker, typeNode),
-                handleCreateSaveMethod(treeMaker, typeNode),
-                handleCreateSave2Method(treeMaker, typeNode),
+                handleSaveMethod(treeMaker, typeNode),
+                handleSave2Method(treeMaker, typeNode),
                 handleCreateMethod(treeMaker, typeNode),
                 handleCreate2Method(treeMaker, typeNode),
                 handleCreateArrayMethod(treeMaker, typeNode),
@@ -108,7 +105,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
         }
     }
 
-    private JCTree.JCMethodDecl handleCreateSave2Method(JavacTreeMaker treeMaker, JavacNode typeNode) {
+    private JCTree.JCMethodDecl handleSave2Method(JavacTreeMaker treeMaker, JavacNode typeNode) {
         ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
         JCTree.JCMethodInvocation thisSaveInv = treeMaker.Apply(List.nil(),
                 treeMaker.Select(treeMaker.Ident(typeNode.toName("this")),
@@ -124,7 +121,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 .buildWith(typeNode);
     }
 
-    private JCTree.JCMethodDecl handleCreateSaveMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
+    private JCTree.JCMethodDecl handleSaveMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
         ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
         JCVariableDecl parameter = FieldBuilder.newField(typeNode)
                 .ofType(Boolean.class)
@@ -289,7 +286,6 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 .withThrowsClauses(createPersistenceExceptions(treeMaker, typeNode))
                 .buildWith(typeNode);
     }
-
 
     private JCTree.JCMethodDecl handleCreateArrayMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
         ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();

@@ -41,18 +41,19 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
             String sql = formatInsertSql(tableName, columnNames);
 
             Object[] values = Arrays.stream(columnNames)
-                    .map(
-                            FunctionWithThrowable.castFunctionWithThrowable(columnName -> {
-                                String fieldName = domainModelDescriptor.getFieldName(columnName);
+                    .map(FunctionWithThrowable.castFunctionWithThrowable(columnName -> {
+                        String fieldName = domainModelDescriptor.getFieldName(columnName);
 
-                                ColumnTransitional<T> columnTransitional = domainModelDescriptor.getColumnTransition(fieldName);
-                                if (columnTransitional != null) {
-                                    return columnTransitional.sinking(connection.getMetaData(),
-                                            dirtyObject, domainModelDescriptor,
-                                            fieldName, PropertyUtils.readDirectly(dirtyObject, fieldName));
-                                } else return PropertyUtils.readDirectly(dirtyObject, fieldName);
-                            }))
-                    .toArray(Object[]::new);
+                        ColumnTransitional<T> columnTransitional = domainModelDescriptor.getColumnTransition(fieldName);
+                        if (columnTransitional != null) {
+                            return columnTransitional.sinking(
+                                    connection.getMetaData(),
+                                    dirtyObject,
+                                    domainModelDescriptor,
+                                    fieldName,
+                                    PropertyUtils.readDirectly(dirtyObject, fieldName));
+                        } else return PropertyUtils.readDirectly(dirtyObject, fieldName);
+                    })).toArray(Object[]::new);
 
             return sqlExecutor.insert(connection, sql, domainModelDescriptor, values);
         } finally {
@@ -103,7 +104,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
 
         PrimaryKey primaryKey = domainModelDescriptor.getPrimaryKey();
 
-        if(primaryKey == null)
+        if (primaryKey == null)
             throw new PersistenceException(String.format("The %s has no primary key(@PrimaryKey)",
                     domainModelDescriptor.getDomainModelClass().getSimpleName()));
 
