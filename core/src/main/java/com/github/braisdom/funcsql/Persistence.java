@@ -13,9 +13,9 @@ public interface Persistence<T> {
 
     int update(Object id, T dirtyObject, boolean skipValidation) throws SQLException, PersistenceException;
 
-    int update(String updates, String criteria) throws SQLException, PersistenceException;
+    int update(String updates, String predication) throws SQLException, PersistenceException;
 
-    int update(Map updates, String criteria) throws SQLException, PersistenceException;
+    int update(Map updates, String predication) throws SQLException, PersistenceException;
 
     int delete(Object id) throws SQLException, PersistenceException;
 

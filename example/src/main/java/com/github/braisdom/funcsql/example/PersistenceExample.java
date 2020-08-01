@@ -11,8 +11,9 @@ import java.util.Map;
 public class PersistenceExample {
 
     private static void createMember() throws SQLException, PersistenceException {
-        Map<String, String> extendedAttributes = new HashMap<>();
-        extendedAttributes.put("name", "hello world");
+        Map<String, Object> extendedAttributes = new HashMap<>();
+        extendedAttributes.put("hobbies", new String[]{"Play football"});
+        extendedAttributes.put("ag", 32);
 
         Domains.Member newMember = new Domains.Member()
                 .setId(12)
@@ -38,14 +39,14 @@ public class PersistenceExample {
                 .setGender(0)
                 .setMobile("15011112222");
 
-        Domains.Member.create(new Domains.Member[]{newMember1, newMember2}, false);
+        Domains.Member.create(new Domains.Member[]{newMember1, newMember2});
     }
 
     private static void updateSmithMember() throws SQLException, PersistenceException {
         Domains.Member newMember = new Domains.Member()
-                .setName("Jackson");
+                .setName("Smith => Jackson");
 
-        Domains.Member.update(12, newMember, true);
+        Domains.Member.update(12, newMember);
     }
 
     public static void main(String args[]) throws SQLException, PersistenceException {

@@ -140,22 +140,28 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
             updatesSql.append(columnName).append("=").append("?").append(",");
         });
 
-        if(StringUtil.isBlank(updatesSql.toString()))
-            throw new PersistenceException("Empty updates for " + domainModelDescriptor.getTableName());
-
+        ensureNotBlank(updatesSql.toString(), "updates");
         updatesSql.delete(updatesSql.length() - 1, updatesSql.length());
+
         String sql = formatUpdateSql(domainModelDescriptor.getTableName(),
                 updatesSql.toString(), String.format("%s = ?", primaryKey.name()));
         return sqlExecutor.update(connection, sql, ArrayUtil.appendElement(Object.class, values, id));
     }
 
     @Override
-    public int update(String updates, String criteria) throws SQLException, PersistenceException {
+    public int update(String updates, String predication) throws SQLException, PersistenceException {
+        Objects.requireNonNull(updates, "The updates cannot be null");
+        Objects.requireNonNull(predication, "The predication cannot be null");
+        
+        ensureNotBlank(updates.toString(), "updates");
+        ensureNotBlank(updates.toString(), "predication");
+
+
         return 0;
     }
 
     @Override
-    public int update(Map updates, String criteria) throws SQLException, PersistenceException {
+    public int update(Map updates, String predication) throws SQLException, PersistenceException {
         return 0;
     }
 
@@ -167,5 +173,10 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
     @Override
     public int delete(Object id) throws SQLException, PersistenceException {
         return 0;
+    }
+
+    private void ensureNotBlank(String string, String name) throws PersistenceException {
+        if(StringUtil.isBlank(string))
+            throw new PersistenceException(String.format("Empty %s for %s ", name, domainModelDescriptor.getTableName()));
     }
 }

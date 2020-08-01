@@ -41,12 +41,11 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
         JavacTreeMaker treeMaker = typeNode.getTreeMaker();
         DomainModel domainModel = annotationValues.getInstance();
 
-        JCAnnotation annotation = treeMaker.Annotation(
-                chainDots(typeNode, splitNameOf(PrimaryKey.class)),
+        JCAnnotation annotation = treeMaker.Annotation(chainDots(typeNode, splitNameOf(PrimaryKey.class)),
                 List.of(treeMaker.Assign(treeMaker.Ident(typeNode.toName("name")),
                         treeMaker.Literal(domainModel.primaryColumnName()))));
 
-        JCVariableDecl iDFieldDecl = FieldBuilder.newField(typeNode)
+        JCVariableDecl idFieldDecl = FieldBuilder.newField(typeNode)
                 .ofType(domainModel.primaryClass())
                 .withModifiers(Flags.PRIVATE)
                 .withAnnotations(annotation)
@@ -54,14 +53,14 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 .build();
 
         if (!domainModel.disableGeneratedId()) {
-            JavacNode fieldNode = new JavacNode(javacNode.getAst(), iDFieldDecl, null, AST.Kind.FIELD) {
+            JavacNode fieldNode = new JavacNode(javacNode.getAst(), idFieldDecl, null, AST.Kind.FIELD) {
                 @Override
                 public JavacNode up() {
                     return typeNode;
                 }
             };
 
-            injectField(typeNode, iDFieldDecl);
+            injectField(typeNode, idFieldDecl);
             handleGetter.generateGetterForField(fieldNode, null, AccessLevel.PUBLIC, false);
             HandleSetter.createSetter(Flags.PUBLIC, fieldNode, treeMaker, toSetterName(fieldNode), domainModel.fluent(),
                     typeNode, List.nil(), List.nil());
@@ -78,7 +77,8 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 handleCreate2Method(treeMaker, typeNode),
                 handleCreateArrayMethod(treeMaker, typeNode),
                 handleCreateArray2Method(treeMaker, typeNode),
-                handleUpdateMethod(treeMaker, typeNode)
+                handleUpdateMethod(treeMaker, typeNode),
+                handleUpdate2Method(treeMaker, typeNode)
         };
 
         Arrays.stream(methodDeclArray).forEach(methodDecl -> {
@@ -322,27 +322,6 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 .buildWith(typeNode);
     }
 
-    private void addPersistenceRefStatement(JavacTreeMaker treeMaker, JavacNode typeNode,
-                                            ListBuffer<JCTree.JCStatement> jcStatements) {
-        Name modelClassName = typeNode.toName(typeNode.getName());
-
-        Name persistenceFactoryName = typeNode.toName("persistenceFactory");
-        JCExpression persistenceFactoryRef = chainDots(typeNode, splitNameOf(PersistenceFactory.class));
-        JCExpression getPersistenceFactoryRef = treeMaker.Select(
-                chainDots(typeNode, splitNameOf(Database.class)), typeNode.toName("getPersistenceFactory"));
-        jcStatements.append(treeMaker.VarDef(treeMaker.Modifiers(Flags.PARAMETER), persistenceFactoryName,
-                persistenceFactoryRef, treeMaker.Apply(List.nil(), getPersistenceFactoryRef, List.nil())));
-
-        Name persistenceName = typeNode.toName("persistence");
-        JCExpression persistenceRef = genTypeRef(typeNode, Persistence.class.getName());
-        JCExpression createPersistenceRef = treeMaker.Select(
-                treeMaker.Ident(typeNode.toName("persistenceFactory")), typeNode.toName("createPersistence"));
-        JCExpression modelClassRef = treeMaker.Select(treeMaker.Ident(modelClassName), typeNode.toName("class"));
-        JCTree.JCModifiers persistenceModifier = treeMaker.Modifiers(Flags.PARAMETER);
-        jcStatements.append(treeMaker.VarDef(persistenceModifier, persistenceName,
-                persistenceRef, treeMaker.Apply(List.nil(), createPersistenceRef, List.of(modelClassRef))));
-    }
-
     private JCTree.JCMethodDecl handleUpdateMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
         ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
         Name modelClassName = typeNode.toName(typeNode.getName());
@@ -366,8 +345,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
 
         addPersistenceRefStatement(treeMaker, typeNode, jcStatements);
 
-        JCExpression updateRef = treeMaker.Select(
-                treeMaker.Ident(typeNode.toName("persistence")), typeNode.toName("update"));
+        JCExpression updateRef = treeMaker.Select(treeMaker.Ident(typeNode.toName("persistence")), typeNode.toName("update"));
         JCExpression idRef = treeMaker.Ident(typeNode.toName("id"));
         JCExpression skipValidationRef = treeMaker.Ident(typeNode.toName("skipValidation"));
         JCExpression dirtyObjectRef = treeMaker.Ident(typeNode.toName("dirtyObject"));
@@ -382,6 +360,57 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 .withReturnType(treeMaker.TypeIdent(CTC_INT))
                 .withBody(treeMaker.Block(0, jcStatements.toList()))
                 .buildWith(typeNode);
+    }
+
+    private JCTree.JCMethodDecl handleUpdate2Method(JavacTreeMaker treeMaker, JavacNode typeNode) {
+        ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
+        Name modelClassName = typeNode.toName(typeNode.getName());
+        JCVariableDecl idVar = FieldBuilder.newField(typeNode)
+                .ofType(genJavaLangTypeRef(typeNode, Object.class.getSimpleName()))
+                .withName("id")
+                .withModifiers(Flags.PARAMETER)
+                .build();
+        JCVariableDecl dirtyObjectVar = FieldBuilder.newField(typeNode)
+                .ofType(treeMaker.Ident(modelClassName))
+                .withName("dirtyObject")
+                .withModifiers(Flags.PARAMETER)
+                .build();
+        JCTree.JCIdent idRef = treeMaker.Ident(typeNode.toName("id"));
+        JCTree.JCIdent dirtyObjectsRef = treeMaker.Ident(typeNode.toName("dirtyObject"));
+        JCTree.JCMethodInvocation thisSaveInv = treeMaker.Apply(List.nil(),
+                treeMaker.Ident(typeNode.toName("update")), List.of(idRef, dirtyObjectsRef, treeMaker.Literal(false)));
+
+        jcStatements.append(treeMaker.Return(thisSaveInv));
+
+        return MethodBuilder.newMethod()
+                .withModifiers(Flags.PUBLIC | Flags.FINAL | Flags.STATIC)
+                .withName("update")
+                .withParameters(List.of(idVar, dirtyObjectVar))
+                .withBody(treeMaker.Block(0, jcStatements.toList()))
+                .withReturnType(treeMaker.TypeIdent(CTC_INT))
+                .withThrowsClauses(createPersistenceExceptions(treeMaker, typeNode))
+                .buildWith(typeNode);
+    }
+
+    private void addPersistenceRefStatement(JavacTreeMaker treeMaker, JavacNode typeNode,
+                                            ListBuffer<JCTree.JCStatement> jcStatements) {
+        Name modelClassName = typeNode.toName(typeNode.getName());
+
+        Name persistenceFactoryName = typeNode.toName("persistenceFactory");
+        JCExpression persistenceFactoryRef = chainDots(typeNode, splitNameOf(PersistenceFactory.class));
+        JCExpression getPersistenceFactoryRef = treeMaker.Select(
+                chainDots(typeNode, splitNameOf(Database.class)), typeNode.toName("getPersistenceFactory"));
+        jcStatements.append(treeMaker.VarDef(treeMaker.Modifiers(Flags.PARAMETER), persistenceFactoryName,
+                persistenceFactoryRef, treeMaker.Apply(List.nil(), getPersistenceFactoryRef, List.nil())));
+
+        Name persistenceName = typeNode.toName("persistence");
+        JCExpression persistenceRef = genTypeRef(typeNode, Persistence.class.getName());
+        JCExpression createPersistenceRef = treeMaker.Select(
+                treeMaker.Ident(typeNode.toName("persistenceFactory")), typeNode.toName("createPersistence"));
+        JCExpression modelClassRef = treeMaker.Select(treeMaker.Ident(modelClassName), typeNode.toName("class"));
+        JCTree.JCModifiers persistenceModifier = treeMaker.Modifiers(Flags.PARAMETER);
+        jcStatements.append(treeMaker.VarDef(persistenceModifier, persistenceName,
+                persistenceRef, treeMaker.Apply(List.nil(), createPersistenceRef, List.of(modelClassRef))));
     }
 
     private List<JCExpression> createPersistenceExceptions(JavacTreeMaker treeMaker, JavacNode typeNode) {

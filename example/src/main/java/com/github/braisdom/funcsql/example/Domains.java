@@ -21,7 +21,7 @@ public final class Domains {
     private Domains() {
     }
 
-    @DomainModel()
+    @DomainModel
     public static class Member {
         private String no;
         private String name;
