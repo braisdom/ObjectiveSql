@@ -24,6 +24,22 @@ public class PersistenceExample {
         Domains.Member.create(newMember);
     }
 
+    private static void createMemberArray() throws SQLException, PersistenceException {
+        Domains.Member newMember1 = new Domains.Member()
+                .setNo("200001")
+                .setName("Jones")
+                .setGender(1)
+                .setMobile("15011112222");
+
+        Domains.Member newMember2 = new Domains.Member()
+                .setNo("200003")
+                .setName("Mary")
+                .setGender(0)
+                .setMobile("15011112222");
+
+        Domains.Member.create(new Domains.Member[]{newMember1, newMember2}, false);
+    }
+
     public static void main(String args[]) throws SQLException, PersistenceException {
         File file = new File("persistence_example.db");
 
@@ -34,5 +50,6 @@ public class PersistenceExample {
         Domains.createTables(Database.getConnectionFactory().getConnection());
 
         createMember();
+        createMemberArray();
     }
 }
