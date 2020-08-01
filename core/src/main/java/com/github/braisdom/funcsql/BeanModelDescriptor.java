@@ -79,6 +79,11 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
     }
 
     @Override
+    public boolean skipNullOnUpdate() {
+        return domainModelClass.getAnnotation(DomainModel.class).skipNullValueOnUpdating();
+    }
+
+    @Override
     public String[] getInsertableColumns() {
         return Arrays.stream(getColumnizableFields(domainModelClass, true, false))
                 .map(field -> getColumnName(field)).toArray(String[]::new);

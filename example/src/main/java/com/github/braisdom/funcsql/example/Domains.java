@@ -21,11 +21,11 @@ public final class Domains {
     private Domains() {
     }
 
-    @DomainModel
+    @DomainModel()
     public static class Member {
         private String no;
         private String name;
-        private int gender;
+        private Integer gender;
         private String mobile;
 
         @Relation(relationType = RelationType.HAS_MANY)
@@ -41,9 +41,9 @@ public final class Domains {
     @DomainModel
     public static class Order {
         private String no;
-        private long memberId;
-        private float amount;
-        private float quantity;
+        private Long memberId;
+        private Float amount;
+        private Float quantity;
         private Date salesAt;
 
         @Relation(relationType = RelationType.BELONGS_TO)
@@ -56,8 +56,8 @@ public final class Domains {
     @DomainModel
     public static class OrderLine {
         private String orderNo;
-        private float amount;
-        private float quantity;
+        private Float amount;
+        private Float quantity;
 
         @Relation(relationType = RelationType.BELONGS_TO)
         private Order order;

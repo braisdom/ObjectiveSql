@@ -5,11 +5,13 @@ import com.github.braisdom.funcsql.reflection.PropertyUtils;
 import com.github.braisdom.funcsql.transition.ColumnTransitional;
 import com.github.braisdom.funcsql.util.ArrayUtil;
 import com.github.braisdom.funcsql.util.FunctionWithThrowable;
+import com.github.braisdom.funcsql.util.StringUtil;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Objects;
 
 public class DefaultPersistence<T> extends AbstractPersistence<T> {
 
@@ -26,11 +28,13 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
         Object primaryValue = domainModelDescriptor.getPrimaryValue(dirtyObject);
         if (primaryValue == null)
             insert(dirtyObject, skipValidation);
-        else update(dirtyObject, skipValidation);
+        else update(primaryValue, dirtyObject, skipValidation);
     }
 
     @Override
     public T insert(T dirtyObject, boolean skipValidation) throws SQLException, PersistenceException {
+        Objects.requireNonNull(dirtyObject, "The dirtyObject cannot be null");
+
         ConnectionFactory connectionFactory = Database.getConnectionFactory();
         SQLExecutor<T> sqlExecutor = Database.getSqlExecutor();
         Connection connection = connectionFactory.getConnection();
@@ -64,6 +68,8 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
 
     @Override
     public int[] insert(T[] dirtyObject, boolean skipValidation) throws SQLException, PersistenceException {
+        Objects.requireNonNull(dirtyObject, "The dirtyObject cannot be null");
+
         ConnectionFactory connectionFactory = Database.getConnectionFactory();
         Connection connection = connectionFactory.getConnection();
         SQLExecutor<T> sqlExecutor = Database.getSqlExecutor();
@@ -97,33 +103,36 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
     }
 
     @Override
-    public int update(T dirtyObject, boolean skipValidation) throws SQLException, PersistenceException {
+    public int update(Object id, T dirtyObject, boolean skipValidation) throws SQLException, PersistenceException {
+        Objects.requireNonNull(id, "The id cannot be null");
+        Objects.requireNonNull(dirtyObject, "The dirtyObject cannot be null");
+
         ConnectionFactory connectionFactory = Database.getConnectionFactory();
         Connection connection = connectionFactory.getConnection();
         SQLExecutor<T> sqlExecutor = Database.getSqlExecutor();
-
         PrimaryKey primaryKey = domainModelDescriptor.getPrimaryKey();
 
         if (primaryKey == null)
             throw new PersistenceException(String.format("The %s has no primary key(@PrimaryKey)",
                     domainModelDescriptor.getDomainModelClass().getSimpleName()));
 
-        Object primaryValue = domainModelDescriptor.getPrimaryValue(dirtyObject);
-
-        String[] columnNames = domainModelDescriptor.getUpdatableColumns();
-
+        String[] rawColumnNames = domainModelDescriptor.getUpdatableColumns();
+        String[] columnNames = Arrays.stream(rawColumnNames)
+                .filter(rawColumnName -> {
+                    if (domainModelDescriptor.skipNullOnUpdate()) {
+                        String fieldName = domainModelDescriptor.getFieldName(rawColumnName);
+                        return PropertyUtils.readDirectly(dirtyObject, fieldName) != null;
+                    } else return true;
+                }).toArray(String[]::new);
         Object[] values = Arrays.stream(columnNames)
-                .map(
-                        FunctionWithThrowable.castFunctionWithThrowable(columnName -> {
-                            String fieldName = domainModelDescriptor.getFieldName(columnName);
-                            ColumnTransitional<T> columnTransitional = domainModelDescriptor.getColumnTransition(fieldName);
-                            if (columnTransitional != null)
-                                return columnTransitional.sinking(connection.getMetaData(), dirtyObject, domainModelDescriptor,
-                                        fieldName, PropertyUtils.readDirectly(dirtyObject, fieldName));
-                            else return PropertyUtils.readDirectly(dirtyObject, fieldName);
-                        })
-                )
-                .toArray(Object[]::new);
+                .map(FunctionWithThrowable.castFunctionWithThrowable(columnName -> {
+                    String fieldName = domainModelDescriptor.getFieldName(columnName);
+                    ColumnTransitional<T> columnTransitional = domainModelDescriptor.getColumnTransition(fieldName);
+                    if (columnTransitional != null)
+                        return columnTransitional.sinking(connection.getMetaData(), dirtyObject, domainModelDescriptor,
+                                fieldName, PropertyUtils.readDirectly(dirtyObject, fieldName));
+                    else return PropertyUtils.readDirectly(dirtyObject, fieldName);
+                })).toArray(Object[]::new);
 
         StringBuilder updatesSql = new StringBuilder();
 
@@ -131,10 +140,13 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
             updatesSql.append(columnName).append("=").append("?").append(",");
         });
 
+        if(StringUtil.isBlank(updatesSql.toString()))
+            throw new PersistenceException("Empty updates for " + domainModelDescriptor.getTableName());
+
         updatesSql.delete(updatesSql.length() - 1, updatesSql.length());
         String sql = formatUpdateSql(domainModelDescriptor.getTableName(),
                 updatesSql.toString(), String.format("%s = ?", primaryKey.name()));
-        return sqlExecutor.update(connection, sql, ArrayUtil.appendElement(Object.class, values, primaryValue));
+        return sqlExecutor.update(connection, sql, ArrayUtil.appendElement(Object.class, values, id));
     }
 
     @Override

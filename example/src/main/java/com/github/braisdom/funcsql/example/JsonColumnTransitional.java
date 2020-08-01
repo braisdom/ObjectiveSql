@@ -15,12 +15,16 @@ public class JsonColumnTransitional implements ColumnTransitional {
     @Override
     public Object sinking(DatabaseMetaData databaseMetaData, Object object,
                           DomainModelDescriptor domainModelDescriptor, String fieldName, Object fieldValue) {
-        return gson.toJson(fieldValue);
+        if(fieldValue != null)
+            return gson.toJson(fieldValue);
+        return null;
     }
 
     @Override
     public Object rising(DatabaseMetaData databaseMetaData, ResultSetMetaData resultSetMetaData,
                          Object object, DomainModelDescriptor domainModelDescriptor, String fieldName, Object fieldValue) {
-        return gson.fromJson(String.valueOf(fieldValue), domainModelDescriptor.getFieldTypeByFieldName(fieldName));
+        if(fieldValue != null)
+            return gson.fromJson(String.valueOf(fieldValue), domainModelDescriptor.getFieldTypeByFieldName(fieldName));
+        return null;
     }
 }

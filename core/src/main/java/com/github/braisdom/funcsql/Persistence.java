@@ -11,7 +11,7 @@ public interface Persistence<T> {
 
     int[] insert(T[] dirtyObject, boolean skipValidation) throws SQLException, PersistenceException;
 
-    int update(T dirtyObject, boolean skipValidation) throws SQLException, PersistenceException;
+    int update(Object id, T dirtyObject, boolean skipValidation) throws SQLException, PersistenceException;
 
     int update(String updates, String criteria) throws SQLException, PersistenceException;
 

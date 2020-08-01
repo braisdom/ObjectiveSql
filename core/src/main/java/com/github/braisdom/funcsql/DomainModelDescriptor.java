@@ -13,6 +13,8 @@ public interface DomainModelDescriptor<T> {
 
     Object getPrimaryValue(T domainObject);
 
+    boolean skipNullOnUpdate();
+
     Class getDomainModelClass();
 
     DomainModelDescriptor getRelatedModeDescriptor(Class relatedClass);

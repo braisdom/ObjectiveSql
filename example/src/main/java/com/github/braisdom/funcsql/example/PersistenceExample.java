@@ -41,6 +41,13 @@ public class PersistenceExample {
         Domains.Member.create(new Domains.Member[]{newMember1, newMember2}, false);
     }
 
+    private static void updateSmithMember() throws SQLException, PersistenceException {
+        Domains.Member newMember = new Domains.Member()
+                .setName("Jackson");
+
+        Domains.Member.update(12, newMember, true);
+    }
+
     public static void main(String args[]) throws SQLException, PersistenceException {
         File file = new File("persistence_example.db");
 
@@ -52,5 +59,6 @@ public class PersistenceExample {
 
         createMember();
         createMemberArray();
+        updateSmithMember();
     }
 }
