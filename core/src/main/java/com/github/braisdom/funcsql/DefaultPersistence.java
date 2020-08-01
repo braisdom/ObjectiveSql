@@ -47,7 +47,6 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
             Object[] values = Arrays.stream(columnNames)
                     .map(FunctionWithThrowable.castFunctionWithThrowable(columnName -> {
                         String fieldName = domainModelDescriptor.getFieldName(columnName);
-
                         ColumnTransitional<T> columnTransitional = domainModelDescriptor.getColumnTransition(fieldName);
                         if (columnTransitional != null) {
                             return columnTransitional.sinking(
@@ -76,7 +75,6 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
 
         try {
             String[] columnNames = domainModelDescriptor.getInsertableColumns();
-
             Object[][] values = new Object[dirtyObject.length][columnNames.length];
 
             for (int i = 0; i < dirtyObject.length; i++) {
@@ -112,9 +110,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
         SQLExecutor<T> sqlExecutor = Database.getSqlExecutor();
         PrimaryKey primaryKey = domainModelDescriptor.getPrimaryKey();
 
-        if (primaryKey == null)
-            throw new PersistenceException(String.format("The %s has no primary key(@PrimaryKey)",
-                    domainModelDescriptor.getDomainModelClass().getSimpleName()));
+        ensurePrimaryKeyNotNull(primaryKey);
 
         String[] rawColumnNames = domainModelDescriptor.getUpdatableColumns();
         String[] columnNames = Arrays.stream(rawColumnNames)
@@ -181,7 +177,24 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
 
     @Override
     public int delete(Object id) throws SQLException, PersistenceException {
-        return 0;
+        Objects.requireNonNull(id, "The id cannot be null");
+
+        ConnectionFactory connectionFactory = Database.getConnectionFactory();
+        Connection connection = connectionFactory.getConnection();
+        SQLExecutor<T> sqlExecutor = Database.getSqlExecutor();
+        Quoter quoter = Database.getQuoter();
+        PrimaryKey primaryKey = domainModelDescriptor.getPrimaryKey();
+
+        ensurePrimaryKeyNotNull(primaryKey);
+
+        String sql = formatDeleteSql(domainModelDescriptor.getTableName(),
+                String.format("%s = %s", quoter.quoteColumn(primaryKey.name()), quoter.quoteValue(id)));
+        return sqlExecutor.delete(connection, sql);
+    }
+
+    private void ensurePrimaryKeyNotNull(PrimaryKey primaryKey) throws PersistenceException {
+        if(primaryKey == null)
+            throw new PersistenceException(String.format("The %s has no primary key", domainModelDescriptor.getTableName()));
     }
 
     private void ensureNotBlank(String string, String name) throws PersistenceException {
