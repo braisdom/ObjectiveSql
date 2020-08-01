@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class PersistenceExample {
 
-    private static void saveCreate() throws SQLException, PersistenceException {
+    private static void create() throws SQLException, PersistenceException {
         Map<String, String> extendedAttributes = new HashMap<>();
         extendedAttributes.put("name", "hello");
 
@@ -33,7 +33,7 @@ public class PersistenceExample {
         Database.installConnectionFactory(new SqliteConnectionFactory(file.getPath()));
         Domains.createTables(Database.getConnectionFactory().getConnection());
 
-        saveCreate();
+        create();
 //        Persistence<Member> memberPersistence = new DefaultPersistence<>(Member.class);
 //
 //        memberPersistence.update(newMember);

@@ -39,7 +39,6 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
         JavacNode typeNode = javacNode.up();
         JCTree.JCClassDecl classDecl = (JCTree.JCClassDecl) typeNode.get();
         HandleGetter handleGetter = new HandleGetter();
-        HandleSetter handleSetter = new HandleSetter();
         JavacTreeMaker treeMaker = typeNode.getTreeMaker();
         DomainModel domainModel = annotationValues.getInstance();
 
@@ -55,15 +54,18 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 .withName(domainModel.primaryFieldName())
                 .build();
 
-        JavacNode fieldNode = new JavacNode(javacNode.getAst(), iDFieldDecl, null, AST.Kind.FIELD) {
-            @Override
-            public JavacNode up() {
-                return typeNode;
-            }
-        };
+        if(!domainModel.disableGeneratedId()) {
+            JavacNode fieldNode = new JavacNode(javacNode.getAst(), iDFieldDecl, null, AST.Kind.FIELD) {
+                @Override
+                public JavacNode up() {
+                    return typeNode;
+                }
+            };
 
-        handleGetter.generateGetterForField(fieldNode, null, AccessLevel.PUBLIC, false);
-        handleSetter.generateSetterForField(fieldNode, typeNode, AccessLevel.PUBLIC);
+            handleGetter.generateGetterForField(fieldNode, null, AccessLevel.PUBLIC, false);
+            HandleSetter.createSetter(Flags.PUBLIC, fieldNode, treeMaker, toSetterName(fieldNode), domainModel.fluent(),
+                    typeNode, List.nil(), List.nil());
+        }
 
         JCMethodDecl createPersistenceMethod = handleCreatePersistenceMethod(treeMaker, typeNode);
         JCMethodDecl createQueryMethod = handleCreateQueryMethod(treeMaker, typeNode);
@@ -72,7 +74,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
         JCMethodDecl createMethod = handleCreateMethod(treeMaker, typeNode);
         JCMethodDecl create2Method = handleCreate2Method(treeMaker, typeNode);
 
-        generateFieldSG(typeNode, handleGetter, handleSetter);
+        generateFieldSG(treeMaker, domainModel, typeNode, handleGetter);
 
         if (!JCTreeUtil.containsMethod(classDecl.sym, createPersistenceMethod, false))
             injectMethod(typeNode, createPersistenceMethod);
@@ -95,7 +97,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
         injectField(typeNode, iDFieldDecl);
     }
 
-    private void generateFieldSG(JavacNode typeNode, HandleGetter handleGetter, HandleSetter handleSetter) {
+    private void generateFieldSG(JavacTreeMaker treeMaker, DomainModel domainModel, JavacNode typeNode, HandleGetter handleGetter) {
         for (JavacNode field : typeNode.down()) {
             if (handleGetter.fieldQualifiesForGetterGeneration(field))
                 handleGetter.generateGetterForField(field, null, AccessLevel.PUBLIC, false);
@@ -109,7 +111,8 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
             //Skip final fields.
             if ((fieldDecl.mods.flags & Flags.FINAL) != 0) continue;
 
-            handleSetter.generateSetterForField(field, typeNode, AccessLevel.PUBLIC);
+            injectMethod(typeNode, HandleSetter.createSetter(Flags.PUBLIC, field, treeMaker, toSetterName(field), domainModel.fluent(),
+                    typeNode, List.nil(), List.nil()));
         }
     }
 
