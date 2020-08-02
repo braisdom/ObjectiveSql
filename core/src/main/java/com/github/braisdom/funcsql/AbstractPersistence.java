@@ -1,6 +1,7 @@
 package com.github.braisdom.funcsql;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 public abstract class AbstractPersistence<T> implements Persistence<T> {
 
@@ -15,6 +16,8 @@ public abstract class AbstractPersistence<T> implements Persistence<T> {
     }
 
     public AbstractPersistence(DomainModelDescriptor domainModelDescriptor) {
+        Objects.requireNonNull(domainModelDescriptor, "The domainModelDescriptor cannot be null");
+
         this.domainModelDescriptor = domainModelDescriptor;
     }
 

@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 public class PersistenceExample {
 
@@ -28,11 +29,11 @@ public class PersistenceExample {
                 .setMobile("15011112222");
 
         Domains.Member.create(newMember);
-        print("Create member 'Smith' successfully.");
     }
 
     private static void createMemberArray() throws SQLException, PersistenceException {
         Domains.Member newMember1 = new Domains.Member()
+                .setId(13)
                 .setNo("200001")
                 .setName("Alice")
                 .setGender(0)

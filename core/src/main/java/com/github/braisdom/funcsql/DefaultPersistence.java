@@ -25,6 +25,8 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
 
     @Override
     public void save(T dirtyObject, boolean skipValidation) throws SQLException, PersistenceException {
+        Objects.requireNonNull(dirtyObject, "The dirtyObject cannot be null");
+
         Object primaryValue = domainModelDescriptor.getPrimaryValue(dirtyObject);
         if (primaryValue == null)
             insert(dirtyObject, skipValidation);
