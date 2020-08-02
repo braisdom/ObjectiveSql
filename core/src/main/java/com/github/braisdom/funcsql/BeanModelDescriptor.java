@@ -11,6 +11,7 @@ import com.github.braisdom.funcsql.util.StringUtil;
 import com.github.braisdom.funcsql.util.WordUtil;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.*;
 
 public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
@@ -140,7 +141,7 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
             return Arrays.stream(fields).filter(field -> {
                 Column column = field.getAnnotation(Column.class);
                 Volatile volatileAnnotation = field.getAnnotation(Volatile.class);
-                if (volatileAnnotation == null) {
+                if (!Modifier.isStatic(field.getModifiers()) && volatileAnnotation == null) {
                     if (column == null)
                         return isColumnizable(field);
                     else {
@@ -152,7 +153,7 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
             return Arrays.stream(fields).filter(field -> {
                 Column column = field.getAnnotation(Column.class);
                 Volatile volatileAnnotation = field.getAnnotation(Volatile.class);
-                if (volatileAnnotation == null) {
+                if (!Modifier.isStatic(field.getModifiers()) && volatileAnnotation == null) {
                     if (column == null)
                         return false;
                     else

@@ -42,18 +42,8 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
         JavacTreeMaker treeMaker = typeNode.getTreeMaker();
         DomainModel domainModel = annotationValues.getInstance();
 
-        JCAnnotation annotation = treeMaker.Annotation(chainDots(typeNode, splitNameOf(PrimaryKey.class)),
-                List.of(treeMaker.Assign(treeMaker.Ident(typeNode.toName("name")),
-                        treeMaker.Literal(domainModel.primaryColumnName()))));
-
-        JCVariableDecl idFieldDecl = FieldBuilder.newField(typeNode)
-                .ofType(domainModel.primaryClass())
-                .withModifiers(Flags.PRIVATE)
-                .withAnnotations(annotation)
-                .withName(domainModel.primaryFieldName())
-                .build();
-
         if (!domainModel.disableGeneratedId()) {
+            JCVariableDecl idFieldDecl = createIdField(treeMaker, typeNode, domainModel);
             JavacNode fieldNode = new JavacNode(javacNode.getAst(), idFieldDecl, null, AST.Kind.FIELD) {
                 @Override
                 public JavacNode up() {
@@ -67,7 +57,8 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                     typeNode, List.nil(), List.nil());
         }
 
-        generateFieldSG(treeMaker, domainModel, typeNode, handleGetter);
+        handleFieldSG(treeMaker, domainModel, typeNode, handleGetter);
+        handleTableNameField(treeMaker, typeNode);
 
         JCMethodDecl[] methodDeclArray = new JCMethodDecl[]{
                 handleCreatePersistenceMethod(treeMaker, typeNode),
@@ -92,7 +83,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
         });
     }
 
-    private void generateFieldSG(JavacTreeMaker treeMaker, DomainModel domainModel, JavacNode typeNode, HandleGetter handleGetter) {
+    private void handleFieldSG(JavacTreeMaker treeMaker, DomainModel domainModel, JavacNode typeNode, HandleGetter handleGetter) {
         for (JavacNode field : typeNode.down()) {
             if (handleGetter.fieldQualifiesForGetterGeneration(field))
                 handleGetter.generateGetterForField(field, null, AccessLevel.PUBLIC, false);
@@ -479,6 +470,34 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
         JCTree.JCModifiers persistenceModifier = treeMaker.Modifiers(Flags.PARAMETER);
         jcStatements.append(treeMaker.VarDef(persistenceModifier, persistenceName,
                 persistenceRef, treeMaker.Apply(List.nil(), createPersistenceRef, List.of(modelClassRef))));
+    }
+
+    private JCVariableDecl createIdField(JavacTreeMaker treeMaker, JavacNode typeNode, DomainModel domainModel) {
+        JCAnnotation annotation = treeMaker.Annotation(chainDots(typeNode, splitNameOf(PrimaryKey.class)),
+                List.of(treeMaker.Assign(treeMaker.Ident(typeNode.toName("name")),
+                        treeMaker.Literal(domainModel.primaryColumnName()))));
+
+        return FieldBuilder.newField(typeNode)
+                .ofType(domainModel.primaryClass())
+                .withModifiers(Flags.PRIVATE)
+                .withAnnotations(annotation)
+                .withName(domainModel.primaryFieldName())
+                .build();
+    }
+
+    private void handleTableNameField(JavacTreeMaker treeMaker, JavacNode typeNode) {
+        JCExpression tableRef = genTypeRef(typeNode, Table.class.getName());
+        JCExpression getTableRef = treeMaker.Select(tableRef, typeNode.toName("getTableName"));
+        JCExpression paramRef = treeMaker.Select(treeMaker.Ident(typeNode.toName(typeNode.getName())), typeNode.toName("class"));
+        JCTree.JCMethodInvocation getTableInv = treeMaker.Apply(List.nil(), getTableRef, List.of(paramRef));
+        JCVariableDecl variableDecl = FieldBuilder.newField(typeNode)
+                .ofType(genJavaLangTypeRef(typeNode, String.class.getSimpleName()))
+                .withModifiers(Flags.PUBLIC | Flags.STATIC | Flags.FINAL)
+                .withName("TABLE_NAME")
+                .withInit(getTableInv)
+                .build();
+
+        injectField(typeNode, variableDecl);
     }
 
     private List<JCExpression> createPersistenceExceptions(JavacTreeMaker treeMaker, JavacNode typeNode) {

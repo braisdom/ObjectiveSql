@@ -42,7 +42,7 @@ class FieldBuilder {
   private JCExpression type;
   private String name;
   private long modifiers;
-  private List<JCExpression> args = nil();
+  private JCExpression init;
 
   private FieldBuilder(JavacNode node) {
     this.node = node;
@@ -73,8 +73,8 @@ class FieldBuilder {
     return this;
   }
 
-  FieldBuilder withArgs(JCExpression... newArgs) {
-    args = List.from(newArgs);
+  FieldBuilder withInit(JCExpression newInit) {
+    init = newInit;
     return this;
   }
 
@@ -82,11 +82,11 @@ class FieldBuilder {
     JavacTreeMaker treeMaker = node.getTreeMaker();
     JCTree.JCModifiers jcModifiers = treeMaker.Modifiers(modifiers);
 
-    for(JCTree.JCAnnotation annotation : annotations) {
+    for(JCTree.JCAnnotation annotation : annotations)
       jcModifiers.annotations = jcModifiers.annotations.append(annotation);
-    }
+
     treeMaker.at(node.get().pos);
-    return treeMaker.VarDef(jcModifiers, node.toName(name), type, null);
+    return treeMaker.VarDef(jcModifiers, node.toName(name), type, init);
   }
 
   private FieldBuilder() {}

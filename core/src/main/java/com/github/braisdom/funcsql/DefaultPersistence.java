@@ -114,10 +114,8 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
                     })).toArray(Object[]::new);
 
             StringBuilder updatesSql = new StringBuilder();
-
-            Arrays.stream(columnNames).forEach(columnName -> {
-                updatesSql.append(columnName).append("=").append("?").append(",");
-            });
+            Arrays.stream(columnNames).forEach(columnName ->
+                    updatesSql.append(columnName).append("=").append("?").append(","));
 
             ensureNotBlank(updatesSql.toString(), "updates");
             updatesSql.delete(updatesSql.length() - 1, updatesSql.length());

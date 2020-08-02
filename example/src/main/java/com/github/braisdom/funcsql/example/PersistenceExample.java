@@ -45,7 +45,13 @@ public class PersistenceExample {
                 .setGender(0)
                 .setMobile("15011112222");
 
-        Domains.Member.create(new Domains.Member[]{newMember1, newMember2});
+        Domains.Member newMember3 = new Domains.Member()
+                .setNo("200004")
+                .setName("Denise")
+                .setGender(0)
+                .setMobile("15011112222");
+
+        Domains.Member.create(new Domains.Member[]{newMember1, newMember2, newMember3});
         print("Create member['Alice', 'Mary'] successfully.");
     }
 
@@ -77,6 +83,11 @@ public class PersistenceExample {
         print("Delete Mary successfully");
     }
 
+    private static void executeDeleteDenise() throws SQLException, PersistenceException {
+        Domains.Member.execute(String.format("DELETE FROM %s WHERE name = 'Denise'", Domains.Member.TABLE_NAME));
+        print("Delete Mary successfully");
+    }
+
     private static void print(String message, Object... params) {
         Date date = new Date(System.currentTimeMillis());
         System.out.println(String.format("[%s] %s", dateFormat.format(date), String.format(message, params)));
@@ -97,5 +108,6 @@ public class PersistenceExample {
         updateJacksonMember();
         deleteAliceMember();
         deleteMaryMember();
+        executeDeleteDenise();
     }
 }
