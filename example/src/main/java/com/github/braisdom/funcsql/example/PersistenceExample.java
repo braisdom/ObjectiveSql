@@ -67,6 +67,16 @@ public class PersistenceExample {
         print("Update member from 'Smith => Jackson' to 'Smith => Jackson => Davies' successfully.");
     }
 
+    private static void deleteAliceMember() throws SQLException, PersistenceException {
+        Domains.Member.destroy(13);
+        print("Delete Alice successfully");
+    }
+
+    private static void deleteMaryMember() throws SQLException, PersistenceException {
+        Domains.Member.destroy("name = 'Mary'");
+        print("Delete Mary successfully");
+    }
+
     private static void print(String message, Object... params) {
         Date date = new Date(System.currentTimeMillis());
         System.out.println(String.format("[%s] %s", dateFormat.format(date), String.format(message, params)));
@@ -85,5 +95,7 @@ public class PersistenceExample {
         createMemberArray();
         updateSmithMember();
         updateJacksonMember();
+        deleteAliceMember();
+        deleteMaryMember();
     }
 }

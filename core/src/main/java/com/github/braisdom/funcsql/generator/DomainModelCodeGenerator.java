@@ -80,7 +80,9 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 handleCreateArray2Method(treeMaker, typeNode),
                 handleUpdateMethod(treeMaker, typeNode),
                 handleUpdate2Method(treeMaker, typeNode),
-                handleUpdate3Method(treeMaker, typeNode)
+                handleUpdate3Method(treeMaker, typeNode),
+                handleDestroyMethod(treeMaker, typeNode),
+                handleDestroy2Method(treeMaker, typeNode)
         };
 
         Arrays.stream(methodDeclArray).forEach(methodDecl -> {
@@ -383,6 +385,51 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 .withModifiers(Flags.PUBLIC | Flags.STATIC | Flags.FINAL)
                 .withName("update")
                 .withParameters(List.of(updatesVar, predicationVar))
+                .withThrowsClauses(createPersistenceExceptions(treeMaker, typeNode))
+                .withReturnType(treeMaker.TypeIdent(CTC_INT))
+                .withBody(treeMaker.Block(0, jcStatements.toList()))
+                .buildWith(typeNode);
+    }
+
+    private JCTree.JCMethodDecl handleDestroyMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
+        ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
+        JCVariableDecl idVar = createParameter(typeNode, genJavaLangTypeRef(typeNode, Object.class.getSimpleName()), "id");
+
+        addPersistenceRefStatement(treeMaker, typeNode, jcStatements);
+
+        JCExpression deleteRef = treeMaker.Select(treeMaker.Ident(typeNode.toName("persistence")), typeNode.toName("delete"));
+        JCExpression idRef = treeMaker.Ident(typeNode.toName("id"));
+
+        JCTree.JCMethodInvocation returnInv = treeMaker.Apply(List.nil(), deleteRef, List.of(idRef));
+        jcStatements.append(treeMaker.Return(returnInv));
+
+        return MethodBuilder.newMethod()
+                .withModifiers(Flags.PUBLIC | Flags.STATIC | Flags.FINAL)
+                .withName("destroy")
+                .withParameters(List.of(idVar))
+                .withThrowsClauses(createPersistenceExceptions(treeMaker, typeNode))
+                .withReturnType(treeMaker.TypeIdent(CTC_INT))
+                .withBody(treeMaker.Block(0, jcStatements.toList()))
+                .buildWith(typeNode);
+    }
+
+    private JCTree.JCMethodDecl handleDestroy2Method(JavacTreeMaker treeMaker, JavacNode typeNode) {
+        ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
+        JCVariableDecl predicationVar = createParameter(typeNode,
+                genJavaLangTypeRef(typeNode, String.class.getSimpleName()), "predication");
+
+        addPersistenceRefStatement(treeMaker, typeNode, jcStatements);
+
+        JCExpression deleteRef = treeMaker.Select(treeMaker.Ident(typeNode.toName("persistence")), typeNode.toName("delete"));
+        JCExpression predicationRef = treeMaker.Ident(typeNode.toName("predication"));
+
+        JCTree.JCMethodInvocation returnInv = treeMaker.Apply(List.nil(), deleteRef, List.of(predicationRef));
+        jcStatements.append(treeMaker.Return(returnInv));
+
+        return MethodBuilder.newMethod()
+                .withModifiers(Flags.PUBLIC | Flags.STATIC | Flags.FINAL)
+                .withName("destroy")
+                .withParameters(List.of(predicationVar))
                 .withThrowsClauses(createPersistenceExceptions(treeMaker, typeNode))
                 .withReturnType(treeMaker.TypeIdent(CTC_INT))
                 .withBody(treeMaker.Block(0, jcStatements.toList()))
