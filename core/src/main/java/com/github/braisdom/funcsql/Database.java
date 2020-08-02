@@ -1,5 +1,7 @@
 package com.github.braisdom.funcsql;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Objects;
 
 @SuppressWarnings("ALL")
@@ -46,6 +48,12 @@ public final class Database {
 
     private static ConnectionFactory connectionFactory;
 
+    @FunctionalInterface
+    public static interface Executing<T, R> {
+        R apply(Connection connection, SQLExecutor<T> sqlExecutor) throws SQLException, PersistenceException;
+    }
+
+
     public static void installConnectionFactory(ConnectionFactory connectionFactory) {
         Objects.requireNonNull(connectionFactory, "The connectionFactory cannot be null");
 
@@ -76,6 +84,19 @@ public final class Database {
         Database.quoter = quoter;
     }
 
+    public static <T, R> R execute(Executing<T, R> executing) throws SQLException, PersistenceException {
+        ConnectionFactory connectionFactory = Database.getConnectionFactory();
+        SQLExecutor<T> sqlExecutor = Database.getSqlExecutor();
+        Connection connection = connectionFactory.getConnection();
+
+        try {
+            return executing.apply(connection, sqlExecutor);
+        } finally {
+            if (connection != null && !connection.isClosed())
+                connection.close();
+        }
+    }
+
     public static QueryFactory getQueryFactory() {
         return queryFactory;
     }
@@ -93,7 +114,7 @@ public final class Database {
     }
 
     public static ConnectionFactory getConnectionFactory() {
-        if(connectionFactory == null)
+        if (connectionFactory == null)
             throw new IllegalStateException("The connectionFactory cannot be null");
         return connectionFactory;
     }

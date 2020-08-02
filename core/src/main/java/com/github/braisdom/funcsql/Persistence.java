@@ -1,7 +1,6 @@
 package com.github.braisdom.funcsql;
 
 import java.sql.SQLException;
-import java.util.Map;
 
 public interface Persistence<T> {
 
