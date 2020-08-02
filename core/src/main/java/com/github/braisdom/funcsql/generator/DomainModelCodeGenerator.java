@@ -82,7 +82,8 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 handleUpdate2Method(treeMaker, typeNode),
                 handleUpdate3Method(treeMaker, typeNode),
                 handleDestroyMethod(treeMaker, typeNode),
-                handleDestroy2Method(treeMaker, typeNode)
+                handleDestroy2Method(treeMaker, typeNode),
+                handleExecuteMethod(treeMaker, typeNode)
         };
 
         Arrays.stream(methodDeclArray).forEach(methodDecl -> {
@@ -430,6 +431,29 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 .withModifiers(Flags.PUBLIC | Flags.STATIC | Flags.FINAL)
                 .withName("destroy")
                 .withParameters(List.of(predicationVar))
+                .withThrowsClauses(createPersistenceExceptions(treeMaker, typeNode))
+                .withReturnType(treeMaker.TypeIdent(CTC_INT))
+                .withBody(treeMaker.Block(0, jcStatements.toList()))
+                .buildWith(typeNode);
+    }
+
+    private JCTree.JCMethodDecl handleExecuteMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
+        ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
+        JCVariableDecl sqlVar = createParameter(typeNode,
+                genJavaLangTypeRef(typeNode, String.class.getSimpleName()), "sql");
+
+        addPersistenceRefStatement(treeMaker, typeNode, jcStatements);
+
+        JCExpression executeRef = treeMaker.Select(treeMaker.Ident(typeNode.toName("persistence")), typeNode.toName("execute"));
+        JCExpression sqlRef = treeMaker.Ident(typeNode.toName("sql"));
+
+        JCTree.JCMethodInvocation returnInv = treeMaker.Apply(List.nil(), executeRef, List.of(sqlRef));
+        jcStatements.append(treeMaker.Return(returnInv));
+
+        return MethodBuilder.newMethod()
+                .withModifiers(Flags.PUBLIC | Flags.STATIC | Flags.FINAL)
+                .withName("execute")
+                .withParameters(List.of(sqlVar))
                 .withThrowsClauses(createPersistenceExceptions(treeMaker, typeNode))
                 .withReturnType(treeMaker.TypeIdent(CTC_INT))
                 .withBody(treeMaker.Block(0, jcStatements.toList()))
