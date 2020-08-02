@@ -4,7 +4,13 @@ public interface Logger {
 
     boolean isDebugEnabled();
 
-    void debug(long elapsed, String sql, Object[] params);
+    boolean isInfoEnabled();
 
-    void info(long elapsed, String sql, Object[] params);
+    boolean isErrorEnabled();
+
+    void debug(long elapsedTime, String sql, Object[] params);
+
+    void info(long elapsedTime, String sql, Object[] params);
+
+    void error(String message, Throwable throwable);
 }
