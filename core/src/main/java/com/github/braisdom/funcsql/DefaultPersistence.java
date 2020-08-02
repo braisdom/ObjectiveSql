@@ -138,7 +138,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
 
         return Database.execute((connection, sqlExecutor) -> {
             String sql = formatUpdateSql(domainModelDescriptor.getTableName(), updates, predication);
-            return sqlExecutor.update(connection, sql);
+            return sqlExecutor.execute(connection, sql);
         });
     }
 
@@ -166,6 +166,13 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
                     String.format("%s = %s", quoter.quoteColumn(primaryKey.name()), quoter.quoteValue(id)));
             return sqlExecutor.execute(connection, sql);
         });
+    }
+
+    @Override
+    public int execute(String sql) throws SQLException, PersistenceException {
+        Objects.requireNonNull(sql, "The sql cannot be null");
+
+        return Database.execute((connection, sqlExecutor) -> sqlExecutor.execute(connection, sql) );
     }
 
     private void ensurePrimaryKeyNotNull(PrimaryKey primaryKey) throws PersistenceException {

@@ -17,4 +17,6 @@ public interface Persistence<T> {
     int delete(Object id) throws SQLException, PersistenceException;
 
     int delete(String predication) throws SQLException, PersistenceException;
+
+    int execute(String sql) throws SQLException, PersistenceException;
 }
