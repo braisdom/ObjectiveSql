@@ -14,13 +14,10 @@ import java.util.concurrent.atomic.AtomicReference;
 class PropertyDescriptorCache<T> {
 
 	private final Class<T> originalClass;
-	private final AtomicReference<Class<? extends T>> methodCapturingProxy = new AtomicReference<>();
 	private final Map<String, PropertyDescriptor> propertyDescriptorsByName = new LinkedHashMap<>();
 	private final Map<Field, PropertyDescriptor> propertyDescriptorsByField = new LinkedHashMap<>();
 	private final Map<Method, PropertyDescriptor> propertyDescriptorsByMethod = new LinkedHashMap<>();
 	private final Map<Class<? extends Annotation>, Map<PropertyDescriptor, Annotation>> propertyDescriptorsByAnnotation = new LinkedHashMap<>();
-	private final Map<TypedPropertyGetter<T, ?>, Method> methodByPropertyGetterCache = new ConcurrentHashMap<>();
-	private final Map<VoidMethod<T>, Method> methodByVoidMethodCache = new ConcurrentHashMap<>();
 	private final Map<PropertyDescriptor, Object> defaultValues = new ConcurrentHashMap<>();
 
 	private PropertyDescriptorCache(Class<T> originalClass) {
