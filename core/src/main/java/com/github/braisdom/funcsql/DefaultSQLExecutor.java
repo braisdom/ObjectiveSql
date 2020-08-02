@@ -52,7 +52,7 @@ public class DefaultSQLExecutor<T> implements SQLExecutor<T> {
     }
 
     @Override
-    public int delete(Connection connection, String sql) throws SQLException {
+    public int execute(Connection connection, String sql) throws SQLException {
         return queryRunner.update(connection, sql);
     }
 }

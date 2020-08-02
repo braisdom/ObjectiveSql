@@ -7,10 +7,8 @@ import com.github.braisdom.funcsql.util.ArrayUtil;
 import com.github.braisdom.funcsql.util.FunctionWithThrowable;
 import com.github.braisdom.funcsql.util.StringUtil;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Arrays;
-import java.util.Map;
 import java.util.Objects;
 
 public class DefaultPersistence<T> extends AbstractPersistence<T> {
@@ -151,7 +149,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
 
         return Database.execute((connection, sqlExecutor) -> {
             String sql = formatDeleteSql(domainModelDescriptor.getTableName(), predication);
-            return sqlExecutor.delete(connection, sql);
+            return sqlExecutor.execute(connection, sql);
         });
     }
 
@@ -166,7 +164,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
             Quoter quoter = Database.getQuoter();
             String sql = formatDeleteSql(domainModelDescriptor.getTableName(),
                     String.format("%s = %s", quoter.quoteColumn(primaryKey.name()), quoter.quoteValue(id)));
-            return sqlExecutor.delete(connection, sql);
+            return sqlExecutor.execute(connection, sql);
         });
     }
 
