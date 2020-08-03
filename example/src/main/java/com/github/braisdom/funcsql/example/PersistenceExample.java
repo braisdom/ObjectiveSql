@@ -2,6 +2,7 @@ package com.github.braisdom.funcsql.example;
 
 import com.github.braisdom.funcsql.Database;
 import com.github.braisdom.funcsql.PersistenceException;
+import com.google.gson.GsonBuilder;
 
 import java.io.File;
 import java.sql.SQLException;
@@ -25,6 +26,46 @@ public class PersistenceExample {
         Domains.Member.create(newMember);
     }
 
+    private static void createSimpleCopyFromMember() throws SQLException, PersistenceException {
+        Map<String, Object> extendedAttributes = new HashMap<>();
+        extendedAttributes.put("hobbies", new String[]{"Play football"});
+        extendedAttributes.put("age", 28);
+
+        Map<String, Object> attributes = new HashMap<>();
+        attributes.put("id", 10);
+        attributes.put("no", "200000");
+        attributes.put("name", "Carter");
+        attributes.put("gender", 1);
+        attributes.put("mobile", "15011112222");
+        attributes.put("extendedAttributes", extendedAttributes);
+
+        Domains.Member.create(Domains.Member.copyFrom(attributes));
+    }
+
+    private static void createSimpleCopyFromUnderlineMember() throws SQLException, PersistenceException {
+        Map<String, Object> extendedAttributes = new HashMap<>();
+        extendedAttributes.put("hobbies", new String[]{"Play football"});
+        extendedAttributes.put("age", 28);
+
+        Map<String, Object> attributes = new HashMap<>();
+        attributes.put("id", 9);
+        attributes.put("no", "200000");
+        attributes.put("name", "Barbara\t");
+        attributes.put("gender", 1);
+        attributes.put("mobile", "15011112222");
+        attributes.put("extended_attributes", extendedAttributes);
+
+        Domains.Member.create(Domains.Member.copyFrom(attributes));
+    }
+
+    private static void createFromJsonMember() throws SQLException, PersistenceException {
+        String json = "{\"id\":7,\"no\":\"200000\",\"name\":\"Smith\",\"gender\":1,\"mobile\":\"15011112222\"," +
+                "\"extendedAttributes\":{\"hobbies\":[\"Play football\"],\"age\":28}}";
+        Domains.Member newMember = new GsonBuilder().create().fromJson(json, Domains.Member.class);
+
+        Domains.Member.create(newMember);
+    }
+
     private static void createMember() throws SQLException, PersistenceException {
         Map<String, Object> extendedAttributes = new HashMap<>();
         extendedAttributes.put("hobbies", new String[]{"Play football"});
@@ -37,6 +78,8 @@ public class PersistenceExample {
                 .setGender(1)
                 .setExtendedAttributes(extendedAttributes)
                 .setMobile("15011112222");
+
+        System.out.println(new GsonBuilder().create().toJson(newMember));
 
         Domains.Member.create(newMember);
     }
@@ -113,6 +156,9 @@ public class PersistenceExample {
         Domains.createTables(Database.getConnectionFactory().getConnection());
 
         createSimpleMember();
+        createSimpleCopyFromMember();
+        createSimpleCopyFromUnderlineMember();
+        createFromJsonMember();
         createMember();
         createMemberArray();
         updateSmithMember();

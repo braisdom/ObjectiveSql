@@ -3,6 +3,8 @@ package com.github.braisdom.funcsql.generator;
 import com.github.braisdom.funcsql.*;
 import com.github.braisdom.funcsql.annotations.DomainModel;
 import com.github.braisdom.funcsql.annotations.PrimaryKey;
+import com.github.braisdom.funcsql.reflection.ClassUtils;
+import com.github.braisdom.funcsql.reflection.PropertyUtils;
 import com.github.braisdom.funcsql.util.JCTreeUtil;
 import com.sun.tools.javac.code.Flags;
 import com.sun.tools.javac.tree.JCTree;
@@ -25,6 +27,7 @@ import org.kohsuke.MetaInfServices;
 
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.Map;
 
 import static com.github.braisdom.funcsql.util.StringUtil.splitNameOf;
 import static lombok.javac.Javac.CTC_BOOLEAN;
@@ -74,7 +77,9 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 handleUpdate3Method(treeMaker, typeNode),
                 handleDestroyMethod(treeMaker, typeNode),
                 handleDestroy2Method(treeMaker, typeNode),
-                handleExecuteMethod(treeMaker, typeNode)
+                handleExecuteMethod(treeMaker, typeNode),
+                handleCopyFromMethod(treeMaker, typeNode),
+                handleCopyFro2mMethod(treeMaker, typeNode)
         };
 
         Arrays.stream(methodDeclArray).forEach(methodDecl -> {
@@ -470,6 +475,69 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
         JCTree.JCModifiers persistenceModifier = treeMaker.Modifiers(Flags.PARAMETER);
         jcStatements.append(treeMaker.VarDef(persistenceModifier, persistenceName,
                 persistenceRef, treeMaker.Apply(List.nil(), createPersistenceRef, List.of(modelClassRef))));
+    }
+
+    private JCTree.JCMethodDecl handleCopyFromMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
+        ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
+        JCVariableDecl sourceVar = createParameter(typeNode,
+                genTypeRef(typeNode, Map.class.getName()), "source");
+
+        JCExpression domainClassRef = treeMaker.Select(treeMaker.Ident(typeNode.toName(typeNode.getName())), typeNode.toName("class"));
+
+        Name targetName = typeNode.toName("target");
+        JCExpression createNewInstanceRef = treeMaker.Select(
+                genTypeRef(typeNode, ClassUtils.class.getName()), typeNode.toName("createNewInstance"));
+
+        jcStatements.append(treeMaker.VarDef(treeMaker.Modifiers(Flags.PARAMETER), targetName,
+                genTypeRef(typeNode, Object.class.getName()), treeMaker.Apply(List.nil(), createNewInstanceRef, List.of(domainClassRef))));
+
+        JCExpression populateRef = treeMaker.Select(genTypeRef(typeNode, PropertyUtils.class.getName()), typeNode.toName("populate"));
+        JCExpression sourceRef = treeMaker.Ident(typeNode.toName("source"));
+        JCExpression targetRef = treeMaker.Ident(typeNode.toName("target"));
+
+        jcStatements.append(treeMaker.Exec(treeMaker.Apply(List.nil(), populateRef, List.of(targetRef, sourceRef))));
+        jcStatements.append(treeMaker.Return(treeMaker.TypeCast(treeMaker.Ident(typeNode.toName(typeNode.getName())), targetRef)));
+
+        return MethodBuilder.newMethod()
+                .withModifiers(Flags.PUBLIC | Flags.STATIC | Flags.FINAL)
+                .withName("copyFrom")
+                .withParameters(List.of(sourceVar))
+                .withReturnType(treeMaker.Ident(typeNode.toName(typeNode.getName())))
+                .withBody(treeMaker.Block(0, jcStatements.toList()))
+                .buildWith(typeNode);
+    }
+
+    private JCTree.JCMethodDecl handleCopyFro2mMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
+        ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
+        JCVariableDecl sourceVar = createParameter(typeNode,
+                genTypeRef(typeNode, Map.class.getName()), "source");
+        JCVariableDecl underlineVar = createParameter(typeNode,
+                treeMaker.TypeIdent(CTC_BOOLEAN), "underline");
+
+        JCExpression domainClassRef = treeMaker.Select(treeMaker.Ident(typeNode.toName(typeNode.getName())), typeNode.toName("class"));
+
+        Name targetName = typeNode.toName("target");
+        JCExpression createNewInstanceRef = treeMaker.Select(
+                genTypeRef(typeNode, ClassUtils.class.getName()), typeNode.toName("createNewInstance"));
+
+        jcStatements.append(treeMaker.VarDef(treeMaker.Modifiers(Flags.PARAMETER), targetName,
+                genTypeRef(typeNode, Object.class.getName()), treeMaker.Apply(List.nil(), createNewInstanceRef, List.of(domainClassRef))));
+
+        JCExpression populateRef = treeMaker.Select(genTypeRef(typeNode, PropertyUtils.class.getName()), typeNode.toName("populate"));
+        JCExpression sourceRef = treeMaker.Ident(typeNode.toName("source"));
+        JCExpression targetRef = treeMaker.Ident(typeNode.toName("target"));
+        JCExpression underlineRef = treeMaker.Ident(typeNode.toName("underline"));
+
+        jcStatements.append(treeMaker.Exec(treeMaker.Apply(List.nil(), populateRef, List.of(targetRef, sourceRef, underlineRef))));
+        jcStatements.append(treeMaker.Return(treeMaker.TypeCast(treeMaker.Ident(typeNode.toName(typeNode.getName())), targetRef)));
+
+        return MethodBuilder.newMethod()
+                .withModifiers(Flags.PUBLIC | Flags.STATIC | Flags.FINAL)
+                .withName("copyFrom")
+                .withParameters(List.of(sourceVar, underlineVar))
+                .withReturnType(treeMaker.Ident(typeNode.toName(typeNode.getName())))
+                .withBody(treeMaker.Block(0, jcStatements.toList()))
+                .buildWith(typeNode);
     }
 
     private JCVariableDecl createIdField(JavacTreeMaker treeMaker, JavacNode typeNode, DomainModel domainModel) {
