@@ -1,5 +1,7 @@
 package com.github.braisdom.funcsql.annotations;
 
+import com.github.braisdom.funcsql.TableDefinition;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -26,4 +28,6 @@ public @interface DomainModel {
     boolean allFieldsPersistent() default true;
 
     boolean disableGeneratedId() default false;
+
+    Class<? extends TableDefinition> definition() default TableDefinition.class;
 }

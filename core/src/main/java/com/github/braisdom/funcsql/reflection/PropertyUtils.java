@@ -5,9 +5,9 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Objects;
+import java.lang.reflect.Modifier;
+import java.sql.Ref;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
@@ -225,6 +225,21 @@ public final class PropertyUtils {
 		@SuppressWarnings("unchecked")
 		T castedResult = (T) result;
 		return castedResult;
+	}
+
+	public static void populate(final Object bean, final Map<String, ? extends Object> properties)
+			throws ReflectionException {
+		if (bean == null || properties == null) {
+			return;
+		}
+
+		for(final Map.Entry<String, ? extends Object> entry : properties.entrySet()) {
+			final String name = entry.getKey();
+			if (name == null) {
+				continue;
+			}
+			write(bean, name, entry.getValue());
+		}
 	}
 
 	public static <T> T readIfPropertyExists(Object source, String propertyName) {

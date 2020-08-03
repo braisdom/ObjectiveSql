@@ -9,11 +9,21 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
 
 public class PersistenceExample {
 
     private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+    private static void createSimpleMember() throws SQLException, PersistenceException {
+        Domains.Member newMember = new Domains.Member()
+                .setId(11)
+                .setNo("200000")
+                .setName("Pamela")
+                .setGender(1)
+                .setMobile("15011112222");
+
+        Domains.Member.create(newMember);
+    }
 
     private static void createMember() throws SQLException, PersistenceException {
         Map<String, Object> extendedAttributes = new HashMap<>();
@@ -102,6 +112,7 @@ public class PersistenceExample {
         Database.installConnectionFactory(new SqliteConnectionFactory(file.getPath()));
         Domains.createTables(Database.getConnectionFactory().getConnection());
 
+        createSimpleMember();
         createMember();
         createMemberArray();
         updateSmithMember();
