@@ -6,14 +6,10 @@ import com.google.gson.GsonBuilder;
 
 import java.io.File;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 public class PersistenceExample {
-
-    private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     private static void createSimpleMember() throws SQLException, PersistenceException {
         Domains.Member newMember = new Domains.Member()
@@ -39,7 +35,7 @@ public class PersistenceExample {
         attributes.put("mobile", "15011112222");
         attributes.put("extendedAttributes", extendedAttributes);
 
-        Domains.Member.create(Domains.Member.copyFrom(attributes));
+        Domains.Member.create(Domains.Member.newInstanceFrom(attributes));
     }
 
     private static void createSimpleCopyFromUnderlineMember() throws SQLException, PersistenceException {
@@ -55,7 +51,7 @@ public class PersistenceExample {
         attributes.put("mobile", "15011112222");
         attributes.put("extended_attributes", extendedAttributes);
 
-        Domains.Member.create(Domains.Member.copyFrom(attributes));
+        Domains.Member.create(Domains.Member.newInstanceFrom(attributes));
     }
 
     private static void createSimpleFromJsonMember() throws SQLException, PersistenceException {
@@ -105,7 +101,6 @@ public class PersistenceExample {
                 .setMobile("15011112222");
 
         Domains.Member.create(new Domains.Member[]{newMember1, newMember2, newMember3});
-        print("Create member['Alice', 'Mary'] successfully.");
     }
 
     private static void updateSmithMember() throws SQLException, PersistenceException {
@@ -118,32 +113,22 @@ public class PersistenceExample {
                 .setExtendedAttributes(extendedAttributes);
 
         Domains.Member.update(12, newMember);
-        print("Update member from 'Smith' to 'Smith => Jackson' successfully.");
     }
 
     private static void updateJacksonMember() throws SQLException, PersistenceException {
         Domains.Member.update("name = 'Smith => Jackson => Davies'", "name = 'Smith => Jackson'");
-        print("Update member from 'Smith => Jackson' to 'Smith => Jackson => Davies' successfully.");
     }
 
     private static void deleteAliceMember() throws SQLException, PersistenceException {
         Domains.Member.destroy(13);
-        print("Delete Alice successfully");
     }
 
     private static void deleteMaryMember() throws SQLException, PersistenceException {
         Domains.Member.destroy("name = 'Mary'");
-        print("Delete Mary successfully");
     }
 
     private static void executeDeleteDenise() throws SQLException, PersistenceException {
         Domains.Member.execute(String.format("DELETE FROM %s WHERE name = 'Denise'", Domains.Member.TABLE_NAME));
-        print("Delete Mary successfully");
-    }
-
-    private static void print(String message, Object... params) {
-        Date date = new Date(System.currentTimeMillis());
-        System.out.println(String.format("[%s] %s", dateFormat.format(date), String.format(message, params)));
     }
 
     public static void main(String args[]) throws SQLException, PersistenceException {

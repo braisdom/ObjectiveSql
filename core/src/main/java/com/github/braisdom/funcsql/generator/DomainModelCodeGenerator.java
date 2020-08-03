@@ -78,8 +78,8 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 handleDestroyMethod(treeMaker, typeNode),
                 handleDestroy2Method(treeMaker, typeNode),
                 handleExecuteMethod(treeMaker, typeNode),
-                handleCopyFromMethod(treeMaker, typeNode),
-                handleCopyFro2mMethod(treeMaker, typeNode)
+                handleNewInstanceFromMethod(treeMaker, typeNode),
+                handleNewInstanceFrom2Method(treeMaker, typeNode)
         };
 
         Arrays.stream(methodDeclArray).forEach(methodDecl -> {
@@ -214,13 +214,12 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
 
         addPersistenceRefStatement(treeMaker, typeNode, jcStatements);
 
-        JCExpression insertRef = treeMaker.Select(
-                treeMaker.Ident(typeNode.toName("persistence")), typeNode.toName("insert"));
+        JCExpression insertRef = treeMaker.Select(treeMaker.Ident(typeNode.toName("persistence")), typeNode.toName("insert"));
         JCExpression skipValidationRef = treeMaker.Ident(typeNode.toName("skipValidation"));
         JCExpression dirtyObjectRef = treeMaker.Ident(typeNode.toName("dirtyObject"));
         JCTree.JCMethodInvocation returnInv = treeMaker.Apply(List.nil(), insertRef, List.of(dirtyObjectRef, skipValidationRef));
-        JCTree.JCIdent returnValueType = treeMaker.Ident(modelClassName);
-        jcStatements.append(treeMaker.Return(treeMaker.TypeCast(returnValueType, returnInv)));
+
+        jcStatements.append(treeMaker.Return(treeMaker.TypeCast(treeMaker.Ident(modelClassName), returnInv)));
 
         return MethodBuilder.newMethod()
                 .withModifiers(Flags.PUBLIC | Flags.STATIC | Flags.FINAL)
@@ -456,6 +455,8 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 .buildWith(typeNode);
     }
 
+
+
     private void addPersistenceRefStatement(JavacTreeMaker treeMaker, JavacNode typeNode,
                                             ListBuffer<JCTree.JCStatement> jcStatements) {
         Name modelClassName = typeNode.toName(typeNode.getName());
@@ -477,7 +478,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 persistenceRef, treeMaker.Apply(List.nil(), createPersistenceRef, List.of(modelClassRef))));
     }
 
-    private JCTree.JCMethodDecl handleCopyFromMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
+    private JCTree.JCMethodDecl handleNewInstanceFromMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
         ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
         JCVariableDecl sourceVar = createParameter(typeNode,
                 genTypeRef(typeNode, Map.class.getName()), "source");
@@ -500,14 +501,14 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
 
         return MethodBuilder.newMethod()
                 .withModifiers(Flags.PUBLIC | Flags.STATIC | Flags.FINAL)
-                .withName("copyFrom")
+                .withName("newInstanceFrom")
                 .withParameters(List.of(sourceVar))
                 .withReturnType(treeMaker.Ident(typeNode.toName(typeNode.getName())))
                 .withBody(treeMaker.Block(0, jcStatements.toList()))
                 .buildWith(typeNode);
     }
 
-    private JCTree.JCMethodDecl handleCopyFro2mMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
+    private JCTree.JCMethodDecl handleNewInstanceFrom2Method(JavacTreeMaker treeMaker, JavacNode typeNode) {
         ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
         JCVariableDecl sourceVar = createParameter(typeNode,
                 genTypeRef(typeNode, Map.class.getName()), "source");
@@ -533,7 +534,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
 
         return MethodBuilder.newMethod()
                 .withModifiers(Flags.PUBLIC | Flags.STATIC | Flags.FINAL)
-                .withName("copyFrom")
+                .withName("newInstanceFrom")
                 .withParameters(List.of(sourceVar, underlineVar))
                 .withReturnType(treeMaker.Ident(typeNode.toName(typeNode.getName())))
                 .withBody(treeMaker.Block(0, jcStatements.toList()))
