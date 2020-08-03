@@ -14,20 +14,18 @@
  */
 package com.github.braisdom.funcsql.generator;
 
-import static com.sun.tools.javac.util.List.nil;
-import static lombok.javac.Javac.CTC_VOID;
-
+import com.sun.tools.javac.tree.JCTree;
+import com.sun.tools.javac.tree.JCTree.*;
+import com.sun.tools.javac.util.List;
 import lombok.javac.Javac;
 import lombok.javac.JavacNode;
-
-import com.sun.tools.javac.tree.JCTree.JCBlock;
-import com.sun.tools.javac.tree.JCTree.JCExpression;
-import com.sun.tools.javac.tree.JCTree.JCMethodDecl;
-import com.sun.tools.javac.tree.JCTree.JCTypeParameter;
-import com.sun.tools.javac.tree.JCTree.JCVariableDecl;
-import com.sun.tools.javac.tree.*;
-import com.sun.tools.javac.util.List;
 import lombok.javac.JavacTreeMaker;
+
+import java.util.Arrays;
+
+import static com.sun.tools.javac.util.List.nil;
+import static lombok.javac.Javac.CTC_VOID;
+import static lombok.javac.handlers.JavacHandlerUtil.genTypeRef;
 
 /**
  * Simplifies creation of methods.
@@ -36,11 +34,13 @@ import lombok.javac.JavacTreeMaker;
  */
 class MethodBuilder {
 
-  static MethodBuilder newMethod() {
-    return new MethodBuilder();
+  static MethodBuilder newMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
+    return new MethodBuilder(treeMaker, typeNode);
   }
 
-  private long modifiers;
+  private final JavacNode typeNode;
+  private final JavacTreeMaker treeMaker;
+  private JCTree.JCModifiers modifiers;
   private String name;
   private JCExpression returnType;
   private List<JCVariableDecl> parameters = nil();
@@ -48,10 +48,13 @@ class MethodBuilder {
   private JCBlock body;
   private JCExpression defaultValue;
 
-  private MethodBuilder() {}
+  private MethodBuilder(JavacTreeMaker treeMaker, JavacNode typeNode) {
+    this.treeMaker = treeMaker;
+    this.typeNode = typeNode;
+  }
 
   MethodBuilder withModifiers(long newModifiers) {
-    modifiers = newModifiers;
+    modifiers = treeMaker.Modifiers(newModifiers);
     return this;
   }
 
@@ -60,13 +63,49 @@ class MethodBuilder {
     return this;
   }
 
+  MethodBuilder withReturnType(String newReturnType) {
+    returnType = treeMaker.Ident(typeNode.toName(newReturnType));
+    return this;
+  }
+
   MethodBuilder withReturnType(JCExpression newReturnType) {
     returnType = newReturnType;
     return this;
   }
 
+  MethodBuilder withReturnType(JavacTreeMaker.TypeTag type) {
+    returnType = treeMaker.TypeIdent(type);
+    return this;
+  }
+
+  MethodBuilder withReturnType(Class typeClass) {
+    returnType = genTypeRef(typeNode, typeClass.getClass().getName());
+    return this;
+  }
+
+  MethodBuilder withReturnType(Class typeClass, Class... genericTypeClasses) {
+    JCExpression[] genericTypes = Arrays.stream(genericTypeClasses).map(genericTypeClass ->
+            genTypeRef(typeNode, genericTypeClass.getClass().getName())).toArray(JCExpression[]::new);
+    returnType = treeMaker.TypeApply(genTypeRef(typeNode, typeClass.getClass().getName()),
+            List.from(genericTypes));
+    return this;
+  }
+
   MethodBuilder withParameters(List<JCVariableDecl> newParameters) {
     parameters = newParameters;
+    return this;
+  }
+
+  MethodBuilder withParameters(JCVariableDecl... newParameters) {
+    parameters = List.from(newParameters);
+    return this;
+  }
+
+  MethodBuilder withThrowsClauses(Class<? extends Throwable>... exceptionClasses) {
+    JCExpression[] exceptionExpressions = Arrays.stream(exceptionClasses).map(exceptionClass ->
+            treeMaker.Throw(genTypeRef(typeNode, exceptionClass.getName())).getExpression())
+            .toArray(JCExpression[]::new);
+    throwsClauses = List.from(exceptionExpressions);
     return this;
   }
 
@@ -89,8 +128,7 @@ class MethodBuilder {
     JavacTreeMaker treeMaker = node.getTreeMaker();
     if(returnType == null)
       returnType = treeMaker.Type(Javac.createVoidType(node.getTreeMaker(), CTC_VOID));
-    return treeMaker.MethodDef(treeMaker.Modifiers(modifiers), node.toName(name),
-            returnType, List.<JCTypeParameter>nil(), parameters, throwsClauses,
+    return treeMaker.MethodDef(modifiers, node.toName(name), returnType, List.<JCTypeParameter>nil(), parameters, throwsClauses,
             body, null);
   }
 }
