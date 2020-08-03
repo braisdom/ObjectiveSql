@@ -75,8 +75,6 @@ public class PersistenceExample {
                 .setExtendedAttributes(extendedAttributes)
                 .setMobile("15011112222");
 
-        System.out.println(new GsonBuilder().create().toJson(newMember));
-
         Domains.Member.create(newMember);
     }
 
