@@ -58,7 +58,7 @@ public class PersistenceExample {
         Domains.Member.create(Domains.Member.copyFrom(attributes));
     }
 
-    private static void createFromJsonMember() throws SQLException, PersistenceException {
+    private static void createSimpleFromJsonMember() throws SQLException, PersistenceException {
         String json = "{\"id\":7,\"no\":\"200000\",\"name\":\"Smith\",\"gender\":1,\"mobile\":\"15011112222\"," +
                 "\"extendedAttributes\":{\"hobbies\":[\"Play football\"],\"age\":28}}";
         Domains.Member newMember = new GsonBuilder().create().fromJson(json, Domains.Member.class);
@@ -158,7 +158,7 @@ public class PersistenceExample {
         createSimpleMember();
         createSimpleCopyFromMember();
         createSimpleCopyFromUnderlineMember();
-        createFromJsonMember();
+        createSimpleFromJsonMember();
         createMember();
         createMemberArray();
         updateSmithMember();

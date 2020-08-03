@@ -1,14 +1,10 @@
 package com.github.braisdom.funcsql.example;
 
-import com.github.braisdom.funcsql.Database;
-import com.github.braisdom.funcsql.Persistence;
-import com.github.braisdom.funcsql.PersistenceFactory;
 import com.github.braisdom.funcsql.annotations.Column;
 import com.github.braisdom.funcsql.annotations.DomainModel;
 import com.github.braisdom.funcsql.annotations.Relation;
 import com.github.braisdom.funcsql.annotations.Volatile;
 import com.github.braisdom.funcsql.relation.RelationType;
-import lombok.Data;
 
 import java.sql.Connection;
 import java.sql.Date;
