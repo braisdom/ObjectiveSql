@@ -1,7 +1,5 @@
 package com.github.braisdom.funcsql;
 
-import java.util.Arrays;
-
 public class ValidationException extends PersistenceException {
 
     private final Validator.Violation[] violations;

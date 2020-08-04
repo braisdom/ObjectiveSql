@@ -25,7 +25,7 @@ public final class Table {
         Set<ConstraintViolation<Object>> rawViolations = validator.validate(bean);
 
         return rawViolations.stream().map(violation ->
-                new Validator.Violation(violation.getMessage(), violation.getConstraintDescriptor().getAttributes()))
+                new Validator.Violation(violation.getMessage(), violation.getInvalidValue(), violation.getPropertyPath().toString()))
                 .toArray(Validator.Violation[]::new);
     };
 

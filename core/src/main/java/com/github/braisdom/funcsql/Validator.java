@@ -6,19 +6,25 @@ public interface Validator {
 
     class Violation {
         private String message;
-        private Map<String, Object> attributes;
+        private Object invalidValue;
+        private String propertyPath;
 
-        public Violation(String message, Map<String, Object> attributes) {
+        public Violation(String message, Object invalidValue, String propertyPath) {
             this.message = message;
-            this.attributes = attributes;
+            this.invalidValue = invalidValue;
+            this.propertyPath = propertyPath;
         }
 
         public String getMessage() {
             return message;
         }
 
-        public Map<String, Object> getAttributes() {
-            return attributes;
+        public Object getInvalidValue() {
+            return invalidValue;
+        }
+
+        public String getPropertyPath() {
+            return propertyPath;
         }
 
         @Override
