@@ -14,6 +14,7 @@
  */
 package com.github.braisdom.funcsql.generator;
 
+import com.sun.tools.javac.code.Flags;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.JCTree.*;
 import com.sun.tools.javac.util.List;
@@ -85,8 +86,8 @@ class MethodBuilder {
 
   MethodBuilder withReturnType(Class typeClass, Class... genericTypeClasses) {
     JCExpression[] genericTypes = Arrays.stream(genericTypeClasses).map(genericTypeClass ->
-            genTypeRef(typeNode, genericTypeClass.getClass().getName())).toArray(JCExpression[]::new);
-    returnType = treeMaker.TypeApply(genTypeRef(typeNode, typeClass.getClass().getName()),
+            genTypeRef(typeNode, genericTypeClass.getName())).toArray(JCExpression[]::new);
+    returnType = treeMaker.TypeApply(genTypeRef(typeNode, typeClass.getName()),
             List.from(genericTypes));
     return this;
   }
@@ -130,5 +131,16 @@ class MethodBuilder {
       returnType = treeMaker.Type(Javac.createVoidType(node.getTreeMaker(), CTC_VOID));
     return treeMaker.MethodDef(modifiers, node.toName(name), returnType, List.<JCTypeParameter>nil(), parameters, throwsClauses,
             body, null);
+  }
+
+  static JCVariableDecl createParameter(JavacNode typeNode, Class<?> paramType, String name) {
+    return createParameter(typeNode, genTypeRef(typeNode, paramType.getName()), name);
+  }
+
+  static JCVariableDecl createParameter(JavacNode typeNode, JCExpression paramType, String name) {
+    JavacTreeMaker treeMaker = typeNode.getTreeMaker();
+    treeMaker.at(typeNode.get().pos);
+    return treeMaker.VarDef(treeMaker.Modifiers(Flags.PARAMETER), typeNode.toName(name),
+            paramType, null);
   }
 }

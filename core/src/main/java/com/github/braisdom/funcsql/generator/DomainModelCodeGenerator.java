@@ -25,6 +25,7 @@ import lombok.javac.handlers.HandleGetter;
 import lombok.javac.handlers.HandleSetter;
 import org.kohsuke.MetaInfServices;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Map;
@@ -522,25 +523,31 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
     }
 
     private JCTree.JCMethodDecl handleQueryMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
-        ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
-        Name modelClassName = typeNode.toName(typeNode.getName());
-        JCVariableDecl sqlVar = createParameter(typeNode,
-                genJavaLangTypeRef(typeNode, String.class.getSimpleName()), "sql");
-
+        JCVariableDecl sqlVar = MethodBuilder.createParameter(typeNode, String.class, "sql");
         BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
+        
+        JCTree.JCExpression getConnectionFactoryExec = treeMaker.Apply(List.nil(), treeMaker.Select(
+                genTypeRef(typeNode, Database.class.getName()), typeNode.toName("getConnectionFactory")), List.nil());
+        blockBuilder.appendVar(ConnectionFactory.class, "connectionFactory", getConnectionFactoryExec);
 
-        Name queryName = typeNode.toName("query");
-        JCExpression createQueryRef = treeMaker.Select(treeMaker.Ident(modelClassName), typeNode.toName("createQuery"));
+        JCTree.JCExpression getConnectionExec = treeMaker.Apply(List.nil(), treeMaker.Select(
+                treeMaker.Ident(typeNode.toName("connectionFactory")), typeNode.toName("getConnection")), List.nil());
+        blockBuilder.appendVar(Connection.class, "connection", getConnectionExec);
 
-        JCExpression returnType = treeMaker.TypeApply(genTypeRef(typeNode, List.class.getName()),
-                List.of(genTypeRef(typeNode, Row.class.getName())));
+        JCTree.JCExpression sqlExecutorExec = treeMaker.Apply(List.nil(), treeMaker.Select(
+                genTypeRef(typeNode, Database.class.getName()), typeNode.toName("getSqlExecutor")), List.nil());
+        blockBuilder.appendVar(SQLExecutor.class, "sqlExecutor", sqlExecutorExec);
+
+        blockBuilder.appendReturn("sqlExecutor", "query", treeMaker.Ident(typeNode.toName("connection")),
+                treeMaker.Ident(typeNode.toName("sql")));
 
         return MethodBuilder.newMethod(treeMaker, typeNode)
                 .withModifiers(Flags.PUBLIC | Flags.STATIC | Flags.FINAL)
-                .withReturnType(List.class, Row.class)
+                .withReturnType(java.util.List.class, Row.class)
                 .withName("query")
                 .withParameters(sqlVar)
-                .withBody(treeMaker.Block(0, jcStatements.toList()))
+                .withThrowsClauses(SQLException.class)
+                .withBody(blockBuilder.build())
                 .buildWith(typeNode);
     }
 
