@@ -110,52 +110,38 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
         }
     }
 
+    // public final void save() throws SQLException, PersistenceException {
     private JCTree.JCMethodDecl handleSave2Method(JavacTreeMaker treeMaker, JavacNode typeNode) {
-        ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
-        JCTree.JCMethodInvocation thisSaveInv = treeMaker.Apply(List.nil(),
-                treeMaker.Select(treeMaker.Ident(typeNode.toName("this")),
-                        typeNode.toName("save")), List.of(treeMaker.Literal(false)));
+        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
 
-        jcStatements.append(treeMaker.Exec(thisSaveInv));
+        // this.save(false);
+        blockBuilder.appendInstanceMethodInvoke("save", treeMaker.Literal(false));
 
         return MethodBuilder.newMethod(treeMaker, typeNode)
                 .withModifiers(Flags.PUBLIC | Flags.FINAL)
                 .withName("save")
-                .withBody(treeMaker.Block(0, jcStatements.toList()))
+                .withBody(blockBuilder.build())
                 .withThrowsClauses(createPersistenceExceptions(treeMaker, typeNode))
                 .buildWith(typeNode);
     }
 
+    // public final void save(boolean skipValidation) throws SQLException, PersistenceException {...}
     private JCTree.JCMethodDecl handleSaveMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
-        ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
-        JCVariableDecl parameter = FieldBuilder.newField(typeNode)
-                .ofType(Boolean.class)
-                .withName("skipValidation")
-                .withModifiers(Flags.PARAMETER)
-                .build();
-        JCTree.JCMethodInvocation createPersistenceInv = treeMaker.Apply(List.nil(),
-                treeMaker.Select(treeMaker.Ident(typeNode.toName("this")),
-                        typeNode.toName("createPersistence")), List.nil());
-        JCExpression createPersistenceType = chainDots(typeNode, splitNameOf(Persistence.class));
+        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
+        JCVariableDecl parameter = createParameter(typeNode, treeMaker.TypeIdent(CTC_BOOLEAN), "skipValidation");
 
-        jcStatements.append(treeMaker.VarDef(treeMaker.Modifiers(Flags.PARAMETER),
-                typeNode.toName("persistence"), createPersistenceType, createPersistenceInv));
+        // PersistenceFactory persistenceFactory = Database.getPersistenceFactory();
+        // Persistence<RelationshipTest.TestDomainModel> persistence = persistenceFactory.createPersistence(RelationshipTest.TestDomainModel.class);
+        addPersistenceRefStatement(treeMaker, typeNode, blockBuilder);
 
-        JCTree.JCFieldAccess saveAcc = treeMaker.Select(
-                treeMaker.Ident(typeNode.toName("persistence")),
-                typeNode.toName("save")
-        );
-
-        List<JCTree.JCExpression> saveParameters = List.of(treeMaker.Ident(typeNode.toName("this")),
-                treeMaker.Ident(typeNode.toName("skipValidation")));
-
-        jcStatements.append(treeMaker.Exec(treeMaker.Apply(List.nil(), saveAcc, saveParameters)));
-
+        // persistence.save(this, skipValidation);
+        blockBuilder.appendStaticMethodInvoke("persistence", "save",
+                varRef(typeNode, "this"), varRef(typeNode, "skipValidation"));
         return MethodBuilder.newMethod(treeMaker, typeNode)
                 .withModifiers(Flags.PUBLIC | Flags.FINAL)
                 .withName("save")
                 .withParameters(List.of(parameter))
-                .withBody(treeMaker.Block(0, jcStatements.toList()))
+                .withBody(blockBuilder.build())
                 .withThrowsClauses(createPersistenceExceptions(treeMaker, typeNode))
                 .buildWith(typeNode);
     }
@@ -472,7 +458,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
         blockBuilder.appendVar(typeNode.getName(), "target", createNewInstance);
 
         // PropertyUtils.populate(target, source, underline);
-        blockBuilder.appendClassMethodInvoke(PropertyUtils.class, "populate",
+        blockBuilder.appendStaticMethodInvoke(PropertyUtils.class, "populate",
                 varRef(typeNode, "target"), varRef(typeNode, "source"), varRef(typeNode, "underline"));
 
         // return target;

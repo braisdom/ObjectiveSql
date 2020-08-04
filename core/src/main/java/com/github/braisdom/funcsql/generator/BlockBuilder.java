@@ -54,14 +54,6 @@ class BlockBuilder {
         return this;
     }
 
-    public BlockBuilder appendClassMethodInvoke(Class<?> typeClass, String name, JCTree.JCExpression... params) {
-        JCTree.JCExpression methodRef = treeMaker.Select(genTypeRef(typeNode, typeClass.getName()),
-                typeNode.toName(name));
-        jcStatements.append(treeMaker.Exec(treeMaker.Apply(List.nil(),
-                methodRef, List.from(params))));
-        return this;
-    }
-
     public BlockBuilder appendStaticMethodInvoke(Class<?> typeClass, String name, JCTree.JCExpression... params) {
         JCTree.JCExpression methodRef = treeMaker.Select(genTypeRef(typeNode, typeClass.getName()),
                 typeNode.toName(name));
@@ -70,14 +62,19 @@ class BlockBuilder {
         return this;
     }
 
-    public BlockBuilder appendStaticMethodInvoke(String typeClassName, String name, JCTree.JCExpression... params) {
-        JCTree.JCExpression methodRef = treeMaker.Select(treeMaker.Ident(typeNode.toName(typeClassName)),
+    public BlockBuilder appendStaticMethodInvoke(String varName, String name, JCTree.JCExpression... params) {
+        JCTree.JCExpression methodRef = treeMaker.Select(treeMaker.Ident(typeNode.toName(varName)),
                 typeNode.toName(name));
         jcStatements.append(treeMaker.Exec(treeMaker.Apply(List.nil(),
                 methodRef, List.from(params))));
         return this;
     }
 
+    public BlockBuilder appendInstanceMethodInvoke(String name, JCTree.JCExpression... params) {
+        jcStatements.append(treeMaker.Exec(treeMaker.Apply(List.nil(),
+                treeMaker.Ident(typeNode.toName(name)), List.from(params))));
+        return this;
+    }
 
     public BlockBuilder appendVar(String typeClassName, String name, JCTree.JCExpression init) {
         jcStatements.append(treeMaker.VarDef(treeMaker.Modifiers(Flags.PARAMETER), typeNode.toName(name),
