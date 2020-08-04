@@ -211,252 +211,230 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 .buildWith(typeNode);
     }
 
+    // public static final RelationshipTest.TestDomainModel create(RelationshipTest.TestDomainModel dirtyObject,
+    //                          boolean skipValidation) throws SQLException, PersistenceException {...}
     private JCTree.JCMethodDecl handleCreateMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
-        ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
+        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
         Name modelClassName = typeNode.toName(typeNode.getName());
         JCVariableDecl dirtyObjectVar = createParameter(typeNode, treeMaker.Ident(modelClassName), "dirtyObject");
         JCVariableDecl skipValidationVar = createParameter(typeNode, treeMaker.TypeIdent(CTC_BOOLEAN), "skipValidation");
 
-        addPersistenceRefStatement(treeMaker, typeNode, jcStatements);
+        addPersistenceRefStatement(treeMaker, typeNode, blockBuilder);
 
-        JCExpression insertRef = treeMaker.Select(treeMaker.Ident(typeNode.toName("persistence")), typeNode.toName("insert"));
-        JCExpression skipValidationRef = treeMaker.Ident(typeNode.toName("skipValidation"));
-        JCExpression dirtyObjectRef = treeMaker.Ident(typeNode.toName("dirtyObject"));
-        JCTree.JCMethodInvocation returnInv = treeMaker.Apply(List.nil(), insertRef, List.of(dirtyObjectRef, skipValidationRef));
-
-        jcStatements.append(treeMaker.Return(treeMaker.TypeCast(treeMaker.Ident(modelClassName), returnInv)));
-
+        // return (RelationshipTest.TestDomainModel)persistence.insert(dirtyObject, skipValidation);
+        blockBuilder.appendReturn("persistence", "insert",
+                varRef(typeNode, "dirtyObject"), varRef(typeNode, "skipValidation"));
         return MethodBuilder.newMethod(treeMaker, typeNode)
                 .withModifiers(Flags.PUBLIC | Flags.STATIC | Flags.FINAL)
                 .withName("create")
                 .withParameters(List.of(dirtyObjectVar, skipValidationVar))
                 .withThrowsClauses(createPersistenceExceptions(treeMaker, typeNode))
                 .withReturnType(treeMaker.Ident(modelClassName))
-                .withBody(treeMaker.Block(0, jcStatements.toList()))
+                .withBody(blockBuilder.build())
                 .buildWith(typeNode);
     }
 
+    // public static final RelationshipTest.TestDomainModel create(RelationshipTest.TestDomainModel dirtyObject)
+    //          throws SQLException, PersistenceException {
     private JCTree.JCMethodDecl handleCreate2Method(JavacTreeMaker treeMaker, JavacNode typeNode) {
-        ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
+        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
         Name modelClassName = typeNode.toName(typeNode.getName());
         JCVariableDecl dirtyObjectVar = createParameter(typeNode, treeMaker.Ident(modelClassName), "dirtyObject");
-        JCTree.JCIdent dirtyObjectRef = treeMaker.Ident(typeNode.toName("dirtyObject"));
-        JCTree.JCMethodInvocation thisSaveInv = treeMaker.Apply(List.nil(),
-                treeMaker.Ident(typeNode.toName("create")), List.of(dirtyObjectRef, treeMaker.Literal(false)));
 
-        jcStatements.append(treeMaker.Return(thisSaveInv));
-
+        // return create(dirtyObject, false);
+        blockBuilder.appendReturn(typeNode.getName(), "create", varRef(typeNode, "dirtyObject"),
+                treeMaker.Literal(false));
         return MethodBuilder.newMethod(treeMaker, typeNode)
                 .withModifiers(Flags.PUBLIC | Flags.FINAL | Flags.STATIC)
                 .withName("create")
                 .withParameters(List.of(dirtyObjectVar))
-                .withBody(treeMaker.Block(0, jcStatements.toList()))
+                .withBody(blockBuilder.build())
                 .withReturnType(typeNode.getName())
                 .withThrowsClauses(createPersistenceExceptions(treeMaker, typeNode))
                 .buildWith(typeNode);
     }
 
+    // public static final int[] create(RelationshipTest.TestDomainModel[] dirtyObjects) throws SQLException, PersistenceException {...}
     private JCTree.JCMethodDecl handleCreateArray2Method(JavacTreeMaker treeMaker, JavacNode typeNode) {
-        ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
+        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
         Name modelClassName = typeNode.toName(typeNode.getName());
         JCVariableDecl dirtyArrayObjectVar = createParameter(typeNode, treeMaker.TypeArray(treeMaker.Ident(modelClassName)),
                 "dirtyObjects");
-        JCTree.JCIdent dirtyObjectsRef = treeMaker.Ident(typeNode.toName("dirtyObjects"));
-        JCTree.JCMethodInvocation thisSaveInv = treeMaker.Apply(List.nil(),
-                treeMaker.Ident(typeNode.toName("create")), List.of(dirtyObjectsRef, treeMaker.Literal(false)));
 
-        jcStatements.append(treeMaker.Return(thisSaveInv));
-
+        // return create(dirtyObjects, false);
+        blockBuilder.appendReturn(typeNode.getName(), "create", varRef(typeNode, "dirtyObjects"),
+                treeMaker.Literal(false));
         return MethodBuilder.newMethod(treeMaker, typeNode)
                 .withModifiers(Flags.PUBLIC | Flags.FINAL | Flags.STATIC)
                 .withName("create")
                 .withParameters(List.of(dirtyArrayObjectVar))
-                .withBody(treeMaker.Block(0, jcStatements.toList()))
+                .withBody(blockBuilder.build())
                 .withReturnType(treeMaker.TypeArray(treeMaker.TypeIdent(CTC_INT)))
                 .withThrowsClauses(createPersistenceExceptions(treeMaker, typeNode))
                 .buildWith(typeNode);
     }
 
+    // public static final int[] create(RelationshipTest.TestDomainModel[] dirtyObjects, boolean skipValidation) throws SQLException, PersistenceException {
     private JCTree.JCMethodDecl handleCreateArrayMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
-        ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
+        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
         Name modelClassName = typeNode.toName(typeNode.getName());
-        JCVariableDecl dirtyArrayObjectVar = FieldBuilder.newField(typeNode)
-                .ofType(treeMaker.TypeArray(treeMaker.Ident(modelClassName)))
-                .withName("dirtyObjects")
-                .withModifiers(Flags.PARAMETER)
-                .build();
+        JCVariableDecl dirtyArrayObjectVar =  createParameter(typeNode,
+                treeMaker.TypeArray(treeMaker.Ident(modelClassName)), "dirtyObjects");
+        JCVariableDecl skipValidationVar =  createParameter(typeNode,
+                treeMaker.TypeIdent(CTC_BOOLEAN), "skipValidation");
 
-        JCVariableDecl skipValidationVar = FieldBuilder.newField(typeNode)
-                .ofType(Boolean.class)
-                .withName("skipValidation")
-                .withModifiers(Flags.PARAMETER)
-                .build();
+        // PersistenceFactory persistenceFactory = Database.getPersistenceFactory();
+        // Persistence persistence = persistenceFactory.createPersistence(RelationshipTest.TestDomainModel.class);
+        addPersistenceRefStatement(treeMaker, typeNode, blockBuilder);
 
-        addPersistenceRefStatement(treeMaker, typeNode, jcStatements);
-
-        JCExpression insertRef = treeMaker.Select(
-                treeMaker.Ident(typeNode.toName("persistence")), typeNode.toName("insert"));
-        JCExpression skipValidationRef = treeMaker.Ident(typeNode.toName("skipValidation"));
-        JCExpression dirtyObjectsRef = treeMaker.Ident(typeNode.toName("dirtyObjects"));
-        JCTree.JCMethodInvocation returnInv = treeMaker.Apply(List.nil(), insertRef, List.of(dirtyObjectsRef, skipValidationRef));
-        jcStatements.append(treeMaker.Return(returnInv));
-
+        // return persistence.insert(dirtyObjects, skipValidation);
+        blockBuilder.appendReturn("persistence", "insert",
+                varRef(typeNode, "dirtyObjects"), varRef(typeNode, "skipValidation"));
         return MethodBuilder.newMethod(treeMaker, typeNode)
                 .withModifiers(Flags.PUBLIC | Flags.STATIC | Flags.FINAL)
                 .withName("create")
                 .withParameters(List.of(dirtyArrayObjectVar, skipValidationVar))
                 .withReturnType(treeMaker.TypeArray(treeMaker.TypeIdent(CTC_INT)))
                 .withThrowsClauses(createPersistenceExceptions(treeMaker, typeNode))
-                .withBody(treeMaker.Block(0, jcStatements.toList()))
+                .withBody(blockBuilder.build())
                 .buildWith(typeNode);
     }
 
+    // public static final int update(Object id, RelationshipTest.TestDomainModel dirtyObject, boolean skipValidation) throws SQLException, PersistenceException {
     private JCTree.JCMethodDecl handleUpdateMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
-        ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
+        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
         Name modelClassName = typeNode.toName(typeNode.getName());
         JCVariableDecl idVar = createParameter(typeNode, genJavaLangTypeRef(typeNode, Object.class.getSimpleName()), "id");
         JCVariableDecl dirtyObjectVar = createParameter(typeNode, treeMaker.Ident(modelClassName), "dirtyObject");
         JCVariableDecl skipValidationVar = createParameter(typeNode, treeMaker.TypeIdent(CTC_BOOLEAN), "skipValidation");
 
-        addPersistenceRefStatement(treeMaker, typeNode, jcStatements);
+        // PersistenceFactory persistenceFactory = Database.getPersistenceFactory();
+        // Persistence persistence = persistenceFactory.createPersistence(RelationshipTest.TestDomainModel.class);
+        addPersistenceRefStatement(treeMaker, typeNode, blockBuilder);
 
-        JCExpression updateRef = treeMaker.Select(treeMaker.Ident(typeNode.toName("persistence")), typeNode.toName("update"));
-        JCExpression idRef = treeMaker.Ident(typeNode.toName("id"));
-        JCExpression skipValidationRef = treeMaker.Ident(typeNode.toName("skipValidation"));
-        JCExpression dirtyObjectRef = treeMaker.Ident(typeNode.toName("dirtyObject"));
-
-        JCTree.JCMethodInvocation returnInv = treeMaker.Apply(List.nil(), updateRef, List.of(idRef, dirtyObjectRef, skipValidationRef));
-        jcStatements.append(treeMaker.Return(returnInv));
-
+        // return persistence.update(id, dirtyObject, skipValidation);
+        blockBuilder.appendReturn("persistence", "update",
+                varRef(typeNode, "id"), varRef(typeNode, "dirtyObject"), varRef(typeNode, "skipValidation"));
         return MethodBuilder.newMethod(treeMaker, typeNode)
                 .withModifiers(Flags.PUBLIC | Flags.STATIC | Flags.FINAL)
                 .withName("update")
                 .withParameters(List.of(idVar, dirtyObjectVar, skipValidationVar))
                 .withThrowsClauses(createPersistenceExceptions(treeMaker, typeNode))
                 .withReturnType(treeMaker.TypeIdent(CTC_INT))
-                .withBody(treeMaker.Block(0, jcStatements.toList()))
+                .withBody(blockBuilder.build())
                 .buildWith(typeNode);
     }
 
+    // public static final int update(Object id, RelationshipTest.TestDomainModel dirtyObject) throws SQLException, PersistenceException {...}
     private JCTree.JCMethodDecl handleUpdate2Method(JavacTreeMaker treeMaker, JavacNode typeNode) {
-        ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
-        Name modelClassName = typeNode.toName(typeNode.getName());
-        JCVariableDecl idVar = FieldBuilder.newField(typeNode)
-                .ofType(genJavaLangTypeRef(typeNode, Object.class.getSimpleName()))
-                .withName("id")
-                .withModifiers(Flags.PARAMETER)
-                .build();
-        JCVariableDecl dirtyObjectVar = FieldBuilder.newField(typeNode)
-                .ofType(treeMaker.Ident(modelClassName))
-                .withName("dirtyObject")
-                .withModifiers(Flags.PARAMETER)
-                .build();
-        JCTree.JCIdent idRef = treeMaker.Ident(typeNode.toName("id"));
-        JCTree.JCIdent dirtyObjectsRef = treeMaker.Ident(typeNode.toName("dirtyObject"));
-        JCTree.JCMethodInvocation thisSaveInv = treeMaker.Apply(List.nil(),
-                treeMaker.Ident(typeNode.toName("update")), List.of(idRef, dirtyObjectsRef, treeMaker.Literal(false)));
+        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
+        JCVariableDecl idVar = createParameter(typeNode,
+                genJavaLangTypeRef(typeNode, Object.class.getSimpleName()), "id");
+        JCVariableDecl dirtyObjectVar = createParameter(typeNode,
+                treeMaker.Ident(typeNode.toName(typeNode.getName())), "dirtyObject");
 
-        jcStatements.append(treeMaker.Return(thisSaveInv));
+        // PersistenceFactory persistenceFactory = Database.getPersistenceFactory();
+        // Persistence persistence = persistenceFactory.createPersistence(RelationshipTest.TestDomainModel.class);
+        addPersistenceRefStatement(treeMaker, typeNode, blockBuilder);
 
+        // return persistence.update(id, dirtyObject, false);
+        blockBuilder.appendReturn("persistence", "update",
+                varRef(typeNode, "id"), varRef(typeNode, "dirtyObject"), treeMaker.Literal(false));
         return MethodBuilder.newMethod(treeMaker, typeNode)
                 .withModifiers(Flags.PUBLIC | Flags.FINAL | Flags.STATIC)
                 .withName("update")
                 .withParameters(List.of(idVar, dirtyObjectVar))
-                .withBody(treeMaker.Block(0, jcStatements.toList()))
+                .withBody(blockBuilder.build())
                 .withReturnType(treeMaker.TypeIdent(CTC_INT))
                 .withThrowsClauses(createPersistenceExceptions(treeMaker, typeNode))
                 .buildWith(typeNode);
     }
 
+    // public static final int update(String updates, String predication) throws SQLException, PersistenceException {...}
     private JCTree.JCMethodDecl handleUpdate3Method(JavacTreeMaker treeMaker, JavacNode typeNode) {
-        ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
-        JCVariableDecl updatesVar = createParameter(typeNode, genJavaLangTypeRef(typeNode, String.class.getSimpleName()), "updates");
-        JCVariableDecl predicationVar = createParameter(typeNode, genJavaLangTypeRef(typeNode, String.class.getSimpleName()), "predication");
+        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
+        JCVariableDecl updatesVar = createParameter(typeNode,
+                genJavaLangTypeRef(typeNode, String.class.getSimpleName()), "updates");
+        JCVariableDecl predicationVar = createParameter(typeNode,
+                genJavaLangTypeRef(typeNode, String.class.getSimpleName()), "predication");
 
-        addPersistenceRefStatement(treeMaker, typeNode, jcStatements);
+        // PersistenceFactory persistenceFactory = Database.getPersistenceFactory();
+        // Persistence persistence = persistenceFactory.createPersistence(RelationshipTest.TestDomainModel.class);
+        addPersistenceRefStatement(treeMaker, typeNode, blockBuilder);
 
-        JCExpression updateRef = treeMaker.Select(treeMaker.Ident(typeNode.toName("persistence")), typeNode.toName("update"));
-        JCExpression updatesRef = treeMaker.Ident(typeNode.toName("updates"));
-        JCExpression predicationRef = treeMaker.Ident(typeNode.toName("predication"));
-
-        JCTree.JCMethodInvocation returnInv = treeMaker.Apply(List.nil(), updateRef, List.of(updatesRef, predicationRef));
-        jcStatements.append(treeMaker.Return(returnInv));
-
+        // return persistence.update(updates, predication);
+        blockBuilder.appendReturn("persistence", "update",
+                varRef(typeNode, "updates"), varRef(typeNode, "predication"));
         return MethodBuilder.newMethod(treeMaker, typeNode)
                 .withModifiers(Flags.PUBLIC | Flags.STATIC | Flags.FINAL)
                 .withName("update")
                 .withParameters(List.of(updatesVar, predicationVar))
                 .withThrowsClauses(createPersistenceExceptions(treeMaker, typeNode))
                 .withReturnType(treeMaker.TypeIdent(CTC_INT))
-                .withBody(treeMaker.Block(0, jcStatements.toList()))
+                .withBody(blockBuilder.build())
                 .buildWith(typeNode);
     }
 
+    // public static final int destroy(Object id) throws SQLException, PersistenceException {...}
     private JCTree.JCMethodDecl handleDestroyMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
-        ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
-        JCVariableDecl idVar = createParameter(typeNode, genJavaLangTypeRef(typeNode, Object.class.getSimpleName()), "id");
+        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
+        JCVariableDecl idVar = createParameter(typeNode,
+                genJavaLangTypeRef(typeNode, Object.class.getSimpleName()), "id");
 
-        addPersistenceRefStatement(treeMaker, typeNode, jcStatements);
+        // PersistenceFactory persistenceFactory = Database.getPersistenceFactory();
+        // Persistence persistence = persistenceFactory.createPersistence(RelationshipTest.TestDomainModel.class);
+        addPersistenceRefStatement(treeMaker, typeNode, blockBuilder);
 
-        JCExpression deleteRef = treeMaker.Select(treeMaker.Ident(typeNode.toName("persistence")), typeNode.toName("delete"));
-        JCExpression idRef = treeMaker.Ident(typeNode.toName("id"));
-
-        JCTree.JCMethodInvocation returnInv = treeMaker.Apply(List.nil(), deleteRef, List.of(idRef));
-        jcStatements.append(treeMaker.Return(returnInv));
-
+        // return persistence.delete(id);
+        blockBuilder.appendReturn("persistence", "delete", varRef(typeNode, "id"));
         return MethodBuilder.newMethod(treeMaker, typeNode)
                 .withModifiers(Flags.PUBLIC | Flags.STATIC | Flags.FINAL)
                 .withName("destroy")
-                .withParameters(List.of(idVar))
+                .withParameters(idVar)
                 .withThrowsClauses(createPersistenceExceptions(treeMaker, typeNode))
                 .withReturnType(treeMaker.TypeIdent(CTC_INT))
-                .withBody(treeMaker.Block(0, jcStatements.toList()))
+                .withBody(blockBuilder.build())
                 .buildWith(typeNode);
     }
 
+    // public static final int destroy(String predication) throws SQLException, PersistenceException {...}
     private JCTree.JCMethodDecl handleDestroy2Method(JavacTreeMaker treeMaker, JavacNode typeNode) {
-        ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
+        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
         JCVariableDecl predicationVar = createParameter(typeNode,
                 genJavaLangTypeRef(typeNode, String.class.getSimpleName()), "predication");
 
-        addPersistenceRefStatement(treeMaker, typeNode, jcStatements);
+        // PersistenceFactory persistenceFactory = Database.getPersistenceFactory();
+        // Persistence persistence = persistenceFactory.createPersistence(RelationshipTest.TestDomainModel.class);
+        addPersistenceRefStatement(treeMaker, typeNode, blockBuilder);
 
-        JCExpression deleteRef = treeMaker.Select(treeMaker.Ident(typeNode.toName("persistence")), typeNode.toName("delete"));
-        JCExpression predicationRef = treeMaker.Ident(typeNode.toName("predication"));
-
-        JCTree.JCMethodInvocation returnInv = treeMaker.Apply(List.nil(), deleteRef, List.of(predicationRef));
-        jcStatements.append(treeMaker.Return(returnInv));
-
+        // return persistence.delete(predication);
+        blockBuilder.appendReturn("persistence", "delete", varRef(typeNode, "predication"));
         return MethodBuilder.newMethod(treeMaker, typeNode)
                 .withModifiers(Flags.PUBLIC | Flags.STATIC | Flags.FINAL)
                 .withName("destroy")
                 .withParameters(List.of(predicationVar))
                 .withThrowsClauses(createPersistenceExceptions(treeMaker, typeNode))
                 .withReturnType(treeMaker.TypeIdent(CTC_INT))
-                .withBody(treeMaker.Block(0, jcStatements.toList()))
+                .withBody(blockBuilder.build())
                 .buildWith(typeNode);
     }
 
     private JCTree.JCMethodDecl handleExecuteMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
-        ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
+        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
         JCVariableDecl sqlVar = createParameter(typeNode,
                 genJavaLangTypeRef(typeNode, String.class.getSimpleName()), "sql");
 
-        addPersistenceRefStatement(treeMaker, typeNode, jcStatements);
+        addPersistenceRefStatement(treeMaker, typeNode, blockBuilder);
 
-        JCExpression executeRef = treeMaker.Select(treeMaker.Ident(typeNode.toName("persistence")), typeNode.toName("execute"));
-        JCExpression sqlRef = treeMaker.Ident(typeNode.toName("sql"));
-
-        JCTree.JCMethodInvocation returnInv = treeMaker.Apply(List.nil(), executeRef, List.of(sqlRef));
-        jcStatements.append(treeMaker.Return(returnInv));
-
+        // return persistence.execute(sql);
+        blockBuilder.appendReturn("persistence", "execute", varRef(typeNode, "sql"));
         return MethodBuilder.newMethod(treeMaker, typeNode)
                 .withModifiers(Flags.PUBLIC | Flags.STATIC | Flags.FINAL)
                 .withName("execute")
-                .withParameters(List.of(sqlVar))
+                .withParameters(sqlVar)
                 .withThrowsClauses(createPersistenceExceptions(treeMaker, typeNode))
                 .withReturnType(treeMaker.TypeIdent(CTC_INT))
-                .withBody(treeMaker.Block(0, jcStatements.toList()))
+                .withBody(blockBuilder.build())
                 .buildWith(typeNode);
     }
 
@@ -489,9 +467,9 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 treeMaker.TypeIdent(CTC_BOOLEAN), "underline");
 
         // RelationshipTest.TestRelativeModel target = ClassUtils.createNewInstance(RelationshipTest.TestRelativeModel.class);
-        JCTree.JCExpression getConnectionFactory = staticMethodInvoke(typeNode,
+        JCTree.JCExpression createNewInstance = staticMethodInvoke(typeNode,
                 ClassUtils.class, "createNewInstance", classRef(typeNode, typeNode.getName()));
-        blockBuilder.appendVar(typeNode.getName(), "target", getConnectionFactory);
+        blockBuilder.appendVar(typeNode.getName(), "target", createNewInstance);
 
         // PropertyUtils.populate(target, source, underline);
         blockBuilder.appendClassMethodInvoke(PropertyUtils.class, "populate",
@@ -542,24 +520,17 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
     }
 
     private void addPersistenceRefStatement(JavacTreeMaker treeMaker, JavacNode typeNode,
-                                            ListBuffer<JCTree.JCStatement> jcStatements) {
-        Name modelClassName = typeNode.toName(typeNode.getName());
+                                            BlockBuilder blockBuilder) {
+        // PersistenceFactory persistenceFactory = Database.getPersistenceFactory();
+        blockBuilder.appendVar(PersistenceFactory.class, "persistenceFactory",
+                Database.class, "getPersistenceFactory");
 
-        Name persistenceFactoryName = typeNode.toName("persistenceFactory");
-        JCExpression persistenceFactoryRef = chainDots(typeNode, splitNameOf(PersistenceFactory.class));
-        JCExpression getPersistenceFactoryRef = treeMaker.Select(
-                chainDots(typeNode, splitNameOf(Database.class)), typeNode.toName("getPersistenceFactory"));
-        jcStatements.append(treeMaker.VarDef(treeMaker.Modifiers(Flags.PARAMETER), persistenceFactoryName,
-                persistenceFactoryRef, treeMaker.Apply(List.nil(), getPersistenceFactoryRef, List.nil())));
-
-        Name persistenceName = typeNode.toName("persistence");
-        JCExpression persistenceRef = genTypeRef(typeNode, Persistence.class.getName());
-        JCExpression createPersistenceRef = treeMaker.Select(
-                treeMaker.Ident(typeNode.toName("persistenceFactory")), typeNode.toName("createPersistence"));
-        JCExpression modelClassRef = treeMaker.Select(treeMaker.Ident(modelClassName), typeNode.toName("class"));
-        JCTree.JCModifiers persistenceModifier = treeMaker.Modifiers(Flags.PARAMETER);
-        jcStatements.append(treeMaker.VarDef(persistenceModifier, persistenceName,
-                persistenceRef, treeMaker.Apply(List.nil(), createPersistenceRef, List.of(modelClassRef))));
+        //Persistence persistence = persistenceFactory.createPersistence(RelationshipTest.TestRelativeModel.class);
+        JCExpression createPersistence = staticMethodInvoke(typeNode,
+                "persistenceFactory", "createPersistence", classRef(typeNode, typeNode.getName()));
+        JCTree.JCTypeApply typeApply = treeMaker.TypeApply(genTypeRef(typeNode, Persistence.class.getName()),
+                List.of(treeMaker.Ident(typeNode.toName(typeNode.getName()))));
+        blockBuilder.appendVar(typeApply, "persistence", createPersistence);
     }
 
     private JCVariableDecl createIdField(JavacTreeMaker treeMaker, JavacNode typeNode, DomainModel domainModel) {

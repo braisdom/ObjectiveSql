@@ -49,6 +49,11 @@ class BlockBuilder {
         return this;
     }
 
+    public BlockBuilder appendVar(JCTree.JCTypeApply typeApply, String name, JCTree.JCExpression init) {
+        jcStatements.append(treeMaker.VarDef(treeMaker.Modifiers(Flags.PARAMETER), typeNode.toName(name), typeApply, init));
+        return this;
+    }
+
     public BlockBuilder appendClassMethodInvoke(Class<?> typeClass, String name, JCTree.JCExpression... params) {
         JCTree.JCExpression methodRef = treeMaker.Select(genTypeRef(typeNode, typeClass.getName()),
                 typeNode.toName(name));

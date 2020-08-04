@@ -27,45 +27,45 @@ public class RelationshipTest {
         private TestDomainModel testDomainModel;
     }
 
-    @Test
-    public void testDefaultPrimaryKey() {
-        Relationship relationship = Relationship
-                .createRelation(TestDomainModel.class, "testRelativeModels");
-//        Assertions.assertEquals(relationship.getPrimaryKey(), "id");
-    }
-
-    @Test
-    public void testGivenPrimaryKey() {
-        Relationship relationship = Relationship
-                .createRelation(TestDomainModel.class, "testRelativeModels2");
-        Assertions.assertEquals(relationship.getPrimaryKey(), "test_id");
-    }
-
-    @Test
-    public void testHasAnyDefaultForeignKey() {
-        Relationship relationship = Relationship
-                .createRelation(TestDomainModel.class, "testRelativeModels");
-        Assertions.assertEquals(relationship.getForeignKey(), "test_domain_model_id");
-    }
-
-    @Test
-    public void testHasAnyDefaultForeignFieldName() {
-        Relationship relationship = Relationship
-                .createRelation(TestDomainModel.class, "testRelativeModels");
-//        Assertions.assertEquals(relationship.getForeignFieldName(), "testDomainModel");
-    }
-
-    @Test
-    public void testGivenForeignKey() {
-        Relationship relationship = Relationship
-                .createRelation(TestDomainModel.class, "testRelativeModels2");
-        Assertions.assertEquals(relationship.getForeignKey(), "given_foreign_id");
-    }
-
-    @Test
-    public void testBelongsToDefaultForeignKey() {
-        Relationship relationship = Relationship
-                .createRelation(TestRelativeModel.class, "testDomainModel");
-        Assertions.assertEquals(relationship.getForeignKey(), "test_domain_model_id");
-    }
+//    @Test
+//    public void testDefaultPrimaryKey() {
+//        Relationship relationship = Relationship
+//                .createRelation(TestDomainModel.class, "testRelativeModels");
+////        Assertions.assertEquals(relationship.getPrimaryKey(), "id");
+//    }
+//
+//    @Test
+//    public void testGivenPrimaryKey() {
+//        Relationship relationship = Relationship
+//                .createRelation(TestDomainModel.class, "testRelativeModels2");
+//        Assertions.assertEquals(relationship.getPrimaryKey(), "test_id");
+//    }
+//
+//    @Test
+//    public void testHasAnyDefaultForeignKey() {
+//        Relationship relationship = Relationship
+//                .createRelation(TestDomainModel.class, "testRelativeModels");
+//        Assertions.assertEquals(relationship.getForeignKey(), "test_domain_model_id");
+//    }
+//
+//    @Test
+//    public void testHasAnyDefaultForeignFieldName() {
+//        Relationship relationship = Relationship
+//                .createRelation(TestDomainModel.class, "testRelativeModels");
+////        Assertions.assertEquals(relationship.getForeignFieldName(), "testDomainModel");
+//    }
+//
+//    @Test
+//    public void testGivenForeignKey() {
+//        Relationship relationship = Relationship
+//                .createRelation(TestDomainModel.class, "testRelativeModels2");
+//        Assertions.assertEquals(relationship.getForeignKey(), "given_foreign_id");
+//    }
+//
+//    @Test
+//    public void testBelongsToDefaultForeignKey() {
+//        Relationship relationship = Relationship
+//                .createRelation(TestRelativeModel.class, "testDomainModel");
+//        Assertions.assertEquals(relationship.getForeignKey(), "test_domain_model_id");
+//    }
 }
