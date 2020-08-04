@@ -522,22 +522,29 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 .buildWith(typeNode);
     }
 
+    /**
+     * public static final List<Row> query(String sql) throws SQLException {...}
+     */
     private JCTree.JCMethodDecl handleQueryMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
         JCVariableDecl sqlVar = MethodBuilder.createParameter(typeNode, String.class, "sql");
         BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
-        
+
+        // ConnectionFactory connectionFactory = Database.getConnectionFactory();
         JCTree.JCExpression getConnectionFactoryExec = treeMaker.Apply(List.nil(), treeMaker.Select(
                 genTypeRef(typeNode, Database.class.getName()), typeNode.toName("getConnectionFactory")), List.nil());
         blockBuilder.appendVar(ConnectionFactory.class, "connectionFactory", getConnectionFactoryExec);
 
+        // Connection connection = connectionFactory.getConnection();
         JCTree.JCExpression getConnectionExec = treeMaker.Apply(List.nil(), treeMaker.Select(
                 treeMaker.Ident(typeNode.toName("connectionFactory")), typeNode.toName("getConnection")), List.nil());
         blockBuilder.appendVar(Connection.class, "connection", getConnectionExec);
 
+        // SQLExecutor sqlExecutor = Database.getSqlExecutor();
         JCTree.JCExpression sqlExecutorExec = treeMaker.Apply(List.nil(), treeMaker.Select(
                 genTypeRef(typeNode, Database.class.getName()), typeNode.toName("getSqlExecutor")), List.nil());
         blockBuilder.appendVar(SQLExecutor.class, "sqlExecutor", sqlExecutorExec);
 
+        // return sqlExecutor.query(connection, sql);
         blockBuilder.appendReturn("sqlExecutor", "query", treeMaker.Ident(typeNode.toName("connection")),
                 treeMaker.Ident(typeNode.toName("sql")));
 
