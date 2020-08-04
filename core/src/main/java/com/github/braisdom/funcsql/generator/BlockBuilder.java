@@ -49,11 +49,52 @@ class BlockBuilder {
         return this;
     }
 
+    public BlockBuilder appendClassMethodInvoke(Class<?> typeClass, String name, JCTree.JCExpression... params) {
+        JCTree.JCExpression methodRef = treeMaker.Select(genTypeRef(typeNode, typeClass.getName()),
+                typeNode.toName(name));
+        jcStatements.append(treeMaker.Exec(treeMaker.Apply(List.nil(),
+                methodRef, List.from(params))));
+        return this;
+    }
+
+    public BlockBuilder appendStaticMethodInvoke(Class<?> typeClass, String name, JCTree.JCExpression... params) {
+        JCTree.JCExpression methodRef = treeMaker.Select(genTypeRef(typeNode, typeClass.getName()),
+                typeNode.toName(name));
+        jcStatements.append(treeMaker.Exec(treeMaker.Apply(List.nil(),
+                methodRef, List.from(params))));
+        return this;
+    }
+
+    public BlockBuilder appendStaticMethodInvoke(String typeClassName, String name, JCTree.JCExpression... params) {
+        JCTree.JCExpression methodRef = treeMaker.Select(treeMaker.Ident(typeNode.toName(typeClassName)),
+                typeNode.toName(name));
+        jcStatements.append(treeMaker.Exec(treeMaker.Apply(List.nil(),
+                methodRef, List.from(params))));
+        return this;
+    }
+
+
+    public BlockBuilder appendVar(String typeClassName, String name, JCTree.JCExpression init) {
+        jcStatements.append(treeMaker.VarDef(treeMaker.Modifiers(Flags.PARAMETER), typeNode.toName(name),
+                treeMaker.Ident(typeNode.toName(typeClassName)), init));
+        return this;
+    }
+
     public BlockBuilder appendReturn(String varName, String varMethodName, JCTree.JCExpression... params) {
         JCTree.JCExpression invokeRef = treeMaker.Select(treeMaker.Ident(typeNode.toName(varName)), typeNode.toName(varMethodName));
         JCTree.JCMethodInvocation returnInv = treeMaker.Apply(List.nil(), invokeRef, List.from(params));
 
         jcStatements.append(treeMaker.Return(returnInv));
+        return this;
+    }
+
+    public BlockBuilder appendReturn(String varName) {
+        jcStatements.append(treeMaker.Return(treeMaker.Ident(typeNode.toName(varName))));
+        return this;
+    }
+
+    public BlockBuilder appendReturn(JCTree.JCExpression expression) {
+        jcStatements.append(treeMaker.Return(expression));
         return this;
     }
 
@@ -65,5 +106,36 @@ class BlockBuilder {
         JavacTreeMaker treeMaker = typeNode.getTreeMaker();
         return treeMaker.NewClass(null, List.nil(), genTypeRef(typeNode, clazz.getName()),
                 List.from(params), null);
+    }
+
+    public static JCTree.JCExpression classRef(JavacNode typeNode, String name) {
+        JavacTreeMaker treeMaker = typeNode.getTreeMaker();
+        return treeMaker.Select(treeMaker.Ident(typeNode.toName(name)), typeNode.toName("class"));
+    }
+
+    public static JCTree.JCExpression varRef(JavacNode typeNode, String name) {
+        JavacTreeMaker treeMaker = typeNode.getTreeMaker();
+        return treeMaker.Ident(typeNode.toName(name));
+    }
+
+    public static JCTree.JCExpression staticMethodInvoke(JavacNode typeNode, Class<?> clazz,
+                                                         String methodName, JCTree.JCExpression... params) {
+        JavacTreeMaker treeMaker = typeNode.getTreeMaker();
+        return treeMaker.Apply(List.nil(), treeMaker.Select(
+                genTypeRef(typeNode, clazz.getName()), typeNode.toName(methodName)), List.from(params));
+    }
+
+    public static JCTree.JCExpression staticMethodInvoke(JavacNode typeNode, String clazzName,
+                                                         String methodName, JCTree.JCExpression... params) {
+        JavacTreeMaker treeMaker = typeNode.getTreeMaker();
+        return treeMaker.Apply(List.nil(), treeMaker.Select(
+                treeMaker.Ident(typeNode.toName(clazzName)), typeNode.toName(methodName)), List.from(params));
+    }
+
+    public static JCTree.JCExpression methodInvoke(JavacNode typeNode, String varName,
+                                                         String methodName, JCTree.JCExpression... params) {
+        JavacTreeMaker treeMaker = typeNode.getTreeMaker();
+        return treeMaker.Apply(List.nil(), treeMaker.Select(
+                treeMaker.Ident(typeNode.toName(varName)), typeNode.toName(methodName)), List.from(params));
     }
 }

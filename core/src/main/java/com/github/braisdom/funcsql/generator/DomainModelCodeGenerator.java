@@ -460,33 +460,23 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 .buildWith(typeNode);
     }
 
+    // public static final RelationshipTest.TestRelativeModel newInstanceFrom(Map source) {...}
     private JCTree.JCMethodDecl handleNewInstanceFromMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
-        ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
+        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
         JCVariableDecl sourceVar = createParameter(typeNode,
                 genTypeRef(typeNode, Map.class.getName()), "source");
 
-        JCExpression domainClassRef = treeMaker.Select(treeMaker.Ident(typeNode.toName(typeNode.getName())), typeNode.toName("class"));
-
-        Name targetName = typeNode.toName("target");
-        JCExpression createNewInstanceRef = treeMaker.Select(
-                genTypeRef(typeNode, ClassUtils.class.getName()), typeNode.toName("createNewInstance"));
-
-        jcStatements.append(treeMaker.VarDef(treeMaker.Modifiers(Flags.PARAMETER), targetName,
-                genTypeRef(typeNode, Object.class.getName()), treeMaker.Apply(List.nil(), createNewInstanceRef, List.of(domainClassRef))));
-
-        JCExpression populateRef = treeMaker.Select(genTypeRef(typeNode, PropertyUtils.class.getName()), typeNode.toName("populate"));
-        JCExpression sourceRef = treeMaker.Ident(typeNode.toName("source"));
-        JCExpression targetRef = treeMaker.Ident(typeNode.toName("target"));
-
-        jcStatements.append(treeMaker.Exec(treeMaker.Apply(List.nil(), populateRef, List.of(targetRef, sourceRef))));
-        jcStatements.append(treeMaker.Return(treeMaker.TypeCast(treeMaker.Ident(typeNode.toName(typeNode.getName())), targetRef)));
+        // return newInstanceFrom(source, true);
+        JCExpression createNewInstance = blockBuilder.staticMethodInvoke(typeNode, typeNode.getName(), "newInstanceFrom",
+                varRef(typeNode, "source"), treeMaker.Literal(true));
+        blockBuilder.appendReturn(createNewInstance);
 
         return MethodBuilder.newMethod(treeMaker, typeNode)
                 .withModifiers(Flags.PUBLIC | Flags.STATIC | Flags.FINAL)
                 .withName("newInstanceFrom")
                 .withParameters(List.of(sourceVar))
                 .withReturnType(treeMaker.Ident(typeNode.toName(typeNode.getName())))
-                .withBody(treeMaker.Block(0, jcStatements.toList()))
+                .withBody(blockBuilder.build())
                 .buildWith(typeNode);
     }
 
@@ -504,7 +494,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
         blockBuilder.appendVar(typeNode.getName(), "target", getConnectionFactory);
 
         // PropertyUtils.populate(target, source, underline);
-        blockBuilder.appendMethodInvoke(PropertyUtils.class, "populate",
+        blockBuilder.appendClassMethodInvoke(PropertyUtils.class, "populate",
                 varRef(typeNode, "target"), varRef(typeNode, "source"), varRef(typeNode, "underline"));
 
         // return target;
