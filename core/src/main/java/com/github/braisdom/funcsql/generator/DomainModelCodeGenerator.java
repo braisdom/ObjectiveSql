@@ -174,26 +174,24 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
     }
 
     private JCTree.JCMethodDecl handleCreatePersistenceMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
-        ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
+        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
 
-        Name persistenceFactoryName = typeNode.toName("persistenceFactory");
-        JCExpression persistenceFactoryRef = chainDots(typeNode, splitNameOf(PersistenceFactory.class));
-        JCExpression getPersistenceFactoryInv = treeMaker.Select(
-                chainDots(typeNode, splitNameOf(Database.class)), typeNode.toName("getPersistenceFactory"));
+        // PersistenceFactory persistenceFactory = Database.getPersistenceFactory();
+        blockBuilder.appendVar(PersistenceFactory.class, "persistenceFactory",
+                Database.class, "getPersistenceFactory");
 
-        JCExpression createPersistenceInv = treeMaker.Select(
-                treeMaker.Ident(typeNode.toName("persistenceFactory")), typeNode.toName("createPersistence"));
-        JCExpression modelClassRef = treeMaker.Select(treeMaker.Ident(typeNode.toName(typeNode.getName())), typeNode.toName("class"));
-
-        jcStatements.append(treeMaker.VarDef(treeMaker.Modifiers(Flags.PARAMETER), persistenceFactoryName,
-                persistenceFactoryRef, treeMaker.Apply(List.nil(), getPersistenceFactoryInv, List.nil())));
-        jcStatements.append(treeMaker.Return(treeMaker.Apply(List.nil(), createPersistenceInv, List.of(modelClassRef))));
+        //Persistence persistence = persistenceFactory.createPersistence(RelationshipTest.TestRelativeModel.class);
+        JCExpression createPersistence = staticMethodInvoke(typeNode,
+                "persistenceFactory", "createPersistence", classRef(typeNode, typeNode.getName()));
+        JCTree.JCTypeApply typeApply = treeMaker.TypeApply(genTypeRef(typeNode, Persistence.class.getName()),
+                List.of(treeMaker.Ident(typeNode.toName(typeNode.getName()))));
+        blockBuilder.appendReturn(createPersistence);
 
         return MethodBuilder.newMethod(treeMaker, typeNode)
                 .withModifiers(Flags.PUBLIC | Flags.STATIC | Flags.FINAL)
                 .withName("createPersistence")
-                .withReturnType(chainDots(typeNode, splitNameOf(Persistence.class)))
-                .withBody(treeMaker.Block(0, jcStatements.toList()))
+                .withReturnType(typeApply)
+                .withBody(blockBuilder.build())
                 .buildWith(typeNode);
     }
 
@@ -405,6 +403,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 .buildWith(typeNode);
     }
 
+    // public static final int execute(String sql) throws SQLException, PersistenceException {...}
     private JCTree.JCMethodDecl handleExecuteMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
         BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
         JCVariableDecl sqlVar = createParameter(typeNode,
