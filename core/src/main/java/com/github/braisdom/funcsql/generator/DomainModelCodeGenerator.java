@@ -30,6 +30,7 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Map;
 
+import static com.github.braisdom.funcsql.generator.BlockBuilder.*;
 import static com.github.braisdom.funcsql.util.StringUtil.splitNameOf;
 import static lombok.javac.Javac.CTC_BOOLEAN;
 import static lombok.javac.Javac.CTC_INT;
@@ -489,64 +490,56 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 .buildWith(typeNode);
     }
 
+    // public static final RelationshipTest.TestRelativeModel newInstanceFrom(Map source, boolean underline) {...}
     private JCTree.JCMethodDecl handleNewInstanceFrom2Method(JavacTreeMaker treeMaker, JavacNode typeNode) {
-        ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
+        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
         JCVariableDecl sourceVar = createParameter(typeNode,
                 genTypeRef(typeNode, Map.class.getName()), "source");
         JCVariableDecl underlineVar = createParameter(typeNode,
                 treeMaker.TypeIdent(CTC_BOOLEAN), "underline");
 
-        JCExpression domainClassRef = treeMaker.Select(treeMaker.Ident(typeNode.toName(typeNode.getName())), typeNode.toName("class"));
+        // RelationshipTest.TestRelativeModel target = ClassUtils.createNewInstance(RelationshipTest.TestRelativeModel.class);
+        JCTree.JCExpression getConnectionFactory = staticMethodInvoke(typeNode,
+                ClassUtils.class, "createNewInstance", classRef(typeNode, typeNode.getName()));
+        blockBuilder.appendVar(typeNode.getName(), "target", getConnectionFactory);
 
-        Name targetName = typeNode.toName("target");
-        JCExpression createNewInstanceRef = treeMaker.Select(
-                genTypeRef(typeNode, ClassUtils.class.getName()), typeNode.toName("createNewInstance"));
+        // PropertyUtils.populate(target, source, underline);
+        blockBuilder.appendMethodInvoke(PropertyUtils.class, "populate",
+                varRef(typeNode, "target"), varRef(typeNode, "source"), varRef(typeNode, "underline"));
 
-        jcStatements.append(treeMaker.VarDef(treeMaker.Modifiers(Flags.PARAMETER), targetName,
-                genTypeRef(typeNode, Object.class.getName()), treeMaker.Apply(List.nil(), createNewInstanceRef, List.of(domainClassRef))));
-
-        JCExpression populateRef = treeMaker.Select(genTypeRef(typeNode, PropertyUtils.class.getName()), typeNode.toName("populate"));
-        JCExpression sourceRef = treeMaker.Ident(typeNode.toName("source"));
-        JCExpression targetRef = treeMaker.Ident(typeNode.toName("target"));
-        JCExpression underlineRef = treeMaker.Ident(typeNode.toName("underline"));
-
-        jcStatements.append(treeMaker.Exec(treeMaker.Apply(List.nil(), populateRef, List.of(targetRef, sourceRef, underlineRef))));
-        jcStatements.append(treeMaker.Return(treeMaker.TypeCast(treeMaker.Ident(typeNode.toName(typeNode.getName())), targetRef)));
+        // return target;
+        blockBuilder.appendReturn("target");
 
         return MethodBuilder.newMethod(treeMaker, typeNode)
                 .withModifiers(Flags.PUBLIC | Flags.STATIC | Flags.FINAL)
                 .withName("newInstanceFrom")
                 .withParameters(List.of(sourceVar, underlineVar))
                 .withReturnType(treeMaker.Ident(typeNode.toName(typeNode.getName())))
-                .withBody(treeMaker.Block(0, jcStatements.toList()))
+                .withBody(blockBuilder.build())
                 .buildWith(typeNode);
     }
 
-    /**
-     * public static final List<Row> query(String sql) throws SQLException {...}
-     */
+    // public static final List<Row> query(String sql) throws SQLException {...}
     private JCTree.JCMethodDecl handleQueryMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
         JCVariableDecl sqlVar = MethodBuilder.createParameter(typeNode, String.class, "sql");
         BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
 
         // ConnectionFactory connectionFactory = Database.getConnectionFactory();
-        JCTree.JCExpression getConnectionFactoryExec = treeMaker.Apply(List.nil(), treeMaker.Select(
-                genTypeRef(typeNode, Database.class.getName()), typeNode.toName("getConnectionFactory")), List.nil());
-        blockBuilder.appendVar(ConnectionFactory.class, "connectionFactory", getConnectionFactoryExec);
+        JCTree.JCExpression getConnectionFactory = staticMethodInvoke(typeNode,
+                Database.class, "getConnectionFactory");
+        blockBuilder.appendVar(ConnectionFactory.class, "connectionFactory", getConnectionFactory);
 
         // Connection connection = connectionFactory.getConnection();
-        JCTree.JCExpression getConnectionExec = treeMaker.Apply(List.nil(), treeMaker.Select(
-                treeMaker.Ident(typeNode.toName("connectionFactory")), typeNode.toName("getConnection")), List.nil());
-        blockBuilder.appendVar(Connection.class, "connection", getConnectionExec);
+        JCTree.JCExpression getConnection = methodInvoke(typeNode, "connectionFactory", "getConnection");
+        blockBuilder.appendVar(Connection.class, "connection", getConnection);
 
         // SQLExecutor sqlExecutor = Database.getSqlExecutor();
-        JCTree.JCExpression sqlExecutorExec = treeMaker.Apply(List.nil(), treeMaker.Select(
-                genTypeRef(typeNode, Database.class.getName()), typeNode.toName("getSqlExecutor")), List.nil());
-        blockBuilder.appendVar(SQLExecutor.class, "sqlExecutor", sqlExecutorExec);
+        JCTree.JCExpression sqlExecutor = staticMethodInvoke(typeNode, Database.class, "getSqlExecutor");
+        blockBuilder.appendVar(SQLExecutor.class, "sqlExecutor", sqlExecutor);
 
         // return sqlExecutor.query(connection, sql);
-        blockBuilder.appendReturn("sqlExecutor", "query", treeMaker.Ident(typeNode.toName("connection")),
-                treeMaker.Ident(typeNode.toName("sql")));
+        blockBuilder.appendReturn("sqlExecutor", "query",
+                treeMaker.Ident(typeNode.toName("connection")), treeMaker.Ident(typeNode.toName("sql")));
 
         return MethodBuilder.newMethod(treeMaker, typeNode)
                 .withModifiers(Flags.PUBLIC | Flags.STATIC | Flags.FINAL)
