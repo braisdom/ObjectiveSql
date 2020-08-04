@@ -323,7 +323,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
 
         // return persistence.update(id, dirtyObject, false);
         blockBuilder.appendReturn("persistence", "update",
-                varRef(typeNode, "id"), varRef(typeNode, "dirtyObject"), treeMaker.Literal(false));
+                varRef(typeNode, "id"), varRef(typeNode, "dirtyObject"), treeMaker.Literal(true));
         return MethodBuilder.newMethod(treeMaker, typeNode)
                 .withModifiers(Flags.PUBLIC | Flags.FINAL | Flags.STATIC)
                 .withName("update")

@@ -6,6 +6,8 @@ import com.github.braisdom.funcsql.annotations.Relation;
 import com.github.braisdom.funcsql.annotations.Volatile;
 import com.github.braisdom.funcsql.relation.RelationType;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
@@ -19,6 +21,9 @@ public final class Domains {
 
     @DomainModel
     public static class Member {
+
+        @NotNull
+        @Size(min = 5, max = 20)
         private String no;
         private String name;
         private Integer gender;

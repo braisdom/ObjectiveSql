@@ -5,11 +5,13 @@ import com.github.braisdom.funcsql.annotations.PrimaryKey;
 import com.github.braisdom.funcsql.util.StringUtil;
 import com.github.braisdom.funcsql.util.WordUtil;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
 import java.lang.reflect.Field;
 import java.util.Objects;
+import java.util.Set;
 
 /**
- *
  * @author braisdom
  * @since 1.0
  */
@@ -17,6 +19,15 @@ public final class Table {
 
     public static final String DEFAULT_PRIMARY_KEY = "id";
     public static final String DEFAULT_KEY_SUFFIX = "id";
+
+    private static Validator validator = bean -> {
+        javax.validation.Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+        Set<ConstraintViolation<Object>> rawViolations = validator.validate(bean);
+
+        return rawViolations.stream().map(violation ->
+                new Validator.Violation(violation.getMessage(), violation.getConstraintDescriptor().getAttributes()))
+                .toArray(Validator.Violation[]::new);
+    };
 
     public static final String getTableName(Class baseClass) {
         Objects.requireNonNull(baseClass, "The baseClass cannot be null");
@@ -35,9 +46,9 @@ public final class Table {
 
     public static final PrimaryKey getPrimaryKey(Class tableClass) {
         Field[] fields = tableClass.getDeclaredFields();
-        for(Field field:fields) {
+        for (Field field : fields) {
             PrimaryKey primaryKey = field.getDeclaredAnnotation(PrimaryKey.class);
-            if(primaryKey != null) {
+            if (primaryKey != null) {
                 return primaryKey;
             }
         }
@@ -46,7 +57,7 @@ public final class Table {
 
     public static final boolean isPrimaryField(Field field) {
         PrimaryKey primaryKey = field.getDeclaredAnnotation(PrimaryKey.class);
-        if(primaryKey != null)
+        if (primaryKey != null)
             return true;
         else return DEFAULT_PRIMARY_KEY.equals(field.getName());
     }
@@ -57,16 +68,24 @@ public final class Table {
         Field defaultField = null;
         Field primaryField = null;
 
-        for(Field field:fields) {
+        for (Field field : fields) {
             PrimaryKey primaryKey = field.getDeclaredAnnotation(PrimaryKey.class);
             if (primaryKey != null)
                 primaryField = field;
 
-            if(DEFAULT_PRIMARY_KEY.equals(field.getName()))
+            if (DEFAULT_PRIMARY_KEY.equals(field.getName()))
                 defaultField = field;
         }
 
         return primaryField == null ? defaultField : primaryField;
+    }
+
+    public static Validator getValidator() {
+        return validator;
+    }
+
+    public static final void installValidator(Validator validator) {
+        Table.validator = validator;
     }
 
     public static final String encodeDefaultKey(String name) {
