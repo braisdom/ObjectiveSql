@@ -25,6 +25,11 @@ class BlockBuilder {
         return new BlockBuilder(treeMaker, typeNode);
     }
 
+    public BlockBuilder append(JCTree.JCStatement... statement) {
+        jcStatements.append(treeMaker.Block(0, List.from(statement)));
+        return this;
+    }
+
     public BlockBuilder appendVar(Class<?> typeClass, String name, String invokedClassName,
                                String staticMethodName, JCTree.JCExpression... params) {
         jcStatements.append(treeMaker.VarDef(treeMaker.Modifiers(Flags.PARAMETER), typeNode.toName(name),

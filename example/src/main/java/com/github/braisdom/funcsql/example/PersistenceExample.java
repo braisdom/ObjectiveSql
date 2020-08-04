@@ -4,28 +4,22 @@ import com.github.braisdom.funcsql.Database;
 import com.github.braisdom.funcsql.PersistenceException;
 import com.google.gson.GsonBuilder;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
 import java.io.File;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 public class PersistenceExample {
 
     private static void createSimpleMember() throws SQLException, PersistenceException {
         Domains.Member newMember = new Domains.Member()
                 .setId(11)
-                .setNo("111123")
+                .setNo("11")
                 .setName("Pamela")
                 .setGender(1)
                 .setMobile("15011112222");
 
-        Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-        Set<ConstraintViolation<Object>> violations = validator.validate(newMember);
-        Domains.Member.create(newMember);
+        Domains.Member.create(newMember, true);
     }
 
     private static void createSimpleCopyFromMember() throws SQLException, PersistenceException {

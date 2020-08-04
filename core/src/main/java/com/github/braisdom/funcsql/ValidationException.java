@@ -1,5 +1,7 @@
 package com.github.braisdom.funcsql;
 
+import java.util.Arrays;
+
 public class ValidationException extends PersistenceException {
 
     private final Validator.Violation[] violations;
@@ -10,5 +12,12 @@ public class ValidationException extends PersistenceException {
 
     public Validator.Violation[] getViolations() {
         return violations;
+    }
+
+    @Override
+    public String toString() {
+        String s = getClass().getName();
+        String message = violations.length > 0 ? violations[0].getMessage() : getLocalizedMessage();
+        return (message != null) ? (s + ": " + message) : s;
     }
 }

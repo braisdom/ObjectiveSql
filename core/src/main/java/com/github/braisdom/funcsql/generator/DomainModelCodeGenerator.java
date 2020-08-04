@@ -203,6 +203,12 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
         JCVariableDecl dirtyObjectVar = createParameter(typeNode, treeMaker.Ident(modelClassName), "dirtyObject");
         JCVariableDecl skipValidationVar = createParameter(typeNode, treeMaker.TypeIdent(CTC_BOOLEAN), "skipValidation");
 
+        // Table.validate(dirtyObject, skipValidation);
+        blockBuilder.appendStaticMethodInvoke(Table.class, "validate",
+                treeMaker.Ident(typeNode.toName("dirtyObject")), treeMaker.Ident(typeNode.toName("skipValidation")));
+
+        // PersistenceFactory persistenceFactory = Database.getPersistenceFactory();
+        // Persistence persistence = persistenceFactory.createPersistence(RelationshipTest.TestDomainModel.class);
         addPersistenceRefStatement(treeMaker, typeNode, blockBuilder);
 
         // return (RelationshipTest.TestDomainModel)persistence.insert(dirtyObject, skipValidation);
@@ -267,6 +273,10 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
         JCVariableDecl skipValidationVar =  createParameter(typeNode,
                 treeMaker.TypeIdent(CTC_BOOLEAN), "skipValidation");
 
+        // Table.validate(dirtyObjects, skipValidation);
+        blockBuilder.appendStaticMethodInvoke(Table.class, "validate",
+                treeMaker.Ident(typeNode.toName("dirtyObjects")), treeMaker.Ident(typeNode.toName("skipValidation")));
+
         // PersistenceFactory persistenceFactory = Database.getPersistenceFactory();
         // Persistence persistence = persistenceFactory.createPersistence(RelationshipTest.TestDomainModel.class);
         addPersistenceRefStatement(treeMaker, typeNode, blockBuilder);
@@ -291,6 +301,10 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
         JCVariableDecl idVar = createParameter(typeNode, genJavaLangTypeRef(typeNode, Object.class.getSimpleName()), "id");
         JCVariableDecl dirtyObjectVar = createParameter(typeNode, treeMaker.Ident(modelClassName), "dirtyObject");
         JCVariableDecl skipValidationVar = createParameter(typeNode, treeMaker.TypeIdent(CTC_BOOLEAN), "skipValidation");
+
+        // Table.validate(dirtyObject, skipValidation);
+        blockBuilder.appendStaticMethodInvoke(Table.class, "validate",
+                treeMaker.Ident(typeNode.toName("dirtyObject")), treeMaker.Ident(typeNode.toName("skipValidation")));
 
         // PersistenceFactory persistenceFactory = Database.getPersistenceFactory();
         // Persistence persistence = persistenceFactory.createPersistence(RelationshipTest.TestDomainModel.class);

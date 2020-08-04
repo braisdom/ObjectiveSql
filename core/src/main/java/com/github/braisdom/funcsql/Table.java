@@ -88,6 +88,26 @@ public final class Table {
         Table.validator = validator;
     }
 
+    public static final void validate(Object bean, boolean skipValidation) throws ValidationException {
+        if(skipValidation) {
+            Validator validator = getValidator();
+            Validator.Violation[] violations = validator.validate(bean);
+            if(violations.length > 0)
+                throw new ValidationException(violations);
+        }
+    }
+
+    public static final void validate(Object[] beans, boolean skipValidation) throws ValidationException {
+        if(skipValidation) {
+            Validator validator = getValidator();
+            for(Object bean : beans) {
+                Validator.Violation[] violations = validator.validate(bean);
+                if (violations.length > 0)
+                    throw new ValidationException(violations);
+            }
+        }
+    }
+
     public static final String encodeDefaultKey(String name) {
         return String.format("%s_%s", name, DEFAULT_KEY_SUFFIX);
     }
