@@ -2,6 +2,7 @@ package com.github.braisdom.funcsql.example;
 
 import com.github.braisdom.funcsql.Database;
 import com.github.braisdom.funcsql.PersistenceException;
+import com.github.braisdom.funcsql.ValidationException;
 import com.google.gson.GsonBuilder;
 
 import java.io.File;
@@ -14,7 +15,18 @@ public class PersistenceExample {
     private static void createSimpleMember() throws SQLException, PersistenceException {
         Domains.Member newMember = new Domains.Member()
                 .setId(11)
-                .setNo("11")
+                .setNo("100000")
+                .setName("Pamela")
+                .setGender(1)
+                .setMobile("15011112222");
+
+        Domains.Member.create(newMember, true);
+    }
+
+    private static void createSimpleValidationMember() throws SQLException, PersistenceException {
+        Domains.Member newMember = new Domains.Member()
+                .setId(11)
+                .setNo("10")
                 .setName("Pamela")
                 .setGender(1)
                 .setMobile("15011112222");
@@ -149,5 +161,11 @@ public class PersistenceExample {
         deleteAliceMember();
         deleteMaryMember();
         executeDeleteDenise();
+
+        try {
+            createSimpleValidationMember();
+        } catch (ValidationException ex) {
+            System.out.println(ex.toString());
+        }
     }
 }
