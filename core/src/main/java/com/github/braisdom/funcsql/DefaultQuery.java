@@ -44,8 +44,7 @@ public class DefaultQuery<T> extends AbstractQuery<T> {
         String sql = createQuerySQL(tableName, projection, filter, groupBy,
                 having, orderBy, offset, limit);
 
-        Database.execute((connection, sqlExecutor) -> executeRawInternally(sql));
-        return executeRawInternally(sql);
+        return Database.execute((connection, sqlExecutor) -> executeRawInternally(sql));
     }
 
     @Override
