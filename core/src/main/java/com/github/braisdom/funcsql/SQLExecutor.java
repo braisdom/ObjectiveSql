@@ -6,9 +6,9 @@ import java.util.List;
 
 public interface SQLExecutor<T> {
 
-    List<T> query(Connection connection, String sql, DomainModelDescriptor domainModelDescriptor) throws SQLException;
+    List<T> query(Connection connection, String sql, DomainModelDescriptor domainModelDescriptor, Object... params) throws SQLException;
 
-    List<Row> query(Connection connection, String sql) throws SQLException;
+    List<Row> query(Connection connection, String sql, Object... params) throws SQLException;
 
     int update(Connection connection, String sql, Object... params) throws SQLException;
 
@@ -16,6 +16,6 @@ public interface SQLExecutor<T> {
 
     int[] insert(Connection connection, String sql, DomainModelDescriptor domainModelDescriptor, Object[][] params) throws SQLException;
 
-    int execute(Connection connection, String sql) throws SQLException;
+    int execute(Connection connection, String sql, Object... params) throws SQLException;
 
 }

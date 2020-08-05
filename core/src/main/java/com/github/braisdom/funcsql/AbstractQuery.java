@@ -13,6 +13,7 @@ public abstract class AbstractQuery<T> implements Query<T> {
 
     protected String projection;
     protected String filter;
+    protected Object[] params;
     protected String orderBy;
     protected String groupBy;
     protected String having;
@@ -26,8 +27,9 @@ public abstract class AbstractQuery<T> implements Query<T> {
     }
 
     @Override
-    public Query where(String filter, Object... args) {
-        this.filter = String.format(filter, args);
+    public Query where(String filter, Object... params) {
+        this.filter = filter;
+        this.params = params;
         return this;
     }
 
@@ -69,7 +71,7 @@ public abstract class AbstractQuery<T> implements Query<T> {
 
     protected <C> List<C> executeInternally(Connection connection, String sql) throws SQLException {
         SQLExecutor sqlExecutor = Database.getSqlExecutor();
-        return sqlExecutor.query(connection, sql, domainModelDescriptor);
+        return sqlExecutor.query(connection, sql, domainModelDescriptor, params);
     }
 
     protected List<Row> executeRawInternally(String sql) throws SQLException {
