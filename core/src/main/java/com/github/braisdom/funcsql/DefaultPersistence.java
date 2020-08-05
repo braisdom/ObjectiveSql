@@ -13,6 +13,8 @@ import java.util.Objects;
 
 public class DefaultPersistence<T> extends AbstractPersistence<T> {
 
+    private static Logger logger = Database.getLoggerFactory().create(DefaultPersistence.class);
+
     public DefaultPersistence(Class<T> domainClass) {
         super(domainClass);
     }
@@ -54,7 +56,8 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
                         } else return PropertyUtils.readDirectly(dirtyObject, fieldName);
                     })).toArray(Object[]::new);
 
-            return (T) sqlExecutor.insert(connection, sql, domainModelDescriptor, values);
+            return (T) Database.sqlBenchmarking(() ->
+                    sqlExecutor.insert(connection, sql, domainModelDescriptor, values), logger, sql, values);
         });
     }
 
