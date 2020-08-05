@@ -39,6 +39,10 @@ public class QueryExample {
         Domains.Member.count("id > 10");
     }
 
+    private static void rawQuery() throws SQLException {
+        Domains.Member.query("SELECT id, name FROM members WHERE id < 10");
+    }
+
     public static void main(String[] args) throws SQLException, PersistenceException {
         File file = new File("query_example.db");
 
@@ -51,5 +55,6 @@ public class QueryExample {
 
         createMembers();
         countMember();
+        rawQuery();
     }
 }

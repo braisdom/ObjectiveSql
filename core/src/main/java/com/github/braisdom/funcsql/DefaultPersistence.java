@@ -13,8 +13,6 @@ import java.util.Objects;
 
 public class DefaultPersistence<T> extends AbstractPersistence<T> {
 
-    private static Logger logger = Database.getLoggerFactory().create(DefaultPersistence.class);
-
     public DefaultPersistence(Class<T> domainClass) {
         super(domainClass);
     }
@@ -56,8 +54,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
                         } else return PropertyUtils.readDirectly(dirtyObject, fieldName);
                     })).toArray(Object[]::new);
 
-            return (T) Database.sqlBenchmarking(() ->
-                    sqlExecutor.insert(connection, sql, domainModelDescriptor, values), logger, sql, values);
+            return (T) sqlExecutor.insert(connection, sql, domainModelDescriptor, values);
         });
     }
 
@@ -85,8 +82,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
             String tableName = domainModelDescriptor.getTableName();
             String sql = formatInsertSql(tableName, columnNames);
 
-            return Database.sqlBenchmarking(() ->
-                    sqlExecutor.insert(connection, sql, domainModelDescriptor, values), logger, sql, values);
+            return sqlExecutor.insert(connection, sql, domainModelDescriptor, values);
         });
     }
 
@@ -127,8 +123,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
             String sql = formatUpdateSql(domainModelDescriptor.getTableName(),
                     updatesSql.toString(), String.format("%s = ?", primaryKey.name()));
 
-            return Database.sqlBenchmarking(() ->
-                    sqlExecutor.update(connection, sql, ArrayUtil.appendElement(Object.class, values, id)), logger, sql, values);
+            return sqlExecutor.update(connection, sql, ArrayUtil.appendElement(Object.class, values, id));
         });
     }
 
@@ -142,8 +137,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
 
         return Database.execute((connection, sqlExecutor) -> {
             String sql = formatUpdateSql(domainModelDescriptor.getTableName(), updates, predication);
-            return Database.sqlBenchmarking(() ->
-                    sqlExecutor.execute(connection, sql), logger, sql);
+            return sqlExecutor.execute(connection, sql);
         });
     }
 
@@ -154,8 +148,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
 
         return Database.execute((connection, sqlExecutor) -> {
             String sql = formatDeleteSql(domainModelDescriptor.getTableName(), predication);
-            return Database.sqlBenchmarking(() ->
-                    sqlExecutor.execute(connection, sql), logger, sql, predication);
+            return sqlExecutor.execute(connection, sql);
         });
     }
 
@@ -170,8 +163,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
             Quoter quoter = Database.getQuoter();
             String sql = formatDeleteSql(domainModelDescriptor.getTableName(),
                     String.format("%s = %s", quoter.quoteColumn(primaryKey.name()), quoter.quoteValue(id)));
-            return Database.sqlBenchmarking(() ->
-                    sqlExecutor.execute(connection, sql), logger, sql, id);
+            return sqlExecutor.execute(connection, sql);
         });
     }
 
@@ -180,8 +172,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
         Objects.requireNonNull(sql, "The sql cannot be null");
 
         return Database.execute((connection, sqlExecutor) ->
-                Database.sqlBenchmarking(() ->
-                sqlExecutor.execute(connection, sql), logger, sql));
+                sqlExecutor.execute(connection, sql));
     }
 
     private void ensurePrimaryKeyNotNull(PrimaryKey primaryKey) throws PersistenceException {
