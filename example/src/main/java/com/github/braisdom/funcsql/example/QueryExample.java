@@ -2,8 +2,6 @@ package com.github.braisdom.funcsql.example;
 
 import com.github.braisdom.funcsql.Database;
 import com.github.braisdom.funcsql.PersistenceException;
-import com.github.braisdom.funcsql.Row;
-import com.github.braisdom.funcsql.Table;
 
 import java.io.File;
 import java.sql.Connection;
@@ -22,7 +20,7 @@ public class QueryExample {
             "Frank","Scott","Eric","Stephen","Andrew","Raymond","Gregory","Joshua","Jerry","Dennis","Walter","Patrick","Peter","Harold",
             "Douglas","Henry","Carl","Arthur","Ryan","Roger"};
 
-    private static void createMembers() throws SQLException, PersistenceException {
+    private static void createMembers() throws SQLException {
         List<Domains.Member> members = new ArrayList<>();
         for (int i = 0; i < 100; i++) {
             members.add(new Domains.Member()

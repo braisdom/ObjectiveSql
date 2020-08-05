@@ -27,8 +27,7 @@ import org.kohsuke.MetaInfServices;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.Map;
+import java.util.*;
 
 import static com.github.braisdom.funcsql.generator.BlockBuilder.*;
 import static com.github.braisdom.funcsql.util.StringUtil.splitNameOf;
@@ -64,6 +63,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
 
         handleFieldSG(treeMaker, domainModel, typeNode, handleGetter);
         handleTableNameField(treeMaker, typeNode);
+        handleRawAttributesField(treeMaker, typeNode);
 
         JCMethodDecl[] methodDeclArray = new JCMethodDecl[]{
                 handleCreatePersistenceMethod(treeMaker, typeNode),
@@ -624,6 +624,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 .build();
     }
 
+    // public static final String TABLE_NAME = Table.getTableName(Domains.OrderLine.class);
     private void handleTableNameField(JavacTreeMaker treeMaker, JavacNode typeNode) {
         JCExpression tableRef = genTypeRef(typeNode, Table.class.getName());
         JCExpression getTableRef = treeMaker.Select(tableRef, typeNode.toName("getTableName"));
@@ -637,6 +638,58 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 .build();
 
         injectField(typeNode, variableDecl);
+    }
+
+    // private final Map<String, Object> rawAttributes = new HashMap();
+    private void handleRawAttributesField(JavacTreeMaker treeMaker, JavacNode typeNode) {
+        JCExpression rawAttributesType = treeMaker.TypeApply(genTypeRef(typeNode, Map.class.getName()),
+                List.of(genTypeRef(typeNode, String.class.getName()), genTypeRef(typeNode, Object.class.getName())));
+        JCExpression rawAttributesInit = treeMaker.NewClass(null, List.nil(), genTypeRef(typeNode, HashMap.class.getName()),
+                List.nil(), null);
+        injectField(typeNode, FieldBuilder.newField(typeNode)
+                .ofType(rawAttributesType)
+                .withModifiers(Flags.PRIVATE | Flags.FINAL)
+                .withName("rawAttributes")
+                .withInit(rawAttributesInit)
+                .build());
+
+        // return Collections.unmodifiableMap(this.rawAttributes);
+        BlockBuilder getRawAttributesBlockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
+        getRawAttributesBlockBuilder.appendReturn(Collections.class, "unmodifiableMap",
+                treeMaker.Select(varRef(typeNode, "this"),
+                        typeNode.toName("rawAttributes")));
+        injectMethod(typeNode, MethodBuilder.newMethod(treeMaker, typeNode)
+                .withModifiers(Flags.PUBLIC | Flags.FINAL)
+                .withName("getRawAttributes")
+                .withReturnType(rawAttributesType)
+                .withBody(getRawAttributesBlockBuilder.build())
+                .buildWith(typeNode));
+
+        // return this.rawAttributes.get(name);
+        JCVariableDecl nameVar = MethodBuilder.createParameter(typeNode, String.class, "name");
+        BlockBuilder getRawAttributeBlockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
+        getRawAttributeBlockBuilder.appendReturn("rawAttributes", "get", varRef(typeNode, "name"));
+        injectMethod(typeNode, MethodBuilder.newMethod(treeMaker, typeNode)
+                .withModifiers(Flags.PUBLIC | Flags.FINAL)
+                .withName("getRawAttribute")
+                .withParameters(nameVar)
+                .withReturnType(genTypeRef(typeNode, Object.class.getName()))
+                .withBody(getRawAttributeBlockBuilder.build())
+                .buildWith(typeNode));
+
+        // this.rawAttributes.put(name, value);
+        JCVariableDecl valueVar = MethodBuilder.createParameter(typeNode, Object.class, "value");
+        BlockBuilder setRawAttributeBlockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
+        JCTree.JCExpression putRef = treeMaker.Select(treeMaker.Ident(typeNode.toName("rawAttributes")),
+                typeNode.toName("put"));
+        setRawAttributeBlockBuilder.append(treeMaker.Exec(treeMaker.Apply(List.nil(), putRef,
+                List.of(varRef(typeNode, "name"), varRef(typeNode, "value")))));
+        injectMethod(typeNode, MethodBuilder.newMethod(treeMaker, typeNode)
+                .withModifiers(Flags.PUBLIC | Flags.FINAL)
+                .withName("setRawAttribute")
+                .withParameters(nameVar, valueVar)
+                .withBody(setRawAttributeBlockBuilder.build())
+                .buildWith(typeNode));
     }
 
     private JCVariableDecl createParameter(JavacNode typeNode, JCExpression type, String name, JCTree.JCAnnotation... annotations) {
