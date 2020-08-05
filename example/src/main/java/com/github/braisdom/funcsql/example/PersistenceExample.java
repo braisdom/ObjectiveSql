@@ -37,8 +37,8 @@ public class PersistenceExample {
         } catch (ValidationException ex) {
             Validator.Violation[] violations = ex.getViolations();
             if(violations.length > 0) {
-                System.out.println(String.format("%s %s: %s", violations[0].getPropertyPath(),
-                        violations[0].getMessage(), violations[0].getInvalidValue()));
+                System.out.println(String.format("%s.%s %s: %s", violations[0].getModelClass().getName(),
+                        violations[0].getPropertyPath(), violations[0].getMessage(), violations[0].getInvalidValue()));
             }
         }
     }
@@ -54,7 +54,7 @@ public class PersistenceExample {
         Domains.Member.create(newMember, true);
     }
 
-    private static void createSimpleCopyFromMember() throws SQLException, PersistenceException {
+    private static void createSimpleMemberCopyFromMap() throws SQLException, PersistenceException {
         Map<String, Object> extendedAttributes = new HashMap<>();
         extendedAttributes.put("hobbies", new String[]{"Play football"});
         extendedAttributes.put("age", 28);
@@ -70,7 +70,7 @@ public class PersistenceExample {
         Domains.Member.create(Domains.Member.newInstanceFrom(attributes));
     }
 
-    private static void createSimpleCopyFromUnderlineMember() throws SQLException, PersistenceException {
+    private static void createSimpleMemberCopyFromUnderlineMap() throws SQLException, PersistenceException {
         Map<String, Object> extendedAttributes = new HashMap<>();
         extendedAttributes.put("hobbies", new String[]{"Play football"});
         extendedAttributes.put("age", 28);
@@ -171,8 +171,8 @@ public class PersistenceExample {
         Domains.createTables(Database.getConnectionFactory().getConnection());
 
         createSimpleMember();
-        createSimpleCopyFromMember();
-        createSimpleCopyFromUnderlineMember();
+        createSimpleMemberCopyFromMap();
+        createSimpleMemberCopyFromUnderlineMap();
         createSimpleFromJsonMember();
         createMember();
         createMemberArray();

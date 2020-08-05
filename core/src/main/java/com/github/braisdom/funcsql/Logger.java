@@ -6,8 +6,6 @@ public interface Logger {
 
     boolean isInfoEnabled();
 
-    boolean isErrorEnabled();
-
     void debug(long elapsedTime, String sql, Object[] params);
 
     void info(long elapsedTime, String sql, Object[] params);
