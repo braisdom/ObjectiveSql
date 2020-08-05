@@ -6,6 +6,7 @@ import java.util.List;
 
 public abstract class AbstractQuery<T> implements Query<T> {
 
+    private static final Logger logger = Database.getLoggerFactory().create(AbstractQuery.class);
     protected final DomainModelDescriptor<T> domainModelDescriptor;
 
     protected int limit = -1;
@@ -69,14 +70,16 @@ public abstract class AbstractQuery<T> implements Query<T> {
 
     protected <C> List<C> executeInternally(Connection connection, String sql) throws SQLException {
         SQLExecutor sqlExecutor = Database.getSqlExecutor();
-        return sqlExecutor.query(connection, sql, domainModelDescriptor);
+        return Database.sqlBenchmarking(() ->
+                sqlExecutor.query(connection, sql, domainModelDescriptor), logger, sql);
     }
 
     protected List<Row> executeRawInternally(String sql) throws SQLException {
         ConnectionFactory connectionFactory = Database.getConnectionFactory();
         SQLExecutor sqlExecutor = Database.getSqlExecutor();
 
-        return sqlExecutor.query(connectionFactory.getConnection(), sql);
+        return Database.sqlBenchmarking(() ->
+                sqlExecutor.query(connectionFactory.getConnection(), sql), logger, sql);
     }
 
     protected String getTableName(Class tableClass) {

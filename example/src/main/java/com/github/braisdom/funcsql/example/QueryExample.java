@@ -35,7 +35,8 @@ public class QueryExample {
     }
 
     private static void countMember() throws SQLException {
-        Table.count(Domains.Member.class, "");
+        int count = Table.count(Domains.Member.class, "");
+        System.out.println();
     }
 
     public static void main(String[] args) throws SQLException, PersistenceException {

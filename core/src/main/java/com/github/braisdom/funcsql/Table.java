@@ -115,7 +115,7 @@ public final class Table {
     public static final int count(Class<?> domainModelClass, String predicate) throws SQLException {
         Query<?> query = Database.getQueryFactory().createQuery(domainModelClass);
         String countAlias = "_count";
-        List<Row> rows = query.select("count(*) AS " + countAlias).where(predicate).executeRawly();
+        List<Row> rows = query.select("COUNT(*) AS " + countAlias).where(predicate).executeRawly();
 
         if (rows.size() > 0) {
             return rows.get(0).getInteger(countAlias);
