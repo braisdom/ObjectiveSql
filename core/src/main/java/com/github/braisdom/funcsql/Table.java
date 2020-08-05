@@ -119,7 +119,8 @@ public final class Table {
         List rows = query.select("COUNT(*) AS " + countAlias).where(predicate).execute();
 
         if (rows.size() > 0) {
-            return (int) PropertyUtils.getRawAttribute(rows.get(0), countAlias);
+            Object count = PropertyUtils.getRawAttribute(rows.get(0), countAlias);
+            return count == null ? 0 : (int) count;
         } else return 0;
     }
 

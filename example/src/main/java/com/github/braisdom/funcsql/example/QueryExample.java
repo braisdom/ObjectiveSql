@@ -34,13 +34,15 @@ public class QueryExample {
     }
 
     private static void countMember() throws SQLException {
-        Domains.Member.count();
-        Domains.Member.count("id > 10");
+        int countTotal = Domains.Member.count();
+        int countGrate10 = Domains.Member.count("id > 10");
+        System.out.println(String.format("[Results] Total: %d, id > 10: %d", countTotal, countGrate10));
     }
 
     private static void rawQuery() throws SQLException {
-        Domains.Member.query("SELECT id, name FROM members WHERE id < ?", new Object[]{10});
-        Domains.Member.query("SELECT * FROM members WHERE name = ?", new Object[]{"Jonathan"});
+        List<Domains.Member> members = Domains.Member.query("SELECT id, name FROM members WHERE id < ?", new Object[]{10});
+        List<Domains.Member> members2 = Domains.Member.query("SELECT * FROM members WHERE name = ?", new Object[]{"Jonathan"});
+        System.out.println(String.format("[Results] Member size1: %d, size2: %d", members.size(), members2.size()));
     }
 
     public static void main(String[] args) throws SQLException, PersistenceException {
