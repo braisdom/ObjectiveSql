@@ -128,11 +128,6 @@ class BlockBuilder {
         return treeMaker.Select(treeMaker.Ident(typeNode.toName(name)), typeNode.toName("class"));
     }
 
-    public static JCTree.JCExpression varRef(JavacNode typeNode, String name) {
-        JavacTreeMaker treeMaker = typeNode.getTreeMaker();
-        return treeMaker.Ident(typeNode.toName(name));
-    }
-
     public static JCTree.JCExpression staticMethodInvoke(JavacNode typeNode, Class<?> clazz,
                                                          String methodName, JCTree.JCExpression... params) {
         JavacTreeMaker treeMaker = typeNode.getTreeMaker();
@@ -152,5 +147,10 @@ class BlockBuilder {
         JavacTreeMaker treeMaker = typeNode.getTreeMaker();
         return treeMaker.Apply(List.nil(), treeMaker.Select(
                 treeMaker.Ident(typeNode.toName(varName)), typeNode.toName(methodName)), List.from(params));
+    }
+
+    public static JCTree.JCExpression varRef(JavacNode typeNode, String name) {
+        JavacTreeMaker treeMaker = typeNode.getTreeMaker();
+        return treeMaker.Ident(typeNode.toName(name));
     }
 }

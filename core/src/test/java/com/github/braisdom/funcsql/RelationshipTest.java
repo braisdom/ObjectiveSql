@@ -1,6 +1,7 @@
 package com.github.braisdom.funcsql;
 
 import com.github.braisdom.funcsql.annotations.DomainModel;
+import com.github.braisdom.funcsql.annotations.Queryable;
 import com.github.braisdom.funcsql.annotations.Relation;
 import com.github.braisdom.funcsql.relation.RelationType;
 import com.github.braisdom.funcsql.relation.Relationship;
@@ -13,6 +14,9 @@ public class RelationshipTest {
 
     @DomainModel
     public static class TestDomainModel {
+
+        @Queryable
+        private String name;
 
         @Relation(relationType = RelationType.HAS_MANY)
         private List<TestRelativeModel> testRelativeModels;
