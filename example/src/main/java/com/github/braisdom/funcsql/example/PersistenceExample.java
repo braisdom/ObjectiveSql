@@ -165,7 +165,7 @@ public class PersistenceExample {
         try {
             createSimpleValidationMember();
         } catch (ValidationException ex) {
-            System.out.println(ex.toString());
+            System.out.println("Member.no error: \"" + ex.toString() + "\"");
         }
     }
 }

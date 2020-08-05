@@ -82,7 +82,8 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 handleExecuteMethod(treeMaker, typeNode),
                 handleNewInstanceFromMethod(treeMaker, typeNode),
                 handleNewInstanceFrom2Method(treeMaker, typeNode),
-                handleQueryMethod(treeMaker, typeNode)
+                handleQueryMethod(treeMaker, typeNode),
+                handleValidateMethod(treeMaker, typeNode)
         };
 
         Arrays.stream(methodDeclArray).forEach(methodDecl -> {
@@ -514,6 +515,23 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 .withName("query")
                 .withParameters(sqlVar)
                 .withThrowsClauses(SQLException.class)
+                .withBody(blockBuilder.build())
+                .buildWith(typeNode);
+    }
+
+    // public static final RelationshipTest.TestRelativeModel newInstanceFrom(Map source, boolean underline) {...}
+    private JCTree.JCMethodDecl handleValidateMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
+        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
+        String violationClassName = Validator.Violation.class.getName().replace("$", ".");
+
+        blockBuilder.appendVar(Validator.class, "validator", "Table", "getValidator");
+
+        blockBuilder.appendReturn("validator", "validate",
+                treeMaker.Ident(typeNode.toName("this")));
+        return MethodBuilder.newMethod(treeMaker, typeNode)
+                .withModifiers(Flags.PUBLIC | Flags.FINAL)
+                .withName("validate")
+                .withReturnType(treeMaker.TypeArray(genTypeRef(typeNode, violationClassName)))
                 .withBody(blockBuilder.build())
                 .buildWith(typeNode);
     }

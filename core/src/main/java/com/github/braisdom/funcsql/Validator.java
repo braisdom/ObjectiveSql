@@ -1,10 +1,8 @@
 package com.github.braisdom.funcsql;
 
-import java.util.Map;
-
 public interface Validator {
 
-    class Violation {
+    public static class Violation {
         private String message;
         private Object invalidValue;
         private String propertyPath;

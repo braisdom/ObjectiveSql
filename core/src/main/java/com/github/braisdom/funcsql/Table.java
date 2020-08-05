@@ -8,8 +8,7 @@ import com.github.braisdom.funcsql.util.WordUtil;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import java.lang.reflect.Field;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author braisdom
@@ -100,11 +99,14 @@ public final class Table {
     public static final void validate(Object[] beans, boolean skipValidation) throws ValidationException {
         if(skipValidation) {
             Validator validator = getValidator();
+            List<Validator.Violation> violationList = new ArrayList<>();
             for(Object bean : beans) {
                 Validator.Violation[] violations = validator.validate(bean);
                 if (violations.length > 0)
-                    throw new ValidationException(violations);
+                    violationList.addAll(Arrays.asList(violations));
             }
+            if(violationList.size() > 0)
+                throw new ValidationException(violationList.toArray(new Validator.Violation[]{}));
         }
     }
 
