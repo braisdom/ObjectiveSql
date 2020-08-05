@@ -12,8 +12,6 @@ import java.util.logging.Level;
 @SuppressWarnings("ALL")
 public final class Database {
 
-    private static SQLExecutor sqlExecutor = new DefaultSQLExecutor();
-
     private static QueryFactory queryFactory = new QueryFactory() {
         @Override
         public <T> Query<T> createQuery(Class<T> clazz) {
@@ -58,6 +56,7 @@ public final class Database {
         }
     };
 
+    private static SQLExecutor sqlExecutor = new DefaultSQLExecutor();
     private static ConnectionFactory connectionFactory;
 
     @FunctionalInterface

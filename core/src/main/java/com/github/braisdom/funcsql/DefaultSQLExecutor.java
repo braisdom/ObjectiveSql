@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 
 public class DefaultSQLExecutor<T> implements SQLExecutor<T> {
 
+    private static final Logger logger = Database.getLoggerFactory().create(DefaultSQLExecutor.class);
     private final QueryRunner queryRunner;
 
     public DefaultSQLExecutor() {
@@ -21,8 +22,9 @@ public class DefaultSQLExecutor<T> implements SQLExecutor<T> {
 
     @Override
     public List<T> query(Connection connection, String sql, DomainModelDescriptor domainModelDescriptor) throws SQLException {
-        return (List<T>) queryRunner.query(connection, sql,
-                new DomainModelListHandler(domainModelDescriptor, connection.getMetaData()));
+        return Database.sqlBenchmarking(()->
+                queryRunner.query(connection, sql,
+                        new DomainModelListHandler(domainModelDescriptor, connection.getMetaData())), logger, sql);
     }
 
     @Override
@@ -30,30 +32,35 @@ public class DefaultSQLExecutor<T> implements SQLExecutor<T> {
         MapListHandler handler = new MapListHandler();
         List<Map<String, Object>> rawRows = queryRunner.query(connection, sql, handler);
 
-        return rawRows.stream().map(rawRow -> new DefaultRow(rawRow)).collect(Collectors.toList());
+        return Database.sqlBenchmarking(() ->
+                rawRows.stream().map(rawRow -> new DefaultRow(rawRow)).collect(Collectors.toList()), logger, sql);
     }
 
     @Override
     public int update(Connection connection, String sql, Object... params) throws SQLException {
-        return queryRunner.update(connection, sql, params);
+        return Database.sqlBenchmarking(() ->
+                queryRunner.update(connection, sql, params), logger, sql, params);
     }
 
     @Override
     public T insert(Connection connection, String sql,
                     DomainModelDescriptor domainModelDescriptor, Object... params) throws SQLException {
-        return (T) queryRunner.insert(connection, sql,
-                new DomainModelHandler(domainModelDescriptor, connection.getMetaData()), params);
+        return (T) Database.sqlBenchmarking(() ->
+                queryRunner.insert(connection, sql,
+                        new DomainModelHandler(domainModelDescriptor, connection.getMetaData()), params), logger, sql, params);
     }
 
     @Override
     public int[] insert(Connection connection, String sql,
                       DomainModelDescriptor domainModelDescriptor, Object[][] params) throws SQLException {
-        return queryRunner.insertBatch(connection, sql, params);
+        return Database.sqlBenchmarking(() ->
+                queryRunner.insertBatch(connection, sql, params), logger, sql, params);
     }
 
     @Override
     public int execute(Connection connection, String sql) throws SQLException {
-        return queryRunner.update(connection, sql);
+        return Database.sqlBenchmarking(() ->
+                queryRunner.update(connection, sql), logger, sql);
     }
 }
 
