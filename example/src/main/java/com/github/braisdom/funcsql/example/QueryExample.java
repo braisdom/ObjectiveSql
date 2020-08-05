@@ -2,6 +2,7 @@ package com.github.braisdom.funcsql.example;
 
 import com.github.braisdom.funcsql.Database;
 import com.github.braisdom.funcsql.PersistenceException;
+import com.github.braisdom.funcsql.Row;
 import com.github.braisdom.funcsql.Table;
 
 import java.io.File;
@@ -40,7 +41,8 @@ public class QueryExample {
     }
 
     private static void rawQuery() throws SQLException {
-        Domains.Member.query("SELECT id, name FROM members WHERE id < 10");
+        Domains.Member.query("SELECT id, name FROM members WHERE id < ?", new Object[]{10});
+        Domains.Member.query("SELECT * FROM members WHERE name = ?", new Object[]{"Jonathan"});
     }
 
     public static void main(String[] args) throws SQLException, PersistenceException {

@@ -25,7 +25,7 @@ public class DefaultSQLExecutor<T> implements SQLExecutor<T> {
                          Object... params) throws SQLException {
         return Database.sqlBenchmarking(()->
                 queryRunner.query(connection, sql,
-                        new DomainModelListHandler(domainModelDescriptor, connection.getMetaData()), params), logger, sql);
+                        new DomainModelListHandler(domainModelDescriptor, connection.getMetaData()), params), logger, sql, params);
     }
 
     @Override
@@ -34,7 +34,7 @@ public class DefaultSQLExecutor<T> implements SQLExecutor<T> {
         List<Map<String, Object>> rawRows = queryRunner.query(connection, sql, handler, params);
 
         return Database.sqlBenchmarking(() ->
-                rawRows.stream().map(rawRow -> new DefaultRow(rawRow)).collect(Collectors.toList()), logger, sql);
+                rawRows.stream().map(rawRow -> new DefaultRow(rawRow)).collect(Collectors.toList()), logger, sql, params);
     }
 
     @Override
@@ -61,7 +61,7 @@ public class DefaultSQLExecutor<T> implements SQLExecutor<T> {
     @Override
     public int execute(Connection connection, String sql, Object... params) throws SQLException {
         return Database.sqlBenchmarking(() ->
-                queryRunner.update(connection, sql, params), logger, sql);
+                queryRunner.update(connection, sql, params), logger, sql, params);
     }
 }
 

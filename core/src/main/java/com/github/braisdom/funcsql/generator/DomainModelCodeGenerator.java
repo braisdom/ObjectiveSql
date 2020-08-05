@@ -83,6 +83,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 handleNewInstanceFromMethod(treeMaker, typeNode),
                 handleNewInstanceFrom2Method(treeMaker, typeNode),
                 handleQueryMethod(treeMaker, typeNode),
+                handleQuery2Method(treeMaker, typeNode),
                 handleValidateMethod(treeMaker, typeNode),
                 handleCountMethod(treeMaker, typeNode),
                 handleCount2Method(treeMaker, typeNode)
@@ -489,9 +490,11 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 .buildWith(typeNode);
     }
 
-    // public static final List<Row> query(String sql) throws SQLException {...}
+    // public static final List<Row> query(String sql, Object[] params) throws SQLException {...}
     private JCTree.JCMethodDecl handleQueryMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
         JCVariableDecl sqlVar = MethodBuilder.createParameter(typeNode, String.class, "sql");
+        JCVariableDecl paramsVar = MethodBuilder.createParameter(typeNode,
+                treeMaker.TypeArray(genTypeRef(typeNode, Object.class.getName())), "params");
         BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
 
         // ConnectionFactory connectionFactory = Database.getConnectionFactory();
@@ -507,9 +510,30 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
         JCTree.JCExpression sqlExecutor = staticMethodInvoke(typeNode, Database.class, "getSqlExecutor");
         blockBuilder.appendVar(SQLExecutor.class, "sqlExecutor", sqlExecutor);
 
-        // return sqlExecutor.query(connection, sql);
+        // return sqlExecutor.query(connection, sql, params);
         blockBuilder.appendReturn("sqlExecutor", "query",
-                treeMaker.Ident(typeNode.toName("connection")), treeMaker.Ident(typeNode.toName("sql")));
+                varRef(typeNode,"connection"), varRef(typeNode, "sql"), varRef(typeNode, "params"));
+
+        return MethodBuilder.newMethod(treeMaker, typeNode)
+                .withModifiers(Flags.PUBLIC | Flags.STATIC | Flags.FINAL)
+                .withReturnType(java.util.List.class, Row.class)
+                .withName("query")
+                .withParameters(sqlVar, paramsVar)
+                .withThrowsClauses(SQLException.class)
+                .withBody(blockBuilder.build())
+                .buildWith(typeNode);
+    }
+
+    // public static final List<Row> query(String sql, Object[] params) throws SQLException {...}
+    private JCTree.JCMethodDecl handleQuery2Method(JavacTreeMaker treeMaker, JavacNode typeNode) {
+        JCVariableDecl sqlVar = MethodBuilder.createParameter(typeNode, String.class, "sql");
+        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
+
+
+        // return sqlExecutor.query(connection, sql, params);
+        JCExpression emptyArray = treeMaker.NewArray(genTypeRef(typeNode, Object.class.getName()),
+                List.<JCExpression>nil(), List.<JCExpression>nil());
+        blockBuilder.appendReturn(typeNode.getName(), "query", varRef(typeNode, "sql"), emptyArray);
 
         return MethodBuilder.newMethod(treeMaker, typeNode)
                 .withModifiers(Flags.PUBLIC | Flags.STATIC | Flags.FINAL)
