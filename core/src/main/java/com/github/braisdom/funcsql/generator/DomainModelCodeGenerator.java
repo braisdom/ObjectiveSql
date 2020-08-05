@@ -111,7 +111,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
         }
     }
 
-    // public final void save() throws SQLException, PersistenceException {
+    // public final void save() throws SQLException {
     private JCTree.JCMethodDecl handleSave2Method(JavacTreeMaker treeMaker, JavacNode typeNode) {
         BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
 
@@ -122,11 +122,11 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 .withModifiers(Flags.PUBLIC | Flags.FINAL)
                 .withName("save")
                 .withBody(blockBuilder.build())
-                .withThrowsClauses(createPersistenceExceptions(treeMaker, typeNode))
+                .withThrowsClauses(SQLException.class)
                 .buildWith(typeNode);
     }
 
-    // public final void save(boolean skipValidation) throws SQLException, PersistenceException {...}
+    // public final void save(boolean skipValidation) throws SQLException {...}
     private JCTree.JCMethodDecl handleSaveMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
         BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
         JCVariableDecl parameter = createParameter(typeNode, treeMaker.TypeIdent(CTC_BOOLEAN), "skipValidation");
@@ -143,7 +143,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 .withName("save")
                 .withParameters(List.of(parameter))
                 .withBody(blockBuilder.build())
-                .withThrowsClauses(createPersistenceExceptions(treeMaker, typeNode))
+                .withThrowsClauses(SQLException.class)
                 .buildWith(typeNode);
     }
 
@@ -197,7 +197,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
     }
 
     // public static final RelationshipTest.TestDomainModel create(RelationshipTest.TestDomainModel dirtyObject,
-    //                          boolean skipValidation) throws SQLException, PersistenceException {...}
+    //                          boolean skipValidation) throws SQLException {...}
     private JCTree.JCMethodDecl handleCreateMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
         BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
         Name modelClassName = typeNode.toName(typeNode.getName());
@@ -219,14 +219,14 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 .withModifiers(Flags.PUBLIC | Flags.STATIC | Flags.FINAL)
                 .withName("create")
                 .withParameters(List.of(dirtyObjectVar, skipValidationVar))
-                .withThrowsClauses(createPersistenceExceptions(treeMaker, typeNode))
+                .withThrowsClauses(SQLException.class)
                 .withReturnType(treeMaker.Ident(modelClassName))
                 .withBody(blockBuilder.build())
                 .buildWith(typeNode);
     }
 
     // public static final RelationshipTest.TestDomainModel create(RelationshipTest.TestDomainModel dirtyObject)
-    //          throws SQLException, PersistenceException {
+    //          throws SQLException {
     private JCTree.JCMethodDecl handleCreate2Method(JavacTreeMaker treeMaker, JavacNode typeNode) {
         BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
         Name modelClassName = typeNode.toName(typeNode.getName());
@@ -241,11 +241,11 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 .withParameters(List.of(dirtyObjectVar))
                 .withBody(blockBuilder.build())
                 .withReturnType(typeNode.getName())
-                .withThrowsClauses(createPersistenceExceptions(treeMaker, typeNode))
+                .withThrowsClauses(SQLException.class)
                 .buildWith(typeNode);
     }
 
-    // public static final int[] create(RelationshipTest.TestDomainModel[] dirtyObjects) throws SQLException, PersistenceException {...}
+    // public static final int[] create(RelationshipTest.TestDomainModel[] dirtyObjects) throws SQLException {...}
     private JCTree.JCMethodDecl handleCreateArray2Method(JavacTreeMaker treeMaker, JavacNode typeNode) {
         BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
         Name modelClassName = typeNode.toName(typeNode.getName());
@@ -261,11 +261,11 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 .withParameters(List.of(dirtyArrayObjectVar))
                 .withBody(blockBuilder.build())
                 .withReturnType(treeMaker.TypeArray(treeMaker.TypeIdent(CTC_INT)))
-                .withThrowsClauses(createPersistenceExceptions(treeMaker, typeNode))
+                .withThrowsClauses(SQLException.class)
                 .buildWith(typeNode);
     }
 
-    // public static final int[] create(RelationshipTest.TestDomainModel[] dirtyObjects, boolean skipValidation) throws SQLException, PersistenceException {
+    // public static final int[] create(RelationshipTest.TestDomainModel[] dirtyObjects, boolean skipValidation) throws SQLException {
     private JCTree.JCMethodDecl handleCreateArrayMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
         BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
         Name modelClassName = typeNode.toName(typeNode.getName());
@@ -290,12 +290,12 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 .withName("create")
                 .withParameters(List.of(dirtyArrayObjectVar, skipValidationVar))
                 .withReturnType(treeMaker.TypeArray(treeMaker.TypeIdent(CTC_INT)))
-                .withThrowsClauses(createPersistenceExceptions(treeMaker, typeNode))
+                .withThrowsClauses(SQLException.class)
                 .withBody(blockBuilder.build())
                 .buildWith(typeNode);
     }
 
-    // public static final int update(Object id, RelationshipTest.TestDomainModel dirtyObject, boolean skipValidation) throws SQLException, PersistenceException {
+    // public static final int update(Object id, RelationshipTest.TestDomainModel dirtyObject, boolean skipValidation) throws SQLException {
     private JCTree.JCMethodDecl handleUpdateMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
         BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
         Name modelClassName = typeNode.toName(typeNode.getName());
@@ -318,13 +318,13 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 .withModifiers(Flags.PUBLIC | Flags.STATIC | Flags.FINAL)
                 .withName("update")
                 .withParameters(List.of(idVar, dirtyObjectVar, skipValidationVar))
-                .withThrowsClauses(createPersistenceExceptions(treeMaker, typeNode))
+                .withThrowsClauses(SQLException.class)
                 .withReturnType(treeMaker.TypeIdent(CTC_INT))
                 .withBody(blockBuilder.build())
                 .buildWith(typeNode);
     }
 
-    // public static final int update(Object id, RelationshipTest.TestDomainModel dirtyObject) throws SQLException, PersistenceException {...}
+    // public static final int update(Object id, RelationshipTest.TestDomainModel dirtyObject) throws SQLException {...}
     private JCTree.JCMethodDecl handleUpdate2Method(JavacTreeMaker treeMaker, JavacNode typeNode) {
         BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
         JCVariableDecl idVar = createParameter(typeNode,
@@ -345,11 +345,11 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 .withParameters(List.of(idVar, dirtyObjectVar))
                 .withBody(blockBuilder.build())
                 .withReturnType(treeMaker.TypeIdent(CTC_INT))
-                .withThrowsClauses(createPersistenceExceptions(treeMaker, typeNode))
+                .withThrowsClauses(SQLException.class)
                 .buildWith(typeNode);
     }
 
-    // public static final int update(String updates, String predication) throws SQLException, PersistenceException {...}
+    // public static final int update(String updates, String predication) throws SQLException {...}
     private JCTree.JCMethodDecl handleUpdate3Method(JavacTreeMaker treeMaker, JavacNode typeNode) {
         BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
         JCVariableDecl updatesVar = createParameter(typeNode,
@@ -368,13 +368,13 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 .withModifiers(Flags.PUBLIC | Flags.STATIC | Flags.FINAL)
                 .withName("update")
                 .withParameters(List.of(updatesVar, predicationVar))
-                .withThrowsClauses(createPersistenceExceptions(treeMaker, typeNode))
+                .withThrowsClauses(SQLException.class)
                 .withReturnType(treeMaker.TypeIdent(CTC_INT))
                 .withBody(blockBuilder.build())
                 .buildWith(typeNode);
     }
 
-    // public static final int destroy(Object id) throws SQLException, PersistenceException {...}
+    // public static final int destroy(Object id) throws SQLException {...}
     private JCTree.JCMethodDecl handleDestroyMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
         BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
         JCVariableDecl idVar = createParameter(typeNode,
@@ -390,13 +390,13 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 .withModifiers(Flags.PUBLIC | Flags.STATIC | Flags.FINAL)
                 .withName("destroy")
                 .withParameters(idVar)
-                .withThrowsClauses(createPersistenceExceptions(treeMaker, typeNode))
+                .withThrowsClauses(SQLException.class)
                 .withReturnType(treeMaker.TypeIdent(CTC_INT))
                 .withBody(blockBuilder.build())
                 .buildWith(typeNode);
     }
 
-    // public static final int destroy(String predication) throws SQLException, PersistenceException {...}
+    // public static final int destroy(String predication) throws SQLException {...}
     private JCTree.JCMethodDecl handleDestroy2Method(JavacTreeMaker treeMaker, JavacNode typeNode) {
         BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
         JCVariableDecl predicationVar = createParameter(typeNode,
@@ -412,13 +412,13 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 .withModifiers(Flags.PUBLIC | Flags.STATIC | Flags.FINAL)
                 .withName("destroy")
                 .withParameters(List.of(predicationVar))
-                .withThrowsClauses(createPersistenceExceptions(treeMaker, typeNode))
+                .withThrowsClauses(SQLException.class)
                 .withReturnType(treeMaker.TypeIdent(CTC_INT))
                 .withBody(blockBuilder.build())
                 .buildWith(typeNode);
     }
 
-    // public static final int execute(String sql) throws SQLException, PersistenceException {...}
+    // public static final int execute(String sql) throws SQLException {...}
     private JCTree.JCMethodDecl handleExecuteMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
         BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
         JCVariableDecl sqlVar = createParameter(typeNode,
@@ -432,7 +432,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 .withModifiers(Flags.PUBLIC | Flags.STATIC | Flags.FINAL)
                 .withName("execute")
                 .withParameters(sqlVar)
-                .withThrowsClauses(createPersistenceExceptions(treeMaker, typeNode))
+                .withThrowsClauses(SQLException.class)
                 .withReturnType(treeMaker.TypeIdent(CTC_INT))
                 .withBody(blockBuilder.build())
                 .buildWith(typeNode);
@@ -576,11 +576,6 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 .build();
 
         injectField(typeNode, variableDecl);
-    }
-
-    private List<JCExpression> createPersistenceExceptions(JavacTreeMaker treeMaker, JavacNode typeNode) {
-        return List.of(treeMaker.Throw(chainDots(typeNode, splitNameOf(SQLException.class))).getExpression(),
-                treeMaker.Throw(chainDots(typeNode, splitNameOf(PersistenceException.class))).getExpression());
     }
 
     private JCVariableDecl createParameter(JavacNode typeNode, JCExpression type, String name, JCTree.JCAnnotation... annotations) {

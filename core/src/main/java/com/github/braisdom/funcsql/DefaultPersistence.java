@@ -24,7 +24,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
     }
 
     @Override
-    public void save(T dirtyObject, boolean skipValidation) throws SQLException, PersistenceException {
+    public void save(T dirtyObject, boolean skipValidation) throws SQLException {
         Objects.requireNonNull(dirtyObject, "The dirtyObject cannot be null");
 
         Object primaryValue = domainModelDescriptor.getPrimaryValue(dirtyObject);
@@ -34,7 +34,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
     }
 
     @Override
-    public T insert(T dirtyObject, boolean skipValidation) throws SQLException, PersistenceException {
+    public T insert(T dirtyObject, boolean skipValidation) throws SQLException {
         Objects.requireNonNull(dirtyObject, "The dirtyObject cannot be null");
 
         return Database.execute((connection, sqlExecutor) -> {
@@ -62,7 +62,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
     }
 
     @Override
-    public int[] insert(T[] dirtyObject, boolean skipValidation) throws SQLException, PersistenceException {
+    public int[] insert(T[] dirtyObject, boolean skipValidation) throws SQLException {
         Objects.requireNonNull(dirtyObject, "The dirtyObject cannot be null");
 
         return Database.execute((connection, sqlExecutor) -> {
@@ -91,7 +91,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
     }
 
     @Override
-    public int update(Object id, T dirtyObject, boolean skipValidation) throws SQLException, PersistenceException {
+    public int update(Object id, T dirtyObject, boolean skipValidation) throws SQLException {
         Objects.requireNonNull(id, "The id cannot be null");
         Objects.requireNonNull(dirtyObject, "The dirtyObject cannot be null");
 
@@ -133,7 +133,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
     }
 
     @Override
-    public int update(String updates, String predication) throws SQLException, PersistenceException {
+    public int update(String updates, String predication) throws SQLException {
         Objects.requireNonNull(updates, "The updates cannot be null");
         Objects.requireNonNull(predication, "The predication cannot be null");
 
@@ -148,7 +148,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
     }
 
     @Override
-    public int delete(String predication) throws SQLException, PersistenceException {
+    public int delete(String predication) throws SQLException {
         Objects.requireNonNull(predication, "The criteria cannot be null");
         ensureNotBlank(predication, "predication");
 
@@ -160,7 +160,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
     }
 
     @Override
-    public int delete(Object id) throws SQLException, PersistenceException {
+    public int delete(Object id) throws SQLException {
         Objects.requireNonNull(id, "The id cannot be null");
 
         PrimaryKey primaryKey = domainModelDescriptor.getPrimaryKey();
@@ -176,7 +176,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
     }
 
     @Override
-    public int execute(String sql) throws SQLException, PersistenceException {
+    public int execute(String sql) throws SQLException {
         Objects.requireNonNull(sql, "The sql cannot be null");
 
         return Database.execute((connection, sqlExecutor) ->

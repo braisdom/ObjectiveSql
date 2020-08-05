@@ -13,7 +13,7 @@ import java.util.Map;
 
 public class PersistenceExample {
 
-    private static void createSimpleMember() throws SQLException, PersistenceException {
+    private static void createSimpleMember() throws SQLException {
         Domains.Member newMember = new Domains.Member()
                 .setId(6)
                 .setNo("100000")
@@ -24,7 +24,7 @@ public class PersistenceExample {
         Domains.Member.create(newMember, true);
     }
 
-    private static void validateMember() throws SQLException, PersistenceException {
+    private static void validateMember() throws SQLException {
         Domains.Member newMember = new Domains.Member()
                 .setId(7)
                 .setNo("100")
@@ -43,7 +43,7 @@ public class PersistenceExample {
         }
     }
 
-    private static void createSimpleMemberWithValidation() throws SQLException, PersistenceException {
+    private static void createSimpleMemberWithValidation() throws SQLException {
         Domains.Member newMember = new Domains.Member()
                 .setId(11)
                 .setNo("100000")
@@ -54,7 +54,7 @@ public class PersistenceExample {
         Domains.Member.create(newMember, true);
     }
 
-    private static void createSimpleMemberCopyFromMap() throws SQLException, PersistenceException {
+    private static void createSimpleMemberCopyFromMap() throws SQLException {
         Map<String, Object> extendedAttributes = new HashMap<>();
         extendedAttributes.put("hobbies", new String[]{"Play football"});
         extendedAttributes.put("age", 28);
@@ -70,7 +70,7 @@ public class PersistenceExample {
         Domains.Member.create(Domains.Member.newInstanceFrom(attributes));
     }
 
-    private static void createSimpleMemberCopyFromUnderlineMap() throws SQLException, PersistenceException {
+    private static void createSimpleMemberCopyFromUnderlineMap() throws SQLException {
         Map<String, Object> extendedAttributes = new HashMap<>();
         extendedAttributes.put("hobbies", new String[]{"Play football"});
         extendedAttributes.put("age", 28);
@@ -86,7 +86,7 @@ public class PersistenceExample {
         Domains.Member.create(Domains.Member.newInstanceFrom(attributes));
     }
 
-    private static void createSimpleFromJsonMember() throws SQLException, PersistenceException {
+    private static void createSimpleFromJsonMember() throws SQLException {
         String json = "{\"id\":7,\"no\":\"200000\",\"name\":\"Smith\",\"gender\":1,\"mobile\":\"15011112222\"," +
                 "\"extendedAttributes\":{\"hobbies\":[\"Play football\"],\"age\":28}}";
         Domains.Member newMember = new GsonBuilder().create().fromJson(json, Domains.Member.class);
@@ -94,7 +94,7 @@ public class PersistenceExample {
         Domains.Member.create(newMember);
     }
 
-    private static void createMember() throws SQLException, PersistenceException {
+    private static void createMember() throws SQLException {
         Map<String, Object> extendedAttributes = new HashMap<>();
         extendedAttributes.put("hobbies", new String[]{"Play football"});
         extendedAttributes.put("age", 28);
@@ -110,7 +110,7 @@ public class PersistenceExample {
         Domains.Member.create(newMember);
     }
 
-    private static void createMemberArray() throws SQLException, PersistenceException {
+    private static void createMemberArray() throws SQLException {
         Domains.Member newMember1 = new Domains.Member()
                 .setNo("200001")
                 .setName("Alice")
@@ -132,7 +132,7 @@ public class PersistenceExample {
         Domains.Member.create(new Domains.Member[]{newMember1, newMember2, newMember3});
     }
 
-    private static void updateSmithMember() throws SQLException, PersistenceException {
+    private static void updateSmithMember() throws SQLException {
         Map<String, Object> extendedAttributes = new HashMap<>();
         extendedAttributes.put("hobbies", new String[]{"Play football", "Cooking"});
         extendedAttributes.put("age", 28);
@@ -144,23 +144,23 @@ public class PersistenceExample {
         Domains.Member.update(12, newMember);
     }
 
-    private static void updateJacksonMember() throws SQLException, PersistenceException {
+    private static void updateJacksonMember() throws SQLException {
         Domains.Member.update("name = 'Smith => Jackson => Davies'", "name = 'Smith => Jackson'");
     }
 
-    private static void deleteAliceMember() throws SQLException, PersistenceException {
+    private static void deleteAliceMember() throws SQLException {
         Domains.Member.destroy(13);
     }
 
-    private static void deleteMaryMember() throws SQLException, PersistenceException {
+    private static void deleteMaryMember() throws SQLException {
         Domains.Member.destroy("name = 'Mary'");
     }
 
-    private static void executeDeleteDenise() throws SQLException, PersistenceException {
+    private static void executeDeleteDenise() throws SQLException {
         Domains.Member.execute(String.format("DELETE FROM %s WHERE name = 'Denise'", Domains.Member.TABLE_NAME));
     }
 
-    public static void main(String args[]) throws SQLException, PersistenceException {
+    public static void main(String args[]) throws SQLException {
         File file = new File("persistence_example.db");
 
         if (file.exists())

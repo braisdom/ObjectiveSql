@@ -8,6 +8,7 @@ import com.github.braisdom.funcsql.util.WordUtil;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import java.lang.reflect.Field;
+import java.sql.SQLException;
 import java.util.*;
 
 /**
@@ -89,26 +90,36 @@ public final class Table {
     }
 
     public static final void validate(Object bean, boolean skipValidation) throws ValidationException {
-        if(skipValidation) {
+        if (skipValidation) {
             Validator validator = getValidator();
             Validator.Violation[] violations = validator.validate(bean);
-            if(violations.length > 0)
+            if (violations.length > 0)
                 throw new ValidationException(violations);
         }
     }
 
     public static final void validate(Object[] beans, boolean skipValidation) throws ValidationException {
-        if(skipValidation) {
+        if (skipValidation) {
             Validator validator = getValidator();
             List<Validator.Violation> violationList = new ArrayList<>();
-            for(Object bean : beans) {
+            for (Object bean : beans) {
                 Validator.Violation[] violations = validator.validate(bean);
                 if (violations.length > 0)
                     violationList.addAll(Arrays.asList(violations));
             }
-            if(violationList.size() > 0)
+            if (violationList.size() > 0)
                 throw new ValidationException(violationList.toArray(new Validator.Violation[]{}));
         }
+    }
+
+    public static final int count(Class<?> domainModelClass, String predicate) throws SQLException {
+        Query<?> query = Database.getQueryFactory().createQuery(domainModelClass);
+        String countAlias = "_count";
+        List<Row> rows = query.select("count(*) AS " + countAlias).where(predicate).executeRawly();
+
+        if (rows.size() > 0) {
+            return rows.get(0).getInteger(countAlias);
+        } else return 0;
     }
 
     public static final String encodeDefaultKey(String name) {

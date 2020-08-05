@@ -1,22 +1,21 @@
 package com.github.braisdom.funcsql;
 
-public class PersistenceException extends Exception {
+import java.sql.SQLException;
+
+public class PersistenceException extends SQLException {
+
+    public PersistenceException(String reason) {
+        super(reason);
+    }
+
     public PersistenceException() {
-    }
-
-    public PersistenceException(String message) {
-        super(message);
-    }
-
-    public PersistenceException(String message, Throwable cause) {
-        super(message, cause);
     }
 
     public PersistenceException(Throwable cause) {
         super(cause);
     }
 
-    public PersistenceException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
+    public PersistenceException(String reason, Throwable cause) {
+        super(reason, cause);
     }
 }

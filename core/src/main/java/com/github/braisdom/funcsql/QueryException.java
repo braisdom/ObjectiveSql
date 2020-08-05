@@ -1,23 +1,21 @@
 package com.github.braisdom.funcsql;
 
-public class QueryException extends Exception {
+import java.sql.SQLException;
+
+public class QueryException extends SQLException {
 
     public QueryException() {
     }
 
-    public QueryException(String message) {
-        super(message);
+    public QueryException(String reason) {
+        super(reason);
     }
 
-    public QueryException(String message, Throwable cause) {
-        super(message, cause);
+    public QueryException(String reason, Throwable cause) {
+        super(reason, cause);
     }
 
     public QueryException(Throwable cause) {
         super(cause);
-    }
-
-    public QueryException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
     }
 }

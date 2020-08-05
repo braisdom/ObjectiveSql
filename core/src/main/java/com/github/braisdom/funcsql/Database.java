@@ -62,7 +62,7 @@ public final class Database {
 
     @FunctionalInterface
     public static interface DatabaseInvoke<T, R> {
-        R apply(Connection connection, SQLExecutor<T> sqlExecutor) throws SQLException, PersistenceException;
+        R apply(Connection connection, SQLExecutor<T> sqlExecutor) throws SQLException;
     }
 
     @FunctionalInterface
@@ -106,7 +106,7 @@ public final class Database {
         Database.quoter = quoter;
     }
 
-    public static <T, R> R execute(DatabaseInvoke<T, R> databaseInvoke) throws SQLException, PersistenceException {
+    public static <T, R> R execute(DatabaseInvoke<T, R> databaseInvoke) throws SQLException {
         ConnectionFactory connectionFactory = Database.getConnectionFactory();
         SQLExecutor<T> sqlExecutor = Database.getSqlExecutor();
         Connection connection = connectionFactory.getConnection();
