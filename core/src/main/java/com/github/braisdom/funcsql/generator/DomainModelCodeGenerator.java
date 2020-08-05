@@ -83,7 +83,9 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 handleNewInstanceFromMethod(treeMaker, typeNode),
                 handleNewInstanceFrom2Method(treeMaker, typeNode),
                 handleQueryMethod(treeMaker, typeNode),
-                handleValidateMethod(treeMaker, typeNode)
+                handleValidateMethod(treeMaker, typeNode),
+                handleCountMethod(treeMaker, typeNode),
+                handleCount2Method(treeMaker, typeNode)
         };
 
         Arrays.stream(methodDeclArray).forEach(methodDecl -> {
@@ -532,6 +534,41 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 .withModifiers(Flags.PUBLIC | Flags.FINAL)
                 .withName("validate")
                 .withReturnType(treeMaker.TypeArray(genTypeRef(typeNode, violationClassName)))
+                .withBody(blockBuilder.build())
+                .buildWith(typeNode);
+    }
+
+    // public final static int count(String predicate) throws SQLException {...}
+    private JCTree.JCMethodDecl handleCountMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
+        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
+        JCVariableDecl predicateVar = createParameter(typeNode,
+                genTypeRef(typeNode, String.class.getName()), "predicate");
+        JCExpression domainModelClassRef = treeMaker.Select(treeMaker.Ident(typeNode.toName(typeNode.getName())),
+                typeNode.toName("class"));
+
+        // return Table.count(RelationshipTest.TestRelativeModel.class, predicate);
+        blockBuilder.appendReturn(Table.class, "count", domainModelClassRef, varRef(typeNode,"predicate"));
+        return MethodBuilder.newMethod(treeMaker, typeNode)
+                .withModifiers(Flags.PUBLIC | Flags.STATIC | Flags.FINAL)
+                .withName("count")
+                .withParameters(predicateVar)
+                .withThrowsClauses(SQLException.class)
+                .withReturnType(treeMaker.TypeIdent(CTC_INT))
+                .withBody(blockBuilder.build())
+                .buildWith(typeNode);
+    }
+
+    // public static final int count() throws SQLException {...}
+    private JCTree.JCMethodDecl handleCount2Method(JavacTreeMaker treeMaker, JavacNode typeNode) {
+        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
+
+        // return count("");
+        blockBuilder.appendReturn(typeNode.getName(), "count", treeMaker.Literal(""));
+        return MethodBuilder.newMethod(treeMaker, typeNode)
+                .withModifiers(Flags.PUBLIC | Flags.STATIC | Flags.FINAL)
+                .withName("count")
+                .withThrowsClauses(SQLException.class)
+                .withReturnType(treeMaker.TypeIdent(CTC_INT))
                 .withBody(blockBuilder.build())
                 .buildWith(typeNode);
     }

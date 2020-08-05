@@ -95,6 +95,14 @@ class BlockBuilder {
         return this;
     }
 
+    public BlockBuilder appendReturn(Class<?> clazz, String methodName, JCTree.JCExpression... params) {
+        JCTree.JCExpression invokeRef = treeMaker.Select(genTypeRef(typeNode, clazz.getName()), typeNode.toName(methodName));
+        JCTree.JCMethodInvocation returnInv = treeMaker.Apply(List.nil(), invokeRef, List.from(params));
+
+        jcStatements.append(treeMaker.Return(returnInv));
+        return this;
+    }
+
     public BlockBuilder appendReturn(String varName) {
         jcStatements.append(treeMaker.Return(treeMaker.Ident(typeNode.toName(varName))));
         return this;
