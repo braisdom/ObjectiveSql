@@ -3,6 +3,7 @@ package com.github.braisdom.funcsql.example;
 import com.github.braisdom.funcsql.Database;
 import com.github.braisdom.funcsql.PersistenceException;
 import com.github.braisdom.funcsql.ValidationException;
+import com.github.braisdom.funcsql.Validator;
 import com.google.gson.GsonBuilder;
 
 import java.io.File;
@@ -14,7 +15,7 @@ public class PersistenceExample {
 
     private static void createSimpleMember() throws SQLException, PersistenceException {
         Domains.Member newMember = new Domains.Member()
-                .setId(11)
+                .setId(6)
                 .setNo("100000")
                 .setName("Pamela")
                 .setGender(1)
@@ -23,10 +24,29 @@ public class PersistenceExample {
         Domains.Member.create(newMember, true);
     }
 
-    private static void createSimpleValidationMember() throws SQLException, PersistenceException {
+    private static void validateMember() throws SQLException, PersistenceException {
+        Domains.Member newMember = new Domains.Member()
+                .setId(7)
+                .setNo("100")
+                .setName("Pamela")
+                .setGender(1)
+                .setMobile("15011112222");
+
+        try {
+            Domains.Member.create(newMember, true);
+        } catch (ValidationException ex) {
+            Validator.Violation[] violations = ex.getViolations();
+            if(violations.length > 0) {
+                System.out.println(String.format("%s %s: %s", violations[0].getPropertyPath(),
+                        violations[0].getMessage(), violations[0].getInvalidValue()));
+            }
+        }
+    }
+
+    private static void createSimpleMemberWithValidation() throws SQLException, PersistenceException {
         Domains.Member newMember = new Domains.Member()
                 .setId(11)
-                .setNo("10")
+                .setNo("100000")
                 .setName("Pamela")
                 .setGender(1)
                 .setMobile("15011112222");
@@ -161,11 +181,7 @@ public class PersistenceExample {
         deleteAliceMember();
         deleteMaryMember();
         executeDeleteDenise();
-
-        try {
-            createSimpleValidationMember();
-        } catch (ValidationException ex) {
-            System.out.println("Member.no error: \"" + ex.toString() + "\"");
-        }
+        createSimpleMemberWithValidation();
+        validateMember();
     }
 }

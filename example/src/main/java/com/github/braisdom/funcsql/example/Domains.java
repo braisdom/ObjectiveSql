@@ -21,7 +21,6 @@ public final class Domains {
 
     @DomainModel
     public static class Member {
-
         @NotNull
         @Size(min = 5, max = 20)
         private String no;

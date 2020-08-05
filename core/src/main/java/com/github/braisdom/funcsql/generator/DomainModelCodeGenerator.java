@@ -524,7 +524,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
         BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
         String violationClassName = Validator.Violation.class.getName().replace("$", ".");
 
-        blockBuilder.appendVar(Validator.class, "validator", "Table", "getValidator");
+        blockBuilder.appendVar(Validator.class, "validator", Table.class, "getValidator");
 
         blockBuilder.appendReturn("validator", "validate",
                 treeMaker.Ident(typeNode.toName("this")));
