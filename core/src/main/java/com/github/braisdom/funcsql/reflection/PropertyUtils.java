@@ -3,12 +3,10 @@ package com.github.braisdom.funcsql.reflection;
 import com.github.braisdom.funcsql.util.StringUtil;
 import com.github.braisdom.funcsql.util.WordUtil;
 
+import javax.el.MethodNotFoundException;
 import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
+import java.lang.reflect.*;
 import java.sql.Ref;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -246,7 +244,23 @@ public final class PropertyUtils {
             final String name = underline ? WordUtil.camelize(entry.getKey(), true) : entry.getKey();
             if (name == null)
                 continue;
-            writeDirectly(bean, name, entry.getValue());
+            if (hasProperty(bean, name))
+                writeDirectly(bean, name, entry.getValue());
+            else
+                writeRawAttribute(bean, name, entry.getValue());
+        }
+    }
+
+    public static void writeRawAttribute(Object bean, String name, Object value) {
+        try {
+            Method method = bean.getClass().getMethod("setRawAttribute", String.class, Object.class);
+            method.invoke(bean, name, value);
+        } catch (NoSuchMethodException ex) {
+            throw new ReflectionException(ex.getMessage(), ex);
+        } catch (IllegalAccessException ex) {
+            throw new ReflectionException(ex.getMessage(), ex);
+        } catch (InvocationTargetException ex) {
+            throw new ReflectionException(ex.getMessage(), ex);
         }
     }
 

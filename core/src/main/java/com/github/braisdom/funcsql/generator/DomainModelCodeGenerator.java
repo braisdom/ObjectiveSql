@@ -3,6 +3,7 @@ package com.github.braisdom.funcsql.generator;
 import com.github.braisdom.funcsql.*;
 import com.github.braisdom.funcsql.annotations.DomainModel;
 import com.github.braisdom.funcsql.annotations.PrimaryKey;
+import com.github.braisdom.funcsql.annotations.Volatile;
 import com.github.braisdom.funcsql.reflection.ClassUtils;
 import com.github.braisdom.funcsql.reflection.PropertyUtils;
 import com.github.braisdom.funcsql.util.JCTreeUtil;
@@ -640,7 +641,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
         injectField(typeNode, variableDecl);
     }
 
-    // private final Map<String, Object> rawAttributes = new HashMap();
+    // @Volatile private final Map<String, Object> rawAttributes = new HashMap();
     private void handleRawAttributesField(JavacTreeMaker treeMaker, JavacNode typeNode) {
         JCExpression rawAttributesType = treeMaker.TypeApply(genTypeRef(typeNode, Map.class.getName()),
                 List.of(genTypeRef(typeNode, String.class.getName()), genTypeRef(typeNode, Object.class.getName())));
@@ -649,6 +650,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
         injectField(typeNode, FieldBuilder.newField(typeNode)
                 .ofType(rawAttributesType)
                 .withModifiers(Flags.PRIVATE | Flags.FINAL)
+                .withAnnotations(treeMaker.Annotation(genTypeRef(typeNode, Volatile.class.getName()), List.nil()))
                 .withName("rawAttributes")
                 .withInit(rawAttributesInit)
                 .build());
