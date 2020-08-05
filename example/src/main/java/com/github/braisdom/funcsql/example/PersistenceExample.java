@@ -112,7 +112,6 @@ public class PersistenceExample {
 
     private static void createMemberArray() throws SQLException, PersistenceException {
         Domains.Member newMember1 = new Domains.Member()
-                .setId(13)
                 .setNo("200001")
                 .setName("Alice")
                 .setGender(0)
