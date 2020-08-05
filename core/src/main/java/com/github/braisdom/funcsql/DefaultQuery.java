@@ -39,15 +39,6 @@ public class DefaultQuery<T> extends AbstractQuery<T> {
     }
 
     @Override
-    public List<Row> executeRawly() throws SQLException {
-        String tableName = domainModelDescriptor.getTableName();
-        String sql = createQuerySQL(tableName, projection, filter, groupBy,
-                having, orderBy, offset, limit);
-
-        return Database.execute((connection, sqlExecutor) -> executeRawInternally(sql));
-    }
-
-    @Override
     public <C extends Class> List<C> execute(C relevantDomainClass, Relationship... relationships) throws SQLException {
         String sql = createQuerySQL(getTableName(relevantDomainClass), projection, filter, groupBy,
                 having, orderBy, offset, limit);

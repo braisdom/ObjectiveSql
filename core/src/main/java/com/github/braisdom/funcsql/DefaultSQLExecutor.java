@@ -3,6 +3,7 @@ package com.github.braisdom.funcsql;
 import com.github.braisdom.funcsql.jdbc.QueryRunner;
 import com.github.braisdom.funcsql.jdbc.ResultSetHandler;
 import com.github.braisdom.funcsql.jdbc.handlers.MapListHandler;
+import com.github.braisdom.funcsql.reflection.PropertyUtils;
 import com.github.braisdom.funcsql.transition.ColumnTransitional;
 
 import java.sql.*;
@@ -26,15 +27,6 @@ public class DefaultSQLExecutor<T> implements SQLExecutor<T> {
         return Database.sqlBenchmarking(()->
                 queryRunner.query(connection, sql,
                         new DomainModelListHandler(domainModelDescriptor, connection.getMetaData()), params), logger, sql, params);
-    }
-
-    @Override
-    public List<Row> query(Connection connection, String sql, Object... params) throws SQLException {
-        MapListHandler handler = new MapListHandler();
-        List<Map<String, Object>> rawRows = queryRunner.query(connection, sql, handler, params);
-
-        return Database.sqlBenchmarking(() ->
-                rawRows.stream().map(rawRow -> new DefaultRow(rawRow)).collect(Collectors.toList()), logger, sql, params);
     }
 
     @Override
@@ -104,6 +96,8 @@ class DomainModelListHandler implements ResultSetHandler<List> {
                         columnTransitional == null ? rs.getObject(columnName)
                                 : columnTransitional.rising(databaseMetaData, metaData, bean,
                                 domainModelDescriptor, fieldName, rs.getObject(columnName)));
+            else
+                PropertyUtils.writeRawAttribute(bean, columnName, rs.getObject(columnName));
         }
 
         return bean;

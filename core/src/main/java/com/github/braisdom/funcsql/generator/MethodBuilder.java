@@ -80,7 +80,13 @@ class MethodBuilder {
   }
 
   MethodBuilder withReturnType(Class typeClass) {
-    returnType = genTypeRef(typeNode, typeClass.getClass().getName());
+    returnType = genTypeRef(typeNode, typeClass.getName());
+    return this;
+  }
+
+  MethodBuilder withReturnType(Class typeClass, JCExpression... genericTypes) {
+    returnType = treeMaker.TypeApply(genTypeRef(typeNode, typeClass.getName()),
+            List.from(genericTypes));
     return this;
   }
 

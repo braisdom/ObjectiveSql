@@ -8,8 +8,6 @@ public interface SQLExecutor<T> {
 
     List<T> query(Connection connection, String sql, DomainModelDescriptor domainModelDescriptor, Object... params) throws SQLException;
 
-    List<Row> query(Connection connection, String sql, Object... params) throws SQLException;
-
     int update(Connection connection, String sql, Object... params) throws SQLException;
 
     T insert(Connection connection, String sql, DomainModelDescriptor domainModelDescriptor, Object... params) throws SQLException;

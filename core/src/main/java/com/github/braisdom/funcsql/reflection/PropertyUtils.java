@@ -244,10 +244,20 @@ public final class PropertyUtils {
             final String name = underline ? WordUtil.camelize(entry.getKey(), true) : entry.getKey();
             if (name == null)
                 continue;
-            if (hasProperty(bean, name))
-                writeDirectly(bean, name, entry.getValue());
-            else
-                writeRawAttribute(bean, name, entry.getValue());
+            writeDirectly(bean, name, entry.getValue());
+        }
+    }
+
+    public static Object getRawAttribute(Object bean, String name) {
+        try {
+            Method method = bean.getClass().getMethod("getRawAttribute", String.class);
+            return method.invoke(bean, name);
+        } catch (NoSuchMethodException ex) {
+            throw new ReflectionException(ex.getMessage(), ex);
+        } catch (IllegalAccessException ex) {
+            throw new ReflectionException(ex.getMessage(), ex);
+        } catch (InvocationTargetException ex) {
+            throw new ReflectionException(ex.getMessage(), ex);
         }
     }
 

@@ -2,6 +2,7 @@ package com.github.braisdom.funcsql;
 
 import com.github.braisdom.funcsql.annotations.DomainModel;
 import com.github.braisdom.funcsql.annotations.PrimaryKey;
+import com.github.braisdom.funcsql.reflection.PropertyUtils;
 import com.github.braisdom.funcsql.util.StringUtil;
 import com.github.braisdom.funcsql.util.WordUtil;
 
@@ -115,10 +116,10 @@ public final class Table {
     public static final int count(Class<?> domainModelClass, String predicate) throws SQLException {
         Query<?> query = Database.getQueryFactory().createQuery(domainModelClass);
         String countAlias = "_count";
-        List<Row> rows = query.select("COUNT(*) AS " + countAlias).where(predicate).executeRawly();
+        List rows = query.select("COUNT(*) AS " + countAlias).where(predicate).execute();
 
         if (rows.size() > 0) {
-            return rows.get(0).getInteger(countAlias);
+            return (int) PropertyUtils.getRawAttribute(rows.get(0), countAlias);
         } else return 0;
     }
 

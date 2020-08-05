@@ -23,7 +23,5 @@ public interface Query<T> {
 
     List<T> execute(Relationship... relationships) throws SQLException;
 
-    List<Row> executeRawly() throws SQLException;
-
     <C extends Class> List<C> execute(C relevantDomainClass, Relationship... relationships) throws SQLException;
 }

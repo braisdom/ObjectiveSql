@@ -94,6 +94,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
             if (!JCTreeUtil.containsMethod(classDecl.sym, methodDecl, false))
                 injectMethod(typeNode, methodDecl);
         });
+        System.out.println();
     }
 
     private void handleFieldSG(JavacTreeMaker treeMaker, DomainModel domainModel, JavacNode typeNode, HandleGetter handleGetter) {
@@ -511,13 +512,20 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
         JCTree.JCExpression sqlExecutor = staticMethodInvoke(typeNode, Database.class, "getSqlExecutor");
         blockBuilder.appendVar(SQLExecutor.class, "sqlExecutor", sqlExecutor);
 
+        JCExpression domainModelClassRef = treeMaker.Select(treeMaker.Ident(typeNode.toName(typeNode.getName())),
+                typeNode.toName("class"));
+        JCExpression newBeanDescriptor = treeMaker.NewClass(null, List.nil(),
+                genTypeRef(typeNode, BeanModelDescriptor.class.getName()), List.of(domainModelClassRef), null);
+        blockBuilder.appendVar(DomainModelDescriptor.class, "descriptor", newBeanDescriptor);
+
         // return sqlExecutor.query(connection, sql, params);
         blockBuilder.appendReturn("sqlExecutor", "query",
-                varRef(typeNode,"connection"), varRef(typeNode, "sql"), varRef(typeNode, "params"));
+                varRef(typeNode,"connection"), varRef(typeNode, "sql"),
+                varRef(typeNode, "descriptor"), varRef(typeNode, "params"));
 
         return MethodBuilder.newMethod(treeMaker, typeNode)
                 .withModifiers(Flags.PUBLIC | Flags.STATIC | Flags.FINAL)
-                .withReturnType(java.util.List.class, Row.class)
+                .withReturnType(java.util.List.class, treeMaker.Ident(typeNode.toName(typeNode.getName())))
                 .withName("query")
                 .withParameters(sqlVar, paramsVar)
                 .withThrowsClauses(SQLException.class)
@@ -538,7 +546,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
 
         return MethodBuilder.newMethod(treeMaker, typeNode)
                 .withModifiers(Flags.PUBLIC | Flags.STATIC | Flags.FINAL)
-                .withReturnType(java.util.List.class, Row.class)
+                .withReturnType(java.util.List.class, treeMaker.Ident(typeNode.toName(typeNode.getName())))
                 .withName("query")
                 .withParameters(sqlVar)
                 .withThrowsClauses(SQLException.class)
