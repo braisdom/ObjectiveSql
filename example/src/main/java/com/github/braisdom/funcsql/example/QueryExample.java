@@ -63,7 +63,7 @@ public class QueryExample {
     }
 
     private static void findFirst() throws SQLException {
-        Domains.Member member = Domains.Member.findFirst("id = ?", new Object[]{11});
+        Domains.Member member = Domains.Member.findFirst("id = ?", 11);
 
         Assert.assertNotNull(member);
         Assert.assertEquals(member.getName(), "Willie");

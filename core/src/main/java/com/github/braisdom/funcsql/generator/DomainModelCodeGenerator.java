@@ -618,8 +618,8 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
         BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
         JCVariableDecl predicateVar = createParameter(typeNode,
                 genTypeRef(typeNode, String.class.getName()), "predicate");
-        JCVariableDecl paramsVar = createParameter(typeNode, treeMaker.TypeArray(genTypeRef(typeNode, Object.class.getName())),
-                "params");
+        JCVariableDecl paramsVar = createParameter(typeNode, Flags.PARAMETER | Flags.VARARGS,
+                treeMaker.TypeArray(genTypeRef(typeNode, Object.class.getName())), "params");
         // Query<RelationshipTest.TestDomainModel> query = createQuery();
         // query.where(predicate, params);
         blockBuilder.appendVar(treeMaker.TypeApply(genTypeRef(typeNode, Query.class.getName()),
@@ -742,6 +742,15 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 .withName(name)
                 .withAnnotations(annotations)
                 .withModifiers(Flags.PARAMETER)
+                .build();
+    }
+
+    private JCVariableDecl createParameter(JavacNode typeNode, long flags, JCExpression type, String name, JCTree.JCAnnotation... annotations) {
+        return FieldBuilder.newField(typeNode)
+                .ofType(type)
+                .withName(name)
+                .withAnnotations(annotations)
+                .withModifiers(flags)
                 .build();
     }
 
