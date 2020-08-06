@@ -1,9 +1,6 @@
 package com.github.braisdom.funcsql.example;
 
-import com.github.braisdom.funcsql.annotations.Column;
-import com.github.braisdom.funcsql.annotations.DomainModel;
-import com.github.braisdom.funcsql.annotations.Relation;
-import com.github.braisdom.funcsql.annotations.Volatile;
+import com.github.braisdom.funcsql.annotations.*;
 import com.github.braisdom.funcsql.relation.RelationType;
 
 import javax.validation.constraints.NotNull;
@@ -24,6 +21,8 @@ public final class Domains {
         @NotNull
         @Size(min = 5, max = 20)
         private String no;
+
+        @Queryable
         private String name;
         private Integer gender;
         private String mobile;

@@ -40,7 +40,7 @@ public class QueryMethodCodeGenerator extends JavacAnnotationHandler<Queryable> 
                 varRef(typeNode, "value")))));
         blockBuilder.appendReturn("query", "execute");
         injectMethod(typeNode, MethodBuilder.newMethod(treeMaker, typeNode)
-                .withModifiers(Flags.PUBLIC | Flags.FINAL)
+                .withModifiers(Flags.PUBLIC | Flags.STATIC | Flags.FINAL)
                 .withName(WordUtil.camelize("queryBy_" + field.getName(), true))
                 .withParameters(valueVar)
                 .withThrowsClauses(SQLException.class)

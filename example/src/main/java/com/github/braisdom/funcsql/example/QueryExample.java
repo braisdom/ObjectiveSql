@@ -39,6 +39,10 @@ public class QueryExample {
         System.out.println(String.format("[Results] Total: %d, id > 10: %d", countTotal, countGrate10));
     }
 
+    private static void queryByName() throws SQLException {
+        List<Domains.Member> member = Domains.Member.queryByName("Ralph");
+    }
+
     private static void rawQuery() throws SQLException {
         List<Domains.Member> members = Domains.Member.query("SELECT id, name FROM members WHERE id < ?", new Object[]{10});
         List<Domains.Member> members2 = Domains.Member.query("SELECT * FROM members WHERE name = ?", new Object[]{"Jonathan"});
@@ -58,5 +62,6 @@ public class QueryExample {
         createMembers();
         countMember();
         rawQuery();
+        queryByName();
     }
 }
