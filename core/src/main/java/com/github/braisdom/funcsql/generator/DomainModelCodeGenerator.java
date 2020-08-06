@@ -84,10 +84,8 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 handleNewInstanceFromMethod(treeMaker, typeNode),
                 handleNewInstanceFrom2Method(treeMaker, typeNode),
                 handleQueryMethod(treeMaker, typeNode),
-                handleQuery2Method(treeMaker, typeNode),
                 handleValidateMethod(treeMaker, typeNode),
                 handleCountMethod(treeMaker, typeNode),
-                handleCount2Method(treeMaker, typeNode),
                 handleFindFirstMethod(treeMaker, typeNode)
         };
 
@@ -493,10 +491,10 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 .buildWith(typeNode);
     }
 
-    // public static final List<Row> query(String sql, Object[] params) throws SQLException {...}
+    // public static final List<Row> query(String sql, Object... params) throws SQLException {...}
     private JCTree.JCMethodDecl handleQueryMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
         JCVariableDecl sqlVar = MethodBuilder.createParameter(typeNode, String.class, "sql");
-        JCVariableDecl paramsVar = MethodBuilder.createParameter(typeNode,
+        JCVariableDecl paramsVar = createParameter(typeNode, Flags.PARAMETER | Flags.VARARGS,
                 treeMaker.TypeArray(genTypeRef(typeNode, Object.class.getName())), "params");
         BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
 
@@ -534,27 +532,6 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 .buildWith(typeNode);
     }
 
-    // public static final List<Row> query(String sql, Object[] params) throws SQLException {...}
-    private JCTree.JCMethodDecl handleQuery2Method(JavacTreeMaker treeMaker, JavacNode typeNode) {
-        JCVariableDecl sqlVar = MethodBuilder.createParameter(typeNode, String.class, "sql");
-        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
-
-
-        // return sqlExecutor.query(connection, sql, params);
-        JCExpression emptyArray = treeMaker.NewArray(genTypeRef(typeNode, Object.class.getName()),
-                List.<JCExpression>nil(), List.<JCExpression>nil());
-        blockBuilder.appendReturn(typeNode.getName(), "query", varRef(typeNode, "sql"), emptyArray);
-
-        return MethodBuilder.newMethod(treeMaker, typeNode)
-                .withModifiers(Flags.PUBLIC | Flags.STATIC | Flags.FINAL)
-                .withReturnType(java.util.List.class, treeMaker.Ident(typeNode.toName(typeNode.getName())))
-                .withName("query")
-                .withParameters(sqlVar)
-                .withThrowsClauses(SQLException.class)
-                .withBody(blockBuilder.build())
-                .buildWith(typeNode);
-    }
-
     // public static final RelationshipTest.TestRelativeModel newInstanceFrom(Map source, boolean underline) {...}
     private JCTree.JCMethodDecl handleValidateMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
         BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
@@ -572,41 +549,23 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 .buildWith(typeNode);
     }
 
-    // public static final int count(String predicate, Object[] params) throws SQLException {...}
+    // public static final int count(String predicate, Object... params) throws SQLException {...}
     private JCTree.JCMethodDecl handleCountMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
         BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
         JCVariableDecl predicateVar = createParameter(typeNode,
                 genTypeRef(typeNode, String.class.getName()), "predicate");
-        JCVariableDecl paramsVar = createParameter(typeNode, treeMaker.TypeArray(genTypeRef(typeNode, Object.class.getName())),
-                "params");
+        JCVariableDecl paramsVar = createParameter(typeNode, Flags.PARAMETER | Flags.VARARGS,
+                treeMaker.TypeArray(genTypeRef(typeNode, Object.class.getName())), "params");
         JCExpression domainModelClassRef = treeMaker.Select(treeMaker.Ident(typeNode.toName(typeNode.getName())),
                 typeNode.toName("class"));
 
-        // return Table.count(RelationshipTest.TestRelativeModel.class, predicate);
+        // return Table.count(RelationshipTest.TestDomainModel.class, predicate, params);
         blockBuilder.appendReturn(Table.class, "count", domainModelClassRef,
                 varRef(typeNode,"predicate"), varRef(typeNode, "params"));
         return MethodBuilder.newMethod(treeMaker, typeNode)
                 .withModifiers(Flags.PUBLIC | Flags.STATIC | Flags.FINAL)
                 .withName("count")
                 .withParameters(predicateVar, paramsVar)
-                .withThrowsClauses(SQLException.class)
-                .withReturnType(treeMaker.TypeIdent(CTC_INT))
-                .withBody(blockBuilder.build())
-                .buildWith(typeNode);
-    }
-
-    // public static final int count() throws SQLException {...}
-    private JCTree.JCMethodDecl handleCount2Method(JavacTreeMaker treeMaker, JavacNode typeNode) {
-        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
-
-        // return count("", new Object[0]);
-        JCExpression emptyArray = treeMaker.NewArray(genTypeRef(typeNode, Object.class.getName()),
-                List.<JCExpression>nil(), List.<JCExpression>nil());
-        blockBuilder.appendReturn(typeNode.getName(), "count",
-                treeMaker.Literal(""), emptyArray);
-        return MethodBuilder.newMethod(treeMaker, typeNode)
-                .withModifiers(Flags.PUBLIC | Flags.STATIC | Flags.FINAL)
-                .withName("count")
                 .withThrowsClauses(SQLException.class)
                 .withReturnType(treeMaker.TypeIdent(CTC_INT))
                 .withBody(blockBuilder.build())

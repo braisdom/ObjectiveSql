@@ -1,7 +1,6 @@
 package com.github.braisdom.funcsql.example;
 
 import com.github.braisdom.funcsql.Database;
-import com.github.braisdom.funcsql.PersistenceException;
 import org.junit.Assert;
 
 import java.io.File;
@@ -39,10 +38,8 @@ public class QueryExample {
     }
 
     private static void countMember() throws SQLException {
-        int countTotal = Domains.Member.count();
         int countGreater10 = Domains.Member.count("id > ?", new Object[]{10});
 
-        Assert.assertEquals(countTotal, 100);
         Assert.assertEquals(countGreater10, 90);
     }
 
@@ -53,9 +50,9 @@ public class QueryExample {
     }
 
     private static void rawQuery() throws SQLException {
-        List<Domains.Member> members = Domains.Member.query("SELECT id, name FROM members WHERE id < ?", new Object[]{10});
-        List<Domains.Member> members2 = Domains.Member.query("SELECT * FROM members WHERE name = ?", new Object[]{"Jonathan"});
-        List<Domains.Member> members3 = Domains.Member.query("SELECT name AS _name FROM members WHERE name = ?", new Object[]{"Jonathan"});
+        List<Domains.Member> members = Domains.Member.query("SELECT id, name FROM members WHERE id < ?", 10);
+        List<Domains.Member> members2 = Domains.Member.query("SELECT * FROM members WHERE name = ?", "Jonathan");
+        List<Domains.Member> members3 = Domains.Member.query("SELECT name AS _name FROM members WHERE name = ?", "Jonathan");
 
         Assert.assertEquals(members.size(), 9);
         Assert.assertEquals(members2.size(), 1);
@@ -69,7 +66,7 @@ public class QueryExample {
         Assert.assertEquals(member.getName(), "Willie");
     }
 
-    public static void main(String[] args) throws SQLException, PersistenceException {
+    public static void main(String[] args) throws SQLException {
         File file = new File("query_example.db");
 
         if (file.exists())
