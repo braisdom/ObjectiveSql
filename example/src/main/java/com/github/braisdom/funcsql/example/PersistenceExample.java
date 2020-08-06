@@ -1,7 +1,6 @@
 package com.github.braisdom.funcsql.example;
 
 import com.github.braisdom.funcsql.Database;
-import com.github.braisdom.funcsql.PersistenceException;
 import com.github.braisdom.funcsql.ValidationException;
 import com.github.braisdom.funcsql.Validator;
 import com.google.gson.GsonBuilder;
