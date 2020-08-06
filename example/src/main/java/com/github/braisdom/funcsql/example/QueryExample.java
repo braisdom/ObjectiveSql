@@ -40,7 +40,7 @@ public class QueryExample {
 
     private static void countMember() throws SQLException {
         int countTotal = Domains.Member.count();
-        int countGreater10 = Domains.Member.count("id > 10");
+        int countGreater10 = Domains.Member.count("id > ?", new Object[]{10});
 
         Assert.assertEquals(countTotal, 100);
         Assert.assertEquals(countGreater10, 90);
@@ -62,6 +62,13 @@ public class QueryExample {
         Assert.assertEquals(members3.get(0).getRawAttribute("_name"), "Jonathan");
     }
 
+    private static void findFirst() throws SQLException {
+        Domains.Member member = Domains.Member.findFirst("id = ?", new Object[]{11});
+
+        Assert.assertNotNull(member);
+        Assert.assertEquals(member.getName(), "Willie");
+    }
+
     public static void main(String[] args) throws SQLException, PersistenceException {
         File file = new File("query_example.db");
 
@@ -76,5 +83,6 @@ public class QueryExample {
         countMember();
         rawQuery();
         queryByName();
+        findFirst();
     }
 }
