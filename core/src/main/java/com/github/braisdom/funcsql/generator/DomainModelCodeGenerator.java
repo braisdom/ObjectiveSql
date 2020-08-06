@@ -87,7 +87,8 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 handleQuery2Method(treeMaker, typeNode),
                 handleValidateMethod(treeMaker, typeNode),
                 handleCountMethod(treeMaker, typeNode),
-                handleCount2Method(treeMaker, typeNode)
+                handleCount2Method(treeMaker, typeNode),
+                handleFindFirstMethod(treeMaker, typeNode)
         };
 
         Arrays.stream(methodDeclArray).forEach(methodDecl -> {
@@ -571,20 +572,23 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 .buildWith(typeNode);
     }
 
-    // public final static int count(String predicate) throws SQLException {...}
+    // public static final int count(String predicate, Object[] params) throws SQLException {...}
     private JCTree.JCMethodDecl handleCountMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
         BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
         JCVariableDecl predicateVar = createParameter(typeNode,
                 genTypeRef(typeNode, String.class.getName()), "predicate");
+        JCVariableDecl paramsVar = createParameter(typeNode, treeMaker.TypeArray(genTypeRef(typeNode, Object.class.getName())),
+                "params");
         JCExpression domainModelClassRef = treeMaker.Select(treeMaker.Ident(typeNode.toName(typeNode.getName())),
                 typeNode.toName("class"));
 
         // return Table.count(RelationshipTest.TestRelativeModel.class, predicate);
-        blockBuilder.appendReturn(Table.class, "count", domainModelClassRef, varRef(typeNode,"predicate"));
+        blockBuilder.appendReturn(Table.class, "count", domainModelClassRef,
+                varRef(typeNode,"predicate"), varRef(typeNode, "params"));
         return MethodBuilder.newMethod(treeMaker, typeNode)
                 .withModifiers(Flags.PUBLIC | Flags.STATIC | Flags.FINAL)
                 .withName("count")
-                .withParameters(predicateVar)
+                .withParameters(predicateVar, paramsVar)
                 .withThrowsClauses(SQLException.class)
                 .withReturnType(treeMaker.TypeIdent(CTC_INT))
                 .withBody(blockBuilder.build())
@@ -595,13 +599,43 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
     private JCTree.JCMethodDecl handleCount2Method(JavacTreeMaker treeMaker, JavacNode typeNode) {
         BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
 
-        // return count("");
-        blockBuilder.appendReturn(typeNode.getName(), "count", treeMaker.Literal(""));
+        // return count("", new Object[0]);
+        JCExpression emptyArray = treeMaker.NewArray(genTypeRef(typeNode, Object.class.getName()),
+                List.<JCExpression>nil(), List.<JCExpression>nil());
+        blockBuilder.appendReturn(typeNode.getName(), "count",
+                treeMaker.Literal(""), emptyArray);
         return MethodBuilder.newMethod(treeMaker, typeNode)
                 .withModifiers(Flags.PUBLIC | Flags.STATIC | Flags.FINAL)
                 .withName("count")
                 .withThrowsClauses(SQLException.class)
                 .withReturnType(treeMaker.TypeIdent(CTC_INT))
+                .withBody(blockBuilder.build())
+                .buildWith(typeNode);
+    }
+
+    // public final static int count(String predicate) throws SQLException {...}
+    private JCTree.JCMethodDecl handleFindFirstMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
+        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
+        JCVariableDecl predicateVar = createParameter(typeNode,
+                genTypeRef(typeNode, String.class.getName()), "predicate");
+        JCVariableDecl paramsVar = createParameter(typeNode, treeMaker.TypeArray(genTypeRef(typeNode, Object.class.getName())),
+                "params");
+        // Query<RelationshipTest.TestDomainModel> query = createQuery();
+        // query.where(predicate, params);
+        blockBuilder.appendVar(treeMaker.TypeApply(genTypeRef(typeNode, Query.class.getName()),
+                List.of(treeMaker.Ident(typeNode.toName(typeNode.getName())))), "query",
+                treeMaker.Apply(List.nil(), treeMaker.Ident(typeNode.toName("createQuery")), List.nil()));
+        blockBuilder.append(treeMaker.Exec(treeMaker.Apply(List.nil(), treeMaker.Select(varRef(typeNode, "query"),
+                typeNode.toName("where")), List.of(varRef(typeNode, "predicate"), varRef(typeNode, "params")))));
+
+        // return (RelationshipTest.TestDomainModel)query.findFirst(new Relationship[0]);
+        blockBuilder.appendReturn("query", "findFirst");
+        return MethodBuilder.newMethod(treeMaker, typeNode)
+                .withModifiers(Flags.PUBLIC | Flags.STATIC | Flags.FINAL)
+                .withName("findFirst")
+                .withParameters(predicateVar, paramsVar)
+                .withThrowsClauses(SQLException.class)
+                .withReturnType(treeMaker.Ident(typeNode.toName(typeNode.getName())))
                 .withBody(blockBuilder.build())
                 .buildWith(typeNode);
     }

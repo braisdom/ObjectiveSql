@@ -9,6 +9,7 @@ import com.github.braisdom.funcsql.util.WordUtil;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import java.lang.reflect.Field;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -113,10 +114,16 @@ public final class Table {
         }
     }
 
-    public static final int count(Class<?> domainModelClass, String predicate) throws SQLException {
+    public static final <T> List<T> query(Class<T> domainModelClass, String sql, Object... params) throws SQLException {
+        Connection connection = Database.getConnectionFactory().getConnection();
+        SQLExecutor<T> sqlExecutor = Database.getSqlExecutor();
+        return sqlExecutor.query(connection, sql, new BeanModelDescriptor(domainModelClass), params);
+    }
+
+    public static final int count(Class<?> domainModelClass, String predicate, Object... params) throws SQLException {
         Query<?> query = Database.getQueryFactory().createQuery(domainModelClass);
         String countAlias = "_count";
-        List rows = query.select("COUNT(*) AS " + countAlias).where(predicate).execute();
+        List rows = query.select("COUNT(*) AS " + countAlias).where(predicate, params).execute();
 
         if (rows.size() > 0) {
             Object count = PropertyUtils.getRawAttribute(rows.get(0), countAlias);
