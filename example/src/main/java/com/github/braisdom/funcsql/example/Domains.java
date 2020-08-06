@@ -35,6 +35,19 @@ public final class Domains {
 
         @Volatile
         private String otherInfo;
+
+        @Override
+        public String toString() {
+            return "Member{" +
+                    "no='" + no + '\'' +
+                    ", name='" + name + '\'' +
+                    ", gender=" + gender +
+                    ", mobile='" + mobile + '\'' +
+                    ", orders=" + orders +
+                    ", extendedAttributes=" + extendedAttributes +
+                    ", otherInfo='" + otherInfo + '\'' +
+                    '}';
+        }
     }
 
     @DomainModel

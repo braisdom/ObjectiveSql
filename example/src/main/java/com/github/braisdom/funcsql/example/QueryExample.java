@@ -2,14 +2,18 @@ package com.github.braisdom.funcsql.example;
 
 import com.github.braisdom.funcsql.Database;
 import com.github.braisdom.funcsql.PersistenceException;
+import org.junit.Assert;
 
 import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class QueryExample {
+
+    private static Logger logger = Logger.getLogger(QueryExample.class.getName());
 
     private static final String[] MEMBER_NAMES = {"Joe","Juan","Jack","Albert","Jonathan","Justin","Terry","Gerald","Keith","Samuel",
             "Willie","Ralph","Lawrence","Nicholas","Roy","Benjamin","Bruce","Brandon","Adam","Harry","Fred","Wayne","Billy","Steve",
@@ -30,23 +34,32 @@ public class QueryExample {
                     .setMobile("150000000" + i));
         }
 
-        Domains.Member.create(members.toArray(new Domains.Member[]{}));
+        int[] count = Domains.Member.create(members.toArray(new Domains.Member[]{}));
+        Assert.assertEquals(count.length, 100);
     }
 
     private static void countMember() throws SQLException {
         int countTotal = Domains.Member.count();
-        int countGrate10 = Domains.Member.count("id > 10");
-        System.out.println(String.format("[Results] Total: %d, id > 10: %d", countTotal, countGrate10));
+        int countGreater10 = Domains.Member.count("id > 10");
+
+        Assert.assertEquals(countTotal, 100);
+        Assert.assertEquals(countGreater10, 90);
     }
 
     private static void queryByName() throws SQLException {
         List<Domains.Member> member = Domains.Member.queryByName("Ralph");
+        Assert.assertEquals(member.get(0).getName(), "Ralph");
+        Assert.assertEquals(member.get(0).getId(), Integer.valueOf(12));
     }
 
     private static void rawQuery() throws SQLException {
         List<Domains.Member> members = Domains.Member.query("SELECT id, name FROM members WHERE id < ?", new Object[]{10});
         List<Domains.Member> members2 = Domains.Member.query("SELECT * FROM members WHERE name = ?", new Object[]{"Jonathan"});
-        System.out.println(String.format("[Results] Member size1: %d, size2: %d", members.size(), members2.size()));
+        List<Domains.Member> members3 = Domains.Member.query("SELECT name AS _name FROM members WHERE name = ?", new Object[]{"Jonathan"});
+
+        Assert.assertEquals(members.size(), 9);
+        Assert.assertEquals(members2.size(), 1);
+        Assert.assertEquals(members3.get(0).getRawAttribute("_name"), "Jonathan");
     }
 
     public static void main(String[] args) throws SQLException, PersistenceException {
