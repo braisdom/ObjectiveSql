@@ -115,13 +115,21 @@ public final class Table {
     }
 
     public static final <T> List<T> query(Class<T> domainModelClass, String sql, Object... params) throws SQLException {
-        return (List<T>) Database.execute((connection, sqlExecutor) ->
-                sqlExecutor.query(connection, sql, new BeanModelDescriptor(domainModelClass), params));
+        return query(new BeanModelDescriptor<>(domainModelClass), sql, params);
     }
 
     public static final int execute(Class<?> domainModelClass, String sql, Object... params) throws SQLException {
+        return execute(new BeanModelDescriptor<>(domainModelClass), sql, params);
+    }
+
+    public static final <T> List<T> query(DomainModelDescriptor<T> domainModelDescriptor, String sql, Object... params) throws SQLException {
+        return (List<T>) Database.execute((connection, sqlExecutor) ->
+                sqlExecutor.query(connection, sql, domainModelDescriptor, params));
+    }
+
+    public static final int execute(DomainModelDescriptor<?> domainModelDescriptor, String sql, Object... params) throws SQLException {
         return Database.execute((connection, sqlExecutor) ->
-                sqlExecutor.execute(connection, sql, new BeanModelDescriptor(domainModelClass), params));
+                sqlExecutor.execute(connection, sql, domainModelDescriptor, params));
     }
 
     public static final int count(Class<?> domainModelClass, String predicate, Object... params) throws SQLException {
