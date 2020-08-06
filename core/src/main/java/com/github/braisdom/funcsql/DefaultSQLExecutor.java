@@ -30,12 +30,6 @@ public class DefaultSQLExecutor<T> implements SQLExecutor<T> {
     }
 
     @Override
-    public int update(Connection connection, String sql, Object... params) throws SQLException {
-        return Database.sqlBenchmarking(() ->
-                queryRunner.update(connection, sql, params), logger, sql, params);
-    }
-
-    @Override
     public T insert(Connection connection, String sql,
                     DomainModelDescriptor domainModelDescriptor, Object... params) throws SQLException {
         return (T) Database.sqlBenchmarking(() ->

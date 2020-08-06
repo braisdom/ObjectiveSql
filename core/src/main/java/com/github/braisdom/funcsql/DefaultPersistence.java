@@ -123,7 +123,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
             String sql = formatUpdateSql(domainModelDescriptor.getTableName(),
                     updatesSql.toString(), String.format("%s = ?", primaryKey.name()));
 
-            return sqlExecutor.update(connection, sql, ArrayUtil.appendElement(Object.class, values, id));
+            return sqlExecutor.execute(connection, sql, ArrayUtil.appendElement(Object.class, values, id));
         });
     }
 
