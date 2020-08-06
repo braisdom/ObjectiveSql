@@ -33,9 +33,17 @@ public class DefaultQuery<T> extends AbstractQuery<T> {
 
             return rows;
         } finally {
-            if(connection != null)
+            if (connection != null)
                 connection.close();
         }
+    }
+
+    @Override
+    public T findFirst(Relationship... relationships) throws SQLException {
+        List<T> results = execute(relationships);
+        if (results.size() > 0)
+            return results.get(0);
+        return null;
     }
 
     @Override
@@ -47,7 +55,7 @@ public class DefaultQuery<T> extends AbstractQuery<T> {
     }
 
     private String createQuerySQL(String tableName, String projections, String filter, String groupBy,
-                                 String having, String orderBy, int offset, int limit) {
+                                  String having, String orderBy, int offset, int limit) {
         Objects.requireNonNull(tableName, "The tableName cannot be null");
 
         StringBuilder sql = new StringBuilder();
@@ -57,22 +65,22 @@ public class DefaultQuery<T> extends AbstractQuery<T> {
 
         sql.append(standardSql);
 
-        if(!StringUtil.isBlank(filter))
+        if (!StringUtil.isBlank(filter))
             sql.append(" WHERE ").append(filter);
 
-        if(!StringUtil.isBlank(groupBy))
+        if (!StringUtil.isBlank(groupBy))
             sql.append(" GROUP BY ").append(groupBy);
 
-        if(!StringUtil.isBlank(having))
+        if (!StringUtil.isBlank(having))
             sql.append(" HAVING ").append(having);
 
-        if(!StringUtil.isBlank(orderBy))
+        if (!StringUtil.isBlank(orderBy))
             sql.append(" ORDER BY ").append(orderBy);
 
-        if(offset > 0)
+        if (offset > 0)
             sql.append(" OFFSET ").append(offset);
 
-        if(limit > 0)
+        if (limit > 0)
             sql.append(" LIMIT ").append(limit);
 
         return sql.toString();

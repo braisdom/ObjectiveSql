@@ -23,5 +23,7 @@ public interface Query<T> {
 
     List<T> execute(Relationship... relationships) throws SQLException;
 
+    T findFirst(Relationship... relationships) throws SQLException;
+
     <C extends Class> List<C> execute(C relevantDomainClass, Relationship... relationships) throws SQLException;
 }
