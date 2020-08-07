@@ -19,14 +19,9 @@
             <version>4.7.2</version>
         </dependency>
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.14.8</version>
-        </dependency>
-        <dependency>
-            <groupId>org.kohsuke.metainf-services</groupId>
-            <artifactId>metainf-services</artifactId>
-            <version>1.8</version>
+            <groupId>com.github.braisdom</groupId>
+            <artifactId>funcsql-apt</artifactId>
+            <version>1.0</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
@@ -41,9 +36,10 @@
         <dependency>
             <groupId>com.sun</groupId>
             <artifactId>tools</artifactId>
-            <version>1.0</version>
             <scope>system</scope>
+            <version>1.0</version>
             <systemPath>${java.home}/../lib/tools.jar</systemPath>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>

@@ -27,6 +27,9 @@ public class RelationshipTest {
 
     @DomainModel
     public static class TestRelativeModel {
+        @Queryable
+        private String name;
+
         @Relation(relationType = RelationType.BELONGS_TO)
         private TestDomainModel testDomainModel;
     }
