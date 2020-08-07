@@ -20,7 +20,7 @@ import com.sun.tools.javac.util.Name;
 //import lombok.core.AST;
 //import lombok.core.AnnotationValues;
 //import lombok.javac.JavacAnnotationHandler;
-//import lombok.javac.JavacNode;
+//import lombok.javac.APTHandler;
 //import lombok.javac.JavacTreeMaker;
 //import lombok.javac.handlers.HandleGetter;
 //import lombok.javac.handlers.HandleSetter;
@@ -39,8 +39,8 @@ import static com.github.braisdom.funcsql.util.StringUtil.splitNameOf;
 public class DomainModelCodeGenerator  {
 
 //    @Override
-//    public void handle(AnnotationValues<DomainModel> annotationValues, JCAnnotation jcAnnotation, JavacNode javacNode) {
-//        JavacNode typeNode = javacNode.up();
+//    public void handle(AnnotationValues<DomainModel> annotationValues, JCAnnotation jcAnnotation, APTHandler javacNode) {
+//        APTHandler typeNode = javacNode.up();
 //        JCTree.JCClassDecl classDecl = (JCTree.JCClassDecl) typeNode.get();
 //        HandleGetter handleGetter = new HandleGetter();
 //        JavacTreeMaker treeMaker = typeNode.getTreeMaker();
@@ -48,9 +48,9 @@ public class DomainModelCodeGenerator  {
 //
 //        if (!domainModel.disableGeneratedId()) {
 //            JCVariableDecl idFieldDecl = createIdField(treeMaker, typeNode, domainModel);
-//            JavacNode fieldNode = new JavacNode(javacNode.getAst(), idFieldDecl, null, AST.Kind.FIELD) {
+//            APTHandler fieldNode = new APTHandler(javacNode.getAst(), idFieldDecl, null, AST.Kind.FIELD) {
 //                @Override
-//                public JavacNode up() {
+//                public APTHandler up() {
 //                    return typeNode;
 //                }
 //            };
@@ -95,8 +95,8 @@ public class DomainModelCodeGenerator  {
 //        System.out.println();
 //    }
 //
-//    private void handleFieldSG(JavacTreeMaker treeMaker, DomainModel domainModel, JavacNode typeNode, HandleGetter handleGetter) {
-//        for (JavacNode field : typeNode.down()) {
+//    private void handleFieldSG(JavacTreeMaker treeMaker, DomainModel domainModel, APTHandler typeNode, HandleGetter handleGetter) {
+//        for (APTHandler field : typeNode.down()) {
 ////            if (handleGetter.fieldQualifiesForGetterGeneration(field))
 ////                handleGetter.generateGetterForField(field, null, AccessLevel.PUBLIC, false);
 ////
@@ -115,7 +115,7 @@ public class DomainModelCodeGenerator  {
 //    }
 //
 //    // public final void save() throws SQLException {
-//    private JCTree.JCMethodDecl handleSave2Method(JavacTreeMaker treeMaker, JavacNode typeNode) {
+//    private JCTree.JCMethodDecl handleSave2Method(JavacTreeMaker treeMaker, APTHandler typeNode) {
 //        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
 //
 //        // this.save(false);
@@ -130,7 +130,7 @@ public class DomainModelCodeGenerator  {
 //    }
 //
 //    // public final void save(boolean skipValidation) throws SQLException {...}
-//    private JCTree.JCMethodDecl handleSaveMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
+//    private JCTree.JCMethodDecl handleSaveMethod(JavacTreeMaker treeMaker, APTHandler typeNode) {
 //        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
 //        JCVariableDecl parameter = createParameter(typeNode, treeMaker.TypeIdent(CTC_BOOLEAN), "skipValidation");
 //
@@ -150,7 +150,7 @@ public class DomainModelCodeGenerator  {
 //                .buildWith(typeNode);
 //    }
 //
-//    private JCTree.JCMethodDecl handleCreateQueryMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
+//    private JCTree.JCMethodDecl handleCreateQueryMethod(JavacTreeMaker treeMaker, APTHandler typeNode) {
 //        ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
 //        Name modelClassName = typeNode.toName(typeNode.getName());
 //        Name queryFactoryName = typeNode.toName("queryFactory");
@@ -177,7 +177,7 @@ public class DomainModelCodeGenerator  {
 //                .buildWith(typeNode);
 //    }
 //
-//    private JCTree.JCMethodDecl handleCreatePersistenceMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
+//    private JCTree.JCMethodDecl handleCreatePersistenceMethod(JavacTreeMaker treeMaker, APTHandler typeNode) {
 //        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
 //
 //        // PersistenceFactory persistenceFactory = Database.getPersistenceFactory();
@@ -201,7 +201,7 @@ public class DomainModelCodeGenerator  {
 //
 //    // public static final RelationshipTest.TestDomainModel create(RelationshipTest.TestDomainModel dirtyObject,
 //    //                          boolean skipValidation) throws SQLException {...}
-//    private JCTree.JCMethodDecl handleCreateMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
+//    private JCTree.JCMethodDecl handleCreateMethod(JavacTreeMaker treeMaker, APTHandler typeNode) {
 //        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
 //        Name modelClassName = typeNode.toName(typeNode.getName());
 //        JCVariableDecl dirtyObjectVar = createParameter(typeNode, treeMaker.Ident(modelClassName), "dirtyObject");
@@ -230,7 +230,7 @@ public class DomainModelCodeGenerator  {
 //
 //    // public static final RelationshipTest.TestDomainModel create(RelationshipTest.TestDomainModel dirtyObject)
 //    //          throws SQLException {
-//    private JCTree.JCMethodDecl handleCreate2Method(JavacTreeMaker treeMaker, JavacNode typeNode) {
+//    private JCTree.JCMethodDecl handleCreate2Method(JavacTreeMaker treeMaker, APTHandler typeNode) {
 //        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
 //        Name modelClassName = typeNode.toName(typeNode.getName());
 //        JCVariableDecl dirtyObjectVar = createParameter(typeNode, treeMaker.Ident(modelClassName), "dirtyObject");
@@ -249,7 +249,7 @@ public class DomainModelCodeGenerator  {
 //    }
 //
 //    // public static final int[] create(RelationshipTest.TestDomainModel[] dirtyObjects) throws SQLException {...}
-//    private JCTree.JCMethodDecl handleCreateArray2Method(JavacTreeMaker treeMaker, JavacNode typeNode) {
+//    private JCTree.JCMethodDecl handleCreateArray2Method(JavacTreeMaker treeMaker, APTHandler typeNode) {
 //        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
 //        Name modelClassName = typeNode.toName(typeNode.getName());
 //        JCVariableDecl dirtyArrayObjectVar = createParameter(typeNode, treeMaker.TypeArray(treeMaker.Ident(modelClassName)),
@@ -269,7 +269,7 @@ public class DomainModelCodeGenerator  {
 //    }
 //
 //    // public static final int[] create(RelationshipTest.TestDomainModel[] dirtyObjects, boolean skipValidation) throws SQLException {
-//    private JCTree.JCMethodDecl handleCreateArrayMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
+//    private JCTree.JCMethodDecl handleCreateArrayMethod(JavacTreeMaker treeMaker, APTHandler typeNode) {
 //        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
 //        Name modelClassName = typeNode.toName(typeNode.getName());
 //        JCVariableDecl dirtyArrayObjectVar =  createParameter(typeNode,
@@ -299,7 +299,7 @@ public class DomainModelCodeGenerator  {
 //    }
 //
 //    // public static final int update(Object id, RelationshipTest.TestDomainModel dirtyObject, boolean skipValidation) throws SQLException {
-//    private JCTree.JCMethodDecl handleUpdateMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
+//    private JCTree.JCMethodDecl handleUpdateMethod(JavacTreeMaker treeMaker, APTHandler typeNode) {
 //        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
 //        Name modelClassName = typeNode.toName(typeNode.getName());
 //        JCVariableDecl idVar = createParameter(typeNode, genJavaLangTypeRef(typeNode, Object.class.getSimpleName()), "id");
@@ -328,7 +328,7 @@ public class DomainModelCodeGenerator  {
 //    }
 //
 //    // public static final int update(Object id, RelationshipTest.TestDomainModel dirtyObject) throws SQLException {...}
-//    private JCTree.JCMethodDecl handleUpdate2Method(JavacTreeMaker treeMaker, JavacNode typeNode) {
+//    private JCTree.JCMethodDecl handleUpdate2Method(JavacTreeMaker treeMaker, APTHandler typeNode) {
 //        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
 //        JCVariableDecl idVar = createParameter(typeNode,
 //                genJavaLangTypeRef(typeNode, Object.class.getSimpleName()), "id");
@@ -353,7 +353,7 @@ public class DomainModelCodeGenerator  {
 //    }
 //
 //    // public static final int update(String updates, String predication) throws SQLException {...}
-//    private JCTree.JCMethodDecl handleUpdate3Method(JavacTreeMaker treeMaker, JavacNode typeNode) {
+//    private JCTree.JCMethodDecl handleUpdate3Method(JavacTreeMaker treeMaker, APTHandler typeNode) {
 //        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
 //        JCVariableDecl updatesVar = createParameter(typeNode,
 //                genJavaLangTypeRef(typeNode, String.class.getSimpleName()), "updates");
@@ -378,7 +378,7 @@ public class DomainModelCodeGenerator  {
 //    }
 //
 //    // public static final int destroy(Object id) throws SQLException {...}
-//    private JCTree.JCMethodDecl handleDestroyMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
+//    private JCTree.JCMethodDecl handleDestroyMethod(JavacTreeMaker treeMaker, APTHandler typeNode) {
 //        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
 //        JCVariableDecl idVar = createParameter(typeNode,
 //                genJavaLangTypeRef(typeNode, Object.class.getSimpleName()), "id");
@@ -400,7 +400,7 @@ public class DomainModelCodeGenerator  {
 //    }
 //
 //    // public static final int destroy(String predication) throws SQLException {...}
-//    private JCTree.JCMethodDecl handleDestroy2Method(JavacTreeMaker treeMaker, JavacNode typeNode) {
+//    private JCTree.JCMethodDecl handleDestroy2Method(JavacTreeMaker treeMaker, APTHandler typeNode) {
 //        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
 //        JCVariableDecl predicationVar = createParameter(typeNode,
 //                genJavaLangTypeRef(typeNode, String.class.getSimpleName()), "predication");
@@ -422,7 +422,7 @@ public class DomainModelCodeGenerator  {
 //    }
 //
 //    // public static final int execute(String sql) throws SQLException {...}
-//    private JCTree.JCMethodDecl handleExecuteMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
+//    private JCTree.JCMethodDecl handleExecuteMethod(JavacTreeMaker treeMaker, APTHandler typeNode) {
 //        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
 //        JCVariableDecl sqlVar = createParameter(typeNode,
 //                genJavaLangTypeRef(typeNode, String.class.getSimpleName()), "sql");
@@ -442,7 +442,7 @@ public class DomainModelCodeGenerator  {
 //    }
 //
 //    // public static final RelationshipTest.TestRelativeModel newInstanceFrom(Map source) {...}
-//    private JCTree.JCMethodDecl handleNewInstanceFromMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
+//    private JCTree.JCMethodDecl handleNewInstanceFromMethod(JavacTreeMaker treeMaker, APTHandler typeNode) {
 //        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
 //        JCVariableDecl sourceVar = createParameter(typeNode,
 //                genTypeRef(typeNode, Map.class.getName()), "source");
@@ -462,7 +462,7 @@ public class DomainModelCodeGenerator  {
 //    }
 //
 //    // public static final RelationshipTest.TestRelativeModel newInstanceFrom(Map source, boolean underline) {...}
-//    private JCTree.JCMethodDecl handleNewInstanceFrom2Method(JavacTreeMaker treeMaker, JavacNode typeNode) {
+//    private JCTree.JCMethodDecl handleNewInstanceFrom2Method(JavacTreeMaker treeMaker, APTHandler typeNode) {
 //        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
 //        JCVariableDecl sourceVar = createParameter(typeNode,
 //                genTypeRef(typeNode, Map.class.getName()), "source");
@@ -491,7 +491,7 @@ public class DomainModelCodeGenerator  {
 //    }
 //
 //    // public static final List<Row> query(String sql, Object... params) throws SQLException {...}
-//    private JCTree.JCMethodDecl handleQueryMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
+//    private JCTree.JCMethodDecl handleQueryMethod(JavacTreeMaker treeMaker, APTHandler typeNode) {
 //        JCVariableDecl sqlVar = MethodBuilder.createParameter(typeNode, String.class, "sql");
 //        JCVariableDecl paramsVar = createParameter(typeNode, Flags.PARAMETER | Flags.VARARGS,
 //                treeMaker.TypeArray(genTypeRef(typeNode, Object.class.getName())), "params");
@@ -514,7 +514,7 @@ public class DomainModelCodeGenerator  {
 //    }
 //
 //    // public static final RelationshipTest.TestRelativeModel newInstanceFrom(Map source, boolean underline) {...}
-//    private JCTree.JCMethodDecl handleValidateMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
+//    private JCTree.JCMethodDecl handleValidateMethod(JavacTreeMaker treeMaker, APTHandler typeNode) {
 //        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
 //        String violationClassName = Validator.Violation.class.getName().replace("$", ".");
 //
@@ -531,7 +531,7 @@ public class DomainModelCodeGenerator  {
 //    }
 //
 //    // public static final int count(String predicate, Object... params) throws SQLException {...}
-//    private JCTree.JCMethodDecl handleCountMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
+//    private JCTree.JCMethodDecl handleCountMethod(JavacTreeMaker treeMaker, APTHandler typeNode) {
 //        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
 //        JCVariableDecl predicateVar = createParameter(typeNode,
 //                genTypeRef(typeNode, String.class.getName()), "predicate");
@@ -554,7 +554,7 @@ public class DomainModelCodeGenerator  {
 //    }
 //
 //    // public final static int count(String predicate) throws SQLException {...}
-//    private JCTree.JCMethodDecl handleFindFirstMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
+//    private JCTree.JCMethodDecl handleFindFirstMethod(JavacTreeMaker treeMaker, APTHandler typeNode) {
 //        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
 //        JCVariableDecl predicateVar = createParameter(typeNode,
 //                genTypeRef(typeNode, String.class.getName()), "predicate");
@@ -580,7 +580,7 @@ public class DomainModelCodeGenerator  {
 //                .buildWith(typeNode);
 //    }
 //
-//    private void addPersistenceRefStatement(JavacTreeMaker treeMaker, JavacNode typeNode,
+//    private void addPersistenceRefStatement(JavacTreeMaker treeMaker, APTHandler typeNode,
 //                                            BlockBuilder blockBuilder) {
 //        // PersistenceFactory persistenceFactory = Database.getPersistenceFactory();
 //        blockBuilder.appendVar(PersistenceFactory.class, "persistenceFactory",
@@ -594,7 +594,7 @@ public class DomainModelCodeGenerator  {
 //        blockBuilder.appendVar(typeApply, "persistence", createPersistence);
 //    }
 //
-//    private JCVariableDecl createIdField(JavacTreeMaker treeMaker, JavacNode typeNode, DomainModel domainModel) {
+//    private JCVariableDecl createIdField(JavacTreeMaker treeMaker, APTHandler typeNode, DomainModel domainModel) {
 //        JCAnnotation annotation = treeMaker.Annotation(chainDots(typeNode, splitNameOf(PrimaryKey.class)),
 //                List.of(treeMaker.Assign(treeMaker.Ident(typeNode.toName("name")),
 //                        treeMaker.Literal(domainModel.primaryColumnName()))));
@@ -608,7 +608,7 @@ public class DomainModelCodeGenerator  {
 //    }
 //
 //    // public static final String TABLE_NAME = Table.getTableName(Domains.OrderLine.class);
-//    private void handleTableNameField(JavacTreeMaker treeMaker, JavacNode typeNode) {
+//    private void handleTableNameField(JavacTreeMaker treeMaker, APTHandler typeNode) {
 //        JCExpression tableRef = genTypeRef(typeNode, Table.class.getName());
 //        JCExpression getTableRef = treeMaker.Select(tableRef, typeNode.toName("getTableName"));
 //        JCExpression paramRef = treeMaker.Select(treeMaker.Ident(typeNode.toName(typeNode.getName())), typeNode.toName("class"));
@@ -624,7 +624,7 @@ public class DomainModelCodeGenerator  {
 //    }
 //
 //    // @Volatile private final Map<String, Object> rawAttributes = new HashMap();
-//    private void handleRawAttributesField(JavacTreeMaker treeMaker, JavacNode typeNode) {
+//    private void handleRawAttributesField(JavacTreeMaker treeMaker, APTHandler typeNode) {
 //        JCExpression rawAttributesType = treeMaker.TypeApply(genTypeRef(typeNode, Map.class.getName()),
 //                List.of(genTypeRef(typeNode, String.class.getName()), genTypeRef(typeNode, Object.class.getName())));
 //        JCExpression rawAttributesInit = treeMaker.NewClass(null, List.nil(), genTypeRef(typeNode, HashMap.class.getName()),
@@ -676,7 +676,7 @@ public class DomainModelCodeGenerator  {
 //                .buildWith(typeNode));
 //    }
 //
-//    private JCVariableDecl createParameter(JavacNode typeNode, JCExpression type, String name, JCTree.JCAnnotation... annotations) {
+//    private JCVariableDecl createParameter(APTHandler typeNode, JCExpression type, String name, JCTree.JCAnnotation... annotations) {
 //        return FieldBuilder.newField(typeNode)
 //                .ofType(type)
 //                .withName(name)
@@ -685,7 +685,7 @@ public class DomainModelCodeGenerator  {
 //                .build();
 //    }
 //
-//    private JCVariableDecl createParameter(JavacNode typeNode, long flags, JCExpression type, String name, JCTree.JCAnnotation... annotations) {
+//    private JCVariableDecl createParameter(APTHandler typeNode, long flags, JCExpression type, String name, JCTree.JCAnnotation... annotations) {
 //        return FieldBuilder.newField(typeNode)
 //                .ofType(type)
 //                .withName(name)

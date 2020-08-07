@@ -9,7 +9,7 @@ import javax.annotation.processing.Messager;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 
-public class JavacNode {
+public class APTHandler {
 
     private final JCTree.JCClassDecl classDecl;
     private final Element element;
@@ -18,14 +18,22 @@ public class JavacNode {
     private final Names names;
     private final Messager messager;
 
-    public JavacNode(JCTree.JCClassDecl classDecl, Element element, JCTree ast, TreeMaker treeMaker,
-                     Names names, Messager messager) {
+    public APTHandler(JCTree.JCClassDecl classDecl, Element element, JCTree ast, TreeMaker treeMaker,
+                      Names names, Messager messager) {
         this.classDecl = classDecl;
         this.element = element;
         this.ast = ast;
         this.treeMaker = treeMaker;
         this.names = names;
         this.messager = messager;
+    }
+
+    public MethodBuilder createMethodBuilder() {
+        return new MethodBuilder(this);
+    }
+
+    public BlockBuilder createBlockBuilder() {
+        return new BlockBuilder(this);
     }
 
     public JCTree get() {

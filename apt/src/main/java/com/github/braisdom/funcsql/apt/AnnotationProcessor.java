@@ -57,8 +57,8 @@ public class AnnotationProcessor extends AbstractProcessor {
                 ast.accept(new TreeTranslator(){
                     @Override
                     public void visitClassDef(JCTree.JCClassDecl tree) {
-                        JavacNode javacNode = new JavacNode(tree, element, tree, treeMaker, names, messager);
-                        handler.handle(element.getAnnotation(annotationClass), tree, javacNode);
+                        APTHandler APTHandler = new APTHandler(tree, element, tree, treeMaker, names, messager);
+                        handler.handle(element.getAnnotation(annotationClass), tree, APTHandler);
                         super.visitClassDef(tree);
                     }
 
@@ -70,8 +70,8 @@ public class AnnotationProcessor extends AbstractProcessor {
                     @Override
                     public void visitVarDef(JCTree.JCVariableDecl tree) {
                         JCTree.JCClassDecl classDecl = getClassDecl(tree);
-                        JavacNode javacNode = new JavacNode(classDecl, element, tree, treeMaker, names, messager);
-                        handler.handle(element.getAnnotation(annotationClass), tree, javacNode);
+                        APTHandler APTHandler = new APTHandler(classDecl, element, tree, treeMaker, names, messager);
+                        handler.handle(element.getAnnotation(annotationClass), tree, APTHandler);
                         super.visitVarDef(tree);
                     }
                 });

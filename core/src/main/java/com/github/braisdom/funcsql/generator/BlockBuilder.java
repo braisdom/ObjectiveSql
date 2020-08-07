@@ -4,7 +4,7 @@ import com.sun.tools.javac.code.Flags;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.List;
 import com.sun.tools.javac.util.ListBuffer;
-//import lombok.javac.JavacNode;
+//import lombok.javac.APTHandler;
 //import lombok.javac.JavacTreeMaker;
 //
 //import static lombok.javac.handlers.JavacHandlerUtil.genTypeRef;
@@ -12,16 +12,16 @@ import com.sun.tools.javac.util.ListBuffer;
 class BlockBuilder {
 
 //    private final JavacTreeMaker treeMaker;
-//    private final JavacNode typeNode;
+//    private final APTHandler typeNode;
 //    private final ListBuffer<JCTree.JCStatement> jcStatements;
 //
-//    private BlockBuilder(JavacTreeMaker treeMaker, JavacNode typeNode){
+//    private BlockBuilder(JavacTreeMaker treeMaker, APTHandler typeNode){
 //        this.treeMaker = treeMaker;
 //        this.typeNode = typeNode;
 //        this.jcStatements = new ListBuffer<>();
 //    }
 //
-//    public static BlockBuilder newBlock(JavacTreeMaker treeMaker, JavacNode typeNode) {
+//    public static BlockBuilder newBlock(JavacTreeMaker treeMaker, APTHandler typeNode) {
 //        return new BlockBuilder(treeMaker, typeNode);
 //    }
 //
@@ -117,39 +117,39 @@ class BlockBuilder {
 //        return treeMaker.Block(0, jcStatements.toList());
 //    }
 //
-//    public static JCTree.JCNewClass newClass(JavacNode typeNode, Class<?> clazz, JCTree.JCExpression... params) {
+//    public static JCTree.JCNewClass newClass(APTHandler typeNode, Class<?> clazz, JCTree.JCExpression... params) {
 //        JavacTreeMaker treeMaker = typeNode.getTreeMaker();
 //        return treeMaker.NewClass(null, List.nil(), genTypeRef(typeNode, clazz.getName()),
 //                List.from(params), null);
 //    }
 //
-//    public static JCTree.JCExpression classRef(JavacNode typeNode, String name) {
+//    public static JCTree.JCExpression classRef(APTHandler typeNode, String name) {
 //        JavacTreeMaker treeMaker = typeNode.getTreeMaker();
 //        return treeMaker.Select(treeMaker.Ident(typeNode.toName(name)), typeNode.toName("class"));
 //    }
 //
-//    public static JCTree.JCExpression staticMethodInvoke(JavacNode typeNode, Class<?> clazz,
+//    public static JCTree.JCExpression staticMethodInvoke(APTHandler typeNode, Class<?> clazz,
 //                                                         String methodName, JCTree.JCExpression... params) {
 //        JavacTreeMaker treeMaker = typeNode.getTreeMaker();
 //        return treeMaker.Apply(List.nil(), treeMaker.Select(
 //                genTypeRef(typeNode, clazz.getName()), typeNode.toName(methodName)), List.from(params));
 //    }
 //
-//    public static JCTree.JCExpression staticMethodInvoke(JavacNode typeNode, String clazzName,
+//    public static JCTree.JCExpression staticMethodInvoke(APTHandler typeNode, String clazzName,
 //                                                         String methodName, JCTree.JCExpression... params) {
 //        JavacTreeMaker treeMaker = typeNode.getTreeMaker();
 //        return treeMaker.Apply(List.nil(), treeMaker.Select(
 //                treeMaker.Ident(typeNode.toName(clazzName)), typeNode.toName(methodName)), List.from(params));
 //    }
 //
-//    public static JCTree.JCExpression methodInvoke(JavacNode typeNode, String varName,
+//    public static JCTree.JCExpression methodInvoke(APTHandler typeNode, String varName,
 //                                                         String methodName, JCTree.JCExpression... params) {
 //        JavacTreeMaker treeMaker = typeNode.getTreeMaker();
 //        return treeMaker.Apply(List.nil(), treeMaker.Select(
 //                treeMaker.Ident(typeNode.toName(varName)), typeNode.toName(methodName)), List.from(params));
 //    }
 //
-//    public static JCTree.JCExpression varRef(JavacNode typeNode, String name) {
+//    public static JCTree.JCExpression varRef(APTHandler typeNode, String name) {
 //        JavacTreeMaker treeMaker = typeNode.getTreeMaker();
 //        return treeMaker.Ident(typeNode.toName(name));
 //    }

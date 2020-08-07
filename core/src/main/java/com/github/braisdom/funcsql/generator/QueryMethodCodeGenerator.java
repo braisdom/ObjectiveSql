@@ -1,9 +1,8 @@
 package com.github.braisdom.funcsql.generator;
 
 import com.github.braisdom.funcsql.apt.JavacAnnotationHandler;
-import com.github.braisdom.funcsql.apt.JavacNode;
+import com.github.braisdom.funcsql.apt.APTHandler;
 import com.github.braisdom.funcsql.annotations.Queryable;
-import com.sun.tools.javac.code.Flags;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
 import org.mangosdk.spi.ProviderFor;
@@ -17,21 +16,15 @@ import org.mangosdk.spi.ProviderFor;
 public class QueryMethodCodeGenerator extends JavacAnnotationHandler<Queryable> {
 
     @Override
-    public void handle(Queryable annotation, JCTree ast, JavacNode javacNode) {
-        TreeMaker treeMaker = javacNode.getTreeMaker();
-        JCTree.JCVariableDecl field = (JCTree.JCVariableDecl) javacNode.get();
-
-        JCTree.JCModifiers jcModifiers = treeMaker.Modifiers(Flags.PRIVATE);
-        JCTree.JCVariableDecl variableDecl = treeMaker.VarDef(jcModifiers, javacNode.toName("id"),
-                javacNode.typeRef(Integer.class), null);
-
-        javacNode.append(variableDecl);
+    public void handle(Queryable annotation, JCTree ast, APTHandler handler) {
+        TreeMaker treeMaker = handler.getTreeMaker();
+        JCTree.JCVariableDecl field = (JCTree.JCVariableDecl) handler.get();
     }
 
 //    @Override
-//    public void handle(AnnotationValues<Queryable> annotation, JCTree.JCAnnotation ast, JavacNode annotationNode) {
-//        JavacNode fieldNode = annotationNode.up();
-//        JavacNode typeNode = fieldNode.up();
+//    public void handle(AnnotationValues<Queryable> annotation, JCTree.JCAnnotation ast, APTHandler annotationNode) {
+//        APTHandler fieldNode = annotationNode.up();
+//        APTHandler typeNode = fieldNode.up();
 //        JavacTreeMaker treeMaker = typeNode.getTreeMaker();
 //        JCTree.JCVariableDecl field = (JCTree.JCVariableDecl) fieldNode.get();
 //

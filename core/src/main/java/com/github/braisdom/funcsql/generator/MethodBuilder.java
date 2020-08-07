@@ -19,7 +19,7 @@ import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.JCTree.*;
 import com.sun.tools.javac.util.List;
 //import lombok.javac.Javac;
-//import lombok.javac.JavacNode;
+//import lombok.javac.APTHandler;
 //import lombok.javac.JavacTreeMaker;
 //
 //import java.util.Arrays;
@@ -35,11 +35,11 @@ import com.sun.tools.javac.util.List;
  */
 class MethodBuilder {
 //
-//  static MethodBuilder newMethod(JavacTreeMaker treeMaker, JavacNode typeNode) {
+//  static MethodBuilder newMethod(JavacTreeMaker treeMaker, APTHandler typeNode) {
 //    return new MethodBuilder(treeMaker, typeNode);
 //  }
 //
-//  private final JavacNode typeNode;
+//  private final APTHandler typeNode;
 //  private final JavacTreeMaker treeMaker;
 //  private JCTree.JCModifiers modifiers;
 //  private String name;
@@ -49,7 +49,7 @@ class MethodBuilder {
 //  private JCBlock body;
 //  private JCExpression defaultValue;
 //
-//  private MethodBuilder(JavacTreeMaker treeMaker, JavacNode typeNode) {
+//  private MethodBuilder(JavacTreeMaker treeMaker, APTHandler typeNode) {
 //    this.treeMaker = treeMaker;
 //    this.typeNode = typeNode;
 //  }
@@ -136,7 +136,7 @@ class MethodBuilder {
 //    return this;
 //  }
 //
-//  JCMethodDecl buildWith(JavacNode node) {
+//  JCMethodDecl buildWith(APTHandler node) {
 //    JavacTreeMaker treeMaker = node.getTreeMaker();
 //    if(returnType == null)
 //      returnType = treeMaker.TypeIdent(CTC_VOID);
@@ -144,11 +144,11 @@ class MethodBuilder {
 //            body, null);
 //  }
 //
-//  static JCVariableDecl createParameter(JavacNode typeNode, Class<?> paramType, String name) {
+//  static JCVariableDecl createParameter(APTHandler typeNode, Class<?> paramType, String name) {
 //    return createParameter(typeNode, genTypeRef(typeNode, paramType.getName()), name);
 //  }
 //
-//  static JCVariableDecl createParameter(JavacNode typeNode, JCExpression paramType, String name) {
+//  static JCVariableDecl createParameter(APTHandler typeNode, JCExpression paramType, String name) {
 //    JavacTreeMaker treeMaker = typeNode.getTreeMaker();
 //    treeMaker.at(typeNode.get().pos);
 //    return treeMaker.VarDef(treeMaker.Modifiers(Flags.PARAMETER), typeNode.toName(name),

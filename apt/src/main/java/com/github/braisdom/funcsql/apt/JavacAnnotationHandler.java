@@ -26,7 +26,6 @@ import java.lang.annotation.Annotation;
 
 import com.sun.source.util.Trees;
 import com.sun.tools.javac.tree.JCTree;
-import com.sun.tools.javac.tree.JCTree.JCAnnotation;
 
 /**
  * Implement this interface if you want to be triggered for a specific annotation.
@@ -55,7 +54,7 @@ public abstract class JavacAnnotationHandler<T extends Annotation> {
      * to travel back up the chain (something javac AST can't do) to the parent of the annotation, as well
      * as access useful methods such as generating warnings or errors focused on the annotation.
      */
-    public abstract void handle(T annotation, JCTree ast, JavacNode node);
+    public abstract void handle(T annotation, JCTree ast, APTHandler node);
 
     /**
      * This handler is a handler for the given annotation; you don't normally need to override this class
