@@ -2,10 +2,8 @@ package com.github.braisdom.funcsql.generator;
 
 import com.github.braisdom.funcsql.Query;
 import com.github.braisdom.funcsql.annotations.Queryable;
-import com.github.braisdom.funcsql.apt.APTHandler;
-import com.github.braisdom.funcsql.apt.JavacAnnotationHandler;
+import com.github.braisdom.funcsql.apt.*;
 import com.github.braisdom.funcsql.apt.MethodBuilder;
-import com.github.braisdom.funcsql.apt.StatementBuilder;
 import com.github.braisdom.funcsql.util.WordUtil;
 import com.sun.tools.javac.code.Flags;
 import com.sun.tools.javac.tree.JCTree;
@@ -19,7 +17,7 @@ import java.sql.SQLException;
 public class QueryMethodCodeGenerator extends JavacAnnotationHandler<Queryable> {
 
     @Override
-    public void handle(Queryable annotation, JCTree ast, APTHandler handler) {
+    public void handle(AnnotationValues annotationValues, JCTree ast, APTHandler handler) {
         JCTree.JCVariableDecl field = (JCTree.JCVariableDecl) handler.get();
         TreeMaker treeMaker = handler.getTreeMaker();
         String fieldColumnName = WordUtil.underscore(field.getName().toString());

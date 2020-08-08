@@ -2,10 +2,8 @@ package com.github.braisdom.funcsql.generator;
 
 import com.github.braisdom.funcsql.*;
 import com.github.braisdom.funcsql.annotations.DomainModel;
-import com.github.braisdom.funcsql.apt.APTHandler;
-import com.github.braisdom.funcsql.apt.JavacAnnotationHandler;
+import com.github.braisdom.funcsql.apt.*;
 import com.github.braisdom.funcsql.apt.MethodBuilder;
-import com.github.braisdom.funcsql.apt.StatementBuilder;
 import com.sun.tools.javac.code.Flags;
 import com.sun.tools.javac.code.TypeTag;
 import com.sun.tools.javac.tree.JCTree;
@@ -19,10 +17,13 @@ import java.sql.SQLException;
 public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel>{
 
     @Override
-    public void handle(DomainModel annotation, JCTree ast, APTHandler handler) {
+    public void handle(AnnotationValues annotationValues, JCTree ast, APTHandler handler) {
         handleCreateQueryMethod(handler);
         handleCreatePersistenceMethod(handler);
         handleSaveMethod(handler);
+        handleCreateMethod(handler);
+        handleCreateArrayMethod(handler);
+        handleUpdateMethod(annotationValues, handler);
     }
 
     private void handleCreateQueryMethod(APTHandler handler) {
@@ -82,14 +83,58 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
         statementBuilder.append(handler.newGenericsType(Persistence.class, handler.getClassName()), "persistence",
                 "createPersistence");
 
-        statementBuilder.append("persistence", "save",
-                handler.varRef("this"), handler.varRef("skipValidation"));
+        methodBuilder.setReturnStatement("persistence", "insert",
+                handler.varRef("dirtyObject"), handler.varRef("skipValidation"));
 
         handler.inject(methodBuilder
+                .setReturnType(handler.typeRef(handler.getClassName()))
                 .addStatements(statementBuilder.build())
+                .addParameter("dirtyObject", handler.typeRef(handler.getClassName()))
                 .addParameter("skipValidation", treeMaker.TypeIdent(TypeTag.BOOLEAN))
                 .setThrowsClauses(SQLException.class)
                 .build("create", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
+    }
+
+    private void handleCreateArrayMethod(APTHandler handler) {
+        MethodBuilder methodBuilder = handler.createMethodBuilder();
+        TreeMaker treeMaker = handler.getTreeMaker();
+        StatementBuilder statementBuilder = handler.createBlockBuilder();
+
+        statementBuilder.append(handler.newGenericsType(Persistence.class, handler.getClassName()), "persistence",
+                "createPersistence");
+
+        methodBuilder.setReturnStatement("persistence", "insert",
+                handler.varRef("dirtyObjects"), handler.varRef("skipValidation"));
+
+        handler.inject(methodBuilder
+                .setReturnType(handler.newArrayType(treeMaker.TypeIdent(TypeTag.INT)))
+                .addStatements(statementBuilder.build())
+                .addParameter("dirtyObjects", handler.newArrayType(handler.getClassName()))
+                .addParameter("skipValidation", treeMaker.TypeIdent(TypeTag.BOOLEAN))
+                .setThrowsClauses(SQLException.class)
+                .build("create", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
+    }
+
+    private void handleUpdateMethod(AnnotationValues annotationValues, APTHandler handler) {
+        MethodBuilder methodBuilder = handler.createMethodBuilder();
+        TreeMaker treeMaker = handler.getTreeMaker();
+        StatementBuilder statementBuilder = handler.createBlockBuilder();
+        DomainModel domainModel = (DomainModel) annotationValues.getInstance();
+
+        statementBuilder.append(handler.newGenericsType(Persistence.class, handler.getClassName()), "persistence",
+                "createPersistence");
+
+        methodBuilder.setReturnStatement("persistence", "update",
+                handler.varRef("id"), handler.varRef("dirtyObject"), handler.varRef("skipValidation"));
+
+        handler.inject(methodBuilder
+                .setReturnType(treeMaker.TypeIdent(TypeTag.INT))
+                .addStatements(statementBuilder.build())
+                .addParameter("id", handler.typeRef(domainModel.primaryClass()))
+                .addParameter("dirtyObject", handler.typeRef(handler.getClassName()))
+                .addParameter("skipValidation", treeMaker.TypeIdent(TypeTag.BOOLEAN))
+                .setThrowsClauses(SQLException.class)
+                .build("update", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
 
 //    @Override

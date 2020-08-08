@@ -49,16 +49,16 @@ public class AnnotationProcessor extends AbstractProcessor {
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         for (JavacAnnotationHandler handler : handlers) {
-            Class<? extends Annotation> annotationClass = handler.getAnnotationHandledByThisHandler();
-            Set<? extends Element> elements = roundEnv.getElementsAnnotatedWith(annotationClass);
+            final Class<? extends Annotation> annotationClass = handler.getAnnotationHandledByThisHandler();
+            final Set<? extends Element> elements = roundEnv.getElementsAnnotatedWith(annotationClass);
+            final AnnotationValues annotationValues = AnnotationValues.of(annotationClass);
             for(Element element : elements) {
                 JCTree ast = javacTrees.getTree(element);
-
                 ast.accept(new TreeTranslator(){
                     @Override
                     public void visitClassDef(JCTree.JCClassDecl tree) {
                         APTHandler APTHandler = new APTHandler(tree, element, tree, treeMaker, names, messager);
-                        handler.handle(element.getAnnotation(annotationClass), tree, APTHandler);
+                        handler.handle(annotationValues, tree, APTHandler);
                         super.visitClassDef(tree);
                     }
 
@@ -72,7 +72,7 @@ public class AnnotationProcessor extends AbstractProcessor {
                         if(tree.sym != null) {
                             JCTree.JCClassDecl classDecl = getClassDecl(tree);
                             APTHandler APTHandler = new APTHandler(classDecl, element, tree, treeMaker, names, messager);
-                            handler.handle(element.getAnnotation(annotationClass), tree, APTHandler);
+                            handler.handle(annotationValues, tree, APTHandler);
                         }
                         super.visitVarDef(tree);
                     }

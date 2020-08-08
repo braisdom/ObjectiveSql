@@ -150,6 +150,10 @@ public final class APTHandler {
         return treeMaker.TypeArray(typeRef(typeClass));
     }
 
+    public JCExpression newArrayType(JCExpression type) {
+        return treeMaker.TypeArray(type);
+    }
+
     public JCExpression varRef(String name) {
         return treeMaker.Ident(toName(name));
     }

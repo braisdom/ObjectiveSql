@@ -58,6 +58,12 @@ public class MethodBuilder {
         return this;
     }
 
+    public MethodBuilder setReturnType(JCExpression type) {
+        returnType = type;
+        return this;
+    }
+
+
     public MethodBuilder setReturnStatement(String varName, String methodName, JCExpression... params) {
         JCTree.JCExpression methodRef = treeMaker.Select(handler.varRef(varName),
                 handler.toName(methodName));
