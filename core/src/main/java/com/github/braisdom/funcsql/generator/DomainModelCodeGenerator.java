@@ -74,6 +74,24 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 .build("save", Flags.PUBLIC | Flags.FINAL));
     }
 
+    private void handleCreateMethod(APTHandler handler) {
+        MethodBuilder methodBuilder = handler.createMethodBuilder();
+        TreeMaker treeMaker = handler.getTreeMaker();
+        StatementBuilder statementBuilder = handler.createBlockBuilder();
+
+        statementBuilder.append(handler.newGenericsType(Persistence.class, handler.getClassName()), "persistence",
+                "createPersistence");
+
+        statementBuilder.append("persistence", "save",
+                handler.varRef("this"), handler.varRef("skipValidation"));
+
+        handler.inject(methodBuilder
+                .addStatements(statementBuilder.build())
+                .addParameter("skipValidation", treeMaker.TypeIdent(TypeTag.BOOLEAN))
+                .setThrowsClauses(SQLException.class)
+                .build("create", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
+    }
+
 //    @Override
 //    public void handle(AnnotationValues<DomainModel> annotationValues, JCAnnotation jcAnnotation, APTHandler javacNode) {
 //        APTHandler typeNode = javacNode.up();

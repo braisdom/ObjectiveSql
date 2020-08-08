@@ -8,7 +8,7 @@ public interface Persistence<T> {
 
     T insert(T dirtyObject, boolean skipValidation) throws SQLException;
 
-    int[] insert(T[] dirtyObject, boolean skipValidation) throws SQLException;
+    int[] insert(T[] dirtyObjects, boolean skipValidation) throws SQLException;
 
     int update(Object id, T dirtyObject, boolean skipValidation) throws SQLException;
 

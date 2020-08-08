@@ -33,14 +33,14 @@
             <artifactId>javax.el</artifactId>
             <version>3.0.1-b11</version>
         </dependency>
-        <dependency>
-            <groupId>com.sun</groupId>
-            <artifactId>tools</artifactId>
-            <scope>system</scope>
-            <version>1.0</version>
-            <systemPath>${java.home}/../lib/tools.jar</systemPath>
-            <optional>true</optional>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.sun</groupId>-->
+            <!--<artifactId>tools</artifactId>-->
+            <!--<scope>system</scope>-->
+            <!--<version>1.0</version>-->
+            <!--<systemPath>${java.home}/../lib/tools.jar</systemPath>-->
+            <!--<optional>true</optional>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>

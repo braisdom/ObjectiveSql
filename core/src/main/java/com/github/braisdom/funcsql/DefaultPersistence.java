@@ -35,6 +35,9 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
     public T insert(T dirtyObject, boolean skipValidation) throws SQLException {
         Objects.requireNonNull(dirtyObject, "The dirtyObject cannot be null");
 
+        if(!skipValidation)
+            Table.validate(dirtyObject);
+
         return Database.execute((connection, sqlExecutor) -> {
             String[] columnNames = domainModelDescriptor.getInsertableColumns();
             String tableName = domainModelDescriptor.getTableName();
@@ -59,23 +62,26 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
     }
 
     @Override
-    public int[] insert(T[] dirtyObject, boolean skipValidation) throws SQLException {
-        Objects.requireNonNull(dirtyObject, "The dirtyObject cannot be null");
+    public int[] insert(T[] dirtyObjects, boolean skipValidation) throws SQLException {
+        Objects.requireNonNull(dirtyObjects, "The dirtyObject cannot be null");
+
+        if(!skipValidation)
+            Table.validate(dirtyObjects);
 
         return Database.execute((connection, sqlExecutor) -> {
             String[] columnNames = domainModelDescriptor.getInsertableColumns();
-            Object[][] values = new Object[dirtyObject.length][columnNames.length];
+            Object[][] values = new Object[dirtyObjects.length][columnNames.length];
 
-            for (int i = 0; i < dirtyObject.length; i++) {
+            for (int i = 0; i < dirtyObjects.length; i++) {
                 for (int t = 0; t < columnNames.length; t++) {
                     ColumnTransitional<T> columnTransitional = domainModelDescriptor.getColumnTransition(columnNames[t]);
                     String fieldName = domainModelDescriptor.getFieldName(columnNames[t]);
                     if (columnTransitional != null)
                         values[i][t] = columnTransitional.sinking(connection.getMetaData(),
-                                dirtyObject[i], domainModelDescriptor, fieldName,
-                                PropertyUtils.readDirectly(dirtyObject[i], fieldName));
+                                dirtyObjects[i], domainModelDescriptor, fieldName,
+                                PropertyUtils.readDirectly(dirtyObjects[i], fieldName));
                     else
-                        values[i][t] = PropertyUtils.readDirectly(dirtyObject[i], fieldName);
+                        values[i][t] = PropertyUtils.readDirectly(dirtyObjects[i], fieldName);
                 }
             }
 
@@ -90,6 +96,9 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
     public int update(Object id, T dirtyObject, boolean skipValidation) throws SQLException {
         Objects.requireNonNull(id, "The id cannot be null");
         Objects.requireNonNull(dirtyObject, "The dirtyObject cannot be null");
+
+        if(!skipValidation)
+            Table.validate(dirtyObject);
 
         PrimaryKey primaryKey = domainModelDescriptor.getPrimaryKey();
         ensurePrimaryKeyNotNull(primaryKey);

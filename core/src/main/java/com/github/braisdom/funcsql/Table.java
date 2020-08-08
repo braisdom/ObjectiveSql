@@ -91,27 +91,23 @@ public final class Table {
         Table.validator = validator;
     }
 
-    public static final void validate(Object bean, boolean skipValidation) throws ValidationException {
-        if (skipValidation) {
-            Validator validator = getValidator();
-            Validator.Violation[] violations = validator.validate(bean);
-            if (violations.length > 0)
-                throw new ValidationException(violations);
-        }
+    public static final void validate(Object bean) throws ValidationException {
+        Validator validator = getValidator();
+        Validator.Violation[] violations = validator.validate(bean);
+        if (violations.length > 0)
+            throw new ValidationException(violations);
     }
 
-    public static final void validate(Object[] beans, boolean skipValidation) throws ValidationException {
-        if (skipValidation) {
-            Validator validator = getValidator();
-            List<Validator.Violation> violationList = new ArrayList<>();
-            for (Object bean : beans) {
-                Validator.Violation[] violations = validator.validate(bean);
-                if (violations.length > 0)
-                    violationList.addAll(Arrays.asList(violations));
-            }
-            if (violationList.size() > 0)
-                throw new ValidationException(violationList.toArray(new Validator.Violation[]{}));
+    public static final void validate(Object[] beans) throws ValidationException {
+        Validator validator = getValidator();
+        List<Validator.Violation> violationList = new ArrayList<>();
+        for (Object bean : beans) {
+            Validator.Violation[] violations = validator.validate(bean);
+            if (violations.length > 0)
+                violationList.addAll(Arrays.asList(violations));
         }
+        if (violationList.size() > 0)
+            throw new ValidationException(violationList.toArray(new Validator.Violation[]{}));
     }
 
     public static final <T> List<T> query(Class<T> domainModelClass, String sql, Object... params) throws SQLException {
