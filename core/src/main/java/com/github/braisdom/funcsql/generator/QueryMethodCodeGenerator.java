@@ -3,6 +3,8 @@ package com.github.braisdom.funcsql.generator;
 import com.github.braisdom.funcsql.apt.JavacAnnotationHandler;
 import com.github.braisdom.funcsql.apt.APTHandler;
 import com.github.braisdom.funcsql.annotations.Queryable;
+import com.github.braisdom.funcsql.apt.MethodBuilder;
+import com.sun.tools.javac.code.Flags;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
 import org.mangosdk.spi.ProviderFor;
@@ -19,6 +21,10 @@ public class QueryMethodCodeGenerator extends JavacAnnotationHandler<Queryable> 
     public void handle(Queryable annotation, JCTree ast, APTHandler handler) {
         TreeMaker treeMaker = handler.getTreeMaker();
         JCTree.JCVariableDecl field = (JCTree.JCVariableDecl) handler.get();
+
+        MethodBuilder methodBuilder = handler.createMethodBuilder();
+
+        handler.inject(methodBuilder.build("test", Flags.PUBLIC | Flags.STATIC));
     }
 
 //    @Override
