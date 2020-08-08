@@ -1,9 +1,12 @@
 package com.github.braisdom.funcsql.generator;
 
+import com.github.braisdom.funcsql.Query;
 import com.github.braisdom.funcsql.apt.JavacAnnotationHandler;
 import com.github.braisdom.funcsql.apt.APTHandler;
 import com.github.braisdom.funcsql.annotations.Queryable;
 import com.github.braisdom.funcsql.apt.MethodBuilder;
+import com.github.braisdom.funcsql.apt.StatementBuilder;
+import com.github.braisdom.funcsql.util.WordUtil;
 import com.sun.tools.javac.code.Flags;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
@@ -21,10 +24,20 @@ public class QueryMethodCodeGenerator extends JavacAnnotationHandler<Queryable> 
     public void handle(Queryable annotation, JCTree ast, APTHandler handler) {
         TreeMaker treeMaker = handler.getTreeMaker();
         JCTree.JCVariableDecl field = (JCTree.JCVariableDecl) handler.get();
+        String fieldColumnName = WordUtil.underscore(field.getName().toString());
+        String methodName = WordUtil.camelize("queryBy_" + field.getName(), true);
 
         MethodBuilder methodBuilder = handler.createMethodBuilder();
+        StatementBuilder statementBuilder = handler.createBlockBuilder();
 
-        handler.inject(methodBuilder.build("test", Flags.PUBLIC | Flags.STATIC));
+        methodBuilder.addParameter("value", field.vartype);
+
+        statementBuilder.append(handler.newGenericsType(Query.class, handler.getClassName()),
+                "query", null);
+
+//        handler.inject(methodBuilder
+//                .addStatements(statementBuilder.build())
+//                .build(methodName, Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
 
 //    @Override

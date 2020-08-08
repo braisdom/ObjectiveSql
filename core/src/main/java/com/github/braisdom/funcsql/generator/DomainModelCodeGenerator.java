@@ -2,41 +2,54 @@ package com.github.braisdom.funcsql.generator;
 
 import com.github.braisdom.funcsql.*;
 import com.github.braisdom.funcsql.annotations.DomainModel;
-import com.github.braisdom.funcsql.annotations.PrimaryKey;
-import com.github.braisdom.funcsql.annotations.Volatile;
-import com.github.braisdom.funcsql.reflection.ClassUtils;
-import com.github.braisdom.funcsql.reflection.PropertyUtils;
-import com.github.braisdom.funcsql.util.JCTreeUtil;
+import com.github.braisdom.funcsql.apt.APTHandler;
+import com.github.braisdom.funcsql.apt.JavacAnnotationHandler;
+import com.github.braisdom.funcsql.apt.MethodBuilder;
+import com.github.braisdom.funcsql.apt.StatementBuilder;
 import com.sun.tools.javac.code.Flags;
 import com.sun.tools.javac.tree.JCTree;
-import com.sun.tools.javac.tree.JCTree.JCAnnotation;
-import com.sun.tools.javac.tree.JCTree.JCExpression;
-import com.sun.tools.javac.tree.JCTree.JCMethodDecl;
-import com.sun.tools.javac.tree.JCTree.JCVariableDecl;
 import com.sun.tools.javac.util.List;
-import com.sun.tools.javac.util.ListBuffer;
-import com.sun.tools.javac.util.Name;
-//import lombok.AccessLevel;
-//import lombok.core.AST;
-//import lombok.core.AnnotationValues;
-//import lombok.javac.JavacAnnotationHandler;
-//import lombok.javac.APTHandler;
-//import lombok.javac.JavacTreeMaker;
-//import lombok.javac.handlers.HandleGetter;
-//import lombok.javac.handlers.HandleSetter;
+import org.mangosdk.spi.ProviderFor;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.*;
+@ProviderFor(JavacAnnotationHandler.class)
+public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel>{
 
-import static com.github.braisdom.funcsql.generator.BlockBuilder.*;
-import static com.github.braisdom.funcsql.util.StringUtil.splitNameOf;
-//import static lombok.javac.Javac.CTC_BOOLEAN;
-//import static lombok.javac.Javac.CTC_INT;
-//import static lombok.javac.handlers.JavacHandlerUtil.*;
+    @Override
+    public void handle(DomainModel annotation, JCTree ast, APTHandler handler) {
+        handleCreateQueryMethod(handler);
+        handleCreatePersistenceMethod(handler);
+    }
 
-//@MetaInfServices(JavacAnnotationHandler.class)
-public class DomainModelCodeGenerator  {
+    private void handleCreateQueryMethod(APTHandler handler) {
+        MethodBuilder methodBuilder = handler.createMethodBuilder();
+        StatementBuilder statementBuilder = handler.createBlockBuilder();
+
+        statementBuilder.append(handler.typeRef(QueryFactory.class), "queryFactory", Database.class,
+                "getQueryFactory", List.nil());
+
+        methodBuilder.setReturnStatement("queryFactory", "createQuery", handler.classRef(handler.getClassName()));
+
+        handler.inject(methodBuilder
+                .addStatements(statementBuilder.build())
+                .setReturnType(Query.class, handler.typeRef(handler.getClassName()))
+                .build("createQuery", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
+    }
+
+    private void handleCreatePersistenceMethod(APTHandler handler) {
+        MethodBuilder methodBuilder = handler.createMethodBuilder();
+        StatementBuilder statementBuilder = handler.createBlockBuilder();
+
+        statementBuilder.append(handler.typeRef(PersistenceFactory.class), "persistenceFactory", Database.class,
+                "getPersistenceFactory", List.nil());
+
+        methodBuilder.setReturnStatement("persistenceFactory", "createPersistence",
+                handler.classRef(handler.getClassName()));
+
+        handler.inject(methodBuilder
+                .addStatements(statementBuilder.build())
+                .setReturnType(Persistence.class, handler.typeRef(handler.getClassName()))
+                .build("createPersistence", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
+    }
 
 //    @Override
 //    public void handle(AnnotationValues<DomainModel> annotationValues, JCAnnotation jcAnnotation, APTHandler javacNode) {

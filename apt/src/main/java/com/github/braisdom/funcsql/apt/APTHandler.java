@@ -1,8 +1,10 @@
 package com.github.braisdom.funcsql.apt;
 
 import com.sun.tools.javac.tree.JCTree;
+import com.sun.tools.javac.tree.JCTree.JCExpression;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.List;
+import com.sun.tools.javac.util.ListBuffer;
 import com.sun.tools.javac.util.Name;
 import com.sun.tools.javac.util.Names;
 
@@ -41,6 +43,10 @@ public final class APTHandler {
         return ast;
     }
 
+    public String getClassName() {
+        return classDecl.name.toString();
+    }
+
     public TreeMaker getTreeMaker() {
         return treeMaker;
     }
@@ -53,7 +59,7 @@ public final class APTHandler {
         return this.names.fromString(name);
     }
 
-    public JCTree.JCExpression typeRef(Class clazz) {
+    public JCExpression typeRef(Class clazz) {
         return typeRef(clazz.getName());
     }
 
@@ -65,7 +71,7 @@ public final class APTHandler {
         classDecl.defs = classDecl.defs.append(methodDecl);
     }
 
-    public JCTree.JCExpression typeRef(String complexName) {
+    public JCExpression typeRef(String complexName) {
         String[] parts = complexName.split("\\.");
         if (parts.length > 2 && parts[0].equals("java") && parts[1].equals("lang")) {
             String[] subParts = new String[parts.length - 2];
@@ -76,18 +82,18 @@ public final class APTHandler {
         return chainDots(parts);
     }
 
-    public JCTree.JCExpression javaLangTypeRef(String... simpleNames) {
+    public JCExpression javaLangTypeRef(String... simpleNames) {
         return chainDots(null, null, simpleNames);
     }
 
-    public JCTree.JCExpression chainDots(String elem1, String elem2, String... elems) {
+    public JCExpression chainDots(String elem1, String elem2, String... elems) {
         return chainDots(-1, elem1, elem2, elems);
     }
 
-    public JCTree.JCExpression chainDots(String... elems) {
+    public JCExpression chainDots(String... elems) {
         assert elems != null;
 
-        JCTree.JCExpression e = null;
+        JCExpression e = null;
         for (String elem : elems) {
             if (e == null) e = treeMaker.Ident(toName(elem));
             else e = treeMaker.Select(e, toName(elem));
@@ -95,11 +101,11 @@ public final class APTHandler {
         return e;
     }
 
-    public JCTree.JCExpression chainDots(int pos, String elem1, String elem2, String... elems) {
+    public JCExpression chainDots(int pos, String elem1, String elem2, String... elems) {
         assert elems != null;
         TreeMaker treeMaker = getTreeMaker();
         if (pos != -1) treeMaker = treeMaker.at(pos);
-        JCTree.JCExpression e = null;
+        JCExpression e = null;
         if (elem1 != null) e = treeMaker.Ident(toName(elem1));
         if (elem2 != null) e = e == null ? treeMaker.Ident(toName(elem2)) : treeMaker.Select(e, toName(elem2));
         for (int i = 0; i < elems.length; i++) {
@@ -111,24 +117,48 @@ public final class APTHandler {
         return e;
     }
 
-    public JCTree.JCExpression staticMethodCall(Class<?> clazz, String methodName, JCTree.JCExpression... params) {
+    public JCExpression staticMethodCall(Class<?> clazz, String methodName, JCExpression... params) {
         return treeMaker.Apply(List.nil(), treeMaker.Select(typeRef(clazz.getName()), toName(methodName)), List.from(params));
     }
 
-    public JCTree.JCExpression newVar(Class<?> clazz, String methodName, JCTree.JCExpression... params) {
+    public JCExpression newVar(Class<?> clazz, String methodName, JCExpression... params) {
         return treeMaker.Apply(List.nil(), treeMaker.Select(
                 typeRef(clazz.getName()), toName(methodName)), List.from(params));
     }
 
-    public JCTree.JCExpression varRef(String name) {
+    public JCExpression newGenericsType(Class typeClass, JCExpression... genericTypes) {
+        return treeMaker.TypeApply(typeRef(typeClass), List.from(genericTypes));
+    }
+
+    public JCExpression newGenericsType(Class typeClass, Class<?>... genericTypeClasses) {
+        ListBuffer<JCExpression> genericTypes = new ListBuffer<>();
+        for(Class<?> genericTypeClass : genericTypeClasses)
+            genericTypes.append(typeRef(genericTypeClass));
+        return treeMaker.TypeApply(typeRef(typeClass), genericTypes.toList());
+    }
+
+    public JCExpression newGenericsType(Class typeClass, String classSimpleName) {
+        return treeMaker.TypeApply(typeRef(typeClass), List.of(treeMaker.Ident(toName(classSimpleName))));
+    }
+
+
+    public JCExpression newArrayType(String typeName) {
+        return treeMaker.TypeArray(treeMaker.Ident(toName(typeName)));
+    }
+
+    public JCExpression newArrayType(Class typeClass) {
+        return treeMaker.TypeArray(typeRef(typeClass));
+    }
+
+    public JCExpression varRef(String name) {
         return treeMaker.Ident(toName(name));
     }
 
-    public JCTree.JCExpression classRef(String name) {
+    public JCExpression classRef(String name) {
         return treeMaker.Select(treeMaker.Ident(toName(name)), toName("class"));
     }
 
-    public JCTree.JCExpression classRef(Class<?> clazz) {
+    public JCExpression classRef(Class<?> clazz) {
         return treeMaker.Select(typeRef(clazz), toName("class"));
     }
 
