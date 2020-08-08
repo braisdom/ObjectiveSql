@@ -83,7 +83,7 @@ class FieldBuilder {
 //    JCTree.JCModifiers jcModifiers = treeMaker.Modifiers(modifiers);
 //
 //    for(JCTree.JCAnnotation annotation : annotations)
-//      jcModifiers.annotations = jcModifiers.annotations.append(annotation);
+//      jcModifiers.annotations = jcModifiers.annotations.inject(annotation);
 //
 //    treeMaker.at(node.get().pos);
 //    return treeMaker.VarDef(jcModifiers, node.toName(name), type, init);

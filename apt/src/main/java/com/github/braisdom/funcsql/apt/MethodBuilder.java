@@ -4,15 +4,15 @@ import com.sun.tools.javac.code.Flags;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.List;
+import com.sun.tools.javac.util.ListBuffer;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 public class MethodBuilder {
 
     private final TreeMaker treeMaker;
     private final APTHandler node;
-    private final java.util.List<JCTree.JCVariableDecl> parameters;
+    private final ListBuffer<JCTree.JCVariableDecl> parameters;
 
     private JCTree.JCExpression returnType;
     private List<JCTree.JCExpression> throwsClauses;
@@ -21,7 +21,7 @@ public class MethodBuilder {
         this.treeMaker = handler.getTreeMaker();
         this.node = handler;
 
-        this.parameters = new ArrayList<>();
+        this.parameters = new ListBuffer<>();
     }
 
     public MethodBuilder setExceptions(Class<? extends Throwable>... exceptionClasses) {
@@ -50,14 +50,14 @@ public class MethodBuilder {
         return this;
     }
 
-    public MethodBuilder createParameter(String name, JCTree.JCExpression type, JCTree.JCExpression init,
+    public MethodBuilder addParameter(String name, JCTree.JCExpression type, JCTree.JCExpression init,
                                          JCTree.JCExpression... genType) {
         treeMaker.TypeApply(type, List.from(genType));
         parameters.add(treeMaker.VarDef(treeMaker.Modifiers(Flags.PARAMETER), node.toName(name), type, init));
         return this;
     }
 
-    public MethodBuilder createParameter(String name, JCTree.JCExpression type, JCTree.JCExpression init) {
+    public MethodBuilder addParameter(String name, JCTree.JCExpression type, JCTree.JCExpression init) {
         parameters.add(treeMaker.VarDef(treeMaker.Modifiers(Flags.PARAMETER), node.toName(name), type, init));
         return this;
     }

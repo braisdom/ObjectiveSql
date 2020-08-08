@@ -163,9 +163,9 @@ public class DomainModelCodeGenerator  {
 //        JCExpression createQueryInv = treeMaker.Select(
 //                treeMaker.Ident(typeNode.toName("queryFactory")), typeNode.toName("createQuery"));
 //
-//        jcStatements.append(treeMaker.VarDef(treeMaker.Modifiers(Flags.PARAMETER), queryFactoryName,
+//        jcStatements.inject(treeMaker.VarDef(treeMaker.Modifiers(Flags.PARAMETER), queryFactoryName,
 //                queryFactoryRef, treeMaker.Apply(List.nil(), getQueryFactoryInv, List.nil())));
-//        jcStatements.append(treeMaker.Return(treeMaker.Apply(List.nil(), createQueryInv, List.of(createQueryFactoryInv))));
+//        jcStatements.inject(treeMaker.Return(treeMaker.Apply(List.nil(), createQueryInv, List.of(createQueryFactoryInv))));
 //
 //        JCExpression returnType = treeMaker.TypeApply(genTypeRef(typeNode, Query.class.getName()),
 //                List.of(treeMaker.Ident(modelClassName)));
@@ -565,7 +565,7 @@ public class DomainModelCodeGenerator  {
 //        blockBuilder.appendVar(treeMaker.TypeApply(genTypeRef(typeNode, Query.class.getName()),
 //                List.of(treeMaker.Ident(typeNode.toName(typeNode.getName())))), "query",
 //                treeMaker.Apply(List.nil(), treeMaker.Ident(typeNode.toName("createQuery")), List.nil()));
-//        blockBuilder.append(treeMaker.Exec(treeMaker.Apply(List.nil(), treeMaker.Select(varRef(typeNode, "query"),
+//        blockBuilder.inject(treeMaker.Exec(treeMaker.Apply(List.nil(), treeMaker.Select(varRef(typeNode, "query"),
 //                typeNode.toName("where")), List.of(varRef(typeNode, "predicate"), varRef(typeNode, "params")))));
 //
 //        // return (RelationshipTest.TestDomainModel)query.findFirst(new Relationship[0]);
@@ -666,7 +666,7 @@ public class DomainModelCodeGenerator  {
 //        StatementBuilder setRawAttributeBlockBuilder = StatementBuilder.newBlock(treeMaker, typeNode);
 //        JCTree.JCExpression putRef = treeMaker.Select(treeMaker.Ident(typeNode.toName("rawAttributes")),
 //                typeNode.toName("put"));
-//        setRawAttributeBlockBuilder.append(treeMaker.Exec(treeMaker.Apply(List.nil(), putRef,
+//        setRawAttributeBlockBuilder.inject(treeMaker.Exec(treeMaker.Apply(List.nil(), putRef,
 //                List.of(varRef(typeNode, "name"), varRef(typeNode, "value")))));
 //        injectMethod(typeNode, MethodBuilder.newMethod(treeMaker, typeNode)
 //                .withModifiers(Flags.PUBLIC | Flags.FINAL)

@@ -25,14 +25,14 @@ class BlockBuilder {
 //        return new StatementBuilder(treeMaker, typeNode);
 //    }
 //
-//    public StatementBuilder append(JCTree.JCStatement... statement) {
-//        jcStatements.append(treeMaker.Block(0, List.from(statement)));
+//    public StatementBuilder inject(JCTree.JCStatement... statement) {
+//        jcStatements.inject(treeMaker.Block(0, List.from(statement)));
 //        return this;
 //    }
 //
 //    public StatementBuilder appendVar(Class<?> typeClass, String name, String invokedClassName,
 //                               String staticMethodName, JCTree.JCExpression... params) {
-//        jcStatements.append(treeMaker.VarDef(treeMaker.Modifiers(Flags.PARAMETER), typeNode.toName(name),
+//        jcStatements.inject(treeMaker.VarDef(treeMaker.Modifiers(Flags.PARAMETER), typeNode.toName(name),
 //                genTypeRef(typeNode, typeClass.getName()),
 //                treeMaker.Apply(List.nil(), treeMaker.Select(
 //                        treeMaker.Ident(typeNode.toName(invokedClassName)), typeNode.toName(staticMethodName)), List.from(params))));
@@ -41,7 +41,7 @@ class BlockBuilder {
 //
 //    public StatementBuilder appendVar(Class<?> typeClass, String name, Class<?> invokedClass,
 //                               String staticMethodName, JCTree.JCExpression... params) {
-//        jcStatements.append(treeMaker.VarDef(treeMaker.Modifiers(Flags.PARAMETER), typeNode.toName(name),
+//        jcStatements.inject(treeMaker.VarDef(treeMaker.Modifiers(Flags.PARAMETER), typeNode.toName(name),
 //                genTypeRef(typeNode, typeClass.getName()),
 //                treeMaker.Apply(List.nil(), treeMaker.Select(
 //                        genTypeRef(typeNode, invokedClass.getName()), typeNode.toName(staticMethodName)), List.from(params))));
@@ -49,20 +49,20 @@ class BlockBuilder {
 //    }
 //
 //    public StatementBuilder appendVar(Class<?> typeClass, String name, JCTree.JCExpression init) {
-//        jcStatements.append(treeMaker.VarDef(treeMaker.Modifiers(Flags.PARAMETER), typeNode.toName(name),
+//        jcStatements.inject(treeMaker.VarDef(treeMaker.Modifiers(Flags.PARAMETER), typeNode.toName(name),
 //                genTypeRef(typeNode, typeClass.getName()), init));
 //        return this;
 //    }
 //
 //    public StatementBuilder appendVar(JCTree.JCTypeApply typeApply, String name, JCTree.JCExpression init) {
-//        jcStatements.append(treeMaker.VarDef(treeMaker.Modifiers(Flags.PARAMETER), typeNode.toName(name), typeApply, init));
+//        jcStatements.inject(treeMaker.VarDef(treeMaker.Modifiers(Flags.PARAMETER), typeNode.toName(name), typeApply, init));
 //        return this;
 //    }
 //
 //    public StatementBuilder appendStaticMethodInvoke(Class<?> typeClass, String name, JCTree.JCExpression... params) {
 //        JCTree.JCExpression methodRef = treeMaker.Select(genTypeRef(typeNode, typeClass.getName()),
 //                typeNode.toName(name));
-//        jcStatements.append(treeMaker.Exec(treeMaker.Apply(List.nil(),
+//        jcStatements.inject(treeMaker.Exec(treeMaker.Apply(List.nil(),
 //                methodRef, List.from(params))));
 //        return this;
 //    }
@@ -70,19 +70,19 @@ class BlockBuilder {
 //    public StatementBuilder appendStaticMethodInvoke(String varName, String name, JCTree.JCExpression... params) {
 //        JCTree.JCExpression methodRef = treeMaker.Select(treeMaker.Ident(typeNode.toName(varName)),
 //                typeNode.toName(name));
-//        jcStatements.append(treeMaker.Exec(treeMaker.Apply(List.nil(),
+//        jcStatements.inject(treeMaker.Exec(treeMaker.Apply(List.nil(),
 //                methodRef, List.from(params))));
 //        return this;
 //    }
 //
 //    public StatementBuilder appendInstanceMethodInvoke(String name, JCTree.JCExpression... params) {
-//        jcStatements.append(treeMaker.Exec(treeMaker.Apply(List.nil(),
+//        jcStatements.inject(treeMaker.Exec(treeMaker.Apply(List.nil(),
 //                treeMaker.Ident(typeNode.toName(name)), List.from(params))));
 //        return this;
 //    }
 //
 //    public StatementBuilder appendVar(String typeClassName, String name, JCTree.JCExpression init) {
-//        jcStatements.append(treeMaker.VarDef(treeMaker.Modifiers(Flags.PARAMETER), typeNode.toName(name),
+//        jcStatements.inject(treeMaker.VarDef(treeMaker.Modifiers(Flags.PARAMETER), typeNode.toName(name),
 //                treeMaker.Ident(typeNode.toName(typeClassName)), init));
 //        return this;
 //    }
@@ -91,7 +91,7 @@ class BlockBuilder {
 //        JCTree.JCExpression invokeRef = treeMaker.Select(treeMaker.Ident(typeNode.toName(varName)), typeNode.toName(varMethodName));
 //        JCTree.JCMethodInvocation returnInv = treeMaker.Apply(List.nil(), invokeRef, List.from(params));
 //
-//        jcStatements.append(treeMaker.Return(returnInv));
+//        jcStatements.inject(treeMaker.Return(returnInv));
 //        return this;
 //    }
 //
@@ -99,17 +99,17 @@ class BlockBuilder {
 //        JCTree.JCExpression invokeRef = treeMaker.Select(genTypeRef(typeNode, clazz.getName()), typeNode.toName(methodName));
 //        JCTree.JCMethodInvocation returnInv = treeMaker.Apply(List.nil(), invokeRef, List.from(params));
 //
-//        jcStatements.append(treeMaker.Return(returnInv));
+//        jcStatements.inject(treeMaker.Return(returnInv));
 //        return this;
 //    }
 //
 //    public StatementBuilder appendReturn(String varName) {
-//        jcStatements.append(treeMaker.Return(treeMaker.Ident(typeNode.toName(varName))));
+//        jcStatements.inject(treeMaker.Return(treeMaker.Ident(typeNode.toName(varName))));
 //        return this;
 //    }
 //
 //    public StatementBuilder appendReturn(JCTree.JCExpression expression) {
-//        jcStatements.append(treeMaker.Return(expression));
+//        jcStatements.inject(treeMaker.Return(expression));
 //        return this;
 //    }
 //

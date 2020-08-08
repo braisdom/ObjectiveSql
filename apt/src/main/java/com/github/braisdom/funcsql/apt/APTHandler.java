@@ -2,6 +2,7 @@ package com.github.braisdom.funcsql.apt;
 
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
+import com.sun.tools.javac.util.List;
 import com.sun.tools.javac.util.Name;
 import com.sun.tools.javac.util.Names;
 
@@ -9,7 +10,7 @@ import javax.annotation.processing.Messager;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 
-public class APTHandler {
+public final class APTHandler {
 
     private final JCTree.JCClassDecl classDecl;
     private final Element element;
@@ -18,7 +19,7 @@ public class APTHandler {
     private final Names names;
     private final Messager messager;
 
-    public APTHandler(JCTree.JCClassDecl classDecl, Element element, JCTree ast, TreeMaker treeMaker,
+    APTHandler(JCTree.JCClassDecl classDecl, Element element, JCTree ast, TreeMaker treeMaker,
                       Names names, Messager messager) {
         this.classDecl = classDecl;
         this.element = element;
@@ -56,8 +57,12 @@ public class APTHandler {
         return typeRef(clazz.getName());
     }
 
-    public void append(JCTree.JCVariableDecl variableDecl) {
+    public void inject(JCTree.JCVariableDecl variableDecl) {
         classDecl.defs = classDecl.defs.append(variableDecl);
+    }
+
+    public void inject(JCTree.JCMethodDecl methodDecl) {
+        classDecl.defs = classDecl.defs.append(methodDecl);
     }
 
     public JCTree.JCExpression typeRef(String complexName) {
@@ -106,19 +111,25 @@ public class APTHandler {
         return e;
     }
 
-    public static JCTree.JCExpression varRef(APTHandler handler, String name) {
-        TreeMaker treeMaker = handler.treeMaker;
-        return treeMaker.Ident(handler.toName(name));
+    public JCTree.JCExpression staticMethodCall(Class<?> clazz, String methodName, JCTree.JCExpression... params) {
+        return treeMaker.Apply(List.nil(), treeMaker.Select(typeRef(clazz.getName()), toName(methodName)), List.from(params));
     }
 
-    public static JCTree.JCExpression classRef(APTHandler handler, String name) {
-        TreeMaker treeMaker = handler.getTreeMaker();
-        return treeMaker.Select(treeMaker.Ident(handler.toName(name)), handler.toName("class"));
+    public JCTree.JCExpression newVar(Class<?> clazz, String methodName, JCTree.JCExpression... params) {
+        return treeMaker.Apply(List.nil(), treeMaker.Select(
+                typeRef(clazz.getName()), toName(methodName)), List.from(params));
     }
 
-    public static JCTree.JCExpression classRef(APTHandler handler, Class<?> clazz) {
-        TreeMaker treeMaker = handler.getTreeMaker();
-        return treeMaker.Select(handler.typeRef(clazz), handler.toName("class"));
+    public JCTree.JCExpression varRef(String name) {
+        return treeMaker.Ident(toName(name));
+    }
+
+    public JCTree.JCExpression classRef(String name) {
+        return treeMaker.Select(treeMaker.Ident(toName(name)), toName("class"));
+    }
+
+    public JCTree.JCExpression classRef(Class<?> clazz) {
+        return treeMaker.Select(typeRef(clazz), toName("class"));
     }
 
 }

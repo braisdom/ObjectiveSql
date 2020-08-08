@@ -34,7 +34,7 @@ public class QueryMethodCodeGenerator extends JavacAnnotationHandler<Queryable> 
 //        blockBuilder.appendVar(treeMaker.TypeApply(genTypeRef(typeNode, Query.class.getName()),
 //                List.of(treeMaker.Ident(typeNode.toName(typeNode.getName())))), "query",
 //                treeMaker.Apply(List.nil(), treeMaker.Ident(typeNode.toName("createQuery")), List.nil()));
-//        blockBuilder.append(treeMaker.Exec(treeMaker.Apply(List.nil(), treeMaker.Select(varRef(typeNode, "query"),
+//        blockBuilder.inject(treeMaker.Exec(treeMaker.Apply(List.nil(), treeMaker.Select(varRef(typeNode, "query"),
 //                typeNode.toName("where")), List.of(treeMaker.Literal(String.format("%s = ?",fieldColumnName)),
 //                varRef(typeNode, "value")))));
 //        blockBuilder.appendReturn("query", "execute");
