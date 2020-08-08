@@ -7,9 +7,13 @@ import com.github.braisdom.funcsql.apt.JavacAnnotationHandler;
 import com.github.braisdom.funcsql.apt.MethodBuilder;
 import com.github.braisdom.funcsql.apt.StatementBuilder;
 import com.sun.tools.javac.code.Flags;
+import com.sun.tools.javac.code.TypeTag;
 import com.sun.tools.javac.tree.JCTree;
+import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.List;
 import org.mangosdk.spi.ProviderFor;
+
+import java.sql.SQLException;
 
 @ProviderFor(JavacAnnotationHandler.class)
 public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel>{
@@ -18,6 +22,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
     public void handle(DomainModel annotation, JCTree ast, APTHandler handler) {
         handleCreateQueryMethod(handler);
         handleCreatePersistenceMethod(handler);
+        handleSaveMethod(handler);
     }
 
     private void handleCreateQueryMethod(APTHandler handler) {
@@ -49,6 +54,24 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 .addStatements(statementBuilder.build())
                 .setReturnType(Persistence.class, handler.typeRef(handler.getClassName()))
                 .build("createPersistence", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
+    }
+
+    private void handleSaveMethod(APTHandler handler) {
+        MethodBuilder methodBuilder = handler.createMethodBuilder();
+        TreeMaker treeMaker = handler.getTreeMaker();
+        StatementBuilder statementBuilder = handler.createBlockBuilder();
+
+        statementBuilder.append(handler.newGenericsType(Persistence.class, handler.getClassName()), "persistence",
+                "createPersistence");
+
+        statementBuilder.append("persistence", "save",
+                handler.varRef("this"), handler.varRef("skipValidation"));
+
+        handler.inject(methodBuilder
+                .addStatements(statementBuilder.build())
+                .addParameter("skipValidation", treeMaker.TypeIdent(TypeTag.BOOLEAN))
+                .setThrowsClauses(SQLException.class)
+                .build("save", Flags.PUBLIC | Flags.FINAL));
     }
 
 //    @Override
