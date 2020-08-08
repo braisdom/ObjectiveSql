@@ -7,7 +7,7 @@ import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
 import org.mangosdk.spi.ProviderFor;
 
-//import static com.github.braisdom.funcsql.generator.BlockBuilder.varRef;
+//import static com.github.braisdom.funcsql.generator.StatementBuilder.varRef;
 //import static com.github.braisdom.funcsql.generator.MethodBuilder.createParameter;
 //import static lombok.javac.handlers.JavacHandlerUtil.genTypeRef;
 //import static lombok.javac.handlers.JavacHandlerUtil.injectMethod;
@@ -28,7 +28,7 @@ public class QueryMethodCodeGenerator extends JavacAnnotationHandler<Queryable> 
 //        JavacTreeMaker treeMaker = typeNode.getTreeMaker();
 //        JCTree.JCVariableDecl field = (JCTree.JCVariableDecl) fieldNode.get();
 //
-//        BlockBuilder blockBuilder = BlockBuilder.newBlock(typeNode.getTreeMaker(), typeNode);
+//        StatementBuilder blockBuilder = StatementBuilder.newBlock(typeNode.getTreeMaker(), typeNode);
 //        String fieldColumnName = WordUtil.underscore(field.getName().toString());
 //        JCTree.JCVariableDecl valueVar = createParameter(typeNode, field.vartype, "value");
 //        blockBuilder.appendVar(treeMaker.TypeApply(genTypeRef(typeNode, Query.class.getName()),

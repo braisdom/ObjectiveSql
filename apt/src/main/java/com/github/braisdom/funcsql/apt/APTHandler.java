@@ -32,8 +32,8 @@ public class APTHandler {
         return new MethodBuilder(this);
     }
 
-    public BlockBuilder createBlockBuilder() {
-        return new BlockBuilder(this);
+    public StatementBuilder createBlockBuilder() {
+        return new StatementBuilder(this);
     }
 
     public JCTree get() {
@@ -97,7 +97,7 @@ public class APTHandler {
         JCTree.JCExpression e = null;
         if (elem1 != null) e = treeMaker.Ident(toName(elem1));
         if (elem2 != null) e = e == null ? treeMaker.Ident(toName(elem2)) : treeMaker.Select(e, toName(elem2));
-        for (int i = 0 ; i < elems.length ; i++) {
+        for (int i = 0; i < elems.length; i++) {
             e = e == null ? treeMaker.Ident(toName(elems[i])) : treeMaker.Select(e, toName(elems[i]));
         }
 
@@ -105,4 +105,20 @@ public class APTHandler {
 
         return e;
     }
+
+    public static JCTree.JCExpression varRef(APTHandler handler, String name) {
+        TreeMaker treeMaker = handler.treeMaker;
+        return treeMaker.Ident(handler.toName(name));
+    }
+
+    public static JCTree.JCExpression classRef(APTHandler handler, String name) {
+        TreeMaker treeMaker = handler.getTreeMaker();
+        return treeMaker.Select(treeMaker.Ident(handler.toName(name)), handler.toName("class"));
+    }
+
+    public static JCTree.JCExpression classRef(APTHandler handler, Class<?> clazz) {
+        TreeMaker treeMaker = handler.getTreeMaker();
+        return treeMaker.Select(handler.typeRef(clazz), handler.toName("class"));
+    }
+
 }

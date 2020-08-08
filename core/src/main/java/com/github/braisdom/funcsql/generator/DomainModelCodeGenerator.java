@@ -116,7 +116,7 @@ public class DomainModelCodeGenerator  {
 //
 //    // public final void save() throws SQLException {
 //    private JCTree.JCMethodDecl handleSave2Method(JavacTreeMaker treeMaker, APTHandler typeNode) {
-//        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
+//        StatementBuilder blockBuilder = StatementBuilder.newBlock(treeMaker, typeNode);
 //
 //        // this.save(false);
 //        blockBuilder.appendInstanceMethodInvoke("save", treeMaker.Literal(false));
@@ -131,7 +131,7 @@ public class DomainModelCodeGenerator  {
 //
 //    // public final void save(boolean skipValidation) throws SQLException {...}
 //    private JCTree.JCMethodDecl handleSaveMethod(JavacTreeMaker treeMaker, APTHandler typeNode) {
-//        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
+//        StatementBuilder blockBuilder = StatementBuilder.newBlock(treeMaker, typeNode);
 //        JCVariableDecl parameter = createParameter(typeNode, treeMaker.TypeIdent(CTC_BOOLEAN), "skipValidation");
 //
 //        // PersistenceFactory persistenceFactory = Database.getPersistenceFactory();
@@ -178,7 +178,7 @@ public class DomainModelCodeGenerator  {
 //    }
 //
 //    private JCTree.JCMethodDecl handleCreatePersistenceMethod(JavacTreeMaker treeMaker, APTHandler typeNode) {
-//        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
+//        StatementBuilder blockBuilder = StatementBuilder.newBlock(treeMaker, typeNode);
 //
 //        // PersistenceFactory persistenceFactory = Database.getPersistenceFactory();
 //        blockBuilder.appendVar(PersistenceFactory.class, "persistenceFactory",
@@ -202,7 +202,7 @@ public class DomainModelCodeGenerator  {
 //    // public static final RelationshipTest.TestDomainModel create(RelationshipTest.TestDomainModel dirtyObject,
 //    //                          boolean skipValidation) throws SQLException {...}
 //    private JCTree.JCMethodDecl handleCreateMethod(JavacTreeMaker treeMaker, APTHandler typeNode) {
-//        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
+//        StatementBuilder blockBuilder = StatementBuilder.newBlock(treeMaker, typeNode);
 //        Name modelClassName = typeNode.toName(typeNode.getName());
 //        JCVariableDecl dirtyObjectVar = createParameter(typeNode, treeMaker.Ident(modelClassName), "dirtyObject");
 //        JCVariableDecl skipValidationVar = createParameter(typeNode, treeMaker.TypeIdent(CTC_BOOLEAN), "skipValidation");
@@ -231,7 +231,7 @@ public class DomainModelCodeGenerator  {
 //    // public static final RelationshipTest.TestDomainModel create(RelationshipTest.TestDomainModel dirtyObject)
 //    //          throws SQLException {
 //    private JCTree.JCMethodDecl handleCreate2Method(JavacTreeMaker treeMaker, APTHandler typeNode) {
-//        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
+//        StatementBuilder blockBuilder = StatementBuilder.newBlock(treeMaker, typeNode);
 //        Name modelClassName = typeNode.toName(typeNode.getName());
 //        JCVariableDecl dirtyObjectVar = createParameter(typeNode, treeMaker.Ident(modelClassName), "dirtyObject");
 //
@@ -250,7 +250,7 @@ public class DomainModelCodeGenerator  {
 //
 //    // public static final int[] create(RelationshipTest.TestDomainModel[] dirtyObjects) throws SQLException {...}
 //    private JCTree.JCMethodDecl handleCreateArray2Method(JavacTreeMaker treeMaker, APTHandler typeNode) {
-//        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
+//        StatementBuilder blockBuilder = StatementBuilder.newBlock(treeMaker, typeNode);
 //        Name modelClassName = typeNode.toName(typeNode.getName());
 //        JCVariableDecl dirtyArrayObjectVar = createParameter(typeNode, treeMaker.TypeArray(treeMaker.Ident(modelClassName)),
 //                "dirtyObjects");
@@ -270,7 +270,7 @@ public class DomainModelCodeGenerator  {
 //
 //    // public static final int[] create(RelationshipTest.TestDomainModel[] dirtyObjects, boolean skipValidation) throws SQLException {
 //    private JCTree.JCMethodDecl handleCreateArrayMethod(JavacTreeMaker treeMaker, APTHandler typeNode) {
-//        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
+//        StatementBuilder blockBuilder = StatementBuilder.newBlock(treeMaker, typeNode);
 //        Name modelClassName = typeNode.toName(typeNode.getName());
 //        JCVariableDecl dirtyArrayObjectVar =  createParameter(typeNode,
 //                treeMaker.TypeArray(treeMaker.Ident(modelClassName)), "dirtyObjects");
@@ -300,7 +300,7 @@ public class DomainModelCodeGenerator  {
 //
 //    // public static final int update(Object id, RelationshipTest.TestDomainModel dirtyObject, boolean skipValidation) throws SQLException {
 //    private JCTree.JCMethodDecl handleUpdateMethod(JavacTreeMaker treeMaker, APTHandler typeNode) {
-//        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
+//        StatementBuilder blockBuilder = StatementBuilder.newBlock(treeMaker, typeNode);
 //        Name modelClassName = typeNode.toName(typeNode.getName());
 //        JCVariableDecl idVar = createParameter(typeNode, genJavaLangTypeRef(typeNode, Object.class.getSimpleName()), "id");
 //        JCVariableDecl dirtyObjectVar = createParameter(typeNode, treeMaker.Ident(modelClassName), "dirtyObject");
@@ -329,7 +329,7 @@ public class DomainModelCodeGenerator  {
 //
 //    // public static final int update(Object id, RelationshipTest.TestDomainModel dirtyObject) throws SQLException {...}
 //    private JCTree.JCMethodDecl handleUpdate2Method(JavacTreeMaker treeMaker, APTHandler typeNode) {
-//        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
+//        StatementBuilder blockBuilder = StatementBuilder.newBlock(treeMaker, typeNode);
 //        JCVariableDecl idVar = createParameter(typeNode,
 //                genJavaLangTypeRef(typeNode, Object.class.getSimpleName()), "id");
 //        JCVariableDecl dirtyObjectVar = createParameter(typeNode,
@@ -354,7 +354,7 @@ public class DomainModelCodeGenerator  {
 //
 //    // public static final int update(String updates, String predication) throws SQLException {...}
 //    private JCTree.JCMethodDecl handleUpdate3Method(JavacTreeMaker treeMaker, APTHandler typeNode) {
-//        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
+//        StatementBuilder blockBuilder = StatementBuilder.newBlock(treeMaker, typeNode);
 //        JCVariableDecl updatesVar = createParameter(typeNode,
 //                genJavaLangTypeRef(typeNode, String.class.getSimpleName()), "updates");
 //        JCVariableDecl predicationVar = createParameter(typeNode,
@@ -379,7 +379,7 @@ public class DomainModelCodeGenerator  {
 //
 //    // public static final int destroy(Object id) throws SQLException {...}
 //    private JCTree.JCMethodDecl handleDestroyMethod(JavacTreeMaker treeMaker, APTHandler typeNode) {
-//        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
+//        StatementBuilder blockBuilder = StatementBuilder.newBlock(treeMaker, typeNode);
 //        JCVariableDecl idVar = createParameter(typeNode,
 //                genJavaLangTypeRef(typeNode, Object.class.getSimpleName()), "id");
 //
@@ -401,7 +401,7 @@ public class DomainModelCodeGenerator  {
 //
 //    // public static final int destroy(String predication) throws SQLException {...}
 //    private JCTree.JCMethodDecl handleDestroy2Method(JavacTreeMaker treeMaker, APTHandler typeNode) {
-//        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
+//        StatementBuilder blockBuilder = StatementBuilder.newBlock(treeMaker, typeNode);
 //        JCVariableDecl predicationVar = createParameter(typeNode,
 //                genJavaLangTypeRef(typeNode, String.class.getSimpleName()), "predication");
 //
@@ -423,7 +423,7 @@ public class DomainModelCodeGenerator  {
 //
 //    // public static final int execute(String sql) throws SQLException {...}
 //    private JCTree.JCMethodDecl handleExecuteMethod(JavacTreeMaker treeMaker, APTHandler typeNode) {
-//        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
+//        StatementBuilder blockBuilder = StatementBuilder.newBlock(treeMaker, typeNode);
 //        JCVariableDecl sqlVar = createParameter(typeNode,
 //                genJavaLangTypeRef(typeNode, String.class.getSimpleName()), "sql");
 //
@@ -443,7 +443,7 @@ public class DomainModelCodeGenerator  {
 //
 //    // public static final RelationshipTest.TestRelativeModel newInstanceFrom(Map source) {...}
 //    private JCTree.JCMethodDecl handleNewInstanceFromMethod(JavacTreeMaker treeMaker, APTHandler typeNode) {
-//        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
+//        StatementBuilder blockBuilder = StatementBuilder.newBlock(treeMaker, typeNode);
 //        JCVariableDecl sourceVar = createParameter(typeNode,
 //                genTypeRef(typeNode, Map.class.getName()), "source");
 //
@@ -463,7 +463,7 @@ public class DomainModelCodeGenerator  {
 //
 //    // public static final RelationshipTest.TestRelativeModel newInstanceFrom(Map source, boolean underline) {...}
 //    private JCTree.JCMethodDecl handleNewInstanceFrom2Method(JavacTreeMaker treeMaker, APTHandler typeNode) {
-//        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
+//        StatementBuilder blockBuilder = StatementBuilder.newBlock(treeMaker, typeNode);
 //        JCVariableDecl sourceVar = createParameter(typeNode,
 //                genTypeRef(typeNode, Map.class.getName()), "source");
 //        JCVariableDecl underlineVar = createParameter(typeNode,
@@ -495,7 +495,7 @@ public class DomainModelCodeGenerator  {
 //        JCVariableDecl sqlVar = MethodBuilder.createParameter(typeNode, String.class, "sql");
 //        JCVariableDecl paramsVar = createParameter(typeNode, Flags.PARAMETER | Flags.VARARGS,
 //                treeMaker.TypeArray(genTypeRef(typeNode, Object.class.getName())), "params");
-//        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
+//        StatementBuilder blockBuilder = StatementBuilder.newBlock(treeMaker, typeNode);
 //
 //        JCExpression domainModelClassRef = treeMaker.Select(treeMaker.Ident(typeNode.toName(typeNode.getName())),
 //                typeNode.toName("class"));
@@ -515,7 +515,7 @@ public class DomainModelCodeGenerator  {
 //
 //    // public static final RelationshipTest.TestRelativeModel newInstanceFrom(Map source, boolean underline) {...}
 //    private JCTree.JCMethodDecl handleValidateMethod(JavacTreeMaker treeMaker, APTHandler typeNode) {
-//        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
+//        StatementBuilder blockBuilder = StatementBuilder.newBlock(treeMaker, typeNode);
 //        String violationClassName = Validator.Violation.class.getName().replace("$", ".");
 //
 //        blockBuilder.appendVar(Validator.class, "validator", Table.class, "getValidator");
@@ -532,7 +532,7 @@ public class DomainModelCodeGenerator  {
 //
 //    // public static final int count(String predicate, Object... params) throws SQLException {...}
 //    private JCTree.JCMethodDecl handleCountMethod(JavacTreeMaker treeMaker, APTHandler typeNode) {
-//        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
+//        StatementBuilder blockBuilder = StatementBuilder.newBlock(treeMaker, typeNode);
 //        JCVariableDecl predicateVar = createParameter(typeNode,
 //                genTypeRef(typeNode, String.class.getName()), "predicate");
 //        JCVariableDecl paramsVar = createParameter(typeNode, Flags.PARAMETER | Flags.VARARGS,
@@ -555,7 +555,7 @@ public class DomainModelCodeGenerator  {
 //
 //    // public final static int count(String predicate) throws SQLException {...}
 //    private JCTree.JCMethodDecl handleFindFirstMethod(JavacTreeMaker treeMaker, APTHandler typeNode) {
-//        BlockBuilder blockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
+//        StatementBuilder blockBuilder = StatementBuilder.newBlock(treeMaker, typeNode);
 //        JCVariableDecl predicateVar = createParameter(typeNode,
 //                genTypeRef(typeNode, String.class.getName()), "predicate");
 //        JCVariableDecl paramsVar = createParameter(typeNode, Flags.PARAMETER | Flags.VARARGS,
@@ -581,7 +581,7 @@ public class DomainModelCodeGenerator  {
 //    }
 //
 //    private void addPersistenceRefStatement(JavacTreeMaker treeMaker, APTHandler typeNode,
-//                                            BlockBuilder blockBuilder) {
+//                                            StatementBuilder blockBuilder) {
 //        // PersistenceFactory persistenceFactory = Database.getPersistenceFactory();
 //        blockBuilder.appendVar(PersistenceFactory.class, "persistenceFactory",
 //                Database.class, "getPersistenceFactory");
@@ -638,7 +638,7 @@ public class DomainModelCodeGenerator  {
 //                .build());
 //
 //        // return Collections.unmodifiableMap(this.rawAttributes);
-//        BlockBuilder getRawAttributesBlockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
+//        StatementBuilder getRawAttributesBlockBuilder = StatementBuilder.newBlock(treeMaker, typeNode);
 //        getRawAttributesBlockBuilder.appendReturn(Collections.class, "unmodifiableMap",
 //                treeMaker.Select(varRef(typeNode, "this"),
 //                        typeNode.toName("rawAttributes")));
@@ -651,7 +651,7 @@ public class DomainModelCodeGenerator  {
 //
 //        // return this.rawAttributes.get(name);
 //        JCVariableDecl nameVar = MethodBuilder.createParameter(typeNode, String.class, "name");
-//        BlockBuilder getRawAttributeBlockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
+//        StatementBuilder getRawAttributeBlockBuilder = StatementBuilder.newBlock(treeMaker, typeNode);
 //        getRawAttributeBlockBuilder.appendReturn("rawAttributes", "get", varRef(typeNode, "name"));
 //        injectMethod(typeNode, MethodBuilder.newMethod(treeMaker, typeNode)
 //                .withModifiers(Flags.PUBLIC | Flags.FINAL)
@@ -663,7 +663,7 @@ public class DomainModelCodeGenerator  {
 //
 //        // this.rawAttributes.put(name, value);
 //        JCVariableDecl valueVar = MethodBuilder.createParameter(typeNode, Object.class, "value");
-//        BlockBuilder setRawAttributeBlockBuilder = BlockBuilder.newBlock(treeMaker, typeNode);
+//        StatementBuilder setRawAttributeBlockBuilder = StatementBuilder.newBlock(treeMaker, typeNode);
 //        JCTree.JCExpression putRef = treeMaker.Select(treeMaker.Ident(typeNode.toName("rawAttributes")),
 //                typeNode.toName("put"));
 //        setRawAttributeBlockBuilder.append(treeMaker.Exec(treeMaker.Apply(List.nil(), putRef,

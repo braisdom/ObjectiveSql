@@ -17,9 +17,9 @@ public class MethodBuilder {
     private JCTree.JCExpression returnType;
     private List<JCTree.JCExpression> throwsClauses;
 
-    MethodBuilder(APTHandler node) {
-        this.treeMaker = node.getTreeMaker();
-        this.node = node;
+    MethodBuilder(APTHandler handler) {
+        this.treeMaker = handler.getTreeMaker();
+        this.node = handler;
 
         this.parameters = new ArrayList<>();
     }
@@ -32,12 +32,26 @@ public class MethodBuilder {
         return this;
     }
 
+    public MethodBuilder setReturnType(Class<?> typeClass, Class<?>... genTypeClass) {
+        JCTree.JCExpression[] genTypes = Arrays.stream(genTypeClass).map(exceptionClass ->
+                treeMaker.Throw(node.typeRef(exceptionClass.getName())).getExpression())
+                .toArray(JCTree.JCExpression[]::new);
+        returnType = treeMaker.TypeApply(node.typeRef(typeClass), List.from(genTypes));
+        return this;
+    }
+
+    public MethodBuilder setReturnType(Class<?> typeClass, JCTree.JCExpression... genTypeClass) {
+        returnType = treeMaker.TypeApply(node.typeRef(typeClass), List.from(genTypeClass));
+        return this;
+    }
+
     public MethodBuilder setReturnType(JCTree.JCExpression type, JCTree.JCExpression... genType) {
         returnType = treeMaker.TypeApply(type, List.from(genType));
         return this;
     }
 
-    public MethodBuilder createParameter(String name, JCTree.JCExpression type, JCTree.JCExpression init, JCTree.JCExpression... genType) {
+    public MethodBuilder createParameter(String name, JCTree.JCExpression type, JCTree.JCExpression init,
+                                         JCTree.JCExpression... genType) {
         treeMaker.TypeApply(type, List.from(genType));
         parameters.add(treeMaker.VarDef(treeMaker.Modifiers(Flags.PARAMETER), node.toName(name), type, init));
         return this;
