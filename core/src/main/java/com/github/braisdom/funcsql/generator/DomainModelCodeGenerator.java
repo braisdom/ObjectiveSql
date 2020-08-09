@@ -30,6 +30,8 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
         handleExecuteMethod(handler);
         handleQueryMethod(handler);
         handleQuery2Method(handler);
+        handleQuery3Method(handler);
+        handleCountMethod(handler);
     }
 
     private void handleCreateQueryMethod(APTHandler handler) {
@@ -184,19 +186,14 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
 
     private void handleExecuteMethod(APTHandler handler) {
         MethodBuilder methodBuilder = handler.createMethodBuilder();
-        TreeMaker treeMaker = handler.getTreeMaker();
-        StatementBuilder statementBuilder = handler.createBlockBuilder();
 
-        statementBuilder.append(handler.newGenericsType(Persistence.class, handler.getClassName()), "persistence",
-                "createPersistence");
-
-        methodBuilder.setReturnStatement("persistence", "execute",
-                handler.varRef("sql"));
+        methodBuilder.setReturnStatement(Table.class, "execute", handler.classRef(handler.getClassName()),
+                handler.varRef("sql"), handler.varRef("params"));
 
         handler.inject(methodBuilder
-                .setReturnType(treeMaker.TypeIdent(TypeTag.INT))
-                .addStatements(statementBuilder.build())
+                .setReturnType(handler.getTreeMaker().TypeIdent(TypeTag.INT))
                 .addParameter("sql", handler.typeRef(String.class))
+                .addVarargsParameter("params", handler.typeRef(Object.class))
                 .setThrowsClauses(SQLException.class)
                 .build("execute", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
@@ -238,6 +235,35 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 .setThrowsClauses(SQLException.class)
                 .setReturnType(java.util.List.class, handler.typeRef(handler.getClassName()))
                 .build("query", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
+    }
+
+    private void handleQuery3Method(APTHandler handler) {
+        MethodBuilder methodBuilder = handler.createMethodBuilder();
+        StatementBuilder statementBuilder = handler.createBlockBuilder();
+
+        methodBuilder.setReturnStatement(Table.class, "query", handler.classRef(handler.getClassName()),
+                handler.varRef("sql"), handler.varRef("params"));
+        handler.inject(methodBuilder
+                .addStatements(statementBuilder.build())
+                .addParameter("sql", handler.typeRef(String.class))
+                .addVarargsParameter("params", handler.typeRef(Object.class))
+                .setThrowsClauses(SQLException.class)
+                .setReturnType(java.util.List.class, handler.typeRef(handler.getClassName()))
+                .build("queryBySql", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
+    }
+
+    private void handleCountMethod(APTHandler handler) {
+        MethodBuilder methodBuilder = handler.createMethodBuilder();
+
+        methodBuilder.setReturnStatement(Table.class, "count", handler.classRef(handler.getClassName()),
+                handler.varRef("sql"), handler.varRef("params"));
+
+        handler.inject(methodBuilder
+                .addParameter("sql", handler.typeRef(String.class))
+                .addVarargsParameter("params", handler.typeRef(Object.class))
+                .setThrowsClauses(SQLException.class)
+                .setReturnType(handler.getTreeMaker().TypeIdent(TypeTag.INT))
+                .build("count", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
 
 //    @Override

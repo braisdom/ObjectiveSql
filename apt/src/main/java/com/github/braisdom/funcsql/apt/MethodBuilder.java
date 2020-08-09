@@ -71,6 +71,14 @@ public class MethodBuilder {
         return this;
     }
 
+    public MethodBuilder setReturnStatement(Class clazz, String methodName, JCExpression... params) {
+        JCTree.JCExpression methodRef = treeMaker.Select(handler.typeRef(clazz),
+                handler.toName(methodName));
+        this.returnStatement = treeMaker.Apply(List.nil(), methodRef, List.from(params));
+        return this;
+    }
+
+
     public MethodBuilder setReturnStatement(JCExpression returnStatement) {
         this.returnStatement = returnStatement;
         return this;
