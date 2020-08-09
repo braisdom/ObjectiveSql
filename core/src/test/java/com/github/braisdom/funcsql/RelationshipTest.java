@@ -12,7 +12,7 @@ import java.util.List;
 
 public class RelationshipTest {
 
-    @DomainModel
+    @DomainModel(primaryClass = Long.class, primaryColumnName = "test_id")
     public static class TestDomainModel {
 
         @Queryable

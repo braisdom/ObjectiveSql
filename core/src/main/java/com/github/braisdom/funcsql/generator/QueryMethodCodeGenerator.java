@@ -29,8 +29,8 @@ public class QueryMethodCodeGenerator extends JavacAnnotationHandler<Queryable> 
         methodBuilder.addParameter("value", field.vartype);
 
         statementBuilder.append(handler.newGenericsType(Query.class, handler.getClassName()),
-                "query", handler.getClassName(), "createQuery")
-                .append("query", "where",
+                "query", handler.getClassName(), "createQuery");
+        statementBuilder.append("query", "where",
                         List.of(treeMaker.Literal(String.format("%s = ?", fieldColumnName)), handler.varRef("value")));
 
         methodBuilder.setReturnStatement("query", "execute");

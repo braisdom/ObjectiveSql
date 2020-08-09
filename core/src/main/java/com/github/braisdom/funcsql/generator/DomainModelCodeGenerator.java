@@ -24,6 +24,10 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
         handleCreateMethod(handler);
         handleCreateArrayMethod(handler);
         handleUpdateMethod(annotationValues, handler);
+        handleDestroyMethod(annotationValues, handler);
+        handleDestroy2Method(handler);
+        handleExecuteMethod(handler);
+//        handleQueryMethod(handler);
     }
 
     private void handleCreateQueryMethod(APTHandler handler) {
@@ -119,7 +123,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
         MethodBuilder methodBuilder = handler.createMethodBuilder();
         TreeMaker treeMaker = handler.getTreeMaker();
         StatementBuilder statementBuilder = handler.createBlockBuilder();
-        DomainModel domainModel = (DomainModel) annotationValues.getInstance();
+        DomainModel domainModel = annotationValues.getAnnotationValue(DomainModel.class);
 
         statementBuilder.append(handler.newGenericsType(Persistence.class, handler.getClassName()), "persistence",
                 "createPersistence");
@@ -135,6 +139,83 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 .addParameter("skipValidation", treeMaker.TypeIdent(TypeTag.BOOLEAN))
                 .setThrowsClauses(SQLException.class)
                 .build("update", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
+    }
+
+    private void handleDestroyMethod(AnnotationValues annotationValues, APTHandler handler) {
+        MethodBuilder methodBuilder = handler.createMethodBuilder();
+        TreeMaker treeMaker = handler.getTreeMaker();
+        StatementBuilder statementBuilder = handler.createBlockBuilder();
+        DomainModel domainModel = null;
+
+        statementBuilder.append(handler.newGenericsType(Persistence.class, handler.getClassName()), "persistence",
+                "createPersistence");
+
+        methodBuilder.setReturnStatement("persistence", "delete",
+                handler.varRef("id"));
+
+        handler.inject(methodBuilder
+                .setReturnType(treeMaker.TypeIdent(TypeTag.INT))
+                .addStatements(statementBuilder.build())
+                .addParameter("id", handler.typeRef(domainModel.primaryClass()))
+                .setThrowsClauses(SQLException.class)
+                .build("destroy", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
+    }
+
+    private void handleDestroy2Method(APTHandler handler) {
+        MethodBuilder methodBuilder = handler.createMethodBuilder();
+        TreeMaker treeMaker = handler.getTreeMaker();
+        StatementBuilder statementBuilder = handler.createBlockBuilder();
+
+        statementBuilder.append(handler.newGenericsType(Persistence.class, handler.getClassName()), "persistence",
+                "createPersistence");
+
+        methodBuilder.setReturnStatement("persistence", "delete",
+                handler.varRef("predicate"));
+
+        handler.inject(methodBuilder
+                .setReturnType(treeMaker.TypeIdent(TypeTag.INT))
+                .addStatements(statementBuilder.build())
+                .addParameter("predicate", handler.typeRef(String.class))
+                .setThrowsClauses(SQLException.class)
+                .build("destroy", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
+    }
+
+    private void handleExecuteMethod(APTHandler handler) {
+        MethodBuilder methodBuilder = handler.createMethodBuilder();
+        TreeMaker treeMaker = handler.getTreeMaker();
+        StatementBuilder statementBuilder = handler.createBlockBuilder();
+
+        statementBuilder.append(handler.newGenericsType(Persistence.class, handler.getClassName()), "persistence",
+                "createPersistence");
+
+        methodBuilder.setReturnStatement("persistence", "execute",
+                handler.varRef("sql"));
+
+        handler.inject(methodBuilder
+                .setReturnType(treeMaker.TypeIdent(TypeTag.INT))
+                .addStatements(statementBuilder.build())
+                .addParameter("sql", handler.typeRef(String.class))
+                .setThrowsClauses(SQLException.class)
+                .build("execute", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
+    }
+
+    private void handleQueryMethod(APTHandler handler) {
+        MethodBuilder methodBuilder = handler.createMethodBuilder();
+        StatementBuilder statementBuilder = handler.createBlockBuilder();
+
+        statementBuilder.append(handler.newGenericsType(Query.class, handler.getClassName()), "query",
+                "createQuery");
+        statementBuilder.append("query", "where",
+                List.of(handler.varRef("predicate"), handler.varRef("params")));
+
+        methodBuilder.setReturnStatement("query", "execute");
+        handler.inject(methodBuilder
+                .addStatements(statementBuilder.build())
+                .addParameter("predicate", handler.typeRef(String.class))
+                .addVarargsParameter("params", handler.typeRef(Object.class))
+                .setThrowsClauses(SQLException.class)
+                .setReturnType(java.util.List.class, handler.typeRef(handler.getClassName()))
+                .build("query", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
 
 //    @Override
