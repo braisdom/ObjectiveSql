@@ -4,6 +4,7 @@ import com.github.braisdom.funcsql.*;
 import com.github.braisdom.funcsql.annotations.DomainModel;
 import com.github.braisdom.funcsql.apt.*;
 import com.github.braisdom.funcsql.apt.MethodBuilder;
+import com.github.braisdom.funcsql.relation.Relationship;
 import com.sun.tools.javac.code.Flags;
 import com.sun.tools.javac.code.TypeTag;
 import com.sun.tools.javac.tree.JCTree;
@@ -27,7 +28,8 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
         handleDestroyMethod(annotationValues, handler);
         handleDestroy2Method(handler);
         handleExecuteMethod(handler);
-//        handleQueryMethod(handler);
+        handleQueryMethod(handler);
+        handleQuery2Method(handler);
     }
 
     private void handleCreateQueryMethod(APTHandler handler) {
@@ -212,6 +214,26 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
         handler.inject(methodBuilder
                 .addStatements(statementBuilder.build())
                 .addParameter("predicate", handler.typeRef(String.class))
+                .addVarargsParameter("params", handler.typeRef(Object.class))
+                .setThrowsClauses(SQLException.class)
+                .setReturnType(java.util.List.class, handler.typeRef(handler.getClassName()))
+                .build("query", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
+    }
+
+    private void handleQuery2Method(APTHandler handler) {
+        MethodBuilder methodBuilder = handler.createMethodBuilder();
+        StatementBuilder statementBuilder = handler.createBlockBuilder();
+
+        statementBuilder.append(handler.newGenericsType(Query.class, handler.getClassName()), "query",
+                "createQuery");
+        statementBuilder.append("query", "where",
+                List.of(handler.varRef("predicate"), handler.varRef("params")));
+
+        methodBuilder.setReturnStatement("query", "execute", handler.varRef("relations"));
+        handler.inject(methodBuilder
+                .addStatements(statementBuilder.build())
+                .addParameter("predicate", handler.typeRef(String.class))
+                .addArrayParameter("relations", Relationship.class)
                 .addVarargsParameter("params", handler.typeRef(Object.class))
                 .setThrowsClauses(SQLException.class)
                 .setReturnType(java.util.List.class, handler.typeRef(handler.getClassName()))

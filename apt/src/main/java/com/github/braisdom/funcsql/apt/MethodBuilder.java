@@ -120,6 +120,11 @@ public class MethodBuilder {
         return this;
     }
 
+    public MethodBuilder addArrayParameter(String name, Class<?> clazz) {
+        addParameter(handler.toName(name), handler.newArrayType(clazz));
+        return this;
+    }
+
     public MethodBuilder addVarargsParameter(String name, Class typeClass) {
         addVarargsParameter(handler.toName(name), handler.typeRef(typeClass));
         return this;
@@ -132,7 +137,8 @@ public class MethodBuilder {
 
     public MethodBuilder addVarargsParameter(Name name, JCExpression type) {
         treeMaker.at(handler.get().pos);
-        parameters.add(treeMaker.VarDef(treeMaker.Modifiers(Flags.PARAMETER | Flags.VARARGS), name, type, null));
+        parameters.add(treeMaker.VarDef(treeMaker.Modifiers(Flags.PARAMETER | Flags.VARARGS),
+                name, treeMaker.TypeArray(type), null));
         return this;
     }
 
