@@ -145,7 +145,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
         MethodBuilder methodBuilder = handler.createMethodBuilder();
         TreeMaker treeMaker = handler.getTreeMaker();
         StatementBuilder statementBuilder = handler.createBlockBuilder();
-        DomainModel domainModel = null;
+        DomainModel domainModel = annotationValues.getAnnotationValue(DomainModel.class);
 
         statementBuilder.append(handler.newGenericsType(Persistence.class, handler.getClassName()), "persistence",
                 "createPersistence");
