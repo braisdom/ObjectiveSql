@@ -32,6 +32,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
         handleQuery2Method(handler);
         handleQuery3Method(handler);
         handleCountMethod(handler);
+        handleValidateMethod(handler);
     }
 
     private void handleCreateQueryMethod(APTHandler handler) {
@@ -252,6 +253,26 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 .build("queryBySql", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
 
+    private void handleQueryFirstMethod(APTHandler handler) {
+        MethodBuilder methodBuilder = handler.createMethodBuilder();
+        StatementBuilder statementBuilder = handler.createBlockBuilder();
+
+        statementBuilder.append(handler.newGenericsType(Query.class, handler.getClassName()), "query",
+                "createQuery");
+        statementBuilder.append("query", "where",
+                List.of(handler.varRef("predicate"), handler.varRef("params")));
+
+        methodBuilder.setReturnStatement("query", "execute", handler.varRef("relations"));
+        handler.inject(methodBuilder
+                .addStatements(statementBuilder.build())
+                .addParameter("predicate", handler.typeRef(String.class))
+                .addVarargsParameter("params", handler.typeRef(Object.class))
+                .setThrowsClauses(SQLException.class)
+                .setReturnType(java.util.List.class, handler.typeRef(handler.getClassName()))
+                .build("query", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
+    }
+
+
     private void handleCountMethod(APTHandler handler) {
         MethodBuilder methodBuilder = handler.createMethodBuilder();
 
@@ -264,6 +285,18 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 .setThrowsClauses(SQLException.class)
                 .setReturnType(handler.getTreeMaker().TypeIdent(TypeTag.INT))
                 .build("count", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
+    }
+
+    private void handleValidateMethod(APTHandler handler) {
+        MethodBuilder methodBuilder = handler.createMethodBuilder();
+
+        methodBuilder.setReturnStatement(Table.class, "validate",
+                handler.varRef("this"), handler.getTreeMaker().Literal(false));
+
+        handler.inject(methodBuilder
+                .setThrowsClauses(ValidationException.class)
+                .setReturnType(handler.newArrayType(Validator.Violation.class))
+                .build("validate", Flags.PUBLIC | Flags.FINAL));
     }
 
 //    @Override
@@ -796,11 +829,11 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
 //        blockBuilder.inject(treeMaker.Exec(treeMaker.Apply(List.nil(), treeMaker.Select(varRef(typeNode, "query"),
 //                typeNode.toName("where")), List.of(varRef(typeNode, "predicate"), varRef(typeNode, "params")))));
 //
-//        // return (RelationshipTest.TestDomainModel)query.findFirst(new Relationship[0]);
-//        blockBuilder.appendReturn("query", "findFirst");
+//        // return (RelationshipTest.TestDomainModel)query.queryFirst(new Relationship[0]);
+//        blockBuilder.appendReturn("query", "queryFirst");
 //        return MethodBuilder.newMethod(treeMaker, typeNode)
 //                .withModifiers(Flags.PUBLIC | Flags.STATIC | Flags.FINAL)
-//                .withName("findFirst")
+//                .withName("queryFirst")
 //                .withParameters(predicateVar, paramsVar)
 //                .withThrowsClauses(SQLException.class)
 //                .withReturnType(treeMaker.Ident(typeNode.toName(typeNode.getName())))

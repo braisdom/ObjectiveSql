@@ -39,7 +39,7 @@ public class DefaultQuery<T> extends AbstractQuery<T> {
     }
 
     @Override
-    public T findFirst(Relationship... relationships) throws SQLException {
+    public T queryFirst(Relationship... relationships) throws SQLException {
         List<T> results = execute(relationships);
         if (results.size() > 0)
             return results.get(0);

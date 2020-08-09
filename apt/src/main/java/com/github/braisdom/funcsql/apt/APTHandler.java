@@ -60,7 +60,8 @@ public final class APTHandler {
     }
 
     public JCExpression typeRef(Class clazz) {
-        return typeRef(clazz.getName());
+        String className = clazz.getName().replace("$", ".");
+        return typeRef(className);
     }
 
     public void inject(JCTree.JCVariableDecl variableDecl) {

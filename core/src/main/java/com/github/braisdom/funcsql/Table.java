@@ -92,13 +92,23 @@ public final class Table {
     }
 
     public static final void validate(Object bean) throws ValidationException {
+        validate(bean, true);
+    }
+
+    public static final Validator.Violation[] validate(Object bean, boolean throwException) throws ValidationException {
         Validator validator = getValidator();
         Validator.Violation[] violations = validator.validate(bean);
-        if (violations.length > 0)
+        if (violations.length > 0 && throwException)
             throw new ValidationException(violations);
+
+        return violations;
     }
 
     public static final void validate(Object[] beans) throws ValidationException {
+        validate(beans, true);
+    }
+
+    public static final Validator.Violation[] validate(Object[] beans, boolean throwException) throws ValidationException {
         Validator validator = getValidator();
         List<Validator.Violation> violationList = new ArrayList<>();
         for (Object bean : beans) {
@@ -106,8 +116,10 @@ public final class Table {
             if (violations.length > 0)
                 violationList.addAll(Arrays.asList(violations));
         }
-        if (violationList.size() > 0)
+        if (violationList.size() > 0 && throwException)
             throw new ValidationException(violationList.toArray(new Validator.Violation[]{}));
+
+        return violationList.toArray(new Validator.Violation[0]);
     }
 
     public static final <T> List<T> query(Class<T> domainModelClass, String sql, Object... params) throws SQLException {

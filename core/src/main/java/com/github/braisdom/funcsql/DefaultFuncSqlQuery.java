@@ -23,7 +23,7 @@ public class DefaultFuncSqlQuery<T> extends AbstractQuery<T>  {
     }
 
     @Override
-    public T findFirst(Relationship... relationships) throws SQLException {
+    public T queryFirst(Relationship... relationships) throws SQLException {
         return null;
     }
 

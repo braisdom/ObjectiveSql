@@ -59,8 +59,8 @@ public class QueryExample {
 //        Assert.assertEquals(members3.get(0).getRawAttribute("_name"), "Jonathan");
 //    }
 //
-//    private static void findFirst() throws SQLException {
-//        Domains.Member member = Domains.Member.findFirst("id = ?", 11);
+//    private static void queryFirst() throws SQLException {
+//        Domains.Member member = Domains.Member.queryFirst("id = ?", 11);
 //
 //        Assert.assertNotNull(member);
 //        Assert.assertEquals(member.getName(), "Willie");
@@ -80,6 +80,6 @@ public class QueryExample {
 //        countMember();
 //        rawQuery();
 //        queryByName();
-//        findFirst();
+//        queryFirst();
 //    }
 }
