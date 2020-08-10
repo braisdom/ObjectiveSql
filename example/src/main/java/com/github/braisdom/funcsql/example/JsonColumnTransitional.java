@@ -24,7 +24,7 @@ public class JsonColumnTransitional implements ColumnTransitional {
     public Object rising(DatabaseMetaData databaseMetaData, ResultSetMetaData resultSetMetaData,
                          Object object, DomainModelDescriptor domainModelDescriptor, String fieldName, Object fieldValue) {
         if(fieldValue != null)
-            return gson.fromJson(String.valueOf(fieldValue), domainModelDescriptor.getFieldTypeByFieldName(fieldName));
+            return gson.fromJson(String.valueOf(fieldValue), domainModelDescriptor.getFieldType(fieldName));
         return null;
     }
 }

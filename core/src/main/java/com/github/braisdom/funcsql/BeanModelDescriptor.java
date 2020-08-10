@@ -104,12 +104,7 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
     }
 
     @Override
-    public Class getFieldTypeByColumnName(String columnName) {
-        return columnToField.get(columnName).getType();
-    }
-
-    @Override
-    public Class getFieldTypeByFieldName(String fieldName) {
+    public Class getFieldType(String fieldName) {
         try {
             return domainModelClass.getDeclaredField(fieldName).getType();
         }catch (NoSuchFieldException ex) {
