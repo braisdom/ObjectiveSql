@@ -98,6 +98,11 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
     }
 
     @Override
+    public String getColumnName(String fieldName) {
+        return null;
+    }
+
+    @Override
     public String getFieldName(String fieldName) {
         Field field = columnToField.get(fieldName);
         return field == null ? null : field.getName();

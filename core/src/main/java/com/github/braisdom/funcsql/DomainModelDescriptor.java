@@ -25,6 +25,8 @@ public interface DomainModelDescriptor<T> {
 
     String[] getUpdatableColumns();
 
+    String getColumnName(String fieldName);
+
     String getFieldName(String columnName);
 
     Class getFieldType(String fieldName);

@@ -68,7 +68,7 @@ public class PersistenceExample {
         attributes.put("mobile", "15011112222");
         attributes.put("extendedAttributes", extendedAttributes);
 
-        Domains.Member.create(Domains.Member.newInstanceFrom(attributes, false));
+        Domains.Member.create(Domains.Member.newInstanceFrom(attributes, false), false);
     }
 
     private static void createSimpleMemberCopyFromUnderlineMap() throws SQLException {
@@ -84,7 +84,7 @@ public class PersistenceExample {
         attributes.put("mobile", "15011112222");
         attributes.put("extended_attributes", extendedAttributes);
 
-        Domains.Member.create(Domains.Member.newInstanceFrom(attributes, true));
+        Domains.Member.create(Domains.Member.newInstanceFrom(attributes, true), false);
     }
 
     private static void createSimpleFromJsonMember() throws SQLException {

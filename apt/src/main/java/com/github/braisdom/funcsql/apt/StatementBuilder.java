@@ -44,6 +44,12 @@ public class StatementBuilder {
         return this;
     }
 
+    public StatementBuilder append(Class typeClass, String name, Class invokedClass,
+                                   String method, JCExpression... params) {
+        append(aptUtils.typeRef(typeClass), name, invokedClass.getName(), method, params);
+        return this;
+    }
+
     public StatementBuilder append(JCExpression varType, String name, Class invokedClass,
                                    String method, JCExpression... params) {
         append(varType, name, invokedClass.getName(), method, params);

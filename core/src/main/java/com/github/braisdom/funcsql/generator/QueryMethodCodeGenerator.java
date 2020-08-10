@@ -1,6 +1,7 @@
 package com.github.braisdom.funcsql.generator;
 
 import com.github.braisdom.funcsql.Query;
+import com.github.braisdom.funcsql.Table;
 import com.github.braisdom.funcsql.annotations.Queryable;
 import com.github.braisdom.funcsql.apt.*;
 import com.github.braisdom.funcsql.apt.MethodBuilder;
@@ -17,27 +18,28 @@ import java.sql.SQLException;
 public class QueryMethodCodeGenerator extends JavacAnnotationHandler<Queryable> {
 
     @Override
-    public void handle(AnnotationValues annotationValues, JCTree ast, APTUtils handler) {
-        JCTree.JCVariableDecl field = (JCTree.JCVariableDecl) handler.get();
-        TreeMaker treeMaker = handler.getTreeMaker();
-        String fieldColumnName = WordUtil.underscore(field.getName().toString());
+    public void handle(AnnotationValues annotationValues, JCTree ast, APTUtils aptUtils) {
+        JCTree.JCVariableDecl field = (JCTree.JCVariableDecl) aptUtils.get();
+        TreeMaker treeMaker = aptUtils.getTreeMaker();
         String methodName = WordUtil.camelize("queryBy_" + field.getName(), true);
 
-        MethodBuilder methodBuilder = handler.createMethodBuilder();
-        StatementBuilder statementBuilder = handler.createBlockBuilder();
+        MethodBuilder methodBuilder = aptUtils.createMethodBuilder();
+        StatementBuilder statementBuilder = aptUtils.createBlockBuilder();
 
         methodBuilder.addParameter("value", field.vartype);
 
-        statementBuilder.append(handler.newGenericsType(Query.class, handler.getClassName()),
-                "query", handler.getClassName(), "createQuery");
+        statementBuilder.append(aptUtils.newGenericsType(Query.class, aptUtils.getClassName()),
+                "query", aptUtils.getClassName(), "createQuery");
+        statementBuilder.append(String.class, "columnName", Table.class, "getColumnName",
+                aptUtils.classRef(aptUtils.getClassName()), treeMaker.Literal(field.getName().toString()));
         statementBuilder.append("query", "where",
-                        List.of(treeMaker.Literal(String.format("%s = ?", fieldColumnName)), handler.varRef("value")));
+                        List.of(treeMaker.Literal("? = ?"), aptUtils.varRef("columnName"), aptUtils.varRef("value")));
 
         methodBuilder.setReturnStatement("query", "execute");
-        handler.inject(methodBuilder
+        aptUtils.inject(methodBuilder
                 .addStatements(statementBuilder.build())
                 .setThrowsClauses(SQLException.class)
-                .setReturnType(java.util.List.class, handler.typeRef(handler.getClassName()))
+                .setReturnType(java.util.List.class, aptUtils.typeRef(aptUtils.getClassName()))
                 .build(methodName, Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
 }

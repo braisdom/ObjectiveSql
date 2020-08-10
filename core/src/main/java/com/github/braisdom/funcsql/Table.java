@@ -1,5 +1,6 @@
 package com.github.braisdom.funcsql;
 
+import com.github.braisdom.funcsql.annotations.Column;
 import com.github.braisdom.funcsql.annotations.DomainModel;
 import com.github.braisdom.funcsql.annotations.PrimaryKey;
 import com.github.braisdom.funcsql.reflection.PropertyUtils;
@@ -81,6 +82,19 @@ public final class Table {
         }
 
         return primaryField == null ? defaultField : primaryField;
+    }
+
+    public static final String getColumnName(Class tableClass, String fieldName) {
+        try {
+            Field field = tableClass.getDeclaredField(fieldName);
+            Column column = field.getDeclaredAnnotation(Column.class);
+            if(column != null)
+                return column.name();
+
+            return WordUtil.underscore(field.getName());
+        } catch (NoSuchFieldException ex) {
+            throw new DomainModelException(ex.getMessage(), ex);
+        }
     }
 
     public static Validator getValidator() {
