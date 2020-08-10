@@ -1,7 +1,9 @@
 package com.github.braisdom.funcsql.apt;
 
+import com.sun.tools.javac.code.Flags;
+import com.sun.tools.javac.code.TypeTag;
 import com.sun.tools.javac.tree.JCTree;
-import com.sun.tools.javac.tree.JCTree.JCExpression;
+import com.sun.tools.javac.tree.JCTree.*;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.List;
 import com.sun.tools.javac.util.ListBuffer;
@@ -11,6 +13,7 @@ import com.sun.tools.javac.util.Names;
 import javax.annotation.processing.Messager;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
+import java.util.ArrayList;
 
 public final class APTUtils {
 
@@ -64,12 +67,13 @@ public final class APTUtils {
         return typeRef(className);
     }
 
-    public void inject(JCTree.JCVariableDecl variableDecl) {
+    public void inject(JCVariableDecl variableDecl) {
         classDecl.defs = classDecl.defs.append(variableDecl);
     }
 
     public void inject(JCTree.JCMethodDecl methodDecl) {
-        classDecl.defs = classDecl.defs.append(methodDecl);
+        if(!Utils.containsMethod(classDecl.sym, methodDecl, false))
+            classDecl.defs = classDecl.defs.append(methodDecl);
     }
 
     public JCExpression typeRef(String complexName) {
@@ -133,7 +137,7 @@ public final class APTUtils {
 
     public JCExpression newGenericsType(Class typeClass, Class<?>... genericTypeClasses) {
         ListBuffer<JCExpression> genericTypes = new ListBuffer<>();
-        for(Class<?> genericTypeClass : genericTypeClasses)
+        for (Class<?> genericTypeClass : genericTypeClasses)
             genericTypes.append(typeRef(genericTypeClass));
         return treeMaker.TypeApply(typeRef(typeClass), genericTypes.toList());
     }
@@ -141,7 +145,6 @@ public final class APTUtils {
     public JCExpression newGenericsType(Class typeClass, String classSimpleName) {
         return treeMaker.TypeApply(typeRef(typeClass), List.of(treeMaker.Ident(toName(classSimpleName))));
     }
-
 
     public JCExpression newArrayType(String typeName) {
         return treeMaker.TypeArray(treeMaker.Ident(toName(typeName)));
@@ -165,6 +168,62 @@ public final class APTUtils {
 
     public JCExpression classRef(Class<?> clazz) {
         return treeMaker.Select(typeRef(clazz), toName("class"));
+    }
+
+    public static boolean isBoolean(JCExpression varType) {
+        return varType != null && varType.toString().equalsIgnoreCase("boolean");
+    }
+
+    public boolean isStatic(JCModifiers modifiers) {
+        return (modifiers.flags & Flags.STATIC)  != 0;
+    }
+
+    public java.util.List<JCVariableDecl> getFields() {
+        java.util.List fields = new ArrayList();
+        List<JCTree> members = classDecl.defs;
+        for (JCTree member : members) {
+            if(member instanceof JCVariableDecl) {
+                fields.add(member);
+            }
+        }
+
+        return fields;
+    }
+
+    public JCMethodDecl newGetter(JCVariableDecl field) {
+        String fieldName = field.name.toString();
+        String getterName;
+        if(isBoolean(field.vartype))
+            getterName = Utils.camelize(String.format("%s_%s", "is", fieldName), true);
+        else
+            getterName = Utils.camelize(String.format("%s_%s", "get", fieldName), true);
+
+        JCStatement returnStatement = treeMaker.Return(treeMaker.Select(varRef("this"), toName(fieldName)));
+
+        return treeMaker.MethodDef(treeMaker.Modifiers(Flags.PUBLIC | Flags.FINAL),
+                toName(getterName), field.vartype, List.nil(), List.nil(),
+                List.nil(), treeMaker.Block(0, List.of(returnStatement)), null);
+    }
+
+    public JCMethodDecl newSetter(JCVariableDecl field, boolean returnThis) {
+        String fieldName = field.name.toString();
+        String setterName = Utils.camelize(String.format("%s_%s", "set", fieldName), true);
+
+        ListBuffer<JCStatement> statements = new ListBuffer<JCStatement>();
+        JCExpression fieldRef = treeMaker.Select(varRef("this"), toName(fieldName));
+        JCAssign assign = treeMaker.Assign(fieldRef, treeMaker.Ident(field.name));
+        JCVariableDecl parameter = treeMaker.VarDef(treeMaker.Modifiers(Flags.PARAMETER), toName(fieldName), field.vartype, null);
+        JCExpression returnType = treeMaker.TypeIdent(TypeTag.VOID);
+
+        statements.append(treeMaker.Exec(assign));
+        if(returnThis) {
+            returnType = typeRef(classDecl.name.toString());
+            statements.append(treeMaker.Return(varRef("this")));
+        }
+
+        return treeMaker.MethodDef(treeMaker.Modifiers(Flags.PUBLIC | Flags.FINAL),
+                toName(setterName), returnType, List.<JCTree.JCTypeParameter>nil(), List.of(parameter),
+                List.nil(), treeMaker.Block(0, statements.toList()), null);
     }
 
 }

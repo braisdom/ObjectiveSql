@@ -27,7 +27,7 @@ public interface DomainModelDescriptor<T> {
 
     String getFieldName(String columnName);
 
-    Class getFieldType(String fieldName);
+    Class getFieldTypeByColumnName(String columnName);
 
     Class getFieldTypeByFieldName(String fieldName);
 

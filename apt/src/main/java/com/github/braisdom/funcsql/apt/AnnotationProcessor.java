@@ -71,7 +71,7 @@ public class AnnotationProcessor extends AbstractProcessor {
                         if(tree.sym != null) {
                             JCTree.JCClassDecl classDecl = getClassDecl(tree);
                             APTUtils aptUtils = new APTUtils(classDecl, element, tree, treeMaker, names, messager);
-//                            handler.handle(annotationValues, tree, aptUtils);
+                            handler.handle(new AnnotationValues(classDecl), tree, aptUtils);
                         }
                         super.visitVarDef(tree);
                     }

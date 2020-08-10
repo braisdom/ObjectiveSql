@@ -18,6 +18,8 @@ public class RelationshipTest {
         @Queryable
         private String name;
 
+        private boolean enabled;
+
         @Relation(relationType = RelationType.HAS_MANY)
         private List<TestRelativeModel> testRelativeModels;
 

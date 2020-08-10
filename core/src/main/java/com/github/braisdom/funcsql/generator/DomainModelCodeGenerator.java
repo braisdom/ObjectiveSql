@@ -19,10 +19,12 @@ import java.sql.SQLException;
 import java.util.Map;
 
 @ProviderFor(JavacAnnotationHandler.class)
-public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel>{
+public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel> {
 
     @Override
     public void handle(AnnotationValues annotationValues, JCTree ast, APTUtils aptUtils) {
+        handlePrimary(annotationValues, aptUtils);
+        handleSetterGetter(annotationValues, aptUtils);
         handleCreateQueryMethod(aptUtils);
         handleCreatePersistenceMethod(aptUtils);
         handleSaveMethod(aptUtils);
@@ -40,6 +42,24 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
         handleCountMethod(aptUtils);
         handleValidateMethod(aptUtils);
         handleNewInstanceFromMethod(aptUtils);
+    }
+
+    private void handleSetterGetter(AnnotationValues annotationValues, APTUtils aptUtils) {
+        java.util.List<JCTree.JCVariableDecl> fields = aptUtils.getFields();
+        DomainModel domainModel = annotationValues.getAnnotationValue(DomainModel.class);
+        for (JCTree.JCVariableDecl field : fields) {
+            if (!aptUtils.isStatic(field.mods)) {
+                JCTree.JCMethodDecl setter = aptUtils.newSetter(field, domainModel.fluent());
+                JCTree.JCMethodDecl getter = aptUtils.newGetter(field);
+
+                aptUtils.inject(setter);
+                aptUtils.inject(getter);
+            }
+        }
+    }
+
+    private void handlePrimary(AnnotationValues annotationValues, APTUtils aptUtils) {
+
     }
 
     private void handleCreateQueryMethod(APTUtils aptUtils) {
@@ -332,7 +352,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
 
         JCExpression createInstance = treeMaker.TypeCast(aptUtils.typeRef(aptUtils.getClassName()),
                 treeMaker.Apply(List.nil(), treeMaker.Select(aptUtils.typeRef(ClassUtils.class),
-                aptUtils.toName("createNewInstance")), List.of(aptUtils.classRef(aptUtils.getClassName()))));
+                        aptUtils.toName("createNewInstance")), List.of(aptUtils.classRef(aptUtils.getClassName()))));
         statementBuilder.append(aptUtils.typeRef(aptUtils.getClassName()), "bean", createInstance);
         statementBuilder.append(PropertyUtils.class, "populate", aptUtils.varRef("bean"),
                 aptUtils.varRef("properties"), aptUtils.varRef("underLine"));
