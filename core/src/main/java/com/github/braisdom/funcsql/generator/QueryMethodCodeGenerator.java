@@ -17,7 +17,7 @@ import java.sql.SQLException;
 public class QueryMethodCodeGenerator extends JavacAnnotationHandler<Queryable> {
 
     @Override
-    public void handle(AnnotationValues annotationValues, JCTree ast, APTHandler handler) {
+    public void handle(AnnotationValues annotationValues, JCTree ast, APTUtils handler) {
         JCTree.JCVariableDecl field = (JCTree.JCVariableDecl) handler.get();
         TreeMaker treeMaker = handler.getTreeMaker();
         String fieldColumnName = WordUtil.underscore(field.getName().toString());

@@ -17,7 +17,7 @@ import java.util.Arrays;
 public class MethodBuilder {
 
     private final TreeMaker treeMaker;
-    private final APTHandler handler;
+    private final APTUtils aptUtils;
     private final ListBuffer<JCVariableDecl> parameters;
     private final ListBuffer<JCStatement> statements;
 
@@ -25,9 +25,9 @@ public class MethodBuilder {
     private ListBuffer<JCExpression> throwsClauses;
     private JCExpression returnStatement;
 
-    MethodBuilder(APTHandler handler) {
-        this.treeMaker = handler.getTreeMaker();
-        this.handler = handler;
+    MethodBuilder(APTUtils aptUtils) {
+        this.treeMaker = aptUtils.getTreeMaker();
+        this.aptUtils = aptUtils;
 
         this.parameters = new ListBuffer<>();
         this.statements = new ListBuffer<>();
@@ -36,20 +36,20 @@ public class MethodBuilder {
 
     public MethodBuilder setThrowsClauses(Class<? extends Throwable>... throwsClauseArray) {
         for (Class<? extends Throwable> throwsClause : throwsClauseArray)
-            throwsClauses.append(handler.typeRef(throwsClause.getName()));
+            throwsClauses.append(aptUtils.typeRef(throwsClause.getName()));
         return this;
     }
 
     public MethodBuilder setReturnType(Class<?> typeClass, Class<?>... genTypeClass) {
         JCExpression[] genTypes = Arrays.stream(genTypeClass).map(exceptionClass ->
-                treeMaker.Throw(handler.typeRef(exceptionClass.getName())).getExpression())
+                treeMaker.Throw(aptUtils.typeRef(exceptionClass.getName())).getExpression())
                 .toArray(JCExpression[]::new);
-        returnType = treeMaker.TypeApply(handler.typeRef(typeClass), List.from(genTypes));
+        returnType = treeMaker.TypeApply(aptUtils.typeRef(typeClass), List.from(genTypes));
         return this;
     }
 
     public MethodBuilder setReturnType(Class<?> typeClass, JCExpression... genTypeClass) {
-        returnType = treeMaker.TypeApply(handler.typeRef(typeClass), List.from(genTypeClass));
+        returnType = treeMaker.TypeApply(aptUtils.typeRef(typeClass), List.from(genTypeClass));
         return this;
     }
 
@@ -65,15 +65,15 @@ public class MethodBuilder {
 
 
     public MethodBuilder setReturnStatement(String varName, String methodName, JCExpression... params) {
-        JCTree.JCExpression methodRef = treeMaker.Select(handler.varRef(varName),
-                handler.toName(methodName));
+        JCTree.JCExpression methodRef = treeMaker.Select(aptUtils.varRef(varName),
+                aptUtils.toName(methodName));
         this.returnStatement = treeMaker.Apply(List.nil(), methodRef, List.from(params));
         return this;
     }
 
     public MethodBuilder setReturnStatement(Class clazz, String methodName, JCExpression... params) {
-        JCTree.JCExpression methodRef = treeMaker.Select(handler.typeRef(clazz),
-                handler.toName(methodName));
+        JCTree.JCExpression methodRef = treeMaker.Select(aptUtils.typeRef(clazz),
+                aptUtils.toName(methodName));
         this.returnStatement = treeMaker.Apply(List.nil(), methodRef, List.from(params));
         return this;
     }
@@ -108,43 +108,43 @@ public class MethodBuilder {
     }
 
     public MethodBuilder addParameter(String name, Class<?> clazz) {
-        addParameter(handler.toName(name), clazz);
+        addParameter(aptUtils.toName(name), clazz);
         return this;
     }
 
     public MethodBuilder addParameter(Name name, Class<?> clazz) {
-        addParameter(name, handler.typeRef(clazz));
+        addParameter(name, aptUtils.typeRef(clazz));
         return this;
     }
 
     public MethodBuilder addParameter(String name, JCExpression type) {
-        addParameter(handler.toName(name), type);
+        addParameter(aptUtils.toName(name), type);
         return this;
     }
 
     public MethodBuilder addParameter(Name name, JCExpression type) {
-        treeMaker.at(handler.get().pos);
+        treeMaker.at(aptUtils.get().pos);
         parameters.add(treeMaker.VarDef(treeMaker.Modifiers(Flags.PARAMETER), name, type, null));
         return this;
     }
 
     public MethodBuilder addArrayParameter(String name, Class<?> clazz) {
-        addParameter(handler.toName(name), handler.newArrayType(clazz));
+        addParameter(aptUtils.toName(name), aptUtils.newArrayType(clazz));
         return this;
     }
 
     public MethodBuilder addVarargsParameter(String name, Class typeClass) {
-        addVarargsParameter(handler.toName(name), handler.typeRef(typeClass));
+        addVarargsParameter(aptUtils.toName(name), aptUtils.typeRef(typeClass));
         return this;
     }
 
     public MethodBuilder addVarargsParameter(String name, JCExpression type) {
-        addVarargsParameter(handler.toName(name), type);
+        addVarargsParameter(aptUtils.toName(name), type);
         return this;
     }
 
     public MethodBuilder addVarargsParameter(Name name, JCExpression type) {
-        treeMaker.at(handler.get().pos);
+        treeMaker.at(aptUtils.get().pos);
         parameters.add(treeMaker.VarDef(treeMaker.Modifiers(Flags.PARAMETER | Flags.VARARGS),
                 name, treeMaker.TypeArray(type), null));
         return this;
@@ -158,7 +158,7 @@ public class MethodBuilder {
             statements.append(treeMaker.Return(returnStatement));
 
         return treeMaker.MethodDef(treeMaker.Modifiers(modifiers),
-                handler.toName(name),
+                aptUtils.toName(name),
                 returnType,
                 List.<JCTree.JCTypeParameter>nil(),
                 parameters.toList(),

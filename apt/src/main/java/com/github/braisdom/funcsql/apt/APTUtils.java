@@ -12,7 +12,7 @@ import javax.annotation.processing.Messager;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 
-public final class APTHandler {
+public final class APTUtils {
 
     private final JCTree.JCClassDecl classDecl;
     private final Element element;
@@ -21,8 +21,8 @@ public final class APTHandler {
     private final Names names;
     private final Messager messager;
 
-    APTHandler(JCTree.JCClassDecl classDecl, Element element, JCTree ast, TreeMaker treeMaker,
-                      Names names, Messager messager) {
+    APTUtils(JCTree.JCClassDecl classDecl, Element element, JCTree ast, TreeMaker treeMaker,
+             Names names, Messager messager) {
         this.classDecl = classDecl;
         this.element = element;
         this.ast = ast;

@@ -4,304 +4,352 @@ import com.github.braisdom.funcsql.*;
 import com.github.braisdom.funcsql.annotations.DomainModel;
 import com.github.braisdom.funcsql.apt.*;
 import com.github.braisdom.funcsql.apt.MethodBuilder;
+import com.github.braisdom.funcsql.reflection.ClassUtils;
+import com.github.braisdom.funcsql.reflection.PropertyUtils;
 import com.github.braisdom.funcsql.relation.Relationship;
 import com.sun.tools.javac.code.Flags;
 import com.sun.tools.javac.code.TypeTag;
 import com.sun.tools.javac.tree.JCTree;
+import com.sun.tools.javac.tree.JCTree.JCExpression;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.List;
 import org.mangosdk.spi.ProviderFor;
 
 import java.sql.SQLException;
+import java.util.Map;
 
 @ProviderFor(JavacAnnotationHandler.class)
 public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel>{
 
     @Override
-    public void handle(AnnotationValues annotationValues, JCTree ast, APTHandler handler) {
-        handleCreateQueryMethod(handler);
-        handleCreatePersistenceMethod(handler);
-        handleSaveMethod(handler);
-        handleCreateMethod(handler);
-        handleCreateArrayMethod(handler);
-        handleUpdateMethod(annotationValues, handler);
-        handleDestroyMethod(annotationValues, handler);
-        handleDestroy2Method(handler);
-        handleExecuteMethod(handler);
-        handleQueryMethod(handler);
-        handleQuery2Method(handler);
-        handleQuery3Method(handler);
-        handleCountMethod(handler);
-        handleValidateMethod(handler);
+    public void handle(AnnotationValues annotationValues, JCTree ast, APTUtils aptUtils) {
+        handleCreateQueryMethod(aptUtils);
+        handleCreatePersistenceMethod(aptUtils);
+        handleSaveMethod(aptUtils);
+        handleCreateMethod(aptUtils);
+        handleCreateArrayMethod(aptUtils);
+        handleUpdateMethod(annotationValues, aptUtils);
+        handleDestroyMethod(annotationValues, aptUtils);
+        handleDestroy2Method(aptUtils);
+        handleExecuteMethod(aptUtils);
+        handleQueryMethod(aptUtils);
+        handleQuery2Method(aptUtils);
+        handleQuery3Method(aptUtils);
+        handleQueryFirstMethod(aptUtils);
+        handleQueryFirst2Method(aptUtils);
+        handleCountMethod(aptUtils);
+        handleValidateMethod(aptUtils);
+        handleNewInstanceFromMethod(aptUtils);
     }
 
-    private void handleCreateQueryMethod(APTHandler handler) {
-        MethodBuilder methodBuilder = handler.createMethodBuilder();
-        StatementBuilder statementBuilder = handler.createBlockBuilder();
+    private void handleCreateQueryMethod(APTUtils aptUtils) {
+        MethodBuilder methodBuilder = aptUtils.createMethodBuilder();
+        StatementBuilder statementBuilder = aptUtils.createBlockBuilder();
 
-        statementBuilder.append(handler.typeRef(QueryFactory.class), "queryFactory", Database.class,
+        statementBuilder.append(aptUtils.typeRef(QueryFactory.class), "queryFactory", Database.class,
                 "getQueryFactory", List.nil());
 
-        methodBuilder.setReturnStatement("queryFactory", "createQuery", handler.classRef(handler.getClassName()));
+        methodBuilder.setReturnStatement("queryFactory", "createQuery", aptUtils.classRef(aptUtils.getClassName()));
 
-        handler.inject(methodBuilder
+        aptUtils.inject(methodBuilder
                 .addStatements(statementBuilder.build())
-                .setReturnType(Query.class, handler.typeRef(handler.getClassName()))
+                .setReturnType(Query.class, aptUtils.typeRef(aptUtils.getClassName()))
                 .build("createQuery", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
 
-    private void handleCreatePersistenceMethod(APTHandler handler) {
-        MethodBuilder methodBuilder = handler.createMethodBuilder();
-        StatementBuilder statementBuilder = handler.createBlockBuilder();
+    private void handleCreatePersistenceMethod(APTUtils aptUtils) {
+        MethodBuilder methodBuilder = aptUtils.createMethodBuilder();
+        StatementBuilder statementBuilder = aptUtils.createBlockBuilder();
 
-        statementBuilder.append(handler.typeRef(PersistenceFactory.class), "persistenceFactory", Database.class,
+        statementBuilder.append(aptUtils.typeRef(PersistenceFactory.class), "persistenceFactory", Database.class,
                 "getPersistenceFactory", List.nil());
 
         methodBuilder.setReturnStatement("persistenceFactory", "createPersistence",
-                handler.classRef(handler.getClassName()));
+                aptUtils.classRef(aptUtils.getClassName()));
 
-        handler.inject(methodBuilder
+        aptUtils.inject(methodBuilder
                 .addStatements(statementBuilder.build())
-                .setReturnType(Persistence.class, handler.typeRef(handler.getClassName()))
+                .setReturnType(Persistence.class, aptUtils.typeRef(aptUtils.getClassName()))
                 .build("createPersistence", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
 
-    private void handleSaveMethod(APTHandler handler) {
-        MethodBuilder methodBuilder = handler.createMethodBuilder();
-        TreeMaker treeMaker = handler.getTreeMaker();
-        StatementBuilder statementBuilder = handler.createBlockBuilder();
+    private void handleSaveMethod(APTUtils aptUtils) {
+        MethodBuilder methodBuilder = aptUtils.createMethodBuilder();
+        TreeMaker treeMaker = aptUtils.getTreeMaker();
+        StatementBuilder statementBuilder = aptUtils.createBlockBuilder();
 
-        statementBuilder.append(handler.newGenericsType(Persistence.class, handler.getClassName()), "persistence",
+        statementBuilder.append(aptUtils.newGenericsType(Persistence.class, aptUtils.getClassName()), "persistence",
                 "createPersistence");
 
         statementBuilder.append("persistence", "save",
-                handler.varRef("this"), handler.varRef("skipValidation"));
+                aptUtils.varRef("this"), aptUtils.varRef("skipValidation"));
 
-        handler.inject(methodBuilder
+        aptUtils.inject(methodBuilder
                 .addStatements(statementBuilder.build())
                 .addParameter("skipValidation", treeMaker.TypeIdent(TypeTag.BOOLEAN))
                 .setThrowsClauses(SQLException.class)
                 .build("save", Flags.PUBLIC | Flags.FINAL));
     }
 
-    private void handleCreateMethod(APTHandler handler) {
-        MethodBuilder methodBuilder = handler.createMethodBuilder();
-        TreeMaker treeMaker = handler.getTreeMaker();
-        StatementBuilder statementBuilder = handler.createBlockBuilder();
+    private void handleCreateMethod(APTUtils aptUtils) {
+        MethodBuilder methodBuilder = aptUtils.createMethodBuilder();
+        TreeMaker treeMaker = aptUtils.getTreeMaker();
+        StatementBuilder statementBuilder = aptUtils.createBlockBuilder();
 
-        statementBuilder.append(handler.newGenericsType(Persistence.class, handler.getClassName()), "persistence",
+        statementBuilder.append(aptUtils.newGenericsType(Persistence.class, aptUtils.getClassName()), "persistence",
                 "createPersistence");
 
         methodBuilder.setReturnStatement("persistence", "insert",
-                handler.varRef("dirtyObject"), handler.varRef("skipValidation"));
+                aptUtils.varRef("dirtyObject"), aptUtils.varRef("skipValidation"));
 
-        handler.inject(methodBuilder
-                .setReturnType(handler.typeRef(handler.getClassName()))
+        aptUtils.inject(methodBuilder
+                .setReturnType(aptUtils.typeRef(aptUtils.getClassName()))
                 .addStatements(statementBuilder.build())
-                .addParameter("dirtyObject", handler.typeRef(handler.getClassName()))
+                .addParameter("dirtyObject", aptUtils.typeRef(aptUtils.getClassName()))
                 .addParameter("skipValidation", treeMaker.TypeIdent(TypeTag.BOOLEAN))
                 .setThrowsClauses(SQLException.class)
                 .build("create", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
 
-    private void handleCreateArrayMethod(APTHandler handler) {
-        MethodBuilder methodBuilder = handler.createMethodBuilder();
-        TreeMaker treeMaker = handler.getTreeMaker();
-        StatementBuilder statementBuilder = handler.createBlockBuilder();
+    private void handleCreateArrayMethod(APTUtils aptUtils) {
+        MethodBuilder methodBuilder = aptUtils.createMethodBuilder();
+        TreeMaker treeMaker = aptUtils.getTreeMaker();
+        StatementBuilder statementBuilder = aptUtils.createBlockBuilder();
 
-        statementBuilder.append(handler.newGenericsType(Persistence.class, handler.getClassName()), "persistence",
+        statementBuilder.append(aptUtils.newGenericsType(Persistence.class, aptUtils.getClassName()), "persistence",
                 "createPersistence");
 
         methodBuilder.setReturnStatement("persistence", "insert",
-                handler.varRef("dirtyObjects"), handler.varRef("skipValidation"));
+                aptUtils.varRef("dirtyObjects"), aptUtils.varRef("skipValidation"));
 
-        handler.inject(methodBuilder
-                .setReturnType(handler.newArrayType(treeMaker.TypeIdent(TypeTag.INT)))
+        aptUtils.inject(methodBuilder
+                .setReturnType(aptUtils.newArrayType(treeMaker.TypeIdent(TypeTag.INT)))
                 .addStatements(statementBuilder.build())
-                .addParameter("dirtyObjects", handler.newArrayType(handler.getClassName()))
+                .addParameter("dirtyObjects", aptUtils.newArrayType(aptUtils.getClassName()))
                 .addParameter("skipValidation", treeMaker.TypeIdent(TypeTag.BOOLEAN))
                 .setThrowsClauses(SQLException.class)
                 .build("create", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
 
-    private void handleUpdateMethod(AnnotationValues annotationValues, APTHandler handler) {
-        MethodBuilder methodBuilder = handler.createMethodBuilder();
-        TreeMaker treeMaker = handler.getTreeMaker();
-        StatementBuilder statementBuilder = handler.createBlockBuilder();
+    private void handleUpdateMethod(AnnotationValues annotationValues, APTUtils aptUtils) {
+        MethodBuilder methodBuilder = aptUtils.createMethodBuilder();
+        TreeMaker treeMaker = aptUtils.getTreeMaker();
+        StatementBuilder statementBuilder = aptUtils.createBlockBuilder();
         DomainModel domainModel = annotationValues.getAnnotationValue(DomainModel.class);
 
-        statementBuilder.append(handler.newGenericsType(Persistence.class, handler.getClassName()), "persistence",
+        statementBuilder.append(aptUtils.newGenericsType(Persistence.class, aptUtils.getClassName()), "persistence",
                 "createPersistence");
 
         methodBuilder.setReturnStatement("persistence", "update",
-                handler.varRef("id"), handler.varRef("dirtyObject"), handler.varRef("skipValidation"));
+                aptUtils.varRef("id"), aptUtils.varRef("dirtyObject"), aptUtils.varRef("skipValidation"));
 
-        handler.inject(methodBuilder
+        aptUtils.inject(methodBuilder
                 .setReturnType(treeMaker.TypeIdent(TypeTag.INT))
                 .addStatements(statementBuilder.build())
-                .addParameter("id", handler.typeRef(domainModel.primaryClass()))
-                .addParameter("dirtyObject", handler.typeRef(handler.getClassName()))
+                .addParameter("id", aptUtils.typeRef(domainModel.primaryClass()))
+                .addParameter("dirtyObject", aptUtils.typeRef(aptUtils.getClassName()))
                 .addParameter("skipValidation", treeMaker.TypeIdent(TypeTag.BOOLEAN))
                 .setThrowsClauses(SQLException.class)
                 .build("update", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
 
-    private void handleDestroyMethod(AnnotationValues annotationValues, APTHandler handler) {
-        MethodBuilder methodBuilder = handler.createMethodBuilder();
-        TreeMaker treeMaker = handler.getTreeMaker();
-        StatementBuilder statementBuilder = handler.createBlockBuilder();
+    private void handleDestroyMethod(AnnotationValues annotationValues, APTUtils aptUtils) {
+        MethodBuilder methodBuilder = aptUtils.createMethodBuilder();
+        TreeMaker treeMaker = aptUtils.getTreeMaker();
+        StatementBuilder statementBuilder = aptUtils.createBlockBuilder();
         DomainModel domainModel = annotationValues.getAnnotationValue(DomainModel.class);
 
-        statementBuilder.append(handler.newGenericsType(Persistence.class, handler.getClassName()), "persistence",
+        statementBuilder.append(aptUtils.newGenericsType(Persistence.class, aptUtils.getClassName()), "persistence",
                 "createPersistence");
 
         methodBuilder.setReturnStatement("persistence", "delete",
-                handler.varRef("id"));
+                aptUtils.varRef("id"));
 
-        handler.inject(methodBuilder
+        aptUtils.inject(methodBuilder
                 .setReturnType(treeMaker.TypeIdent(TypeTag.INT))
                 .addStatements(statementBuilder.build())
-                .addParameter("id", handler.typeRef(domainModel.primaryClass()))
+                .addParameter("id", aptUtils.typeRef(domainModel.primaryClass()))
                 .setThrowsClauses(SQLException.class)
                 .build("destroy", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
 
-    private void handleDestroy2Method(APTHandler handler) {
-        MethodBuilder methodBuilder = handler.createMethodBuilder();
-        TreeMaker treeMaker = handler.getTreeMaker();
-        StatementBuilder statementBuilder = handler.createBlockBuilder();
+    private void handleDestroy2Method(APTUtils aptUtils) {
+        MethodBuilder methodBuilder = aptUtils.createMethodBuilder();
+        TreeMaker treeMaker = aptUtils.getTreeMaker();
+        StatementBuilder statementBuilder = aptUtils.createBlockBuilder();
 
-        statementBuilder.append(handler.newGenericsType(Persistence.class, handler.getClassName()), "persistence",
+        statementBuilder.append(aptUtils.newGenericsType(Persistence.class, aptUtils.getClassName()), "persistence",
                 "createPersistence");
 
         methodBuilder.setReturnStatement("persistence", "delete",
-                handler.varRef("predicate"));
+                aptUtils.varRef("predicate"));
 
-        handler.inject(methodBuilder
+        aptUtils.inject(methodBuilder
                 .setReturnType(treeMaker.TypeIdent(TypeTag.INT))
                 .addStatements(statementBuilder.build())
-                .addParameter("predicate", handler.typeRef(String.class))
+                .addParameter("predicate", aptUtils.typeRef(String.class))
                 .setThrowsClauses(SQLException.class)
                 .build("destroy", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
 
-    private void handleExecuteMethod(APTHandler handler) {
-        MethodBuilder methodBuilder = handler.createMethodBuilder();
+    private void handleExecuteMethod(APTUtils aptUtils) {
+        MethodBuilder methodBuilder = aptUtils.createMethodBuilder();
 
-        methodBuilder.setReturnStatement(Table.class, "execute", handler.classRef(handler.getClassName()),
-                handler.varRef("sql"), handler.varRef("params"));
+        methodBuilder.setReturnStatement(Table.class, "execute", aptUtils.classRef(aptUtils.getClassName()),
+                aptUtils.varRef("sql"), aptUtils.varRef("params"));
 
-        handler.inject(methodBuilder
-                .setReturnType(handler.getTreeMaker().TypeIdent(TypeTag.INT))
-                .addParameter("sql", handler.typeRef(String.class))
-                .addVarargsParameter("params", handler.typeRef(Object.class))
+        aptUtils.inject(methodBuilder
+                .setReturnType(aptUtils.getTreeMaker().TypeIdent(TypeTag.INT))
+                .addParameter("sql", aptUtils.typeRef(String.class))
+                .addVarargsParameter("params", aptUtils.typeRef(Object.class))
                 .setThrowsClauses(SQLException.class)
                 .build("execute", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
 
-    private void handleQueryMethod(APTHandler handler) {
-        MethodBuilder methodBuilder = handler.createMethodBuilder();
-        StatementBuilder statementBuilder = handler.createBlockBuilder();
+    private void handleQueryMethod(APTUtils aptUtils) {
+        MethodBuilder methodBuilder = aptUtils.createMethodBuilder();
+        StatementBuilder statementBuilder = aptUtils.createBlockBuilder();
 
-        statementBuilder.append(handler.newGenericsType(Query.class, handler.getClassName()), "query",
+        statementBuilder.append(aptUtils.newGenericsType(Query.class, aptUtils.getClassName()), "query",
                 "createQuery");
         statementBuilder.append("query", "where",
-                List.of(handler.varRef("predicate"), handler.varRef("params")));
+                List.of(aptUtils.varRef("predicate"), aptUtils.varRef("params")));
 
         methodBuilder.setReturnStatement("query", "execute");
-        handler.inject(methodBuilder
+        aptUtils.inject(methodBuilder
                 .addStatements(statementBuilder.build())
-                .addParameter("predicate", handler.typeRef(String.class))
-                .addVarargsParameter("params", handler.typeRef(Object.class))
+                .addParameter("predicate", aptUtils.typeRef(String.class))
+                .addVarargsParameter("params", aptUtils.typeRef(Object.class))
                 .setThrowsClauses(SQLException.class)
-                .setReturnType(java.util.List.class, handler.typeRef(handler.getClassName()))
+                .setReturnType(java.util.List.class, aptUtils.typeRef(aptUtils.getClassName()))
                 .build("query", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
 
-    private void handleQuery2Method(APTHandler handler) {
-        MethodBuilder methodBuilder = handler.createMethodBuilder();
-        StatementBuilder statementBuilder = handler.createBlockBuilder();
+    private void handleQuery2Method(APTUtils aptUtils) {
+        MethodBuilder methodBuilder = aptUtils.createMethodBuilder();
+        StatementBuilder statementBuilder = aptUtils.createBlockBuilder();
 
-        statementBuilder.append(handler.newGenericsType(Query.class, handler.getClassName()), "query",
+        statementBuilder.append(aptUtils.newGenericsType(Query.class, aptUtils.getClassName()), "query",
                 "createQuery");
         statementBuilder.append("query", "where",
-                List.of(handler.varRef("predicate"), handler.varRef("params")));
+                List.of(aptUtils.varRef("predicate"), aptUtils.varRef("params")));
 
-        methodBuilder.setReturnStatement("query", "execute", handler.varRef("relations"));
-        handler.inject(methodBuilder
+        methodBuilder.setReturnStatement("query", "execute", aptUtils.varRef("relations"));
+        aptUtils.inject(methodBuilder
                 .addStatements(statementBuilder.build())
-                .addParameter("predicate", handler.typeRef(String.class))
+                .addParameter("predicate", aptUtils.typeRef(String.class))
                 .addArrayParameter("relations", Relationship.class)
-                .addVarargsParameter("params", handler.typeRef(Object.class))
+                .addVarargsParameter("params", aptUtils.typeRef(Object.class))
                 .setThrowsClauses(SQLException.class)
-                .setReturnType(java.util.List.class, handler.typeRef(handler.getClassName()))
+                .setReturnType(java.util.List.class, aptUtils.typeRef(aptUtils.getClassName()))
                 .build("query", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
 
-    private void handleQuery3Method(APTHandler handler) {
-        MethodBuilder methodBuilder = handler.createMethodBuilder();
-        StatementBuilder statementBuilder = handler.createBlockBuilder();
+    private void handleQuery3Method(APTUtils aptUtils) {
+        MethodBuilder methodBuilder = aptUtils.createMethodBuilder();
+        StatementBuilder statementBuilder = aptUtils.createBlockBuilder();
 
-        methodBuilder.setReturnStatement(Table.class, "query", handler.classRef(handler.getClassName()),
-                handler.varRef("sql"), handler.varRef("params"));
-        handler.inject(methodBuilder
+        methodBuilder.setReturnStatement(Table.class, "query", aptUtils.classRef(aptUtils.getClassName()),
+                aptUtils.varRef("sql"), aptUtils.varRef("params"));
+        aptUtils.inject(methodBuilder
                 .addStatements(statementBuilder.build())
-                .addParameter("sql", handler.typeRef(String.class))
-                .addVarargsParameter("params", handler.typeRef(Object.class))
+                .addParameter("sql", aptUtils.typeRef(String.class))
+                .addVarargsParameter("params", aptUtils.typeRef(Object.class))
                 .setThrowsClauses(SQLException.class)
-                .setReturnType(java.util.List.class, handler.typeRef(handler.getClassName()))
+                .setReturnType(java.util.List.class, aptUtils.typeRef(aptUtils.getClassName()))
                 .build("queryBySql", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
 
-    private void handleQueryFirstMethod(APTHandler handler) {
-        MethodBuilder methodBuilder = handler.createMethodBuilder();
-        StatementBuilder statementBuilder = handler.createBlockBuilder();
+    private void handleQueryFirstMethod(APTUtils aptUtils) {
+        MethodBuilder methodBuilder = aptUtils.createMethodBuilder();
+        StatementBuilder statementBuilder = aptUtils.createBlockBuilder();
 
-        statementBuilder.append(handler.newGenericsType(Query.class, handler.getClassName()), "query",
+        statementBuilder.append(aptUtils.newGenericsType(Query.class, aptUtils.getClassName()), "query",
                 "createQuery");
         statementBuilder.append("query", "where",
-                List.of(handler.varRef("predicate"), handler.varRef("params")));
+                List.of(aptUtils.varRef("predicate"), aptUtils.varRef("params")));
 
-        methodBuilder.setReturnStatement("query", "execute", handler.varRef("relations"));
-        handler.inject(methodBuilder
+        methodBuilder.setReturnStatement("query", "queryFirst", aptUtils.varRef("relations"));
+        aptUtils.inject(methodBuilder
                 .addStatements(statementBuilder.build())
-                .addParameter("predicate", handler.typeRef(String.class))
-                .addVarargsParameter("params", handler.typeRef(Object.class))
+                .addParameter("predicate", aptUtils.typeRef(String.class))
+                .addArrayParameter("relations", Relationship.class)
+                .addVarargsParameter("params", aptUtils.typeRef(Object.class))
                 .setThrowsClauses(SQLException.class)
-                .setReturnType(java.util.List.class, handler.typeRef(handler.getClassName()))
-                .build("query", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
+                .setReturnType(aptUtils.typeRef(aptUtils.getClassName()))
+                .build("queryFirst", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
 
+    private void handleQueryFirst2Method(APTUtils aptUtils) {
+        MethodBuilder methodBuilder = aptUtils.createMethodBuilder();
+        StatementBuilder statementBuilder = aptUtils.createBlockBuilder();
 
-    private void handleCountMethod(APTHandler handler) {
-        MethodBuilder methodBuilder = handler.createMethodBuilder();
+        statementBuilder.append(aptUtils.newGenericsType(Query.class, aptUtils.getClassName()), "query",
+                "createQuery");
+        statementBuilder.append("query", "where",
+                List.of(aptUtils.varRef("predicate"), aptUtils.varRef("params")));
 
-        methodBuilder.setReturnStatement(Table.class, "count", handler.classRef(handler.getClassName()),
-                handler.varRef("sql"), handler.varRef("params"));
-
-        handler.inject(methodBuilder
-                .addParameter("sql", handler.typeRef(String.class))
-                .addVarargsParameter("params", handler.typeRef(Object.class))
+        methodBuilder.setReturnStatement("query", "queryFirst");
+        aptUtils.inject(methodBuilder
+                .addStatements(statementBuilder.build())
+                .addParameter("predicate", aptUtils.typeRef(String.class))
+                .addVarargsParameter("params", aptUtils.typeRef(Object.class))
                 .setThrowsClauses(SQLException.class)
-                .setReturnType(handler.getTreeMaker().TypeIdent(TypeTag.INT))
+                .setReturnType(aptUtils.typeRef(aptUtils.getClassName()))
+                .build("queryFirst", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
+    }
+
+    private void handleCountMethod(APTUtils aptUtils) {
+        MethodBuilder methodBuilder = aptUtils.createMethodBuilder();
+
+        methodBuilder.setReturnStatement(Table.class, "count", aptUtils.classRef(aptUtils.getClassName()),
+                aptUtils.varRef("sql"), aptUtils.varRef("params"));
+
+        aptUtils.inject(methodBuilder
+                .addParameter("sql", aptUtils.typeRef(String.class))
+                .addVarargsParameter("params", aptUtils.typeRef(Object.class))
+                .setThrowsClauses(SQLException.class)
+                .setReturnType(aptUtils.getTreeMaker().TypeIdent(TypeTag.INT))
                 .build("count", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
 
-    private void handleValidateMethod(APTHandler handler) {
-        MethodBuilder methodBuilder = handler.createMethodBuilder();
+    private void handleValidateMethod(APTUtils aptUtils) {
+        MethodBuilder methodBuilder = aptUtils.createMethodBuilder();
 
         methodBuilder.setReturnStatement(Table.class, "validate",
-                handler.varRef("this"), handler.getTreeMaker().Literal(false));
+                aptUtils.varRef("this"), aptUtils.getTreeMaker().Literal(false));
 
-        handler.inject(methodBuilder
+        aptUtils.inject(methodBuilder
                 .setThrowsClauses(ValidationException.class)
-                .setReturnType(handler.newArrayType(Validator.Violation.class))
+                .setReturnType(aptUtils.newArrayType(Validator.Violation.class))
                 .build("validate", Flags.PUBLIC | Flags.FINAL));
     }
 
+    private void handleNewInstanceFromMethod(APTUtils aptUtils) {
+        MethodBuilder methodBuilder = aptUtils.createMethodBuilder();
+        TreeMaker treeMaker = aptUtils.getTreeMaker();
+        StatementBuilder statementBuilder = aptUtils.createBlockBuilder();
+
+        JCExpression createInstance = treeMaker.TypeCast(aptUtils.typeRef(aptUtils.getClassName()),
+                treeMaker.Apply(List.nil(), treeMaker.Select(aptUtils.typeRef(ClassUtils.class),
+                aptUtils.toName("createNewInstance")), List.of(aptUtils.classRef(aptUtils.getClassName()))));
+        statementBuilder.append(aptUtils.typeRef(aptUtils.getClassName()), "bean", createInstance);
+        statementBuilder.append(PropertyUtils.class, "populate", aptUtils.varRef("bean"),
+                aptUtils.varRef("properties"), aptUtils.varRef("underLine"));
+
+        methodBuilder.setReturnStatement(aptUtils.varRef("bean"));
+
+        aptUtils.inject(methodBuilder
+                .addStatements(statementBuilder.build())
+                .addParameter("properties", Map.class)
+                .addParameter("underLine", treeMaker.TypeIdent(TypeTag.BOOLEAN))
+                .setReturnType(aptUtils.typeRef(aptUtils.getClassName()))
+                .build("newInstanceFrom", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
+    }
+
 //    @Override
-//    public void handle(AnnotationValues<DomainModel> annotationValues, JCAnnotation jcAnnotation, APTHandler javacNode) {
-//        APTHandler typeNode = javacNode.up();
+//    public void handle(AnnotationValues<DomainModel> annotationValues, JCAnnotation jcAnnotation, APTUtils javacNode) {
+//        APTUtils typeNode = javacNode.up();
 //        JCTree.JCClassDecl classDecl = (JCTree.JCClassDecl) typeNode.get();
 //        HandleGetter handleGetter = new HandleGetter();
 //        JavacTreeMaker treeMaker = typeNode.getTreeMaker();
@@ -309,9 +357,9 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
 //
 //        if (!domainModel.disableGeneratedId()) {
 //            JCVariableDecl idFieldDecl = createIdField(treeMaker, typeNode, domainModel);
-//            APTHandler fieldNode = new APTHandler(javacNode.getAst(), idFieldDecl, null, AST.Kind.FIELD) {
+//            APTUtils fieldNode = new APTUtils(javacNode.getAst(), idFieldDecl, null, AST.Kind.FIELD) {
 //                @Override
-//                public APTHandler up() {
+//                public APTUtils up() {
 //                    return typeNode;
 //                }
 //            };
@@ -356,8 +404,8 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
 //        System.out.println();
 //    }
 //
-//    private void handleFieldSG(JavacTreeMaker treeMaker, DomainModel domainModel, APTHandler typeNode, HandleGetter handleGetter) {
-//        for (APTHandler field : typeNode.down()) {
+//    private void handleFieldSG(JavacTreeMaker treeMaker, DomainModel domainModel, APTUtils typeNode, HandleGetter handleGetter) {
+//        for (APTUtils field : typeNode.down()) {
 ////            if (handleGetter.fieldQualifiesForGetterGeneration(field))
 ////                handleGetter.generateGetterForField(field, null, AccessLevel.PUBLIC, false);
 ////
@@ -376,7 +424,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
 //    }
 //
 //    // public final void save() throws SQLException {
-//    private JCTree.JCMethodDecl handleSave2Method(JavacTreeMaker treeMaker, APTHandler typeNode) {
+//    private JCTree.JCMethodDecl handleSave2Method(JavacTreeMaker treeMaker, APTUtils typeNode) {
 //        StatementBuilder blockBuilder = StatementBuilder.newBlock(treeMaker, typeNode);
 //
 //        // this.save(false);
@@ -391,7 +439,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
 //    }
 //
 //    // public final void save(boolean skipValidation) throws SQLException {...}
-//    private JCTree.JCMethodDecl handleSaveMethod(JavacTreeMaker treeMaker, APTHandler typeNode) {
+//    private JCTree.JCMethodDecl handleSaveMethod(JavacTreeMaker treeMaker, APTUtils typeNode) {
 //        StatementBuilder blockBuilder = StatementBuilder.newBlock(treeMaker, typeNode);
 //        JCVariableDecl parameter = createParameter(typeNode, treeMaker.TypeIdent(CTC_BOOLEAN), "skipValidation");
 //
@@ -411,7 +459,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
 //                .buildWith(typeNode);
 //    }
 //
-//    private JCTree.JCMethodDecl handleCreateQueryMethod(JavacTreeMaker treeMaker, APTHandler typeNode) {
+//    private JCTree.JCMethodDecl handleCreateQueryMethod(JavacTreeMaker treeMaker, APTUtils typeNode) {
 //        ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
 //        Name modelClassName = typeNode.toName(typeNode.getName());
 //        Name queryFactoryName = typeNode.toName("queryFactory");
@@ -438,7 +486,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
 //                .buildWith(typeNode);
 //    }
 //
-//    private JCTree.JCMethodDecl handleCreatePersistenceMethod(JavacTreeMaker treeMaker, APTHandler typeNode) {
+//    private JCTree.JCMethodDecl handleCreatePersistenceMethod(JavacTreeMaker treeMaker, APTUtils typeNode) {
 //        StatementBuilder blockBuilder = StatementBuilder.newBlock(treeMaker, typeNode);
 //
 //        // PersistenceFactory persistenceFactory = Database.getPersistenceFactory();
@@ -462,7 +510,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
 //
 //    // public static final RelationshipTest.TestDomainModel create(RelationshipTest.TestDomainModel dirtyObject,
 //    //                          boolean skipValidation) throws SQLException {...}
-//    private JCTree.JCMethodDecl handleCreateMethod(JavacTreeMaker treeMaker, APTHandler typeNode) {
+//    private JCTree.JCMethodDecl handleCreateMethod(JavacTreeMaker treeMaker, APTUtils typeNode) {
 //        StatementBuilder blockBuilder = StatementBuilder.newBlock(treeMaker, typeNode);
 //        Name modelClassName = typeNode.toName(typeNode.getName());
 //        JCVariableDecl dirtyObjectVar = createParameter(typeNode, treeMaker.Ident(modelClassName), "dirtyObject");
@@ -491,7 +539,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
 //
 //    // public static final RelationshipTest.TestDomainModel create(RelationshipTest.TestDomainModel dirtyObject)
 //    //          throws SQLException {
-//    private JCTree.JCMethodDecl handleCreate2Method(JavacTreeMaker treeMaker, APTHandler typeNode) {
+//    private JCTree.JCMethodDecl handleCreate2Method(JavacTreeMaker treeMaker, APTUtils typeNode) {
 //        StatementBuilder blockBuilder = StatementBuilder.newBlock(treeMaker, typeNode);
 //        Name modelClassName = typeNode.toName(typeNode.getName());
 //        JCVariableDecl dirtyObjectVar = createParameter(typeNode, treeMaker.Ident(modelClassName), "dirtyObject");
@@ -510,7 +558,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
 //    }
 //
 //    // public static final int[] create(RelationshipTest.TestDomainModel[] dirtyObjects) throws SQLException {...}
-//    private JCTree.JCMethodDecl handleCreateArray2Method(JavacTreeMaker treeMaker, APTHandler typeNode) {
+//    private JCTree.JCMethodDecl handleCreateArray2Method(JavacTreeMaker treeMaker, APTUtils typeNode) {
 //        StatementBuilder blockBuilder = StatementBuilder.newBlock(treeMaker, typeNode);
 //        Name modelClassName = typeNode.toName(typeNode.getName());
 //        JCVariableDecl dirtyArrayObjectVar = createParameter(typeNode, treeMaker.TypeArray(treeMaker.Ident(modelClassName)),
@@ -530,7 +578,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
 //    }
 //
 //    // public static final int[] create(RelationshipTest.TestDomainModel[] dirtyObjects, boolean skipValidation) throws SQLException {
-//    private JCTree.JCMethodDecl handleCreateArrayMethod(JavacTreeMaker treeMaker, APTHandler typeNode) {
+//    private JCTree.JCMethodDecl handleCreateArrayMethod(JavacTreeMaker treeMaker, APTUtils typeNode) {
 //        StatementBuilder blockBuilder = StatementBuilder.newBlock(treeMaker, typeNode);
 //        Name modelClassName = typeNode.toName(typeNode.getName());
 //        JCVariableDecl dirtyArrayObjectVar =  createParameter(typeNode,
@@ -560,7 +608,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
 //    }
 //
 //    // public static final int update(Object id, RelationshipTest.TestDomainModel dirtyObject, boolean skipValidation) throws SQLException {
-//    private JCTree.JCMethodDecl handleUpdateMethod(JavacTreeMaker treeMaker, APTHandler typeNode) {
+//    private JCTree.JCMethodDecl handleUpdateMethod(JavacTreeMaker treeMaker, APTUtils typeNode) {
 //        StatementBuilder blockBuilder = StatementBuilder.newBlock(treeMaker, typeNode);
 //        Name modelClassName = typeNode.toName(typeNode.getName());
 //        JCVariableDecl idVar = createParameter(typeNode, genJavaLangTypeRef(typeNode, Object.class.getSimpleName()), "id");
@@ -589,7 +637,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
 //    }
 //
 //    // public static final int update(Object id, RelationshipTest.TestDomainModel dirtyObject) throws SQLException {...}
-//    private JCTree.JCMethodDecl handleUpdate2Method(JavacTreeMaker treeMaker, APTHandler typeNode) {
+//    private JCTree.JCMethodDecl handleUpdate2Method(JavacTreeMaker treeMaker, APTUtils typeNode) {
 //        StatementBuilder blockBuilder = StatementBuilder.newBlock(treeMaker, typeNode);
 //        JCVariableDecl idVar = createParameter(typeNode,
 //                genJavaLangTypeRef(typeNode, Object.class.getSimpleName()), "id");
@@ -614,7 +662,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
 //    }
 //
 //    // public static final int update(String updates, String predication) throws SQLException {...}
-//    private JCTree.JCMethodDecl handleUpdate3Method(JavacTreeMaker treeMaker, APTHandler typeNode) {
+//    private JCTree.JCMethodDecl handleUpdate3Method(JavacTreeMaker treeMaker, APTUtils typeNode) {
 //        StatementBuilder blockBuilder = StatementBuilder.newBlock(treeMaker, typeNode);
 //        JCVariableDecl updatesVar = createParameter(typeNode,
 //                genJavaLangTypeRef(typeNode, String.class.getSimpleName()), "updates");
@@ -639,7 +687,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
 //    }
 //
 //    // public static final int destroy(Object id) throws SQLException {...}
-//    private JCTree.JCMethodDecl handleDestroyMethod(JavacTreeMaker treeMaker, APTHandler typeNode) {
+//    private JCTree.JCMethodDecl handleDestroyMethod(JavacTreeMaker treeMaker, APTUtils typeNode) {
 //        StatementBuilder blockBuilder = StatementBuilder.newBlock(treeMaker, typeNode);
 //        JCVariableDecl idVar = createParameter(typeNode,
 //                genJavaLangTypeRef(typeNode, Object.class.getSimpleName()), "id");
@@ -661,7 +709,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
 //    }
 //
 //    // public static final int destroy(String predication) throws SQLException {...}
-//    private JCTree.JCMethodDecl handleDestroy2Method(JavacTreeMaker treeMaker, APTHandler typeNode) {
+//    private JCTree.JCMethodDecl handleDestroy2Method(JavacTreeMaker treeMaker, APTUtils typeNode) {
 //        StatementBuilder blockBuilder = StatementBuilder.newBlock(treeMaker, typeNode);
 //        JCVariableDecl predicationVar = createParameter(typeNode,
 //                genJavaLangTypeRef(typeNode, String.class.getSimpleName()), "predication");
@@ -683,7 +731,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
 //    }
 //
 //    // public static final int execute(String sql) throws SQLException {...}
-//    private JCTree.JCMethodDecl handleExecuteMethod(JavacTreeMaker treeMaker, APTHandler typeNode) {
+//    private JCTree.JCMethodDecl handleExecuteMethod(JavacTreeMaker treeMaker, APTUtils typeNode) {
 //        StatementBuilder blockBuilder = StatementBuilder.newBlock(treeMaker, typeNode);
 //        JCVariableDecl sqlVar = createParameter(typeNode,
 //                genJavaLangTypeRef(typeNode, String.class.getSimpleName()), "sql");
@@ -703,7 +751,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
 //    }
 //
 //    // public static final RelationshipTest.TestRelativeModel newInstanceFrom(Map source) {...}
-//    private JCTree.JCMethodDecl handleNewInstanceFromMethod(JavacTreeMaker treeMaker, APTHandler typeNode) {
+//    private JCTree.JCMethodDecl handleNewInstanceFromMethod(JavacTreeMaker treeMaker, APTUtils typeNode) {
 //        StatementBuilder blockBuilder = StatementBuilder.newBlock(treeMaker, typeNode);
 //        JCVariableDecl sourceVar = createParameter(typeNode,
 //                genTypeRef(typeNode, Map.class.getName()), "source");
@@ -723,7 +771,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
 //    }
 //
 //    // public static final RelationshipTest.TestRelativeModel newInstanceFrom(Map source, boolean underline) {...}
-//    private JCTree.JCMethodDecl handleNewInstanceFrom2Method(JavacTreeMaker treeMaker, APTHandler typeNode) {
+//    private JCTree.JCMethodDecl handleNewInstanceFrom2Method(JavacTreeMaker treeMaker, APTUtils typeNode) {
 //        StatementBuilder blockBuilder = StatementBuilder.newBlock(treeMaker, typeNode);
 //        JCVariableDecl sourceVar = createParameter(typeNode,
 //                genTypeRef(typeNode, Map.class.getName()), "source");
@@ -752,7 +800,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
 //    }
 //
 //    // public static final List<Row> query(String sql, Object... params) throws SQLException {...}
-//    private JCTree.JCMethodDecl handleQueryMethod(JavacTreeMaker treeMaker, APTHandler typeNode) {
+//    private JCTree.JCMethodDecl handleQueryMethod(JavacTreeMaker treeMaker, APTUtils typeNode) {
 //        JCVariableDecl sqlVar = MethodBuilder.createParameter(typeNode, String.class, "sql");
 //        JCVariableDecl paramsVar = createParameter(typeNode, Flags.PARAMETER | Flags.VARARGS,
 //                treeMaker.TypeArray(genTypeRef(typeNode, Object.class.getName())), "params");
@@ -775,7 +823,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
 //    }
 //
 //    // public static final RelationshipTest.TestRelativeModel newInstanceFrom(Map source, boolean underline) {...}
-//    private JCTree.JCMethodDecl handleValidateMethod(JavacTreeMaker treeMaker, APTHandler typeNode) {
+//    private JCTree.JCMethodDecl handleValidateMethod(JavacTreeMaker treeMaker, APTUtils typeNode) {
 //        StatementBuilder blockBuilder = StatementBuilder.newBlock(treeMaker, typeNode);
 //        String violationClassName = Validator.Violation.class.getName().replace("$", ".");
 //
@@ -792,7 +840,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
 //    }
 //
 //    // public static final int count(String predicate, Object... params) throws SQLException {...}
-//    private JCTree.JCMethodDecl handleCountMethod(JavacTreeMaker treeMaker, APTHandler typeNode) {
+//    private JCTree.JCMethodDecl handleCountMethod(JavacTreeMaker treeMaker, APTUtils typeNode) {
 //        StatementBuilder blockBuilder = StatementBuilder.newBlock(treeMaker, typeNode);
 //        JCVariableDecl predicateVar = createParameter(typeNode,
 //                genTypeRef(typeNode, String.class.getName()), "predicate");
@@ -815,7 +863,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
 //    }
 //
 //    // public final static int count(String predicate) throws SQLException {...}
-//    private JCTree.JCMethodDecl handleFindFirstMethod(JavacTreeMaker treeMaker, APTHandler typeNode) {
+//    private JCTree.JCMethodDecl handleFindFirstMethod(JavacTreeMaker treeMaker, APTUtils typeNode) {
 //        StatementBuilder blockBuilder = StatementBuilder.newBlock(treeMaker, typeNode);
 //        JCVariableDecl predicateVar = createParameter(typeNode,
 //                genTypeRef(typeNode, String.class.getName()), "predicate");
@@ -841,7 +889,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
 //                .buildWith(typeNode);
 //    }
 //
-//    private void addPersistenceRefStatement(JavacTreeMaker treeMaker, APTHandler typeNode,
+//    private void addPersistenceRefStatement(JavacTreeMaker treeMaker, APTUtils typeNode,
 //                                            StatementBuilder blockBuilder) {
 //        // PersistenceFactory persistenceFactory = Database.getPersistenceFactory();
 //        blockBuilder.appendVar(PersistenceFactory.class, "persistenceFactory",
@@ -855,7 +903,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
 //        blockBuilder.appendVar(typeApply, "persistence", createPersistence);
 //    }
 //
-//    private JCVariableDecl createIdField(JavacTreeMaker treeMaker, APTHandler typeNode, DomainModel domainModel) {
+//    private JCVariableDecl createIdField(JavacTreeMaker treeMaker, APTUtils typeNode, DomainModel domainModel) {
 //        JCAnnotation annotation = treeMaker.Annotation(chainDots(typeNode, splitNameOf(PrimaryKey.class)),
 //                List.of(treeMaker.Assign(treeMaker.Ident(typeNode.toName("name")),
 //                        treeMaker.Literal(domainModel.primaryColumnName()))));
@@ -869,7 +917,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
 //    }
 //
 //    // public static final String TABLE_NAME = Table.getTableName(Domains.OrderLine.class);
-//    private void handleTableNameField(JavacTreeMaker treeMaker, APTHandler typeNode) {
+//    private void handleTableNameField(JavacTreeMaker treeMaker, APTUtils typeNode) {
 //        JCExpression tableRef = genTypeRef(typeNode, Table.class.getName());
 //        JCExpression getTableRef = treeMaker.Select(tableRef, typeNode.toName("getTableName"));
 //        JCExpression paramRef = treeMaker.Select(treeMaker.Ident(typeNode.toName(typeNode.getName())), typeNode.toName("class"));
@@ -885,7 +933,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
 //    }
 //
 //    // @Volatile private final Map<String, Object> rawAttributes = new HashMap();
-//    private void handleRawAttributesField(JavacTreeMaker treeMaker, APTHandler typeNode) {
+//    private void handleRawAttributesField(JavacTreeMaker treeMaker, APTUtils typeNode) {
 //        JCExpression rawAttributesType = treeMaker.TypeApply(genTypeRef(typeNode, Map.class.getName()),
 //                List.of(genTypeRef(typeNode, String.class.getName()), genTypeRef(typeNode, Object.class.getName())));
 //        JCExpression rawAttributesInit = treeMaker.NewClass(null, List.nil(), genTypeRef(typeNode, HashMap.class.getName()),
@@ -937,7 +985,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
 //                .buildWith(typeNode));
 //    }
 //
-//    private JCVariableDecl createParameter(APTHandler typeNode, JCExpression type, String name, JCTree.JCAnnotation... annotations) {
+//    private JCVariableDecl createParameter(APTUtils typeNode, JCExpression type, String name, JCTree.JCAnnotation... annotations) {
 //        return FieldBuilder.newField(typeNode)
 //                .ofType(type)
 //                .withName(name)
@@ -946,7 +994,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
 //                .build();
 //    }
 //
-//    private JCVariableDecl createParameter(APTHandler typeNode, long flags, JCExpression type, String name, JCTree.JCAnnotation... annotations) {
+//    private JCVariableDecl createParameter(APTUtils typeNode, long flags, JCExpression type, String name, JCTree.JCAnnotation... annotations) {
 //        return FieldBuilder.newField(typeNode)
 //                .ofType(type)
 //                .withName(name)

@@ -18,7 +18,7 @@ import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.JCTree.JCExpression;
 import com.sun.tools.javac.tree.JCTree.JCVariableDecl;
 import com.sun.tools.javac.util.List;
-//import lombok.javac.APTHandler;
+//import lombok.javac.APTUtils;
 //import lombok.javac.JavacTreeMaker;
 
 import static com.github.braisdom.funcsql.util.StringUtil.splitNameOf;
@@ -32,9 +32,9 @@ import static com.sun.tools.javac.util.List.nil;
  */
 class FieldBuilder {
 
-//  private APTHandler node;
+//  private APTUtils node;
 //
-//  static FieldBuilder newField(APTHandler node) {
+//  static FieldBuilder newField(APTUtils node) {
 //    return new FieldBuilder(node);
 //  }
 //
@@ -44,7 +44,7 @@ class FieldBuilder {
 //  private long modifiers;
 //  private JCExpression init;
 //
-//  private FieldBuilder(APTHandler node) {
+//  private FieldBuilder(APTUtils node) {
 //    this.node = node;
 //  }
 //
