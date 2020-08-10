@@ -191,7 +191,6 @@ public final class APTUtils {
     }
 
     public JCMethodDecl newGetter(JCVariableDecl field) {
-        treeMaker.at(get().pos);
         String fieldName = field.name.toString();
         String getterName;
         if(isBoolean(field.vartype))
@@ -207,7 +206,6 @@ public final class APTUtils {
     }
 
     public JCMethodDecl newSetter(JCVariableDecl field, boolean returnThis) {
-        treeMaker.at(get().pos);
         String fieldName = field.name.toString();
         String setterName = Utils.camelize(String.format("%s_%s", "set", fieldName), true);
 

@@ -2,6 +2,7 @@ package com.github.braisdom.funcsql.generator;
 
 import com.github.braisdom.funcsql.*;
 import com.github.braisdom.funcsql.annotations.DomainModel;
+import com.github.braisdom.funcsql.annotations.PrimaryKey;
 import com.github.braisdom.funcsql.apt.*;
 import com.github.braisdom.funcsql.apt.MethodBuilder;
 import com.github.braisdom.funcsql.reflection.ClassUtils;
@@ -11,6 +12,9 @@ import com.sun.tools.javac.code.Flags;
 import com.sun.tools.javac.code.TypeTag;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.JCTree.JCExpression;
+import com.sun.tools.javac.tree.JCTree.JCMethodInvocation;
+import com.sun.tools.javac.tree.JCTree.JCModifiers;
+import com.sun.tools.javac.tree.JCTree.JCVariableDecl;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.List;
 import org.mangosdk.spi.ProviderFor;
@@ -23,14 +27,16 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
 
     @Override
     public void handle(AnnotationValues annotationValues, JCTree ast, APTUtils aptUtils) {
-        handlePrimary(annotationValues, aptUtils);
         handleSetterGetter(annotationValues, aptUtils);
+        handlePrimary(annotationValues, aptUtils);
+        handleTableName(aptUtils);
         handleCreateQueryMethod(aptUtils);
         handleCreatePersistenceMethod(aptUtils);
         handleSaveMethod(aptUtils);
         handleCreateMethod(aptUtils);
         handleCreateArrayMethod(aptUtils);
         handleUpdateMethod(annotationValues, aptUtils);
+        handleUpdate2Method(aptUtils);
         handleDestroyMethod(annotationValues, aptUtils);
         handleDestroy2Method(aptUtils);
         handleExecuteMethod(aptUtils);
@@ -45,9 +51,10 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
     }
 
     private void handleSetterGetter(AnnotationValues annotationValues, APTUtils aptUtils) {
-        java.util.List<JCTree.JCVariableDecl> fields = aptUtils.getFields();
+        java.util.List<JCVariableDecl> fields = aptUtils.getFields();
         DomainModel domainModel = annotationValues.getAnnotationValue(DomainModel.class);
-        for (JCTree.JCVariableDecl field : fields) {
+        aptUtils.getTreeMaker().at(aptUtils.get().pos);
+        for (JCVariableDecl field : fields) {
             if (!aptUtils.isStatic(field.mods)) {
                 JCTree.JCMethodDecl setter = aptUtils.newSetter(field, domainModel.fluent());
                 JCTree.JCMethodDecl getter = aptUtils.newGetter(field);
@@ -59,7 +66,35 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
     }
 
     private void handlePrimary(AnnotationValues annotationValues, APTUtils aptUtils) {
+        TreeMaker treeMaker = aptUtils.getTreeMaker();
+        DomainModel domainModel = annotationValues.getAnnotationValue(DomainModel.class);
 
+        JCTree.JCAnnotation annotation = treeMaker.Annotation(aptUtils.typeRef(PrimaryKey.class),
+                List.of(treeMaker.Assign(treeMaker.Ident(aptUtils.toName("name")),
+                        treeMaker.Literal(domainModel.primaryColumnName()))));
+        JCModifiers modifiers = treeMaker.Modifiers(Flags.PRIVATE);
+        modifiers.annotations = modifiers.annotations.append(annotation);
+
+        JCVariableDecl primaryField = treeMaker.VarDef(modifiers,
+                aptUtils.toName(domainModel.primaryFieldName()), aptUtils.typeRef(domainModel.primaryClass()), null);
+
+        aptUtils.inject(primaryField);
+        aptUtils.inject(aptUtils.newSetter(primaryField, domainModel.fluent()));
+        aptUtils.inject(aptUtils.newGetter(primaryField));
+    }
+
+    private void handleTableName(APTUtils aptUtils) {
+        TreeMaker treeMaker = aptUtils.getTreeMaker();
+
+        JCModifiers modifiers = treeMaker.Modifiers(Flags.PUBLIC | Flags.STATIC | Flags.FINAL);
+
+        JCMethodInvocation methodInvocation = treeMaker.Apply(List.nil(),
+                treeMaker.Select(aptUtils.typeRef(Table.class), aptUtils.toName("getTableName")),
+                List.of(aptUtils.classRef(aptUtils.getClassName())));
+        JCVariableDecl tableNameField = treeMaker.VarDef(modifiers,
+                aptUtils.toName("TABLE_NAME"), aptUtils.typeRef(String.class), methodInvocation);
+
+        aptUtils.inject(tableNameField);
     }
 
     private void handleCreateQueryMethod(APTUtils aptUtils) {
@@ -169,6 +204,26 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 .addParameter("id", aptUtils.typeRef(domainModel.primaryClass()))
                 .addParameter("dirtyObject", aptUtils.typeRef(aptUtils.getClassName()))
                 .addParameter("skipValidation", treeMaker.TypeIdent(TypeTag.BOOLEAN))
+                .setThrowsClauses(SQLException.class)
+                .build("update", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
+    }
+
+    private void handleUpdate2Method(APTUtils aptUtils) {
+        MethodBuilder methodBuilder = aptUtils.createMethodBuilder();
+        TreeMaker treeMaker = aptUtils.getTreeMaker();
+        StatementBuilder statementBuilder = aptUtils.createBlockBuilder();
+
+        statementBuilder.append(aptUtils.newGenericsType(Persistence.class, aptUtils.getClassName()), "persistence",
+                "createPersistence");
+
+        methodBuilder.setReturnStatement("persistence", "update",
+                aptUtils.varRef("updates"), aptUtils.varRef("predicates"));
+
+        aptUtils.inject(methodBuilder
+                .setReturnType(treeMaker.TypeIdent(TypeTag.INT))
+                .addStatements(statementBuilder.build())
+                .addParameter("updates", aptUtils.typeRef(String.class))
+                .addParameter("predicates", aptUtils.typeRef(String.class))
                 .setThrowsClauses(SQLException.class)
                 .build("update", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
