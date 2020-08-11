@@ -1,7 +1,6 @@
 package com.github.braisdom.funcsql.example;
 
 import com.github.braisdom.funcsql.Database;
-import com.github.braisdom.funcsql.ValidationException;
 import com.github.braisdom.funcsql.Validator;
 import com.google.gson.GsonBuilder;
 import org.junit.Assert;
@@ -25,7 +24,7 @@ public class PersistenceExample {
         Assert.assertNotNull(member);
     }
 
-    private static void validateMember() throws SQLException {
+    private static void validateMember() {
         Domains.Member newMember = new Domains.Member()
                 .setId(2)
                 .setNo("100")
@@ -33,15 +32,8 @@ public class PersistenceExample {
                 .setGender(1)
                 .setMobile("15011112222");
 
-        try {
-            Domains.Member.create(newMember, false);
-        } catch (ValidationException ex) {
-            Validator.Violation[] violations = ex.getViolations();
-            if(violations.length > 0) {
-                System.out.println(String.format("%s.%s %s: %s", violations[0].getModelClass().getName(),
-                        violations[0].getPropertyPath(), violations[0].getMessage(), violations[0].getInvalidValue()));
-            }
-        }
+        Validator.Violation[] violations = newMember.validate();
+        Assert.assertTrue(violations.length > 0);
     }
 
     private static void createSimpleMemberWithValidation() throws SQLException {

@@ -131,6 +131,10 @@ public final class APTUtils {
                 typeRef(clazz.getName()), toName(methodName)), List.from(params));
     }
 
+    public JCVariableDecl newVar(Class<?> clazz, String name) {
+        return treeMaker.VarDef(treeMaker.Modifiers(Flags.PARAMETER), toName(name), typeRef(clazz), null);
+    }
+
     public JCExpression newGenericsType(Class typeClass, JCExpression... genericTypes) {
         return treeMaker.TypeApply(typeRef(typeClass), List.from(genericTypes));
     }
@@ -156,6 +160,10 @@ public final class APTUtils {
 
     public JCExpression newArrayType(JCExpression type) {
         return treeMaker.TypeArray(type);
+    }
+
+    public JCExpression newArray(Class type) {
+        return treeMaker.NewArray(typeRef(type), List.of(treeMaker.Literal(0)), null);
     }
 
     public JCExpression varRef(String name) {

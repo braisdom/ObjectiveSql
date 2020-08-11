@@ -11,12 +11,10 @@ import com.github.braisdom.funcsql.relation.Relationship;
 import com.sun.tools.javac.code.Flags;
 import com.sun.tools.javac.code.TypeTag;
 import com.sun.tools.javac.tree.JCTree;
-import com.sun.tools.javac.tree.JCTree.JCExpression;
-import com.sun.tools.javac.tree.JCTree.JCMethodInvocation;
-import com.sun.tools.javac.tree.JCTree.JCModifiers;
-import com.sun.tools.javac.tree.JCTree.JCVariableDecl;
+import com.sun.tools.javac.tree.JCTree.*;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.List;
+import com.sun.tools.javac.util.ListBuffer;
 import org.mangosdk.spi.ProviderFor;
 
 import java.sql.SQLException;
@@ -390,13 +388,21 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
 
     private void handleValidateMethod(APTUtils aptUtils) {
         MethodBuilder methodBuilder = aptUtils.createMethodBuilder();
+        TreeMaker treeMaker = aptUtils.getTreeMaker();
 
-        methodBuilder.setReturnStatement(Table.class, "validate",
-                aptUtils.varRef("this"), aptUtils.getTreeMaker().Literal(false));
+        JCTree.JCExpression methodRef = treeMaker.Select(aptUtils.typeRef(Table.class),
+                aptUtils.toName("validate"));
+        JCReturn jcReturn = treeMaker.Return(treeMaker.Apply(List.nil(), methodRef, List.of(aptUtils.varRef("this"),
+                aptUtils.getTreeMaker().Literal(true))));
+        JCCatch jcCatch = treeMaker.Catch(aptUtils.newVar(ValidationException.class, "ex"),
+                treeMaker.Block(0, List.of(treeMaker.Return(aptUtils.newArray(Validator.Violation.class)))));
+
+        JCTry jcTry = treeMaker.Try(treeMaker.Block(0, List.of(jcReturn)), List.of(jcCatch),
+                treeMaker.Block(0, List.nil()));
 
         aptUtils.inject(methodBuilder
-                .setThrowsClauses(ValidationException.class)
                 .setReturnType(aptUtils.newArrayType(Validator.Violation.class))
+                .addStatement(jcTry)
                 .build("validate", Flags.PUBLIC | Flags.FINAL));
     }
 

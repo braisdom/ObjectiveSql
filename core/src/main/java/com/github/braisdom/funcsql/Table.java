@@ -109,20 +109,20 @@ public final class Table {
         validate(bean, true);
     }
 
-    public static final Validator.Violation[] validate(Object bean, boolean throwException) throws ValidationException {
+    public static final Validator.Violation[] validate(Object bean, boolean suppressException) throws ValidationException {
         Validator validator = getValidator();
         Validator.Violation[] violations = validator.validate(bean);
-        if (violations.length > 0 && throwException)
+        if (violations.length > 0 && !suppressException)
             throw new ValidationException(violations);
 
         return violations;
     }
 
     public static final void validate(Object[] beans) throws ValidationException {
-        validate(beans, true);
+        validate(beans, false);
     }
 
-    public static final Validator.Violation[] validate(Object[] beans, boolean throwException) throws ValidationException {
+    public static final Validator.Violation[] validate(Object[] beans, boolean suppressException) throws ValidationException {
         Validator validator = getValidator();
         List<Validator.Violation> violationList = new ArrayList<>();
         for (Object bean : beans) {
@@ -130,7 +130,7 @@ public final class Table {
             if (violations.length > 0)
                 violationList.addAll(Arrays.asList(violations));
         }
-        if (violationList.size() > 0 && throwException)
+        if (violationList.size() > 0 && !suppressException)
             throw new ValidationException(violationList.toArray(new Validator.Violation[]{}));
 
         return violationList.toArray(new Validator.Violation[0]);
