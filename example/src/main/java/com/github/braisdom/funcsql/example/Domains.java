@@ -18,21 +18,28 @@ public final class Domains {
 
     @DomainModel
     public static class Member {
+        // The validation constraints, it will be applied for validate method.
+        // for example: Validator.Violation[] violations = member.validate();
         @NotNull
         @Size(min = 5, max = 20)
         private String no;
 
+        // The queryByName method will be generated, usage example: List<Member> members = Member.queryByName("Benjamin");
         @Queryable
         private String name;
+
+        @Queryable
         private Integer gender;
         private String mobile;
 
+        // The HAS_MANY_ORDERS field will be generated, public static final Relationship HAS_MANY_ORDERS = ...
         @Relation(relationType = RelationType.HAS_MANY)
         private List<Order> orders;
 
         @Column(transition = JsonColumnTransitional.class)
         private Map extendedAttributes;
 
+        // The field will not be save into database;
         @Volatile
         private String otherInfo;
 

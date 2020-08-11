@@ -60,11 +60,11 @@ public class AnnotationValues {
                         String attributeName = ((JCTree.JCIdent) assign.lhs).name.toString();
                         if (assign.rhs instanceof JCTree.JCFieldAccess) {
                             JCTree.JCFieldAccess fieldAccess = (JCTree.JCFieldAccess) assign.rhs;
-                            if ("java.lang.Class<?>".equalsIgnoreCase(expression.type.toString())) {
+                            if ("java.lang.Class".equalsIgnoreCase(expression.type.tsym.toString())) {
                                 // For Class value
                                 String className = ((Type.ClassType) fieldAccess.type).allparams_field.get(0).toString();
                                 annotationValueMap.put(attributeName,
-                                        Class.forName(className, true, classLoader));
+                                        Class.forName(className));
                             } else {
                                 // For Enum value
                                 String className = assign.rhs.type.toString();

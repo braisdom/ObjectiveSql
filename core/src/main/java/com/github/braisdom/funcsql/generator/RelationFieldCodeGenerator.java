@@ -23,6 +23,11 @@ public class RelationFieldCodeGenerator extends JavacAnnotationHandler<Relation>
         JCTree.JCVariableDecl relationField = (JCTree.JCVariableDecl) ast;
 
         handleRelationField(relation, relationField, aptUtils);
+        handleCreateRelationMethod(relation, relationField, aptUtils);
+    }
+
+    private void handleCreateRelationMethod(Relation relation, JCTree.JCVariableDecl relationField, APTUtils aptUtils) {
+
     }
 
     private void handleRelationField(Relation relation, JCTree.JCVariableDecl relationField, APTUtils aptUtils) {

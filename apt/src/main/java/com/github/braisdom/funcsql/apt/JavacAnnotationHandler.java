@@ -13,6 +13,6 @@ public abstract class JavacAnnotationHandler<T extends Annotation> {
     }
 
     public ClassLoader getClassLoader() {
-        return this.getClass().getClassLoader();
+        return ClassLoader.getSystemClassLoader();
     }
 }
