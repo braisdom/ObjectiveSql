@@ -15,7 +15,7 @@ public class PersistenceExample {
 
     private static void createSimpleMember() throws SQLException {
         Domains.Member newMember = new Domains.Member()
-                .setId(6)
+                .setId(1)
                 .setNo("100000")
                 .setName("Pamela")
                 .setGender(1)
@@ -27,14 +27,14 @@ public class PersistenceExample {
 
     private static void validateMember() throws SQLException {
         Domains.Member newMember = new Domains.Member()
-                .setId(7)
+                .setId(2)
                 .setNo("100")
                 .setName("Pamela")
                 .setGender(1)
                 .setMobile("15011112222");
 
         try {
-            Domains.Member.create(newMember, true);
+            Domains.Member.create(newMember, false);
         } catch (ValidationException ex) {
             Validator.Violation[] violations = ex.getViolations();
             if(violations.length > 0) {
@@ -46,7 +46,7 @@ public class PersistenceExample {
 
     private static void createSimpleMemberWithValidation() throws SQLException {
         Domains.Member newMember = new Domains.Member()
-                .setId(11)
+                .setId(3)
                 .setNo("100000")
                 .setName("Pamela")
                 .setGender(1)
@@ -142,7 +142,7 @@ public class PersistenceExample {
                 .setName("Smith => Jackson")
                 .setExtendedAttributes(extendedAttributes);
 
-        Domains.Member.update(12, newMember, false);
+        Domains.Member.update(12, newMember, true);
     }
 
     private static void updateJacksonMember() throws SQLException {

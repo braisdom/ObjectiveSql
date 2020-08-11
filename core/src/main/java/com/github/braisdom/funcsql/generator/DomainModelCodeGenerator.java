@@ -270,7 +270,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
     private void handleExecuteMethod(APTUtils aptUtils) {
         MethodBuilder methodBuilder = aptUtils.createMethodBuilder();
 
-        methodBuilder.setReturnStatement(Table.class, "execute", aptUtils.classRef(aptUtils.getClassName()),
+        methodBuilder.setReturnStatement(Table.class, "execute",
                 aptUtils.varRef("sql"), aptUtils.varRef("params"));
 
         aptUtils.inject(methodBuilder
