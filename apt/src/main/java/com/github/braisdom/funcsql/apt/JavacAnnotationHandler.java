@@ -6,9 +6,13 @@ import java.lang.annotation.Annotation;
 
 public abstract class JavacAnnotationHandler<T extends Annotation> {
 
-    public abstract void handle(AnnotationValues annotationValues, JCTree ast, APTUtils handler);
+    public abstract void handle(AnnotationValues annotationValues, JCTree ast, APTUtils aptUtils);
 
     public Class<T> getAnnotationHandledByThisHandler() {
         return (Class<T>) SpiLoadUtil.findAnnotationClass(getClass(), JavacAnnotationHandler.class);
+    }
+
+    public ClassLoader getClassLoader() {
+        return this.getClass().getClassLoader();
     }
 }

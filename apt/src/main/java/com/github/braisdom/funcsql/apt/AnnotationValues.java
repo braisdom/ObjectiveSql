@@ -22,6 +22,8 @@
 package com.github.braisdom.funcsql.apt;
 
 import com.sun.source.tree.ClassTree;
+import com.sun.source.tree.StatementTree;
+import com.sun.source.tree.VariableTree;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.JCTree.JCAnnotation;
@@ -30,6 +32,7 @@ import com.sun.tools.javac.tree.JCTree.JCAssign;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +40,7 @@ import java.util.Map;
 public class AnnotationValues {
 
     private final Map<String, AnnotationValue> values;
+    private final ClassLoader classLoader;
 
     private class AnnotationValue {
 
@@ -56,9 +60,17 @@ public class AnnotationValues {
                         String attributeName = ((JCTree.JCIdent) assign.lhs).name.toString();
                         if (assign.rhs instanceof JCTree.JCFieldAccess) {
                             JCTree.JCFieldAccess fieldAccess = (JCTree.JCFieldAccess) assign.rhs;
-                            if (fieldAccess.type instanceof Type.ClassType)
+                            if ("java.lang.Class<?>".equalsIgnoreCase(expression.type.toString())) {
+                                String className = ((Type.ClassType) fieldAccess.type).allparams_field.get(0).toString();
                                 annotationValueMap.put(attributeName,
-                                        Class.forName(((Type.ClassType) fieldAccess.type).allparams_field.get(0).toString()));
+                                        Class.forName(className, true, classLoader));
+                            } else {
+                                String className = assign.rhs.type.toString();
+                                Class enumClass = Class.forName(className, true, classLoader);
+                                Method method = enumClass.getDeclaredMethod("valueOf", String.class);
+                                annotationValueMap.put(attributeName, method.invoke(null,
+                                        ((JCTree.JCFieldAccess) assign.rhs).name.toString()));
+                            }
                         } else if (assign.rhs instanceof JCTree.JCLiteral) {
                             annotationValueMap.put(attributeName,
                                     ((JCTree.JCLiteral)assign.rhs).value);
@@ -75,14 +87,19 @@ public class AnnotationValues {
         }
     }
 
-    public AnnotationValues(ClassTree classTree) {
+    public AnnotationValues(StatementTree tree, ClassLoader classLoader) {
         this.values = new HashMap<>();
-        extractAnnotation(classTree);
+        this.classLoader = classLoader;
+        extractAnnotation(tree);
     }
 
-    private void extractAnnotation(ClassTree classTree) {
-        List<JCAnnotation> annotations = (List<JCAnnotation>) classTree
-                .getModifiers().getAnnotations();
+    private void extractAnnotation(StatementTree tree) {
+        List<JCAnnotation> annotations = Collections.emptyList();
+        if(tree instanceof ClassTree)
+            annotations = (List<JCAnnotation>) ((ClassTree)tree).getModifiers().getAnnotations();
+        else if(tree instanceof VariableTree)
+            annotations = (List<JCAnnotation>) ((VariableTree)tree).getModifiers().getAnnotations();
+
         for (JCAnnotation annotation : annotations) {
             values.put(annotation.getAnnotationType().type.toString(), new AnnotationValue(annotation));
         }
