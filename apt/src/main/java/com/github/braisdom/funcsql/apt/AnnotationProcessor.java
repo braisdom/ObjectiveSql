@@ -9,6 +9,7 @@ import com.sun.tools.javac.util.Context;
 import com.sun.tools.javac.util.Names;
 
 import javax.annotation.processing.*;
+import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
@@ -85,5 +86,10 @@ public class AnnotationProcessor extends AbstractProcessor {
         String className = tree.sym.owner.getQualifiedName().toString();
         TypeElement typeElement = elementUtils.getTypeElement(className);
         return javacTrees.getTree(typeElement);
+    }
+
+    @Override
+    public SourceVersion getSupportedSourceVersion() {
+        return SourceVersion.latestSupported();
     }
 }

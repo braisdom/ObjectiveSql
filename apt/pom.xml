@@ -19,14 +19,14 @@
             <artifactId>spi</artifactId>
             <version>0.2.4</version>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>com.sun</groupId>-->
-            <!--<artifactId>tools</artifactId>-->
-            <!--<version>1.0</version>-->
-            <!--<scope>system</scope>-->
-            <!--<systemPath>${java.home}/../lib/tools.jar</systemPath>-->
-            <!--<optional>true</optional>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>com.sun</groupId>
+            <artifactId>tools</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${java.home}/../lib/tools.jar</systemPath>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 
 
@@ -45,9 +45,9 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.5.1</version>
                 <configuration>
+                    <encoding>UTF-8</encoding>
                     <source>1.8</source>
                     <target>1.8</target>
-                    <encoding>UTF-8</encoding>
                     <compilerArgument>-proc:none</compilerArgument>
                 </configuration>
             </plugin>
