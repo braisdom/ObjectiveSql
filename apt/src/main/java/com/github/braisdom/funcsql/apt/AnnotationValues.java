@@ -64,11 +64,11 @@ public class AnnotationValues {
                                 // For Class value
                                 String className = ((Type.ClassType) fieldAccess.type).allparams_field.get(0).toString();
                                 annotationValueMap.put(attributeName,
-                                        Class.forName(className));
+                                        classLoader.loadClass(className));
                             } else {
                                 // For Enum value
                                 String className = assign.rhs.type.toString();
-                                Class enumClass = Class.forName(className, true, classLoader);
+                                Class enumClass = classLoader.loadClass(className);
                                 Method method = enumClass.getDeclaredMethod("valueOf", String.class);
                                 annotationValueMap.put(attributeName, method.invoke(null,
                                         ((JCTree.JCFieldAccess) assign.rhs).name.toString()));
@@ -80,7 +80,7 @@ public class AnnotationValues {
                     }
                 }
             } catch (Exception ex) {
-                ex.printStackTrace();
+                //Ignore it
             }
         }
 
