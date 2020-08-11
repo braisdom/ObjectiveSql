@@ -32,8 +32,10 @@ public class QueryMethodCodeGenerator extends JavacAnnotationHandler<Queryable> 
                 "query", aptUtils.getClassName(), "createQuery");
         statementBuilder.append(String.class, "columnName", Table.class, "getColumnName",
                 aptUtils.classRef(aptUtils.getClassName()), treeMaker.Literal(field.getName().toString()));
+        JCTree.JCExpression stringFormatExpression = aptUtils.staticMethodCall(String.class,
+                "format", treeMaker.Literal("%s = ?"), treeMaker.Literal(field.name.toString()));
         statementBuilder.append("query", "where",
-                        List.of(treeMaker.Literal("? = ?"), aptUtils.varRef("columnName"), aptUtils.varRef("value")));
+                        List.of(stringFormatExpression, aptUtils.varRef("value")));
 
         methodBuilder.setReturnStatement("query", "execute");
         aptUtils.inject(methodBuilder

@@ -3,6 +3,7 @@ package com.github.braisdom.funcsql.generator;
 import com.github.braisdom.funcsql.*;
 import com.github.braisdom.funcsql.annotations.DomainModel;
 import com.github.braisdom.funcsql.annotations.PrimaryKey;
+import com.github.braisdom.funcsql.annotations.Volatile;
 import com.github.braisdom.funcsql.apt.*;
 import com.github.braisdom.funcsql.apt.MethodBuilder;
 import com.github.braisdom.funcsql.reflection.ClassUtils;
@@ -18,6 +19,7 @@ import com.sun.tools.javac.util.ListBuffer;
 import org.mangosdk.spi.ProviderFor;
 
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Map;
 
 @ProviderFor(JavacAnnotationHandler.class)
@@ -46,6 +48,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
         handleCountMethod(aptUtils);
         handleValidateMethod(aptUtils);
         handleNewInstanceFromMethod(aptUtils);
+        handleRawAttributesField(aptUtils);
     }
 
     private void handleSetterGetter(AnnotationValues annotationValues, APTUtils aptUtils) {
@@ -395,7 +398,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
         JCReturn jcReturn = treeMaker.Return(treeMaker.Apply(List.nil(), methodRef, List.of(aptUtils.varRef("this"),
                 aptUtils.getTreeMaker().Literal(true))));
         JCCatch jcCatch = treeMaker.Catch(aptUtils.newVar(ValidationException.class, "ex"),
-                treeMaker.Block(0, List.of(treeMaker.Return(aptUtils.newArray(Validator.Violation.class)))));
+                treeMaker.Block(0, List.of(treeMaker.Return(aptUtils.methodCall("ex", "getViolations")))));
 
         JCTry jcTry = treeMaker.Try(treeMaker.Block(0, List.of(jcReturn)), List.of(jcCatch),
                 treeMaker.Block(0, List.nil()));
@@ -426,5 +429,42 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
                 .addParameter("underLine", treeMaker.TypeIdent(TypeTag.BOOLEAN))
                 .setReturnType(aptUtils.typeRef(aptUtils.getClassName()))
                 .build("newInstanceFrom", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
+    }
+
+    private void handleRawAttributesField(APTUtils aptUtils) {
+        TreeMaker treeMaker = aptUtils.getTreeMaker();
+        JCExpression rawAttributesType = treeMaker.TypeApply(aptUtils.typeRef(Map.class),
+                List.of(aptUtils.typeRef(String.class), aptUtils.typeRef(Object.class)));
+        JCExpression rawAttributesInit = treeMaker.NewClass(null, List.nil(), aptUtils.typeRef(HashMap.class.getName()),
+                List.nil(), null);
+        JCModifiers modifiers = treeMaker.Modifiers(Flags.PRIVATE | Flags.FINAL);
+        modifiers.annotations = modifiers.annotations.append(treeMaker.Annotation(aptUtils.typeRef(Volatile.class), List.nil()));
+
+        aptUtils.inject(treeMaker.VarDef(modifiers, aptUtils.toName("rawAttributes"), rawAttributesType, rawAttributesInit));
+
+        MethodBuilder getRawAttributeMethodBuilder = aptUtils.createMethodBuilder();
+        JCReturn getRawAttributeReturn = treeMaker.Return(aptUtils
+                .methodCall("rawAttributes", "get", aptUtils.varRef("name")));
+        aptUtils.inject(getRawAttributeMethodBuilder
+                .addStatement(getRawAttributeReturn)
+                .addParameter("name", String.class)
+                .setReturnType(aptUtils.typeRef(Object.class))
+                .build("getRawAttribute", Flags.PUBLIC | Flags.FINAL));
+
+        MethodBuilder setRawAttributeMethodBuilder = aptUtils.createMethodBuilder();
+        JCExpression setRawAttributeExpression = aptUtils.methodCall("rawAttributes", "put",
+                aptUtils.varRef("name"), aptUtils.varRef("value"));
+        aptUtils.inject(setRawAttributeMethodBuilder
+                .addStatement(treeMaker.Exec(setRawAttributeExpression))
+                .addParameter("name", String.class)
+                .addParameter("value", Object.class)
+                .build("setRawAttribute", Flags.PUBLIC | Flags.FINAL));
+
+        MethodBuilder getRawAttributesMethodBuilder = aptUtils.createMethodBuilder();
+        JCReturn getRawAttributesReturn = treeMaker.Return(aptUtils.varRef("rawAttributes"));
+        aptUtils.inject(getRawAttributesMethodBuilder
+                .addStatement(getRawAttributesReturn)
+                .setReturnType(aptUtils.newGenericsType(Map.class, String.class, Object.class))
+                .build("getRawAttributes", Flags.PUBLIC | Flags.FINAL));
     }
 }

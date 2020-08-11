@@ -126,6 +126,14 @@ public final class APTUtils {
         return treeMaker.Apply(List.nil(), treeMaker.Select(typeRef(clazz.getName()), toName(methodName)), List.from(params));
     }
 
+    public JCExpression methodCall(String methodName, JCExpression... params) {
+        return treeMaker.Apply(List.nil(), treeMaker.Ident(toName(methodName)), List.from(params));
+    }
+
+    public JCExpression methodCall(String varName, String methodName, JCExpression... params) {
+        return treeMaker.Apply(List.nil(), treeMaker.Select(treeMaker.Ident(toName(varName)), toName(methodName)), List.from(params));
+    }
+
     public JCExpression newVar(Class<?> clazz, String methodName, JCExpression... params) {
         return treeMaker.Apply(List.nil(), treeMaker.Select(
                 typeRef(clazz.getName()), toName(methodName)), List.from(params));
