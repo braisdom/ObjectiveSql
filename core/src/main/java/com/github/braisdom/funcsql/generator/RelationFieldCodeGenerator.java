@@ -5,7 +5,13 @@ import com.github.braisdom.funcsql.apt.APTUtils;
 import com.github.braisdom.funcsql.apt.AnnotationValues;
 import com.github.braisdom.funcsql.apt.JavacAnnotationHandler;
 import com.github.braisdom.funcsql.relation.RelationType;
+import com.github.braisdom.funcsql.relation.Relationship;
+import com.github.braisdom.funcsql.util.WordUtil;
+import com.sun.tools.javac.code.Flags;
 import com.sun.tools.javac.tree.JCTree;
+import com.sun.tools.javac.tree.JCTree.JCExpression;
+import com.sun.tools.javac.tree.JCTree.JCModifiers;
+import com.sun.tools.javac.tree.TreeMaker;
 import org.mangosdk.spi.ProviderFor;
 
 @ProviderFor(JavacAnnotationHandler.class)
@@ -14,11 +20,21 @@ public class RelationFieldCodeGenerator extends JavacAnnotationHandler<Relation>
     @Override
     public void handle(AnnotationValues annotationValues, JCTree ast, APTUtils aptUtils) {
         Relation relation = annotationValues.getAnnotationValue(Relation.class);
+        JCTree.JCVariableDecl relationField = (JCTree.JCVariableDecl) ast;
 
-        handleRelationField(relation, aptUtils);
+        handleRelationField(relation, relationField, aptUtils);
     }
 
-    private void handleRelationField(Relation relation, APTUtils aptUtils) {
+    private void handleRelationField(Relation relation, JCTree.JCVariableDecl relationField, APTUtils aptUtils) {
+        TreeMaker treeMaker = aptUtils.getTreeMaker();
         RelationType relationType = relation.relationType();
+        String relationName = String.format("%s_%s", relationType.toString().toUpperCase(),
+                WordUtil.underscore(relationField.getName().toString()).toUpperCase());
+        JCModifiers modifiers = treeMaker.Modifiers(Flags.PUBLIC | Flags.STATIC | Flags.FINAL);
+        JCExpression relationInit = aptUtils.staticMethodCall(Relationship.class,
+                "createRelation", aptUtils.classRef(aptUtils.getClassName()), treeMaker.Literal(relationField.getName().toString()));
+
+        aptUtils.inject(treeMaker.VarDef(modifiers, aptUtils.toName(relationName),
+                aptUtils.typeRef(Relationship.class), relationInit));
     }
 }
