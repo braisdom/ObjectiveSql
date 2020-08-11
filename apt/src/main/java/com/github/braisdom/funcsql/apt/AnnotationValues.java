@@ -61,10 +61,12 @@ public class AnnotationValues {
                         if (assign.rhs instanceof JCTree.JCFieldAccess) {
                             JCTree.JCFieldAccess fieldAccess = (JCTree.JCFieldAccess) assign.rhs;
                             if ("java.lang.Class<?>".equalsIgnoreCase(expression.type.toString())) {
+                                // For Class value
                                 String className = ((Type.ClassType) fieldAccess.type).allparams_field.get(0).toString();
                                 annotationValueMap.put(attributeName,
                                         Class.forName(className, true, classLoader));
                             } else {
+                                // For Enum value
                                 String className = assign.rhs.type.toString();
                                 Class enumClass = Class.forName(className, true, classLoader);
                                 Method method = enumClass.getDeclaredMethod("valueOf", String.class);
