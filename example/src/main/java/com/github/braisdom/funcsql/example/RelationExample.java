@@ -1,20 +1,24 @@
 package com.github.braisdom.funcsql.example;
 
 import com.github.braisdom.funcsql.Database;
+import org.apache.commons.lang3.RandomUtils;
 import org.junit.Assert;
 
 import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
 public class RelationExample {
 
-    private static final String[] MEMBER_NAMES = {"Joe","Juan","Jack","Albert","Jonathan","Justin","Terry"};
+    private static final String[] MEMBER_NAMES = {"Joe", "Juan", "Jack", "Albert", "Jonathan", "Justin", "Terry"};
 
-    private static void createRelationData() throws SQLException {
+    private static void prepareRelationData() throws SQLException {
         List<Domains.Member> members = new ArrayList<>();
+        List<Domains.Order> orders = new ArrayList<>();
+
         for (int i = 1; i <= 6; i++) {
             members.add(new Domains.Member()
                     .setId(i)
@@ -24,8 +28,19 @@ public class RelationExample {
                     .setMobile("150000000" + i));
         }
 
-        int[] count = Domains.Member.create(members.toArray(new Domains.Member[]{}), true);
-        Assert.assertEquals(count.length, 6);
+        for (int i = 0; i < 100; i++) {
+            orders.add(new Domains.Order()
+                    .setNo("20200000" + i)
+                    .setMemberId(i % 6 + 1)
+                    .setAmount(RandomUtils.nextFloat(10.0f, 30.0f))
+                    .setQuantity(RandomUtils.nextFloat(100.0f, 300.0f))
+                    .setSalesAt(Timestamp.valueOf("2020-05-01 09:30:00")));
+        }
+
+        int[] createdMembersCount = Domains.Member.create(members.toArray(new Domains.Member[]{}), true);
+        int[] createdOrderCount = Domains.Order.create(orders.toArray(new Domains.Order[]{}), true);
+        Assert.assertEquals(createdMembersCount.length, 6);
+        Assert.assertEquals(createdOrderCount.length, 100);
     }
 
     public static void main(String args[]) throws SQLException {
@@ -38,6 +53,6 @@ public class RelationExample {
         Connection connection = Database.getConnectionFactory().getConnection();
         Domains.createTables(connection);
 
-        createRelationData();
+        prepareRelationData();
     }
 }
