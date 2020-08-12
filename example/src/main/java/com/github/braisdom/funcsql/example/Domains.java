@@ -2,12 +2,11 @@ package com.github.braisdom.funcsql.example;
 
 import com.github.braisdom.funcsql.annotations.*;
 import com.github.braisdom.funcsql.relation.RelationType;
+import com.github.braisdom.funcsql.transition.SqlDateTransitional;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.List;
 import java.util.Map;
 
@@ -60,10 +59,12 @@ public final class Domains {
     @DomainModel
     public static class Order {
         private String no;
-        private Long memberId;
+        private Integer memberId;
         private Float amount;
         private Float quantity;
-        private Date salesAt;
+
+        @Column(transition = SqlDateTransitional.class)
+        private Timestamp salesAt;
 
         @Relation(relationType = RelationType.BELONGS_TO)
         private Member member;

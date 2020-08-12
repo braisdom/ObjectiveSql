@@ -7,6 +7,8 @@ import org.junit.Assert;
 
 import java.io.File;
 import java.sql.SQLException;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,7 +16,7 @@ public class PersistenceExample {
 
     private static void createSimpleMember() throws SQLException {
         Domains.Member newMember = new Domains.Member()
-                .setId(1)
+                .setId(100)
                 .setNo("100000")
                 .setName("Pamela")
                 .setGender(1)
@@ -154,6 +156,16 @@ public class PersistenceExample {
         Domains.Member.execute(String.format("DELETE FROM %s WHERE name = 'Denise'", Domains.Member.TABLE_NAME));
     }
 
+    private static void createOrder() throws SQLException {
+        Domains.Order order = new Domains.Order()
+                .setNo("202000001")
+                .setMemberId(3)
+                .setAmount(3.5f)
+                .setQuantity(100.3f)
+                .setSalesAt(Timestamp.valueOf("2020-05-01 09:30:00"));
+        order.save(false);
+    }
+
     public static void main(String args[]) throws SQLException {
         File file = new File("persistence_example.db");
 
@@ -176,5 +188,6 @@ public class PersistenceExample {
         executeDeleteDenise();
         createSimpleMemberWithValidation();
         validateMember();
+        createOrder();
     }
 }

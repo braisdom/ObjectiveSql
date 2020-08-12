@@ -74,8 +74,8 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
 
             for (int i = 0; i < dirtyObjects.length; i++) {
                 for (int t = 0; t < columnNames.length; t++) {
-                    ColumnTransitional<T> columnTransitional = domainModelDescriptor.getColumnTransition(columnNames[t]);
                     String fieldName = domainModelDescriptor.getFieldName(columnNames[t]);
+                    ColumnTransitional<T> columnTransitional = domainModelDescriptor.getColumnTransition(fieldName);
                     if (columnTransitional != null)
                         values[i][t] = columnTransitional.sinking(connection.getMetaData(),
                                 dirtyObjects[i], domainModelDescriptor, fieldName,

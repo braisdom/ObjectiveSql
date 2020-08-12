@@ -1,11 +1,13 @@
 package com.github.braisdom.funcsql.example;
 
 import com.github.braisdom.funcsql.Database;
+import org.apache.commons.lang3.RandomUtils;
 import org.junit.Assert;
 
 import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -23,8 +25,10 @@ public class QueryExample {
             "Frank","Scott","Eric","Stephen","Andrew","Raymond","Gregory","Joshua","Jerry","Dennis","Walter","Patrick","Peter","Harold",
             "Douglas","Henry","Carl","Arthur","Ryan","Roger"};
 
-    private static void createMembers() throws SQLException {
+    private static void prepareQueryData() throws SQLException {
         List<Domains.Member> members = new ArrayList<>();
+        List<Domains.Order> orders = new ArrayList<>();
+
         for (int i = 0; i < 100; i++) {
             members.add(new Domains.Member()
                     .setNo("Q200000" + i)
@@ -33,14 +37,25 @@ public class QueryExample {
                     .setMobile("150000000" + i));
         }
 
-        int[] count = Domains.Member.create(members.toArray(new Domains.Member[]{}), true);
-        Assert.assertEquals(count.length, 100);
+        for (int i = 0; i < 100; i++) {
+            orders.add(new Domains.Order()
+                    .setNo("20200000" + i)
+                    .setMemberId(i)
+                    .setAmount(RandomUtils.nextFloat(10.0f, 30.0f))
+                    .setQuantity(RandomUtils.nextFloat(100.0f, 300.0f))
+                    .setSalesAt(Timestamp.valueOf("2020-05-01 09:30:00")));
+        }
+
+        int[] createdMembersCount = Domains.Member.create(members.toArray(new Domains.Member[]{}), true);
+        int[] createdOrderCount = Domains.Order.create(orders.toArray(new Domains.Order[]{}), true);
+        Assert.assertEquals(createdMembersCount.length, 100);
+        Assert.assertEquals(createdOrderCount.length, 100);
     }
 
     private static void countMember() throws SQLException {
-        int countGreater10 = Domains.Member.count("id > ?", 10);
+        int count = Domains.Member.count("id > ?", 10);
 
-        Assert.assertEquals(countGreater10, 90);
+        Assert.assertEquals(count, 90);
     }
 
     private static void queryByName() throws SQLException {
@@ -56,6 +71,7 @@ public class QueryExample {
 
         Assert.assertEquals(members.size(), 9);
         Assert.assertEquals(members2.size(), 1);
+        Assert.assertTrue(members3.size() > 0);
         Assert.assertEquals(members3.get(0).getRawAttribute("_name"), "Jonathan");
     }
 
@@ -71,7 +87,6 @@ public class QueryExample {
 
         Assert.assertNotNull(members);
         Assert.assertEquals(members.size(), 92);
-//        Assert.assertEquals(member.getName(), "Willie");
     }
 
     public static void main(String[] args) throws SQLException {
@@ -84,7 +99,7 @@ public class QueryExample {
         Connection connection = Database.getConnectionFactory().getConnection();
         Domains.createTables(connection);
 
-        createMembers();
+        prepareQueryData();
         countMember();
         rawQuery();
         queryByName();
