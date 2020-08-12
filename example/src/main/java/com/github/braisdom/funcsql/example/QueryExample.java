@@ -89,6 +89,13 @@ public class QueryExample {
         Assert.assertEquals(members.size(), 92);
     }
 
+    private static void queryOrders() throws SQLException {
+        List<Domains.Order> orders = Domains.Order.query("");
+
+        Assert.assertNotNull(orders);
+        Assert.assertTrue(orders.size() > 0);
+    }
+
     public static void main(String[] args) throws SQLException {
         File file = new File("query_example.db");
 
@@ -105,5 +112,6 @@ public class QueryExample {
         queryByName();
         queryFirst();
         queryByPredicate();
+        queryOrders();
     }
 }

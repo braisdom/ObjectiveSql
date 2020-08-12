@@ -128,6 +128,8 @@ public final class Database {
         } catch (Exception ex) {
             if (ex instanceof SQLException)
                 throw (SQLException) ex;
+            else if(ex instanceof IllegalArgumentException)
+                throw (IllegalArgumentException) ex;
             else {
                 logger.error(ex.getMessage(), ex);
                 throw new IllegalStateException(ex.getMessage(), ex);
