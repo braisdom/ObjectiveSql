@@ -4,7 +4,6 @@ import com.github.braisdom.funcsql.annotations.Relation;
 import com.github.braisdom.funcsql.apt.APTUtils;
 import com.github.braisdom.funcsql.apt.AnnotationValues;
 import com.github.braisdom.funcsql.apt.JavacAnnotationHandler;
-import com.github.braisdom.funcsql.apt.MethodBuilder;
 import com.github.braisdom.funcsql.relation.RelationType;
 import com.github.braisdom.funcsql.relation.Relationship;
 import com.github.braisdom.funcsql.util.WordUtil;
@@ -24,18 +23,6 @@ public class RelationFieldCodeGenerator extends JavacAnnotationHandler<Relation>
         JCTree.JCVariableDecl relationField = (JCTree.JCVariableDecl) ast;
 
         handleRelationField(relation, relationField, aptUtils);
-        handleCreateRelationMethod(relation, relationField, aptUtils);
-    }
-
-    private void handleCreateRelationMethod(Relation relation, JCTree.JCVariableDecl relationField, APTUtils aptUtils) {
-        if (RelationType.HAS_MANY.equals(relation.relationType())) {
-            String fieldName = relationField.name.toString();
-            String methodName = String.format("%s%s", "add", WordUtil.camelize(WordUtil.singularize(fieldName)));
-            MethodBuilder methodBuilder = aptUtils.createMethodBuilder();
-
-            aptUtils.inject(methodBuilder
-                    .build(methodName, Flags.PUBLIC | Flags.FINAL));
-        }
     }
 
     private void handleRelationField(Relation relation, JCTree.JCVariableDecl relationField, APTUtils aptUtils) {
