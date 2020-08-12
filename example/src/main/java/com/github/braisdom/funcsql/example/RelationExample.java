@@ -40,12 +40,22 @@ public class RelationExample {
 
         int[] createdMembersCount = Domains.Member.create(members.toArray(new Domains.Member[]{}), true);
         int[] createdOrderCount = Domains.Order.create(orders.toArray(new Domains.Order[]{}), true);
+
         Assert.assertEquals(createdMembersCount.length, 6);
         Assert.assertEquals(createdOrderCount.length, 100);
     }
 
     private static void queryFirstMemberWithOrders() throws SQLException {
-        Domains.Member member = Domains.Member.queryFirst("id > ?", new Relationship[]{Domains.Member.HAS_MANY_ORDERS}, 10);
+        Domains.Member member = Domains.Member.queryFirst("id = ?", new Relationship[]{Domains.Member.HAS_MANY_ORDERS}, 3);
+
+        Assert.assertNotNull(member);
+        Assert.assertTrue(member.getOrders().size() > 0);
+        System.out.println();
+    }
+
+    private static void queryManyMembersWithOrders() throws SQLException {
+        List<Domains.Member> members = Domains.Member.query("id IN (?)",
+                new Relationship[]{Domains.Member.HAS_MANY_ORDERS}, new int[]{2,3,4});
 
         System.out.println();
     }
@@ -62,5 +72,6 @@ public class RelationExample {
 
         prepareRelationData();
         queryFirstMemberWithOrders();
+        queryManyMembersWithOrders();
     }
 }

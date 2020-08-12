@@ -130,11 +130,11 @@ public final class Relationship {
                 throw new RelationalException(String.format("The %s[belongs_to] has too many relations", fieldName));
 
             if (associatedObjects.size() == 1)
-                PropertyUtils.write(row, fieldName, associatedObjects.get(0));
+                PropertyUtils.writeDirectly(row, fieldName, associatedObjects.get(0));
             else
-                PropertyUtils.write(row, fieldName, null);
+                PropertyUtils.writeDirectly(row, fieldName, null);
         } else {
-            PropertyUtils.write(row, fieldName, associatedObjects);
+            PropertyUtils.writeDirectly(row, fieldName, associatedObjects);
         }
     }
 

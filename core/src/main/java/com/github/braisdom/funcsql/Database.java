@@ -39,7 +39,8 @@ public final class Database {
                     sb.append(String.format("'%s'", String.valueOf(value)));
                 sb.append(",");
             }
-            sb.delete(sb.length() - 1, sb.length());
+            if(sb.length() > 0)
+                sb.delete(sb.length() - 1, sb.length());
             return sb.toString();
         }
     };
