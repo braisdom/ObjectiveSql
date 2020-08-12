@@ -27,6 +27,7 @@ public class AnnotationProcessor extends AbstractProcessor {
     private JavacTrees javacTrees;
     private TreeMaker treeMaker;
     private Names names;
+    private ClassLoader classloader;
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
@@ -39,6 +40,7 @@ public class AnnotationProcessor extends AbstractProcessor {
             System.err.println(e.getMessage());
         }
 
+        this.classloader = ClassLoader.getSystemClassLoader();
         this.messager = processingEnv.getMessager();
         this.elementUtils = processingEnv.getElementUtils();
         this.javacTrees = JavacTrees.instance(processingEnv);
@@ -54,29 +56,15 @@ public class AnnotationProcessor extends AbstractProcessor {
             final Set<? extends Element> elements = roundEnv.getElementsAnnotatedWith(annotationClass);
             for(Element element : elements) {
                 JCTree ast = javacTrees.getTree(element);
-                ast.accept(new TreeTranslator(){
-                    @Override
-                    public void visitClassDef(JCTree.JCClassDecl tree) {
-                        APTUtils aptUtils = new APTUtils(tree, element, tree, treeMaker, names, messager);
-                        handler.handle(new AnnotationValues(tree, handler.getClassLoader()), tree, aptUtils);
-                        super.visitClassDef(tree);
-                    }
-
-                    @Override
-                    public void visitMethodDef(JCTree.JCMethodDecl tree) {
-                        super.visitMethodDef(tree);
-                    }
-
-                    @Override
-                    public void visitVarDef(JCTree.JCVariableDecl tree) {
-                        if(tree.sym != null) {
-                            JCTree.JCClassDecl classDecl = getClassDecl(tree);
-                            APTUtils aptUtils = new APTUtils(classDecl, element, tree, treeMaker, names, messager);
-                            handler.handle(new AnnotationValues(tree, handler.getClassLoader()), tree, aptUtils);
-                        }
-                        super.visitVarDef(tree);
-                    }
-                });
+                JCTree.JCClassDecl classDecl;
+                if(ast instanceof JCTree.JCClassDecl)
+                    classDecl = (JCTree.JCClassDecl) ast;
+                else if(ast instanceof JCTree.JCVariableDecl)
+                    classDecl = getClassDecl((JCTree.JCVariableDecl) ast);
+                else
+                    classDecl = null;
+                APTUtils aptUtils = new APTUtils(classDecl, element, ast, treeMaker, names, messager);
+                handler.handle(new AnnotationValues(classDecl, classloader), ast, aptUtils);
             }
         }
         return handlers.size() > 0;

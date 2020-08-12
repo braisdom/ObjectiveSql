@@ -30,6 +30,7 @@ import com.sun.tools.javac.tree.JCTree.JCAnnotation;
 import com.sun.tools.javac.tree.JCTree.JCAssign;
 
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Collections;
@@ -53,35 +54,47 @@ public class AnnotationValues {
         }
 
         private void extractAnnotationValue(JCAnnotation annotation) {
-            try {
-                for (JCTree.JCExpression expression : annotation.getArguments()) {
-                    if (expression instanceof JCAssign) {
-                        JCAssign assign = (JCAssign) expression;
-                        String attributeName = ((JCTree.JCIdent) assign.lhs).name.toString();
-                        if (assign.rhs instanceof JCTree.JCFieldAccess) {
-                            JCTree.JCFieldAccess fieldAccess = (JCTree.JCFieldAccess) assign.rhs;
-                            if ("java.lang.Class".equalsIgnoreCase(expression.type.tsym.toString())) {
-                                // For Class value
-                                String className = ((Type.ClassType) fieldAccess.type).allparams_field.get(0).toString();
+            for (JCTree.JCExpression expression : annotation.getArguments()) {
+                if (expression instanceof JCAssign) {
+                    JCAssign assign = (JCAssign) expression;
+                    String attributeName = ((JCTree.JCIdent) assign.lhs).name.toString();
+                    if (assign.rhs instanceof JCTree.JCFieldAccess) {
+                        JCTree.JCFieldAccess fieldAccess = (JCTree.JCFieldAccess) assign.rhs;
+                        // TODO A ClassNotFoundException will be cached when the annotation value is not a System Class
+                        if ("java.lang.Class".equalsIgnoreCase(expression.type.tsym.toString())) {
+                            // For Class value
+                            String className = ((Type.ClassType) fieldAccess.type).allparams_field.get(0).toString();
+                            try {
                                 annotationValueMap.put(attributeName,
-                                        classLoader.loadClass(className));
-                            } else {
-                                // For Enum value
-                                String className = assign.rhs.type.toString();
-                                Class enumClass = classLoader.loadClass(className);
-                                Method method = enumClass.getDeclaredMethod("valueOf", String.class);
-                                annotationValueMap.put(attributeName, method.invoke(null,
-                                        ((JCTree.JCFieldAccess) assign.rhs).name.toString()));
+                                        Class.forName(className, true, classLoader));
+                            } catch (ClassNotFoundException ex) {
+                                annotationValueMap.put(attributeName, className);
                             }
-                        } else if (assign.rhs instanceof JCTree.JCLiteral) {
-                            annotationValueMap.put(attributeName,
-                                    ((JCTree.JCLiteral)assign.rhs).value);
+                        } else {
+                            // For Enum value
+                            String className = assign.rhs.type.toString();
+                            try {
+                                Class enumClass = Class.forName(className);
+                                annotationValueMap.put(attributeName, getEnumValue(enumClass,
+                                        ((JCTree.JCFieldAccess) assign.rhs).name.toString()));
+                            } catch (ClassNotFoundException ex) {
+                                annotationValueMap.put(attributeName, className);
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
+                            }
                         }
+                    } else if (assign.rhs instanceof JCTree.JCLiteral) {
+                        annotationValueMap.put(attributeName,
+                                ((JCTree.JCLiteral) assign.rhs).value);
                     }
                 }
-            } catch (Exception ex) {
-                //Ignore it
             }
+        }
+
+        private Object getEnumValue(Class enumClass, String value) throws NoSuchMethodException,
+                InvocationTargetException, IllegalAccessException {
+            Method method = enumClass.getDeclaredMethod("valueOf", String.class);
+            return method.invoke(null, value);
         }
 
         private Object getValue(Method method) {
@@ -97,10 +110,10 @@ public class AnnotationValues {
 
     private void extractAnnotation(StatementTree tree) {
         List<JCAnnotation> annotations = Collections.emptyList();
-        if(tree instanceof ClassTree)
-            annotations = (List<JCAnnotation>) ((ClassTree)tree).getModifiers().getAnnotations();
-        else if(tree instanceof VariableTree)
-            annotations = (List<JCAnnotation>) ((VariableTree)tree).getModifiers().getAnnotations();
+        if (tree instanceof ClassTree)
+            annotations = (List<JCAnnotation>) ((ClassTree) tree).getModifiers().getAnnotations();
+        else if (tree instanceof VariableTree)
+            annotations = (List<JCAnnotation>) ((VariableTree) tree).getModifiers().getAnnotations();
 
         for (JCAnnotation annotation : annotations) {
             values.put(annotation.getAnnotationType().type.toString(), new AnnotationValue(annotation));
@@ -116,7 +129,7 @@ public class AnnotationValues {
                     return method.getDefaultValue();
 
                 Object value = annotationValue.getValue(method);
-                if(value == null)
+                if (value == null)
                     return method.getDefaultValue();
 
                 return value;
