@@ -7,7 +7,7 @@ public class DefaultStandardDataTypeRiser implements StandardDataTypeRiser {
         if(lower instanceof Float)
             return (Float) lower;
         if(lower instanceof Double)
-            return Float.class.cast(lower);
+            return Float.valueOf(String.valueOf(lower));
         if(lower instanceof Integer)
             return Float.valueOf(String.valueOf(lower));
         else
@@ -19,7 +19,7 @@ public class DefaultStandardDataTypeRiser implements StandardDataTypeRiser {
         if(lower instanceof Float)
             return (Double) lower;
         if(lower instanceof Float)
-            return Double.class.cast(lower);
+            return Double.valueOf(String.valueOf(lower));
         if(lower instanceof Integer)
             return Double.valueOf(String.valueOf(lower));
         else

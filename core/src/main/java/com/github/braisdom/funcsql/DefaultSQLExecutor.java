@@ -6,6 +6,7 @@ import com.github.braisdom.funcsql.jdbc.ResultSetHandler;
 import com.github.braisdom.funcsql.jdbc.handlers.MapListHandler;
 import com.github.braisdom.funcsql.reflection.PropertyUtils;
 import com.github.braisdom.funcsql.transition.ColumnTransitional;
+import com.github.braisdom.funcsql.transition.StandardDataTypeRiser;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -52,7 +53,29 @@ public class DefaultSQLExecutor<T> implements SQLExecutor<T> {
     }
 }
 
-class DomainModelListHandler implements ResultSetHandler<List> {
+abstract class AbstractResultSetHandler<T> implements ResultSetHandler<T> {
+
+    protected Object getValue(Class fieldType, Object value) {
+        StandardDataTypeRiser dataTypeRiser = Database.getStandardDataTypeRiser();
+        if(Float.class.isAssignableFrom(fieldType) )
+            return dataTypeRiser.risingFloat(value);
+        else if(Double.class.isAssignableFrom(fieldType))
+            return dataTypeRiser.risingDouble(value);
+        else if(Integer.class.isAssignableFrom(fieldType))
+            return dataTypeRiser.risingInteger(value);
+        else if(Short.class.isAssignableFrom(fieldType))
+            return dataTypeRiser.risingShort(value);
+        else if(Long.class.isAssignableFrom(fieldType))
+            return dataTypeRiser.risingLong(value);
+        else if(Boolean.class.isAssignableFrom(fieldType))
+            return dataTypeRiser.risingBoolean(value);
+        else if(Enum.class.isAssignableFrom(fieldType))
+            return dataTypeRiser.risingEnum(fieldType, value);
+        return value;
+    }
+}
+
+class DomainModelListHandler extends AbstractResultSetHandler<List> {
 
     private final DomainModelDescriptor domainModelDescriptor;
     private final DatabaseMetaData databaseMetaData;
@@ -84,14 +107,15 @@ class DomainModelListHandler implements ResultSetHandler<List> {
         for (int i = 1; i <= columnCount; i++) {
             String columnName = metaData.getColumnName(i);
             String fieldName = domainModelDescriptor.getFieldName(columnName);
-            ColumnTransitional columnTransitional = domainModelDescriptor.getColumnTransition(fieldName);
 
-            if (fieldName != null)
-                domainModelDescriptor.setValue(bean, fieldName,
-                        columnTransitional == null ? rs.getObject(columnName)
-                                : columnTransitional.rising(databaseMetaData, metaData, bean,
-                                domainModelDescriptor, fieldName, rs.getObject(columnName)));
-            else
+            if (fieldName != null) {
+                Class fieldType = domainModelDescriptor.getFieldType(fieldName);
+                ColumnTransitional columnTransitional = domainModelDescriptor.getColumnTransition(fieldName);
+                Object rawValue = getValue(fieldType, rs.getObject(columnName));
+                Object value = columnTransitional == null ? rawValue : columnTransitional
+                        .rising(databaseMetaData, metaData, bean, domainModelDescriptor, fieldName, rawValue);
+                domainModelDescriptor.setValue(bean, fieldName, value);
+            } else
                 PropertyUtils.writeRawAttribute(bean, columnName, rs.getObject(columnName));
         }
 
@@ -99,7 +123,7 @@ class DomainModelListHandler implements ResultSetHandler<List> {
     }
 }
 
-class DomainModelHandler implements ResultSetHandler<Object> {
+class DomainModelHandler extends AbstractResultSetHandler<Object> {
 
     private final DomainModelDescriptor domainModelDescriptor;
     private final DatabaseMetaData databaseMetaData;
@@ -123,13 +147,16 @@ class DomainModelHandler implements ResultSetHandler<Object> {
                 domainModelDescriptor.setValue(bean, primaryFieldName, rs.getObject(columnName));
             }else {
                 String fieldName = domainModelDescriptor.getFieldName(columnName);
+                Class fieldType = domainModelDescriptor.getFieldType(fieldName);
                 ColumnTransitional columnTransitional = domainModelDescriptor.getColumnTransition(fieldName);
 
-                if (fieldName != null)
-                    domainModelDescriptor.setValue(bean, fieldName,
-                            columnTransitional == null ? rs.getObject(columnName)
-                                    : columnTransitional.rising(databaseMetaData, metaData, bean,
-                                    domainModelDescriptor, fieldName, rs.getObject(columnName)));
+                if (fieldName != null) {
+                    Object rawValue = getValue(fieldType, rs.getObject(columnName));
+                    Object value = columnTransitional == null ? rawValue : columnTransitional
+                            .rising(databaseMetaData, metaData, bean, domainModelDescriptor, fieldName, rawValue);
+                    domainModelDescriptor.setValue(bean, fieldName, value);
+                } else
+                    PropertyUtils.writeRawAttribute(bean, columnName, rs.getObject(columnName));
             }
         }
 
