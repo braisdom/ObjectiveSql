@@ -1,6 +1,7 @@
 package com.github.braisdom.funcsql.example;
 
 import com.github.braisdom.funcsql.Database;
+import com.github.braisdom.funcsql.relation.Relationship;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.Assert;
 
@@ -43,6 +44,12 @@ public class RelationExample {
         Assert.assertEquals(createdOrderCount.length, 100);
     }
 
+    private static void queryFirstMemberWithOrders() throws SQLException {
+        Domains.Member member = Domains.Member.queryFirst("id > ?", new Relationship[]{Domains.Member.HAS_MANY_ORDERS}, 10);
+
+        System.out.println();
+    }
+
     public static void main(String args[]) throws SQLException {
         File file = new File("relation_example.db");
 
@@ -54,5 +61,6 @@ public class RelationExample {
         Domains.createTables(connection);
 
         prepareRelationData();
+        queryFirstMemberWithOrders();
     }
 }
