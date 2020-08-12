@@ -1,5 +1,6 @@
 package com.github.braisdom.funcsql;
 
+import com.github.braisdom.funcsql.annotations.PrimaryKey;
 import com.github.braisdom.funcsql.jdbc.QueryRunner;
 import com.github.braisdom.funcsql.jdbc.ResultSetHandler;
 import com.github.braisdom.funcsql.jdbc.handlers.MapListHandler;
@@ -116,14 +117,20 @@ class DomainModelHandler implements ResultSetHandler<Object> {
 
         for (int i = 1; i <= columnCount; i++) {
             String columnName = metaData.getColumnName(i);
-            String fieldName = domainModelDescriptor.getFieldName(columnName);
-            ColumnTransitional columnTransitional = domainModelDescriptor.getColumnTransition(fieldName);
+            if(columnName.equalsIgnoreCase("last_insert_rowid()")) {
+                PrimaryKey primaryKey = domainModelDescriptor.getPrimaryKey();
+                String primaryFieldName = domainModelDescriptor.getFieldName(primaryKey.name());
+                domainModelDescriptor.setValue(bean, primaryFieldName, rs.getObject(columnName));
+            }else {
+                String fieldName = domainModelDescriptor.getFieldName(columnName);
+                ColumnTransitional columnTransitional = domainModelDescriptor.getColumnTransition(fieldName);
 
-            if (fieldName != null)
-                domainModelDescriptor.setValue(bean, fieldName,
-                        columnTransitional == null ? rs.getObject(columnName)
-                                : columnTransitional.rising(databaseMetaData, metaData, bean,
-                                domainModelDescriptor, fieldName, rs.getObject(columnName)));
+                if (fieldName != null)
+                    domainModelDescriptor.setValue(bean, fieldName,
+                            columnTransitional == null ? rs.getObject(columnName)
+                                    : columnTransitional.rising(databaseMetaData, metaData, bean,
+                                    domainModelDescriptor, fieldName, rs.getObject(columnName)));
+            }
         }
 
         return bean;
