@@ -11,19 +11,19 @@ public class DefaultStandardDataTypeRiser implements StandardDataTypeRiser {
         if(lower instanceof Integer)
             return Float.valueOf(String.valueOf(lower));
         else
-            throw new TransitionException(String.format("%s cannot convert to Float", String.valueOf(lower)));
+            throw new TransitionException(String.format("'%s' cannot convert to Float", String.valueOf(lower)));
     }
 
     @Override
     public Double risingDouble(Object lower) {
-        if(lower instanceof Float)
+        if(lower instanceof Double)
             return (Double) lower;
         if(lower instanceof Float)
             return Double.valueOf(String.valueOf(lower));
         if(lower instanceof Integer)
             return Double.valueOf(String.valueOf(lower));
         else
-            throw new TransitionException(String.format("%s cannot convert to Double", String.valueOf(lower)));
+            throw new TransitionException(String.format("'%s' cannot convert to Double", String.valueOf(lower)));
     }
 
     @Override
@@ -33,7 +33,7 @@ public class DefaultStandardDataTypeRiser implements StandardDataTypeRiser {
         if(lower instanceof Integer)
             return Short.valueOf(String.valueOf(lower));
         else
-            throw new TransitionException(String.format("%s cannot convert to Short", String.valueOf(lower)));
+            throw new TransitionException(String.format("'%s' cannot convert to Short", String.valueOf(lower)));
     }
 
     @Override
@@ -43,7 +43,7 @@ public class DefaultStandardDataTypeRiser implements StandardDataTypeRiser {
         if(lower instanceof Long)
             return Integer.valueOf(String.valueOf(lower));
         else
-            throw new TransitionException(String.format("%s cannot convert to Integer", String.valueOf(lower)));
+            throw new TransitionException(String.format("'%s' cannot convert to Integer", String.valueOf(lower)));
     }
 
     @Override
@@ -53,7 +53,7 @@ public class DefaultStandardDataTypeRiser implements StandardDataTypeRiser {
         if(lower instanceof Integer)
             return Long.valueOf(String.valueOf(lower));
         else
-            throw new TransitionException(String.format("%s cannot convert to Long", String.valueOf(lower)));
+            throw new TransitionException(String.format("'%s' cannot convert to Long", String.valueOf(lower)));
     }
 
     @Override
@@ -63,7 +63,7 @@ public class DefaultStandardDataTypeRiser implements StandardDataTypeRiser {
         if(lower instanceof Short)
             return ((Short)lower) == 1;
         else
-            throw new TransitionException(String.format("%s cannot convert to Boolean", String.valueOf(lower)));
+            throw new TransitionException(String.format("'%s' cannot convert to Boolean", String.valueOf(lower)));
     }
 
     @Override
