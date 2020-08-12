@@ -1,5 +1,7 @@
 package com.github.braisdom.funcsql;
 
+import com.github.braisdom.funcsql.transition.DefaultStandardDataTypeRiser;
+import com.github.braisdom.funcsql.transition.StandardDataTypeRiser;
 import com.github.braisdom.funcsql.util.ArrayUtil;
 import com.github.braisdom.funcsql.util.StringUtil;
 
@@ -57,6 +59,7 @@ public final class Database {
     };
 
     private static SQLExecutor sqlExecutor = new DefaultSQLExecutor();
+    private static StandardDataTypeRiser standardDataTypeRiser = new DefaultStandardDataTypeRiser();
     private static ConnectionFactory connectionFactory;
 
     @FunctionalInterface
@@ -103,6 +106,10 @@ public final class Database {
         Objects.requireNonNull(sqlExecutor, "The quoter cannot be null");
 
         Database.quoter = quoter;
+    }
+
+    public static void installStandardDataTypeRiser(StandardDataTypeRiser standardDataTypeRiser) {
+        Database.standardDataTypeRiser = standardDataTypeRiser;
     }
 
     public static <T, R> R execute(DatabaseInvoke<T, R> databaseInvoke) throws SQLException {
@@ -155,6 +162,10 @@ public final class Database {
 
     public static LoggerFactory getLoggerFactory() {
         return loggerFactory;
+    }
+
+    public static StandardDataTypeRiser getStandardDataTypeRiser() {
+        return standardDataTypeRiser;
     }
 
     public static ConnectionFactory getConnectionFactory() {

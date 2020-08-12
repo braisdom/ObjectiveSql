@@ -14,5 +14,5 @@ public interface StandardDataTypeRiser {
 
     Boolean risingBoolean(Object lower);
 
-    Enum risingEnum(Object lower);
+    public <T extends Enum<T>> T risingEnum(Class<T> clazz,  Object lower);
 }
