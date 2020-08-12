@@ -4,6 +4,7 @@ import com.github.braisdom.funcsql.annotations.Relation;
 import com.github.braisdom.funcsql.apt.APTUtils;
 import com.github.braisdom.funcsql.apt.AnnotationValues;
 import com.github.braisdom.funcsql.apt.JavacAnnotationHandler;
+import com.github.braisdom.funcsql.apt.MethodBuilder;
 import com.github.braisdom.funcsql.relation.RelationType;
 import com.github.braisdom.funcsql.relation.Relationship;
 import com.github.braisdom.funcsql.util.WordUtil;
@@ -15,7 +16,7 @@ import com.sun.tools.javac.tree.TreeMaker;
 import org.mangosdk.spi.ProviderFor;
 
 @ProviderFor(JavacAnnotationHandler.class)
-public class RelationFieldCodeGenerator extends JavacAnnotationHandler<Relation>{
+public class RelationFieldCodeGenerator extends JavacAnnotationHandler<Relation> {
 
     @Override
     public void handle(AnnotationValues annotationValues, JCTree ast, APTUtils aptUtils) {
@@ -27,7 +28,14 @@ public class RelationFieldCodeGenerator extends JavacAnnotationHandler<Relation>
     }
 
     private void handleCreateRelationMethod(Relation relation, JCTree.JCVariableDecl relationField, APTUtils aptUtils) {
+        if (RelationType.HAS_MANY.equals(relation.relationType())) {
+            String fieldName = relationField.name.toString();
+            String methodName = String.format("%s%s", "add", WordUtil.camelize(WordUtil.singularize(fieldName)));
+            MethodBuilder methodBuilder = aptUtils.createMethodBuilder();
 
+            aptUtils.inject(methodBuilder
+                    .build(methodName, Flags.PUBLIC | Flags.FINAL));
+        }
     }
 
     private void handleRelationField(Relation relation, JCTree.JCVariableDecl relationField, APTUtils aptUtils) {

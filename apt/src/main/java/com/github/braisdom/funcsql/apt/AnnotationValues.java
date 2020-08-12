@@ -23,6 +23,7 @@ package com.github.braisdom.funcsql.apt;
 
 import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.StatementTree;
+import com.sun.source.tree.Tree;
 import com.sun.source.tree.VariableTree;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
@@ -102,13 +103,13 @@ public class AnnotationValues {
         }
     }
 
-    public AnnotationValues(StatementTree tree, ClassLoader classLoader) {
+    public AnnotationValues(Tree tree, ClassLoader classLoader) {
         this.values = new HashMap<>();
         this.classLoader = classLoader;
         extractAnnotation(tree);
     }
 
-    private void extractAnnotation(StatementTree tree) {
+    private void extractAnnotation(Tree tree) {
         List<JCAnnotation> annotations = Collections.emptyList();
         if (tree instanceof ClassTree)
             annotations = (List<JCAnnotation>) ((ClassTree) tree).getModifiers().getAnnotations();

@@ -64,7 +64,7 @@ public class AnnotationProcessor extends AbstractProcessor {
                 else
                     classDecl = null;
                 APTUtils aptUtils = new APTUtils(classDecl, element, ast, treeMaker, names, messager);
-                handler.handle(new AnnotationValues(classDecl, classloader), ast, aptUtils);
+                handler.handle(new AnnotationValues(ast, classloader), ast, aptUtils);
             }
         }
         return handlers.size() > 0;
