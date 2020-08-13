@@ -54,8 +54,8 @@ public class RelationExample {
     }
 
     private static void queryManyMembersWithOrders() throws SQLException {
-        List<Domains.Member> members = Domains.Member.query("id IN (?)",
-                new Relationship[]{Domains.Member.HAS_MANY_ORDERS}, new int[]{2,3,4});
+        List<Domains.Member> members = Domains.Member.query("id > (?)",
+                new Relationship[]{Domains.Member.HAS_MANY_ORDERS}, 1);
 
         System.out.println();
     }
