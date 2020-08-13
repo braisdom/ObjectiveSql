@@ -3,7 +3,7 @@ package com.github.braisdom.funcsql.generator;
 import com.github.braisdom.funcsql.*;
 import com.github.braisdom.funcsql.annotations.DomainModel;
 import com.github.braisdom.funcsql.annotations.PrimaryKey;
-import com.github.braisdom.funcsql.annotations.Volatile;
+import com.github.braisdom.funcsql.annotations.Transient;
 import com.github.braisdom.funcsql.apt.*;
 import com.github.braisdom.funcsql.apt.MethodBuilder;
 import com.github.braisdom.funcsql.reflection.ClassUtils;
@@ -15,7 +15,6 @@ import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.JCTree.*;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.List;
-import com.sun.tools.javac.util.ListBuffer;
 import org.mangosdk.spi.ProviderFor;
 
 import java.sql.SQLException;
@@ -438,7 +437,7 @@ public class DomainModelCodeGenerator extends JavacAnnotationHandler<DomainModel
         JCExpression rawAttributesInit = treeMaker.NewClass(null, List.nil(), aptUtils.typeRef(HashMap.class.getName()),
                 List.nil(), null);
         JCModifiers modifiers = treeMaker.Modifiers(Flags.PRIVATE | Flags.FINAL);
-        modifiers.annotations = modifiers.annotations.append(treeMaker.Annotation(aptUtils.typeRef(Volatile.class), List.nil()));
+        modifiers.annotations = modifiers.annotations.append(treeMaker.Annotation(aptUtils.typeRef(Transient.class), List.nil()));
 
         aptUtils.inject(treeMaker.VarDef(modifiers, aptUtils.toName("rawAttributes"), rawAttributesType, rawAttributesInit));
 

@@ -232,7 +232,11 @@ public abstract class AbstractQueryRunner {
 
         for (int i = 0; i < params.length; i++) {
             if (params[i] != null) {
-                stmt.setObject(i + 1, params[i]);
+                if(params[i] instanceof int[] || params[i] instanceof Integer[]) {
+                    Array array = stmt.getConnection().createArrayOf("INTEGER", params);
+                    stmt.setArray(i + 1, array);
+                }else
+                    stmt.setObject(i + 1, params[i]);
             } else {
                 // VARCHAR works with many drivers regardless
                 // of the actual column type. Oddly, NULL and

@@ -3,7 +3,7 @@ package com.github.braisdom.funcsql;
 import com.github.braisdom.funcsql.annotations.Column;
 import com.github.braisdom.funcsql.annotations.DomainModel;
 import com.github.braisdom.funcsql.annotations.PrimaryKey;
-import com.github.braisdom.funcsql.annotations.Volatile;
+import com.github.braisdom.funcsql.annotations.Transient;
 import com.github.braisdom.funcsql.reflection.ClassUtils;
 import com.github.braisdom.funcsql.reflection.PropertyUtils;
 import com.github.braisdom.funcsql.transition.ColumnTransitional;
@@ -140,8 +140,8 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
         if (domainModel.allFieldsPersistent()) {
             return Arrays.stream(fields).filter(field -> {
                 Column column = field.getAnnotation(Column.class);
-                Volatile volatileAnnotation = field.getAnnotation(Volatile.class);
-                if (!Modifier.isStatic(field.getModifiers()) && volatileAnnotation == null) {
+                Transient transientAnnotation = field.getAnnotation(Transient.class);
+                if (!Modifier.isStatic(field.getModifiers()) && transientAnnotation == null) {
                     if (column == null)
                         return isColumnizable(field);
                     else {
@@ -152,8 +152,8 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
         } else {
             return Arrays.stream(fields).filter(field -> {
                 Column column = field.getAnnotation(Column.class);
-                Volatile volatileAnnotation = field.getAnnotation(Volatile.class);
-                if (!Modifier.isStatic(field.getModifiers()) && volatileAnnotation == null) {
+                Transient transientAnnotation = field.getAnnotation(Transient.class);
+                if (!Modifier.isStatic(field.getModifiers()) && transientAnnotation == null) {
                     if (column == null)
                         return false;
                     else

@@ -4,7 +4,6 @@ import com.github.braisdom.funcsql.annotations.*;
 import com.github.braisdom.funcsql.relation.RelationType;
 import com.github.braisdom.funcsql.transition.SqlDateTransitional;
 
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.sql.*;
 import java.util.List;
@@ -19,7 +18,6 @@ public final class Domains {
     public static class Member {
         // The validation constraints, it will be applied for validate method.
         // for example: Validator.Violation[] violations = member.validate();
-        @NotNull
         @Size(min = 5, max = 20)
         private String no;
 
@@ -39,7 +37,7 @@ public final class Domains {
         private Map extendedAttributes;
 
         // The field will not be save into database;
-        @Volatile
+        @Transient
         private String otherInfo;
 
         @Override
