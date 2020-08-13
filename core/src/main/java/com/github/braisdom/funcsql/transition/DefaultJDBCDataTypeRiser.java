@@ -1,6 +1,6 @@
 package com.github.braisdom.funcsql.transition;
 
-public class DefaultStandardDataTypeRiser implements StandardDataTypeRiser {
+public class DefaultJDBCDataTypeRiser implements JDBCDataTypeRiser {
 
     @Override
     public Float risingFloat(Object lower) {

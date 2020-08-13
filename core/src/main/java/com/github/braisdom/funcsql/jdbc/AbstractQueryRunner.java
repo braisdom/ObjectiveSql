@@ -234,7 +234,7 @@ public abstract class AbstractQueryRunner {
             if (params[i] != null) {
                 if(params[i] instanceof int[] || params[i] instanceof Integer[]) {
                     Array array = stmt.getConnection().createArrayOf("INTEGER", params);
-                    stmt.setArray(i + 1, array);
+                    stmt.setObject(i + 1, array);
                 }else
                     stmt.setObject(i + 1, params[i]);
             } else {

@@ -3,16 +3,13 @@ package com.github.braisdom.funcsql;
 import com.github.braisdom.funcsql.annotations.PrimaryKey;
 import com.github.braisdom.funcsql.jdbc.QueryRunner;
 import com.github.braisdom.funcsql.jdbc.ResultSetHandler;
-import com.github.braisdom.funcsql.jdbc.handlers.MapListHandler;
 import com.github.braisdom.funcsql.reflection.PropertyUtils;
 import com.github.braisdom.funcsql.transition.ColumnTransitional;
-import com.github.braisdom.funcsql.transition.StandardDataTypeRiser;
+import com.github.braisdom.funcsql.transition.JDBCDataTypeRiser;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class DefaultSQLExecutor<T> implements SQLExecutor<T> {
 
@@ -56,7 +53,7 @@ public class DefaultSQLExecutor<T> implements SQLExecutor<T> {
 abstract class AbstractResultSetHandler<T> implements ResultSetHandler<T> {
 
     protected Object getValue(Class fieldType, Object value) {
-        StandardDataTypeRiser dataTypeRiser = Database.getStandardDataTypeRiser();
+        JDBCDataTypeRiser dataTypeRiser = Database.getJdbcDataTypeRiser();
         if(Float.class.isAssignableFrom(fieldType) )
             return dataTypeRiser.risingFloat(value);
         else if(Double.class.isAssignableFrom(fieldType))

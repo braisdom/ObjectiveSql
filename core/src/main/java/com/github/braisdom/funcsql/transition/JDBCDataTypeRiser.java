@@ -1,6 +1,6 @@
 package com.github.braisdom.funcsql.transition;
 
-public interface StandardDataTypeRiser {
+public interface JDBCDataTypeRiser {
 
     Float risingFloat(Object lower);
 

@@ -1,8 +1,7 @@
 package com.github.braisdom.funcsql;
 
-import com.github.braisdom.funcsql.transition.DefaultStandardDataTypeRiser;
-import com.github.braisdom.funcsql.transition.StandardDataTypeRiser;
-import com.github.braisdom.funcsql.util.ArrayUtil;
+import com.github.braisdom.funcsql.transition.DefaultJDBCDataTypeRiser;
+import com.github.braisdom.funcsql.transition.JDBCDataTypeRiser;
 import com.github.braisdom.funcsql.util.StringUtil;
 
 import java.sql.Connection;
@@ -60,7 +59,7 @@ public final class Database {
     };
 
     private static SQLExecutor sqlExecutor = new DefaultSQLExecutor();
-    private static StandardDataTypeRiser standardDataTypeRiser = new DefaultStandardDataTypeRiser();
+    private static JDBCDataTypeRiser jdbcDataTypeRiser = new DefaultJDBCDataTypeRiser();
     private static ConnectionFactory connectionFactory;
 
     @FunctionalInterface
@@ -109,8 +108,8 @@ public final class Database {
         Database.quoter = quoter;
     }
 
-    public static void installStandardDataTypeRiser(StandardDataTypeRiser standardDataTypeRiser) {
-        Database.standardDataTypeRiser = standardDataTypeRiser;
+    public static void installStandardDataTypeRiser(JDBCDataTypeRiser JDBCDataTypeRiser) {
+        Database.jdbcDataTypeRiser = JDBCDataTypeRiser;
     }
 
     public static <T, R> R execute(DatabaseInvoke<T, R> databaseInvoke) throws SQLException {
@@ -165,8 +164,8 @@ public final class Database {
         return loggerFactory;
     }
 
-    public static StandardDataTypeRiser getStandardDataTypeRiser() {
-        return standardDataTypeRiser;
+    public static JDBCDataTypeRiser getJdbcDataTypeRiser() {
+        return jdbcDataTypeRiser;
     }
 
     public static ConnectionFactory getConnectionFactory() {
