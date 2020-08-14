@@ -13,6 +13,7 @@
         <module>apt</module>
         <module>core</module>
         <module>example</module>
+        <module>dionaea</module>
     </modules>
 
     <build>
