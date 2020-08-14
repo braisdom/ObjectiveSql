@@ -36,5 +36,6 @@ public class RelationFieldCodeGenerator extends JavacAnnotationHandler<Relation>
 
         aptUtils.inject(treeMaker.VarDef(modifiers, aptUtils.toName(relationName),
                 aptUtils.typeRef(Relationship.class), relationInit));
+        
     }
 }

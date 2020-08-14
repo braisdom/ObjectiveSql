@@ -1,6 +1,7 @@
 package com.github.braisdom.funcsql.apt;
 
 import com.sun.tools.javac.api.JavacTrees;
+import com.sun.tools.javac.jvm.ClassWriter;
 import com.sun.tools.javac.processing.JavacProcessingEnvironment;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
@@ -27,6 +28,7 @@ public class AnnotationProcessor extends AbstractProcessor {
     private TreeMaker treeMaker;
     private Names names;
     private ClassLoader classloader;
+    private ClassWriter classWriter;
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
@@ -46,6 +48,7 @@ public class AnnotationProcessor extends AbstractProcessor {
         Context context = ((JavacProcessingEnvironment) processingEnv).getContext();
         this.treeMaker = TreeMaker.instance(context);
         this.names = Names.instance(context);
+        this.classWriter = ClassWriter.instance(context);
     }
 
     @Override
@@ -62,7 +65,7 @@ public class AnnotationProcessor extends AbstractProcessor {
                     classDecl = getClassDecl((JCTree.JCVariableDecl) ast);
                 else
                     classDecl = null;
-                APTUtils aptUtils = new APTUtils(classDecl, element, ast, treeMaker, names, messager);
+                APTUtils aptUtils = new APTUtils(classWriter, classDecl, element, ast, treeMaker, names, messager);
                 handler.handle(new AnnotationValues(ast, classloader), ast, aptUtils);
             }
         }

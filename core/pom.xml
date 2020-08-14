@@ -24,6 +24,11 @@
             <version>1.0</version>
         </dependency>
         <dependency>
+            <groupId>com.github.braisdom</groupId>
+            <artifactId>funcsql-dionaea</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
             <version>6.1.5.Final</version>

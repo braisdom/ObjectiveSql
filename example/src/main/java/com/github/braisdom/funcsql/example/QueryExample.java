@@ -1,5 +1,6 @@
 package com.github.braisdom.funcsql.example;
 
+import com.github.braisdom.dionaea.Dionaea;
 import com.github.braisdom.funcsql.Database;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.Assert;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+@Dionaea
 public class QueryExample {
 
     private static Logger logger = Logger.getLogger(QueryExample.class.getName());
