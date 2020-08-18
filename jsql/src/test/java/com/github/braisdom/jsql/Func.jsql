@@ -1,0 +1,9 @@
+
+sql caseWhen() {
+    CASE WHEN :name > 0
+            THEN 'positive'
+         WHEN :name < 0
+            THEN 'negative'
+         ELSE 'zero'
+    END
+}

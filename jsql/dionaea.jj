@@ -1,0 +1,174 @@
+options {
+    LOOKAHEAD = 1;
+    CHOICE_AMBIGUITY_CHECK = 3;
+    OTHER_AMBIGUITY_CHECK = 2;
+    STATIC = false;
+    DEBUG_PARSER = false;
+    DEBUG_LOOKAHEAD = false;
+    DEBUG_TOKEN_MANAGER = false;
+    UNICODE_INPUT = true;
+    SUPPORT_CLASS_VISIBILITY_PUBLIC = false;
+}
+
+PARSER_BEGIN(Parser)
+
+package com.github.braisdom.jsql;
+
+import java.util.*;
+import com.github.braisdom.jsql.ast.*;
+
+public final class Parser {
+
+    public static String unquote(String value, String quote) {
+        if (value.startsWith(quote) && (value.endsWith(quote))) {
+            return value.substring(1, value.length() - 1);
+        }
+        return value;
+    }
+}
+
+PARSER_END(Parser)
+
+SKIP :
+{
+    " "
+|   "\t"
+|   "\n"
+|   "\r"
+|   "\f"
+}
+SPECIAL_TOKEN: { <LINE_COMMENT: "--"(~["\r","\n"])*> }
+
+
+TOKEN :
+{
+  < LPAREN: "(" >
+| < RPAREN: ")" >
+| < LBRACE: "{" >
+| < RBRACE: "}" >
+| < LBRACKET: "[" >
+| < RBRACKET: "]" >
+| < SEMICOLON: ";" >
+| < COMMA: "," >
+| < DOT: "." >
+| < COLON: ":" >
+| < QUOTE: "'" >
+}
+
+TOKEN : {
+    < STRINGVAL: ( "'" ( ("\'") | ~["'"] )* "'") > |
+    < DBSTRINGVAL: ( "\"" ( ("\"") | ~["'"] )* "\"") >
+}
+
+TOKEN : {
+    < IMPORT : "import" > |
+    < DATASET : "dataset" > |
+    < PROJECTION : "projection" > |
+    < AS : "as" > |
+    < FROM : "from" >
+}
+
+TOKEN : {
+    < DIGITS : ([ "0"-"9" ])+ > |
+    < IDENTIFIER : (["a"-"z", "A"-"Z", "_"]) ([ "a"-"z", "A"-"Z", "0"-"9", "_" ])* > |
+    < TYPE_NAME : (["A"-"Z"]) ([ "a"-"z", "0"-"9", "_" ])* >
+}
+
+TOKEN : {
+    < BACK_QUOTED_IDENTIFIER: "`" ( (~["`","\n","\r"]) | ("``") )+ "`" >
+}
+
+JSQLNode JSQLNode():
+{
+    final JSQLNode jsqlNode = new JSQLNode();
+    ImportNode importNode;
+    DatasetNode datasetNode;
+}
+{
+    (
+        importNode = ImportNode() { jsqlNode.addImportNode(importNode); } |
+        datasetNode = DatasetNode() { jsqlNode.addDatasetNode(datasetNode); }
+    )*
+    {
+        return jsqlNode;
+    }
+}
+
+ImportNode ImportNode():
+{
+    ImportNode importNode;
+    String importDeclaration;
+}
+{
+    ( <IMPORT> importDeclaration = Name() { importNode = new ImportNode(importDeclaration); } <SEMICOLON> )
+    {
+        return importNode;
+    }
+}
+
+DatasetNode DatasetNode():
+{
+    final DatasetNode datasetNode = new DatasetNode();
+    FormalParameter parameter;
+    Projectional projectional;
+}
+{
+    (
+        <DATASET> <IDENTIFIER> { datasetNode.setName(getToken(0).image); }
+        <LPAREN>
+            parameter = FormalParameter() { datasetNode.addFormalParameter(parameter); }
+            ( <COMMA> parameter = FormalParameter() { datasetNode.addFormalParameter(parameter); } )*
+        <RPAREN>
+        <LBRACE>
+            <PROJECTION>
+                <LBRACKET>
+                    (
+                        Projectional(datasetNode)
+                        ( <COMMA> Projectional(datasetNode))
+                    )
+                <RBRACKET>
+                <COMMA>
+        <RBRACE>
+    )
+    { return datasetNode; }
+}
+
+FormalParameter FormalParameter():
+{
+    String type;
+    String name;
+}
+{
+    (<IDENTIFIER> { type = getToken(0).image; } <IDENTIFIER> { name = getToken(0).image; })
+    { return new FormalParameter(type, name); }
+}
+
+void Projectional(DatasetNode datasetNode):
+{
+    Projectional projectional;
+}
+{
+    (
+        projectional = SymbolRefNode()
+    ) {  datasetNode.addProjectional(projectional); }
+}
+
+SymbolRefNode SymbolRefNode():
+{
+    SymbolRefNode symbolRefNode = new SymbolRefNode();
+}
+{
+    (
+        <COLON> <IDENTIFIER> { symbolRefNode.setSymbolName(getToken(0).image); }
+        [ <AS> <IDENTIFIER> { symbolRefNode.setAlias(getToken(0).image); } ]
+    ) { return symbolRefNode; }
+}
+
+String Name() :
+{
+    List<String> names = new ArrayList();
+}
+{
+  ( <IDENTIFIER> { names.add(getToken(0).image); } ( <DOT> <IDENTIFIER> { names.add(getToken(0).image); })* )
+  { return String.join(".", names.toArray(new String[0])); }
+}

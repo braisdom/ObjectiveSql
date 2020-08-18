@@ -20,6 +20,7 @@ public class QueryMethodCodeGenerator extends JavacAnnotationHandler<Queryable> 
     @Override
     public void handle(AnnotationValues annotationValues, JCTree ast, APTUtils aptUtils) {
         JCTree.JCVariableDecl field = (JCTree.JCVariableDecl) aptUtils.get();
+
         TreeMaker treeMaker = aptUtils.getTreeMaker();
         String methodName = WordUtil.camelize("queryBy_" + field.getName(), true);
 

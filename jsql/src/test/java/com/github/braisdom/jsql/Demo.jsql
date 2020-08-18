@@ -1,0 +1,30 @@
+
+import com.github.braisdom.jsql.Func;
+
+-- comment
+dataset Member(Timestamp purchaseBegin) {
+    projection [
+        :id,
+        :member_no as member_no,
+        max(:id) as max_member_id,
+        Func::caseWhen() as name
+    ],
+    from [#pumper.member],
+    predicate (:status = 1 && :birthday > purchaseBegin),
+    join [left(MemberProducts mp, mp.member_id == member.id)],
+    group [],
+    order [-:id],
+    having ()
+}
+
+-- comment
+func purchasedMember(skus Array, purchaseBegin Timestamp, purchaseEnd Timestamp) {
+    var member = Member(purchaseBegin);
+
+    member.predicates.appendAnd(:birthday ~ (purchaseBegin, purchaseEnd));
+
+    if(skus.length() > 0)
+        member.predicates.appendAnd(:id < 10);
+
+    return member;
+}

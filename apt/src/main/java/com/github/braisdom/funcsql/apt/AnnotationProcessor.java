@@ -18,7 +18,6 @@ import java.lang.annotation.Annotation;
 import java.util.List;
 import java.util.Set;
 
-@SupportedAnnotationTypes("*")
 public class AnnotationProcessor extends AbstractProcessor {
 
     private List<JavacAnnotationHandler> handlers;
@@ -28,7 +27,6 @@ public class AnnotationProcessor extends AbstractProcessor {
     private TreeMaker treeMaker;
     private Names names;
     private ClassLoader classloader;
-    private ClassWriter classWriter;
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
@@ -48,7 +46,6 @@ public class AnnotationProcessor extends AbstractProcessor {
         Context context = ((JavacProcessingEnvironment) processingEnv).getContext();
         this.treeMaker = TreeMaker.instance(context);
         this.names = Names.instance(context);
-        this.classWriter = ClassWriter.instance(context);
     }
 
     @Override
@@ -65,7 +62,7 @@ public class AnnotationProcessor extends AbstractProcessor {
                     classDecl = getClassDecl((JCTree.JCVariableDecl) ast);
                 else
                     classDecl = null;
-                APTUtils aptUtils = new APTUtils(classWriter, classDecl, element, ast, treeMaker, names, messager);
+                APTUtils aptUtils = new APTUtils(classDecl, element, ast, treeMaker, names, messager);
                 handler.handle(new AnnotationValues(ast, classloader), ast, aptUtils);
             }
         }

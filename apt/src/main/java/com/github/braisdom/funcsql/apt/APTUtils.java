@@ -24,11 +24,9 @@ public final class APTUtils {
     private final TreeMaker treeMaker;
     private final Names names;
     private final Messager messager;
-    private final ClassWriter classWriter;
 
-    APTUtils(ClassWriter classWriter, JCTree.JCClassDecl classDecl, Element element, JCTree ast, TreeMaker treeMaker,
+    APTUtils(JCTree.JCClassDecl classDecl, Element element, JCTree ast, TreeMaker treeMaker,
              Names names, Messager messager) {
-        this.classWriter = classWriter;
         this.classDecl = classDecl;
         this.element = element;
         this.ast = ast;
@@ -43,10 +41,6 @@ public final class APTUtils {
 
     public StatementBuilder createBlockBuilder() {
         return new StatementBuilder(this);
-    }
-
-    public ClassWriter getClassWriter() {
-        return classWriter;
     }
 
     public JCTree get() {
