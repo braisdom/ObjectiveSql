@@ -15,9 +15,9 @@ typedef dataset Member(Timestamp purchaseBegin) {
         {fn if(:name is null, 'unnamed', :name) } as name,
         {fn max(:id) } as max_member_id
     ],
-    from [#pumper.member],
+    from [#pumper.member as member],
     predicate (:status = 1 && :birthday > purchaseBegin),
-    join [left(MemberProducts mp, mp.member_id == member.id)],
+    join [left(MemberProducts as mp, mp.member_id == member.id),],
     group [],
     order [-:id],
     having ()

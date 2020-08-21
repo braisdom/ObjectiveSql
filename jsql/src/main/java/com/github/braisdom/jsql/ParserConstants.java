@@ -77,27 +77,27 @@ interface ParserConstants {
   /** RegularExpression Id. */
   int IMPORT = 41;
   /** RegularExpression Id. */
-  int DATASET = 42;
+  int TYPEDEF = 42;
   /** RegularExpression Id. */
-  int PROJECTION = 43;
+  int DATASET = 43;
   /** RegularExpression Id. */
-  int FROM = 44;
+  int PROJECTION = 44;
   /** RegularExpression Id. */
-  int AS = 45;
+  int FROM = 45;
   /** RegularExpression Id. */
-  int IDENTIFIER = 46;
+  int AS = 46;
   /** RegularExpression Id. */
-  int LETTER = 47;
+  int IDENTIFIER = 47;
   /** RegularExpression Id. */
-  int DIGIT = 48;
+  int LETTER = 48;
   /** RegularExpression Id. */
-  int DECIMAL_LITERAL = 49;
+  int DIGIT = 49;
   /** RegularExpression Id. */
-  int FLOATING_LITERAL = 50;
+  int DECIMAL_LITERAL = 50;
   /** RegularExpression Id. */
-  int BOOLEAN_LITERAL = 51;
+  int FLOATING_LITERAL = 51;
   /** RegularExpression Id. */
-  int SYMBOL = 52;
+  int BOOLEAN_LITERAL = 52;
   /** RegularExpression Id. */
   int DATASET_REF = 53;
 
@@ -148,6 +148,7 @@ interface ParserConstants {
     "<DBSTRINGVAL>",
     "<BACK_QUOTED_IDENTIFIER>",
     "\"import\"",
+    "\"typedef\"",
     "\"dataset\"",
     "\"projection\"",
     "\"from\"",
@@ -158,8 +159,8 @@ interface ParserConstants {
     "<DECIMAL_LITERAL>",
     "<FLOATING_LITERAL>",
     "<BOOLEAN_LITERAL>",
-    "<SYMBOL>",
     "<DATASET_REF>",
+    "\"{fn\"",
   };
 
 }

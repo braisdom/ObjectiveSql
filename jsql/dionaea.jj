@@ -92,6 +92,7 @@ TOKEN : {
 
 TOKEN : {
     < IMPORT : "import" > |
+    < TYPEDEF : "typedef" > |
     < DATASET : "dataset" > |
     < PROJECTION : "projection" > |
     < FROM : "from" > |
@@ -102,10 +103,9 @@ TOKEN : {
     < IDENTIFIER: <LETTER> (<LETTER> | <DIGIT>)* > |
     < #LETTER: ["_", "a"-"z", "A"-"Z"] > |
     < #DIGIT: ["0"-"9"] > |
-    < DECIMAL_LITERAL: ["-"] ["1"-"9"] (["0"-"9"])* > |
-    < FLOATING_LITERAL: ["-"] (["0"-"9"])+ "." (["0"-"9"])*  >|
+    < DECIMAL_LITERAL: (["-"])? ["1"-"9"] (["0"-"9"])* > |
+    < FLOATING_LITERAL: (["-"])? (["0"-"9"])+ "." (["0"-"9"])*  >|
     < BOOLEAN_LITERAL: ("true" | "false") > |
-    < SYMBOL: ":" <IDENTIFIER> > |
     < DATASET_REF: "#" <IDENTIFIER> ("." <IDENTIFIER>)* >
 }
 
@@ -142,19 +142,15 @@ DatasetNode DatasetNode():
 }
 {
     (
-        <DATASET> <IDENTIFIER> { datasetNode.setName(getToken(0).image); }
+        <TYPEDEF> <DATASET> <IDENTIFIER> { datasetNode.setName(getToken(0).image); }
         "("
             parameter = FormalParameterNode() { datasetNode.addFormalParameter(parameter); }
             ( "," parameter = FormalParameterNode() { datasetNode.addFormalParameter(parameter); } )*
         ")"
-        <LBRACE>
+        "{"
             <PROJECTION>
-                "{"
-                    (
-                        Projectional(datasetNode) ( "," Projectional(datasetNode))*
-                    )
-                "}"
-        <RBRACE>
+                "[" Projectional(datasetNode) ( "," Projectional(datasetNode))* "]"
+        "}"
     )
     { return datasetNode; }
 }
@@ -176,8 +172,9 @@ void Projectional(DatasetNode datasetNode):
 }
 {
     [
-        (projectional = SymbolNode() "as" token = <IDENTIFIER> { projectional.setAlias(token.image); } ) |
-        (projectional = ScalarNode() "as" token = <IDENTIFIER> { projectional.setAlias(token.image); })
+        (projectional = SymbolNode() [ "as" token = <IDENTIFIER> { projectional.setAlias(token.image); } ] ) |
+        (projectional = ScalarNode() [ "as" token = <IDENTIFIER> { projectional.setAlias(token.image); } ] ) |
+        (projectional = SqlFunctionCallNode() "as" token = <IDENTIFIER> { projectional.setAlias(token.image); } )
     ] {  datasetNode.addProjectional(projectional); }
 }
 
@@ -188,8 +185,10 @@ SqlFunctionCallNode SqlFunctionCallNode():
 }
 {
     (
-        <IDENTIFIER> { sqlFunctionCallNode.setName(getToken(0).image); }
-        <LPAREN> expr = <IDENTIFIER> { sqlFunctionCallNode.setExpression(expr.image); } <RPAREN>
+        "{fn"
+            <IDENTIFIER> { sqlFunctionCallNode.setName(getToken(0).image); }
+            "(" ")"
+        "}"
     ) { return sqlFunctionCallNode; }
 }
 
@@ -200,9 +199,8 @@ ScalarNode ScalarNode():
 }
 {
     ( token = <STRINGVAL> { value = token.image; } |
-      token = <DECIMAL_LITERAL> { value = Integer.parseInteger(token.image); } |
-      token = <FLOATING_LITERAL> { value = Float.parseFloat(token.image); } |
-      token = <BOOLEAN_LITERAL> { value = Boolean.parseBoolean(token.image); }
+      token = <DECIMAL_LITERAL> { value = Integer.parseInt(token.image); } |
+      token = <FLOATING_LITERAL> { value = Float.parseFloat(token.image); }
     ) { return new ScalarNode(value); }
 }
 

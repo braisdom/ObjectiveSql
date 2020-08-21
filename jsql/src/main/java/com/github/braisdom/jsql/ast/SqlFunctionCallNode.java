@@ -1,6 +1,6 @@
 package com.github.braisdom.jsql.ast;
 
-public class SqlFunctionCallNode implements Projectional {
+public class SqlFunctionCallNode extends Aliasable implements Projectional {
     private String name;
     private String expression;
 
