@@ -16,9 +16,8 @@ public class DatasetNode {
         projectionals.add(projectional);
     }
 
-    public DatasetNode setName(String name) {
+    public void setName(String name) {
         this.name = name;
-        return this;
     }
 
     public String getName() {

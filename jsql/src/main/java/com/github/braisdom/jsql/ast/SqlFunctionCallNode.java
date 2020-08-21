@@ -17,8 +17,7 @@ public class SqlFunctionCallNode extends Aliasable implements Projectional {
         return expression;
     }
 
-    public SqlFunctionCallNode setExpression(String expression) {
+    public void setExpression(String expression) {
         this.expression = expression;
-        return this;
     }
 }

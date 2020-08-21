@@ -18,17 +18,15 @@ public class FunctionCallNode extends Aliasable implements Projectional {
         return functionName;
     }
 
-    public FunctionCallNode setFunctionName(String functionName) {
+    public void setFunctionName(String functionName) {
         this.functionName = functionName;
-        return this;
     }
 
     public String getExpression() {
         return expression;
     }
 
-    public FunctionCallNode setExpression(String expression) {
+    public void setExpression(String expression) {
         this.expression = expression;
-        return this;
     }
 }

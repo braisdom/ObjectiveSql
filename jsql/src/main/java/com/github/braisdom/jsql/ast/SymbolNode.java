@@ -11,8 +11,7 @@ public class SymbolNode extends Aliasable implements Projectional, Expression {
         return symbolName;
     }
 
-    public SymbolNode setSymbolName(String symbolName) {
+    public void setSymbolName(String symbolName) {
         this.symbolName = symbolName;
-        return this;
     }
 }

@@ -127,7 +127,7 @@ name = getToken(0).image;
     case STRINGVAL:
     case DECIMAL_LITERAL:
     case FLOATING_LITERAL:
-    case 54:{
+    case 56:{
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case COLON:{
         projectional = SymbolNode();
@@ -161,7 +161,7 @@ projectional.setAlias(token.image);
         }
         break;
         }
-      case 54:{
+      case 56:{
         projectional = SqlFunctionCallNode();
         jj_consume_token(AS);
         token = jj_consume_token(IDENTIFIER);
@@ -184,7 +184,7 @@ datasetNode.addProjectional(projectional);
 
   final public SqlFunctionCallNode SqlFunctionCallNode() throws ParseException {SqlFunctionCallNode sqlFunctionCallNode = new SqlFunctionCallNode();
     Token expr;
-    jj_consume_token(54);
+    jj_consume_token(56);
     jj_consume_token(IDENTIFIER);
 sqlFunctionCallNode.setName(getToken(0).image);
     jj_consume_token(LPAREN);
@@ -221,6 +221,30 @@ value = Float.parseFloat(token.image);
     throw new Error("Missing return statement in function");
 }
 
+  final public MissingDataNode MissingDataNode() throws ParseException {SymbolNode  symbolNode;
+    MissingDataNode missingData = new MissingDataNode();
+    symbolNode = SymbolNode();
+missingData.setSymbol(symbolNode);
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case IS_NULL:{
+      jj_consume_token(IS_NULL);
+missingData.setMissing(true);
+      break;
+      }
+    case IS_NOT_NULL:{
+      jj_consume_token(IS_NOT_NULL);
+missingData.setMissing(false);
+      break;
+      }
+    default:
+      jj_la1[9] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
+{if ("" != null) return missingData;}
+    throw new Error("Missing return statement in function");
+}
+
   final public SymbolNode SymbolNode() throws ParseException {Token token;
     jj_consume_token(COLON);
     token = jj_consume_token(IDENTIFIER);
@@ -239,7 +263,7 @@ names.add(getToken(0).image);
         break;
         }
       default:
-        jj_la1[9] = jj_gen;
+        jj_la1[10] = jj_gen;
         break label_4;
       }
       jj_consume_token(DOT);
@@ -259,7 +283,7 @@ names.add(getToken(0).image);
   public Token jj_nt;
   private int jj_ntk;
   private int jj_gen;
-  final private int[] jj_la1 = new int[10];
+  final private int[] jj_la1 = new int[11];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static {
@@ -267,10 +291,10 @@ names.add(getToken(0).image);
 	   jj_la1_init_1();
 	}
 	private static void jj_la1_init_0() {
-	   jj_la1_0 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
+	   jj_la1_0 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
 	}
 	private static void jj_la1_init_1() {
-	   jj_la1_1 = new int[] {0x600,0x600,0x2,0x2,0x4000,0x4000,0x4c0048,0x4c0048,0xc0040,0x4,};
+	   jj_la1_1 = new int[] {0x600,0x600,0x2,0x2,0x4000,0x4000,0x1300048,0x1300048,0x300040,0x18000,0x4,};
 	}
 
   /** Constructor with InputStream. */
@@ -284,7 +308,7 @@ names.add(getToken(0).image);
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 10; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 11; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -298,7 +322,7 @@ names.add(getToken(0).image);
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 10; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 11; i++) jj_la1[i] = -1;
   }
 
   /** Constructor. */
@@ -308,7 +332,7 @@ names.add(getToken(0).image);
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 10; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 11; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -326,7 +350,7 @@ names.add(getToken(0).image);
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 10; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 11; i++) jj_la1[i] = -1;
   }
 
   /** Constructor with generated Token Manager. */
@@ -335,7 +359,7 @@ names.add(getToken(0).image);
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 10; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 11; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -344,7 +368,7 @@ names.add(getToken(0).image);
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 10; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 11; i++) jj_la1[i] = -1;
   }
 
   private Token jj_consume_token(int kind) throws ParseException {
@@ -395,12 +419,12 @@ names.add(getToken(0).image);
   /** Generate ParseException. */
   public ParseException generateParseException() {
 	 jj_expentries.clear();
-	 boolean[] la1tokens = new boolean[55];
+	 boolean[] la1tokens = new boolean[57];
 	 if (jj_kind >= 0) {
 	   la1tokens[jj_kind] = true;
 	   jj_kind = -1;
 	 }
-	 for (int i = 0; i < 10; i++) {
+	 for (int i = 0; i < 11; i++) {
 	   if (jj_la1[i] == jj_gen) {
 		 for (int j = 0; j < 32; j++) {
 		   if ((jj_la1_0[i] & (1<<j)) != 0) {
@@ -412,7 +436,7 @@ names.add(getToken(0).image);
 		 }
 	   }
 	 }
-	 for (int i = 0; i < 55; i++) {
+	 for (int i = 0; i < 57; i++) {
 	   if (la1tokens[i]) {
 		 jj_expentry = new int[1];
 		 jj_expentry[0] = i;

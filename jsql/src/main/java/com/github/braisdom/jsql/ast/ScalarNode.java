@@ -11,8 +11,7 @@ public class ScalarNode extends Aliasable implements Projectional, Expression {
         return value;
     }
 
-    public ScalarNode setValue(Object value) {
+    public void setValue(Object value) {
         this.value = value;
-        return this;
     }
 }

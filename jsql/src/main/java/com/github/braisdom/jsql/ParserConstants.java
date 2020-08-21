@@ -87,19 +87,23 @@ interface ParserConstants {
   /** RegularExpression Id. */
   int AS = 46;
   /** RegularExpression Id. */
-  int IDENTIFIER = 47;
+  int IS_NULL = 47;
   /** RegularExpression Id. */
-  int LETTER = 48;
+  int IS_NOT_NULL = 48;
   /** RegularExpression Id. */
-  int DIGIT = 49;
+  int IDENTIFIER = 49;
   /** RegularExpression Id. */
-  int DECIMAL_LITERAL = 50;
+  int LETTER = 50;
   /** RegularExpression Id. */
-  int FLOATING_LITERAL = 51;
+  int DIGIT = 51;
   /** RegularExpression Id. */
-  int BOOLEAN_LITERAL = 52;
+  int DECIMAL_LITERAL = 52;
   /** RegularExpression Id. */
-  int DATASET_REF = 53;
+  int FLOATING_LITERAL = 53;
+  /** RegularExpression Id. */
+  int BOOLEAN_LITERAL = 54;
+  /** RegularExpression Id. */
+  int DATASET_REF = 55;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -153,6 +157,8 @@ interface ParserConstants {
     "\"projection\"",
     "\"from\"",
     "\"as\"",
+    "\"is null\"",
+    "\"is not null\"",
     "<IDENTIFIER>",
     "<LETTER>",
     "<DIGIT>",

@@ -96,7 +96,9 @@ TOKEN : {
     < DATASET : "dataset" > |
     < PROJECTION : "projection" > |
     < FROM : "from" > |
-    < AS : "as" >
+    < AS : "as" > |
+    < IS_NULL : "is null" > |
+    < IS_NOT_NULL : "is not null" >
 }
 
 TOKEN : {
@@ -202,6 +204,18 @@ ScalarNode ScalarNode():
       token = <DECIMAL_LITERAL> { value = Integer.parseInt(token.image); } |
       token = <FLOATING_LITERAL> { value = Float.parseFloat(token.image); }
     ) { return new ScalarNode(value); }
+}
+
+MissingDataNode MissingDataNode():
+{
+    SymbolNode  symbolNode;
+    MissingDataNode missingData = new MissingDataNode();
+}
+{
+    (
+        ( symbolNode = SymbolNode() ) { missingData.setSymbol(symbolNode); }
+        ( <IS_NULL> { missingData.setMissing(true); } | <IS_NOT_NULL> { missingData.setMissing(false); } )
+    ) { return missingData; }
 }
 
 SymbolNode SymbolNode():
