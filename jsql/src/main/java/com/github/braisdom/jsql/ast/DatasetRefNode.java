@@ -1,6 +1,6 @@
 package com.github.braisdom.jsql.ast;
 
-public class DatasetRefNode extends Aliasable implements Projectional {
+public class DatasetRefNode extends Aliasable implements Projectional, Inclusived {
     private String schemaName;
     private String refName;
 

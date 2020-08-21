@@ -150,8 +150,7 @@ DatasetNode DatasetNode():
             ( "," parameter = FormalParameterNode() { datasetNode.addFormalParameter(parameter); } )*
         ")"
         "{"
-            <PROJECTION>
-                "[" Projectional(datasetNode) ( "," Projectional(datasetNode))* "]"
+            <PROJECTION> "[" Projectional(datasetNode) ( "," Projectional(datasetNode))* "]"
         "}"
     )
     { return datasetNode; }
@@ -189,7 +188,9 @@ SqlFunctionCallNode SqlFunctionCallNode():
     (
         "{fn"
             <IDENTIFIER> { sqlFunctionCallNode.setName(getToken(0).image); }
-            "(" ")"
+            "("
+
+            ")"
         "}"
     ) { return sqlFunctionCallNode; }
 }
