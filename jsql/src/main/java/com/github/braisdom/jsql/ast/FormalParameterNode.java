@@ -1,10 +1,10 @@
 package com.github.braisdom.jsql.ast;
 
-public class FormalParameter {
+public class FormalParameterNode {
     private String type;
     private String name;
 
-    public FormalParameter(String type, String name) {
+    public FormalParameterNode(String type, String name) {
         this.type = type;
         this.name = name;
     }

@@ -1,11 +1,21 @@
 
 import com.github.braisdom.jsql.Func;
 
+typedef sql detectName(Symbol name, String scalar) {
+    CASE WHEN $name > 0
+            THEN 'positive'
+         WHEN $name < 0
+            THEN $scalar
+         ELSE 'zero'
+    END
+}
+
 -- comment
-dataset Member(Timestamp purchaseBegin) {
+typedef dataset Member(Timestamp purchaseBegin) {
     projection [
         :id,
         :member_no as member_no,
+        if(:name is null, 'unnamed', :name) as name,
         max(:id) as max_member_id,
         Func::caseWhen() as name
     ],
@@ -18,8 +28,8 @@ dataset Member(Timestamp purchaseBegin) {
 }
 
 -- comment
-func purchasedMember(skus Array, purchaseBegin Timestamp, purchaseEnd Timestamp) {
-    var member = Member(purchaseBegin);
+func purchasedMember(Array skus, Timestamp purchaseBegin, Timestamp purchaseEnd) {
+    var member = new Member(purchaseBegin);
 
     member.predicates.appendAnd(:birthday ~ (purchaseBegin, purchaseEnd));
 

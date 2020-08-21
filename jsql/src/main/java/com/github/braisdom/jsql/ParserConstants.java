@@ -11,49 +11,91 @@ interface ParserConstants {
   /** End of File. */
   int EOF = 0;
   /** RegularExpression Id. */
-  int LINE_COMMENT = 6;
+  int EQ = 9;
   /** RegularExpression Id. */
-  int LPAREN = 7;
+  int GT = 10;
   /** RegularExpression Id. */
-  int RPAREN = 8;
+  int LT = 11;
   /** RegularExpression Id. */
-  int LBRACE = 9;
+  int HOOK = 12;
   /** RegularExpression Id. */
-  int RBRACE = 10;
+  int LE = 13;
   /** RegularExpression Id. */
-  int LBRACKET = 11;
+  int GE = 14;
   /** RegularExpression Id. */
-  int RBRACKET = 12;
+  int NE = 15;
   /** RegularExpression Id. */
-  int SEMICOLON = 13;
+  int NE2 = 16;
   /** RegularExpression Id. */
-  int COMMA = 14;
+  int PLUS = 17;
   /** RegularExpression Id. */
-  int DOT = 15;
+  int MINUS = 18;
   /** RegularExpression Id. */
-  int COLON = 16;
+  int STAR = 19;
   /** RegularExpression Id. */
-  int QUOTE = 17;
+  int SLASH = 20;
   /** RegularExpression Id. */
-  int STRINGVAL = 18;
+  int PERCENT_REMAINDER = 21;
   /** RegularExpression Id. */
-  int DBSTRINGVAL = 19;
+  int SC_OR = 22;
   /** RegularExpression Id. */
-  int IMPORT = 20;
+  int SC_AND = 23;
   /** RegularExpression Id. */
-  int DATASET = 21;
+  int IN = 24;
   /** RegularExpression Id. */
-  int PROJECTION = 22;
+  int BETWEEN = 25;
   /** RegularExpression Id. */
-  int AS = 23;
+  int LPAREN = 26;
   /** RegularExpression Id. */
-  int DIGITS = 24;
+  int RPAREN = 27;
   /** RegularExpression Id. */
-  int IDENTIFIER = 25;
+  int LBRACE = 28;
   /** RegularExpression Id. */
-  int TYPE_NAME = 26;
+  int RBRACE = 29;
   /** RegularExpression Id. */
-  int BACK_QUOTED_IDENTIFIER = 27;
+  int LBRACKET = 30;
+  /** RegularExpression Id. */
+  int RBRACKET = 31;
+  /** RegularExpression Id. */
+  int SEMICOLON = 32;
+  /** RegularExpression Id. */
+  int COMMA = 33;
+  /** RegularExpression Id. */
+  int DOT = 34;
+  /** RegularExpression Id. */
+  int COLON = 35;
+  /** RegularExpression Id. */
+  int QUOTE = 36;
+  /** RegularExpression Id. */
+  int DOUBLE_QUOTE = 37;
+  /** RegularExpression Id. */
+  int STRINGVAL = 38;
+  /** RegularExpression Id. */
+  int DBSTRINGVAL = 39;
+  /** RegularExpression Id. */
+  int BACK_QUOTED_IDENTIFIER = 40;
+  /** RegularExpression Id. */
+  int SYMBOL = 41;
+  /** RegularExpression Id. */
+  int IMPORT = 42;
+  /** RegularExpression Id. */
+  int DATASET = 43;
+  /** RegularExpression Id. */
+  int PROJECTION = 44;
+  /** RegularExpression Id. */
+  int FROM = 45;
+  /** RegularExpression Id. */
+  int AS = 46;
+  /** RegularExpression Id. */
+  int IDENTIFIER = 47;
+  /** RegularExpression Id. */
+  int LETTER = 48;
+  /** RegularExpression Id. */
+  int DIGIT = 49;
+  /** RegularExpression Id. */
+  int DECIMAL_LITERAL = 50;
+  /** RegularExpression Id. */
+  int FLOATING_LITERAL = 51;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -66,7 +108,26 @@ interface ParserConstants {
     "\"\\n\"",
     "\"\\r\"",
     "\"\\f\"",
-    "<LINE_COMMENT>",
+    "<token of kind 6>",
+    "<token of kind 7>",
+    "<token of kind 8>",
+    "\"=\"",
+    "\">\"",
+    "\"<\"",
+    "\"?\"",
+    "\"<=\"",
+    "\">=\"",
+    "\"<>\"",
+    "\"!=\"",
+    "\"+\"",
+    "\"-\"",
+    "\"*\"",
+    "\"/\"",
+    "\"%\"",
+    "\"||\"",
+    "\"&&\"",
+    "\"~=\"",
+    "\"~\"",
     "\"(\"",
     "\")\"",
     "\"{\"",
@@ -78,16 +139,21 @@ interface ParserConstants {
     "\".\"",
     "\":\"",
     "\"\\\'\"",
+    "\"\\\"\"",
     "<STRINGVAL>",
     "<DBSTRINGVAL>",
+    "<BACK_QUOTED_IDENTIFIER>",
+    "<SYMBOL>",
     "\"import\"",
     "\"dataset\"",
     "\"projection\"",
+    "\"from\"",
     "\"as\"",
-    "<DIGITS>",
     "<IDENTIFIER>",
-    "<TYPE_NAME>",
-    "<BACK_QUOTED_IDENTIFIER>",
+    "<LETTER>",
+    "<DIGIT>",
+    "<DECIMAL_LITERAL>",
+    "<FLOATING_LITERAL>",
   };
 
 }

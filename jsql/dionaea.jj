@@ -6,6 +6,7 @@ options {
     DEBUG_PARSER = false;
     DEBUG_LOOKAHEAD = false;
     DEBUG_TOKEN_MANAGER = false;
+    KEEP_LINE_COLUMN = false;
     UNICODE_INPUT = true;
     SUPPORT_CLASS_VISIBILITY_PUBLIC = false;
 }
@@ -36,9 +37,36 @@ SKIP :
 |   "\n"
 |   "\r"
 |   "\f"
+| <"//" (~["\n","\r"])* ("\n"|"\r"|"\r\n")>
+| <"/*" (~["*"])* "*" (~["/"] (~["*"])* "*")* "/">
+| < "--" (~["\n","\r"])* ("\n" | "\r" | "\r\n") >
 }
-SPECIAL_TOKEN: { <LINE_COMMENT: "--"(~["\r","\n"])*> }
 
+TOKEN :
+{
+    < EQ: "=" >
+|   < GT: ">" >
+|   < LT: "<" >
+|   < HOOK: "?" >
+|   < LE: "<=" >
+|   < GE: ">=" >
+|   < NE: "<>" >
+|   < NE2: "!=" >
+|   < PLUS: "+" >
+|   < MINUS: "-" >
+|   < STAR: "*" >
+|   < SLASH: "/" >
+|   < PERCENT_REMAINDER: "%" >
+}
+
+TOKEN :
+{
+    < SC_OR: "||" >
+|   < SC_AND: "&&" >
+|   < IN: "~=" >
+|   < BETWEEN: "~" >
+
+}
 
 TOKEN :
 {
@@ -53,34 +81,35 @@ TOKEN :
 | < DOT: "." >
 | < COLON: ":" >
 | < QUOTE: "'" >
+| < DOUBLE_QUOTE: "\"" >
 }
 
 TOKEN : {
-    < STRINGVAL: ( "'" ( ("\'") | ~["'"] )* "'") > |
-    < DBSTRINGVAL: ( "\"" ( ("\"") | ~["'"] )* "\"") >
+    < STRINGVAL: ( "'" ( ~["'"] | ["\'"] )* "'") > |
+    < DBSTRINGVAL: ( "\"" ( ~["\""] )* "\"") > |
+    < BACK_QUOTED_IDENTIFIER: "`" ( (~["`", "'", "\""]) )+ "`" > |
+    < SYMBOL: ":" <IDENTIFIER> >
 }
 
 TOKEN : {
     < IMPORT : "import" > |
     < DATASET : "dataset" > |
     < PROJECTION : "projection" > |
-    < AS : "as" > |
-    < FROM : "from" >
+    < FROM : "from" > |
+    < AS : "as" >
 }
 
 TOKEN : {
-    < DIGITS : ([ "0"-"9" ])+ > |
-    < IDENTIFIER : (["a"-"z", "A"-"Z", "_"]) ([ "a"-"z", "A"-"Z", "0"-"9", "_" ])* > |
-    < TYPE_NAME : (["A"-"Z"]) ([ "a"-"z", "0"-"9", "_" ])* >
+    < IDENTIFIER: <LETTER> (<LETTER> | <DIGIT>)* > |
+    < #LETTER: ["_", "a"-"z", "A"-"Z"] > |
+    < #DIGIT: ["0"-"9"] > |
+    < DECIMAL_LITERAL: ["-"] ["1"-"9"] (["0"-"9"])* > |
+    < FLOATING_LITERAL: ["-"] (["0"-"9"])+ "." (["0"-"9"])*  >
 }
 
-TOKEN : {
-    < BACK_QUOTED_IDENTIFIER: "`" ( (~["`","\n","\r"]) | ("``") )+ "`" >
-}
-
-JSQLNode JSQLNode():
+JSqlNode JSqlNode():
 {
-    final JSQLNode jsqlNode = new JSQLNode();
+    final JSqlNode jsqlNode = new JSqlNode();
     ImportNode importNode;
     DatasetNode datasetNode;
 }
@@ -88,10 +117,7 @@ JSQLNode JSQLNode():
     (
         importNode = ImportNode() { jsqlNode.addImportNode(importNode); } |
         datasetNode = DatasetNode() { jsqlNode.addDatasetNode(datasetNode); }
-    )*
-    {
-        return jsqlNode;
-    }
+    )* { return jsqlNode; }
 }
 
 ImportNode ImportNode():
@@ -109,62 +135,74 @@ ImportNode ImportNode():
 DatasetNode DatasetNode():
 {
     final DatasetNode datasetNode = new DatasetNode();
-    FormalParameter parameter;
+    FormalParameterNode parameter;
     Projectional projectional;
 }
 {
     (
         <DATASET> <IDENTIFIER> { datasetNode.setName(getToken(0).image); }
         <LPAREN>
-            parameter = FormalParameter() { datasetNode.addFormalParameter(parameter); }
-            ( <COMMA> parameter = FormalParameter() { datasetNode.addFormalParameter(parameter); } )*
+            parameter = FormalParameterNode() { datasetNode.addFormalParameter(parameter); }
+            ( <COMMA> parameter = FormalParameterNode() { datasetNode.addFormalParameter(parameter); } )*
         <RPAREN>
         <LBRACE>
             <PROJECTION>
                 <LBRACKET>
                     (
                         Projectional(datasetNode)
-                        ( <COMMA> Projectional(datasetNode))
+                        ( <COMMA> Projectional(datasetNode))*
                     )
                 <RBRACKET>
-                <COMMA>
         <RBRACE>
     )
     { return datasetNode; }
 }
 
-FormalParameter FormalParameter():
+FormalParameterNode FormalParameterNode():
 {
     String type;
     String name;
 }
 {
     (<IDENTIFIER> { type = getToken(0).image; } <IDENTIFIER> { name = getToken(0).image; })
-    { return new FormalParameter(type, name); }
+    { return new FormalParameterNode(type, name); }
 }
 
 void Projectional(DatasetNode datasetNode):
 {
-    Projectional projectional;
+    Projectional projectional = null;
+}
+{
+    [
+        projectional = SymbolNode() |
+        projectional = SqlFunctionCall()
+    ] {  datasetNode.addProjectional(projectional); }
+}
+
+SqlFunctionCall SqlFunctionCall():
+{
+    SqlFunctionCall sqlFunctionCall = new SqlFunctionCall();
+    Token expr;
 }
 {
     (
-        projectional = SymbolRefNode()
-    ) {  datasetNode.addProjectional(projectional); }
+        <IDENTIFIER> { sqlFunctionCall.setName(getToken(0).image); }
+        <LPAREN> expr = <IDENTIFIER> { sqlFunctionCall.setExpression(expr.image); } <RPAREN>
+    ) { return sqlFunctionCall; }
 }
 
-SymbolRefNode SymbolRefNode():
+SymbolNode SymbolNode():
 {
-    SymbolRefNode symbolRefNode = new SymbolRefNode();
+    SymbolNode symbolNode = new SymbolNode();
 }
 {
     (
-        <COLON> <IDENTIFIER> { symbolRefNode.setSymbolName(getToken(0).image); }
-        [ <AS> <IDENTIFIER> { symbolRefNode.setAlias(getToken(0).image); } ]
-    ) { return symbolRefNode; }
+        <COLON> <IDENTIFIER> { symbolNode.setSymbolName(getToken(0).image); }
+        [ <AS> <IDENTIFIER> { symbolNode.setAlias(getToken(0).image); } ]
+    ) { return symbolNode; }
 }
 
-String Name() :
+String Name():
 {
     List<String> names = new ArrayList();
 }
