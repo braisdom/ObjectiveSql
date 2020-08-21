@@ -3,6 +3,10 @@ package com.github.braisdom.jsql.ast;
 public class SymbolNode extends Aliasable implements Projectional {
     private String symbolName;
 
+    public SymbolNode(String symbolName) {
+        this.symbolName = symbolName;
+    }
+
     public String getSymbolName() {
         return symbolName;
     }

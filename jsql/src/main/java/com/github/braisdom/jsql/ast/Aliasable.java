@@ -7,8 +7,7 @@ public class Aliasable {
         return alias;
     }
 
-    public Aliasable setAlias(String alias) {
+    public void setAlias(String alias) {
         this.alias = alias;
-        return this;
     }
 }

@@ -87,7 +87,7 @@ datasetNode.addFormalParameter(parameter);
     jj_consume_token(RPAREN);
     jj_consume_token(LBRACE);
     jj_consume_token(PROJECTION);
-    jj_consume_token(LBRACKET);
+    jj_consume_token(LBRACE);
     Projectional(datasetNode);
     label_3:
     while (true) {
@@ -103,7 +103,7 @@ datasetNode.addFormalParameter(parameter);
       jj_consume_token(COMMA);
       Projectional(datasetNode);
     }
-    jj_consume_token(RBRACKET);
+    jj_consume_token(RBRACE);
     jj_consume_token(RBRACE);
 {if ("" != null) return datasetNode;}
     throw new Error("Missing return statement in function");
@@ -122,14 +122,20 @@ name = getToken(0).image;
   final public void Projectional(DatasetNode datasetNode) throws ParseException {Projectional projectional = null;
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case COLON:
-    case IDENTIFIER:{
+    case STRINGVAL:
+    case DECIMAL_LITERAL:
+    case FLOATING_LITERAL:
+    case BOOLEAN_LITERAL:{
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case COLON:{
         projectional = SymbolNode();
         break;
         }
-      case IDENTIFIER:{
-        projectional = SqlFunctionCall();
+      case STRINGVAL:
+      case DECIMAL_LITERAL:
+      case FLOATING_LITERAL:
+      case BOOLEAN_LITERAL:{
+        projectional = ScalarNode();
         break;
         }
       default:
@@ -146,34 +152,54 @@ name = getToken(0).image;
 datasetNode.addProjectional(projectional);
 }
 
-  final public SqlFunctionCall SqlFunctionCall() throws ParseException {SqlFunctionCall sqlFunctionCall = new SqlFunctionCall();
+  final public SqlFunctionCallNode SqlFunctionCallNode() throws ParseException {SqlFunctionCallNode sqlFunctionCallNode = new SqlFunctionCallNode();
     Token expr;
     jj_consume_token(IDENTIFIER);
-sqlFunctionCall.setName(getToken(0).image);
+sqlFunctionCallNode.setName(getToken(0).image);
     jj_consume_token(LPAREN);
     expr = jj_consume_token(IDENTIFIER);
-sqlFunctionCall.setExpression(expr.image);
+sqlFunctionCallNode.setExpression(expr.image);
     jj_consume_token(RPAREN);
-{if ("" != null) return sqlFunctionCall;}
+{if ("" != null) return sqlFunctionCallNode;}
     throw new Error("Missing return statement in function");
 }
 
-  final public SymbolNode SymbolNode() throws ParseException {SymbolNode symbolNode = new SymbolNode();
-    jj_consume_token(COLON);
-    jj_consume_token(IDENTIFIER);
-symbolNode.setSymbolName(getToken(0).image);
+  final public ScalarNode ScalarNode() throws ParseException {Object value = null;
+    Token token;
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-    case AS:{
-      jj_consume_token(AS);
-      jj_consume_token(IDENTIFIER);
-symbolNode.setAlias(getToken(0).image);
+    case STRINGVAL:{
+      token = jj_consume_token(STRINGVAL);
+value = token.image;
+      break;
+      }
+    case DECIMAL_LITERAL:{
+      token = jj_consume_token(DECIMAL_LITERAL);
+value = Integer.parseInteger(token.image);
+      break;
+      }
+    case FLOATING_LITERAL:{
+      token = jj_consume_token(FLOATING_LITERAL);
+value = Float.parseFloat(token.image);
+      break;
+      }
+    case BOOLEAN_LITERAL:{
+      token = jj_consume_token(BOOLEAN_LITERAL);
+value = Boolean.parseBoolean(token.image);
       break;
       }
     default:
       jj_la1[6] = jj_gen;
-      ;
+      jj_consume_token(-1);
+      throw new ParseException();
     }
-{if ("" != null) return symbolNode;}
+{if ("" != null) return new ScalarNode(value);}
+    throw new Error("Missing return statement in function");
+}
+
+  final public SymbolNode SymbolNode() throws ParseException {Token token;
+    jj_consume_token(COLON);
+    token = jj_consume_token(IDENTIFIER);
+{if ("" != null) return new SymbolNode(token.image);}
     throw new Error("Missing return statement in function");
 }
 
@@ -219,7 +245,7 @@ names.add(getToken(0).image);
 	   jj_la1_0 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
 	}
 	private static void jj_la1_init_1() {
-	   jj_la1_1 = new int[] {0xc00,0xc00,0x2,0x2,0x8008,0x8008,0x4000,0x4,};
+	   jj_la1_1 = new int[] {0x600,0x600,0x2,0x2,0xe0048,0xe0048,0xe0040,0x4,};
 	}
 
   /** Constructor with InputStream. */
@@ -344,7 +370,7 @@ names.add(getToken(0).image);
   /** Generate ParseException. */
   public ParseException generateParseException() {
 	 jj_expentries.clear();
-	 boolean[] la1tokens = new boolean[52];
+	 boolean[] la1tokens = new boolean[54];
 	 if (jj_kind >= 0) {
 	   la1tokens[jj_kind] = true;
 	   jj_kind = -1;
@@ -361,7 +387,7 @@ names.add(getToken(0).image);
 		 }
 	   }
 	 }
-	 for (int i = 0; i < 52; i++) {
+	 for (int i = 0; i < 54; i++) {
 	   if (la1tokens[i]) {
 		 jj_expentry = new int[1];
 		 jj_expentry[0] = i;

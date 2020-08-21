@@ -75,27 +75,31 @@ interface ParserConstants {
   /** RegularExpression Id. */
   int BACK_QUOTED_IDENTIFIER = 40;
   /** RegularExpression Id. */
-  int SYMBOL = 41;
+  int IMPORT = 41;
   /** RegularExpression Id. */
-  int IMPORT = 42;
+  int DATASET = 42;
   /** RegularExpression Id. */
-  int DATASET = 43;
+  int PROJECTION = 43;
   /** RegularExpression Id. */
-  int PROJECTION = 44;
+  int FROM = 44;
   /** RegularExpression Id. */
-  int FROM = 45;
+  int AS = 45;
   /** RegularExpression Id. */
-  int AS = 46;
+  int IDENTIFIER = 46;
   /** RegularExpression Id. */
-  int IDENTIFIER = 47;
+  int LETTER = 47;
   /** RegularExpression Id. */
-  int LETTER = 48;
+  int DIGIT = 48;
   /** RegularExpression Id. */
-  int DIGIT = 49;
+  int DECIMAL_LITERAL = 49;
   /** RegularExpression Id. */
-  int DECIMAL_LITERAL = 50;
+  int FLOATING_LITERAL = 50;
   /** RegularExpression Id. */
-  int FLOATING_LITERAL = 51;
+  int BOOLEAN_LITERAL = 51;
+  /** RegularExpression Id. */
+  int SYMBOL = 52;
+  /** RegularExpression Id. */
+  int DATASET_REF = 53;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -143,7 +147,6 @@ interface ParserConstants {
     "<STRINGVAL>",
     "<DBSTRINGVAL>",
     "<BACK_QUOTED_IDENTIFIER>",
-    "<SYMBOL>",
     "\"import\"",
     "\"dataset\"",
     "\"projection\"",
@@ -154,6 +157,9 @@ interface ParserConstants {
     "<DIGIT>",
     "<DECIMAL_LITERAL>",
     "<FLOATING_LITERAL>",
+    "<BOOLEAN_LITERAL>",
+    "<SYMBOL>",
+    "<DATASET_REF>",
   };
 
 }

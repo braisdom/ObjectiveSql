@@ -1,13 +1,10 @@
 
 import com.github.braisdom.jsql.Func;
 
-typedef sql detectName(Symbol name, String scalar) {
-    CASE WHEN $name > 0
-            THEN 'positive'
-         WHEN $name < 0
-            THEN $scalar
-         ELSE 'zero'
-    END
+typedef case DetectName() {
+    case member.projections.name
+        when
+    end
 }
 
 -- comment
@@ -15,9 +12,8 @@ typedef dataset Member(Timestamp purchaseBegin) {
     projection [
         :id,
         :member_no as member_no,
-        if(:name is null, 'unnamed', :name) as name,
-        max(:id) as max_member_id,
-        Func::caseWhen() as name
+        {fn if(:name is null, 'unnamed', :name) } as name,
+        {fn max(:id) } as max_member_id
     ],
     from [#pumper.member],
     predicate (:status = 1 && :birthday > purchaseBegin),
@@ -27,14 +23,17 @@ typedef dataset Member(Timestamp purchaseBegin) {
     having ()
 }
 
+func detectName(Symbol name, String scalar) {
+}
+
 -- comment
-func purchasedMember(Array skus, Timestamp purchaseBegin, Timestamp purchaseEnd) {
+query purchasedMember(String[] skus, Timestamp purchaseBegin, Timestamp purchaseEnd) {
     var member = new Member(purchaseBegin);
 
-    member.predicates.appendAnd(:birthday ~ (purchaseBegin, purchaseEnd));
+    member.predicates.And(:birthday ~= (purchaseBegin, purchaseEnd));
 
-    if(skus.length() > 0)
-        member.predicates.appendAnd(:id < 10);
+    if(skus.length > 0)
+        member.predicates.And(:id >= 10);
 
     return member;
 }

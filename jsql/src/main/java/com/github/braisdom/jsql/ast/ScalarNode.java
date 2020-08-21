@@ -1,7 +1,11 @@
 package com.github.braisdom.jsql.ast;
 
-public class ScalarNode {
+public class ScalarNode extends Aliasable {
     private Object value;
+
+    public ScalarNode(Object value) {
+        this.value = value;
+    }
 
     public Object getValue() {
         return value;
