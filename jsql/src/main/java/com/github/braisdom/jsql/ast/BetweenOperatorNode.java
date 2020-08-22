@@ -1,6 +1,6 @@
 package com.github.braisdom.jsql.ast;
 
-public class BetweenOperatorNode implements Expression {
+public class BetweenOperatorNode implements ExpressionOperand {
     private boolean negated;
     private SymbolNode symbolNode;
     private Operand lower;

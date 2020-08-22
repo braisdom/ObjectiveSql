@@ -1,6 +1,6 @@
 package com.github.braisdom.jsql.ast;
 
-public class SqlLiteral extends Aliasable implements Projectional, Expression, BetweenOperatorNode.Operand, SqlFunctionOperand {
+public class SqlLiteral extends Aliasable implements Projectional, ExpressionOperand, BetweenOperatorNode.Operand, SqlFunctionOperand {
     private Object value;
 
     public SqlLiteral(Object value) {
