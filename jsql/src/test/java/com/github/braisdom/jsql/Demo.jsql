@@ -12,8 +12,8 @@ typedef dataset Member(Timestamp purchaseBegin) {
     projection [
         :id,
         :member_no as member_no,
-        {MySql if(:name is null, 'unnamed', :name) } as name,
-        {MySql max(:id) } as max_member_id
+        {fn if(:name is null, 'unnamed', :name) } as name,
+        {fn max(:id) } as max_member_id
     ],
     from [#pumper.member as member],
     predicate (:status = 1 && :birthday > purchaseBegin),

@@ -1,9 +1,20 @@
 package com.github.braisdom.jsql.ast;
 
 public class BetweenNode {
+    private boolean negated;
     private SymbolNode symbolNode;
-    private Inclusived begin;
-    private Inclusived end;
+    private Operand lower;
+    private Operand upper;
+
+    public interface Operand {}
+
+    public boolean isNegated() {
+        return negated;
+    }
+
+    public void setNegated(boolean negated) {
+        this.negated = negated;
+    }
 
     public SymbolNode getSymbolNode() {
         return symbolNode;
@@ -13,19 +24,19 @@ public class BetweenNode {
         this.symbolNode = symbolNode;
     }
 
-    public Inclusived getBegin() {
-        return begin;
+    public Operand getLower() {
+        return lower;
     }
 
-    public void setBegin(Inclusived begin) {
-        this.begin = begin;
+    public void setLower(Operand lower) {
+        this.lower = lower;
     }
 
-    public Inclusived getEnd() {
-        return end;
+    public Operand getUpper() {
+        return upper;
     }
 
-    public void setEnd(Inclusived end) {
-        this.end = end;
+    public void setUpper(Operand upper) {
+        this.upper = upper;
     }
 }

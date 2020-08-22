@@ -1,4 +1,4 @@
 package com.github.braisdom.jsql.ast;
 
-public class LogicExpressionNode {
+public class LogicExpressionNode implements Expression {
 }

@@ -1,5 +1,5 @@
 package com.github.braisdom.jsql.ast;
 
-public class RefNode extends Aliasable implements Projectional, Inclusived {
+public class RefNode extends Aliasable implements Projectional {
 
 }

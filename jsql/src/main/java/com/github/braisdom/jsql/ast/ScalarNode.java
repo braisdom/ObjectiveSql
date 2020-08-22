@@ -1,6 +1,6 @@
 package com.github.braisdom.jsql.ast;
 
-public class ScalarNode extends Aliasable implements Projectional, Expression, Inclusived {
+public class ScalarNode extends Aliasable implements Projectional, Expression {
     private Object value;
 
     public ScalarNode(Object value) {
