@@ -1,8 +1,11 @@
 package com.github.braisdom.jsql.ast;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SqlFunctionCallNode extends Aliasable implements Projectional {
     private String name;
-    private String expression;
+    private List<Expression> expressions = new ArrayList<>();
 
     public String getName() {
         return name;
@@ -13,11 +16,11 @@ public class SqlFunctionCallNode extends Aliasable implements Projectional {
         return this;
     }
 
-    public String getExpression() {
-        return expression;
+    public void addExpression(Expression expression) {
+        expressions.add(expression);
     }
 
-    public void setExpression(String expression) {
-        this.expression = expression;
+    public List<Expression> getExpressions() {
+        return expressions;
     }
 }

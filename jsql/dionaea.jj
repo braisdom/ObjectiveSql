@@ -182,6 +182,7 @@ void Projectional(DatasetNode datasetNode):
 SqlFunctionCallNode SqlFunctionCallNode():
 {
     SqlFunctionCallNode sqlFunctionCallNode = new SqlFunctionCallNode();
+    Expression parameter;
     Token expr;
 }
 {
@@ -189,10 +190,23 @@ SqlFunctionCallNode SqlFunctionCallNode():
         "{fn"
             <IDENTIFIER> { sqlFunctionCallNode.setName(getToken(0).image); }
             "("
-
+                parameter = SqlFunctionParameter() { sqlFunctionCallNode.addExpression(parameter); }
+                ( "," parameter = SqlFunctionParameter() { sqlFunctionCallNode.addExpression(parameter); } )*
             ")"
         "}"
     ) { return sqlFunctionCallNode; }
+}
+
+Expression SqlFunctionParameter():
+{
+    Expression parameter;
+}
+{
+    (
+        parameter = ScalarNode() { return parameter; } |
+        parameter = SymbolNode() { return parameter; } |
+        parameter = SqlFunctionCallNode() { return parameter; }
+    )
 }
 
 ScalarNode ScalarNode():

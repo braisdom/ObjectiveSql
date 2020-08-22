@@ -1,6 +1,6 @@
 package com.github.braisdom.jsql.ast;
 
-public class SymbolNode extends Aliasable implements Projectional, Expression {
+public class SymbolNode extends Aliasable implements Projectional, Expression, BetweenNode.Operand {
     private String symbolName;
 
     public SymbolNode(String symbolName) {

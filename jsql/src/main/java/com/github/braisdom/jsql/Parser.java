@@ -183,14 +183,59 @@ datasetNode.addProjectional(projectional);
 }
 
   final public SqlFunctionCallNode SqlFunctionCallNode() throws ParseException {SqlFunctionCallNode sqlFunctionCallNode = new SqlFunctionCallNode();
+    Expression parameter;
     Token expr;
     jj_consume_token(56);
     jj_consume_token(IDENTIFIER);
 sqlFunctionCallNode.setName(getToken(0).image);
     jj_consume_token(LPAREN);
+    parameter = SqlFunctionParameter();
+sqlFunctionCallNode.addExpression(parameter);
+    label_4:
+    while (true) {
+      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+      case COMMA:{
+        ;
+        break;
+        }
+      default:
+        jj_la1[8] = jj_gen;
+        break label_4;
+      }
+      jj_consume_token(COMMA);
+      parameter = SqlFunctionParameter();
+sqlFunctionCallNode.addExpression(parameter);
+    }
     jj_consume_token(RPAREN);
     jj_consume_token(RBRACE);
 {if ("" != null) return sqlFunctionCallNode;}
+    throw new Error("Missing return statement in function");
+}
+
+  final public Expression SqlFunctionParameter() throws ParseException {Expression parameter;
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case STRINGVAL:
+    case DECIMAL_LITERAL:
+    case FLOATING_LITERAL:{
+      parameter = ScalarNode();
+{if ("" != null) return parameter;}
+      break;
+      }
+    case COLON:{
+      parameter = SymbolNode();
+{if ("" != null) return parameter;}
+      break;
+      }
+    case 56:{
+      parameter = SqlFunctionCallNode();
+{if ("" != null) return parameter;}
+      break;
+      }
+    default:
+      jj_la1[9] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
     throw new Error("Missing return statement in function");
 }
 
@@ -213,7 +258,7 @@ value = Float.parseFloat(token.image);
       break;
       }
     default:
-      jj_la1[8] = jj_gen;
+      jj_la1[10] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -237,7 +282,7 @@ missingData.setMissing(false);
       break;
       }
     default:
-      jj_la1[9] = jj_gen;
+      jj_la1[11] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -255,7 +300,7 @@ missingData.setMissing(false);
   final public String Name() throws ParseException {List<String> names = new ArrayList();
     jj_consume_token(IDENTIFIER);
 names.add(getToken(0).image);
-    label_4:
+    label_5:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case DOT:{
@@ -263,8 +308,8 @@ names.add(getToken(0).image);
         break;
         }
       default:
-        jj_la1[10] = jj_gen;
-        break label_4;
+        jj_la1[12] = jj_gen;
+        break label_5;
       }
       jj_consume_token(DOT);
       jj_consume_token(IDENTIFIER);
@@ -283,7 +328,7 @@ names.add(getToken(0).image);
   public Token jj_nt;
   private int jj_ntk;
   private int jj_gen;
-  final private int[] jj_la1 = new int[11];
+  final private int[] jj_la1 = new int[13];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static {
@@ -291,10 +336,10 @@ names.add(getToken(0).image);
 	   jj_la1_init_1();
 	}
 	private static void jj_la1_init_0() {
-	   jj_la1_0 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
+	   jj_la1_0 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
 	}
 	private static void jj_la1_init_1() {
-	   jj_la1_1 = new int[] {0x600,0x600,0x2,0x2,0x4000,0x4000,0x1300048,0x1300048,0x300040,0x18000,0x4,};
+	   jj_la1_1 = new int[] {0x600,0x600,0x2,0x2,0x4000,0x4000,0x1300048,0x1300048,0x2,0x1300048,0x300040,0x18000,0x4,};
 	}
 
   /** Constructor with InputStream. */
@@ -308,7 +353,7 @@ names.add(getToken(0).image);
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 11; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 13; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -322,7 +367,7 @@ names.add(getToken(0).image);
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 11; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 13; i++) jj_la1[i] = -1;
   }
 
   /** Constructor. */
@@ -332,7 +377,7 @@ names.add(getToken(0).image);
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 11; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 13; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -350,7 +395,7 @@ names.add(getToken(0).image);
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 11; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 13; i++) jj_la1[i] = -1;
   }
 
   /** Constructor with generated Token Manager. */
@@ -359,7 +404,7 @@ names.add(getToken(0).image);
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 11; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 13; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -368,7 +413,7 @@ names.add(getToken(0).image);
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 11; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 13; i++) jj_la1[i] = -1;
   }
 
   private Token jj_consume_token(int kind) throws ParseException {
@@ -424,7 +469,7 @@ names.add(getToken(0).image);
 	   la1tokens[jj_kind] = true;
 	   jj_kind = -1;
 	 }
-	 for (int i = 0; i < 11; i++) {
+	 for (int i = 0; i < 13; i++) {
 	   if (jj_la1[i] == jj_gen) {
 		 for (int j = 0; j < 32; j++) {
 		   if ((jj_la1_0[i] & (1<<j)) != 0) {

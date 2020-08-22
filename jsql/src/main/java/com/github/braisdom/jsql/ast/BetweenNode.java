@@ -1,6 +1,6 @@
 package com.github.braisdom.jsql.ast;
 
-public class BetweenNode {
+public class BetweenNode implements Expression {
     private boolean negated;
     private SymbolNode symbolNode;
     private Operand lower;
