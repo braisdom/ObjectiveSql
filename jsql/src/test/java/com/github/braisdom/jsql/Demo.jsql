@@ -1,5 +1,8 @@
 
-import com.github.braisdom.jsql.Func;
+import com.github.braisdom.jsql.Iso;
+
+typedef native func Integer max(Symbol symbol);
+typedef native func Number abs(Symbol symbol);
 
 typedef case DetectName() {
     case member.projections.name
@@ -12,8 +15,7 @@ typedef dataset Member(Timestamp purchaseBegin) {
     projection [
         :id,
         :member_no as member_no,
-        {fn if(:name is null, 'unnamed', :name) } as name,
-        {fn max(:id) } as max_member_id
+        Iso.max(:id) as max_member_id
     ],
     from [#pumper.member as member],
     predicate (:status = 1 && :birthday > purchaseBegin),
@@ -23,7 +25,7 @@ typedef dataset Member(Timestamp purchaseBegin) {
     having ()
 }
 
-func detectName(Symbol name, String scalar) {
+func append(Member member) {
 }
 
 -- comment

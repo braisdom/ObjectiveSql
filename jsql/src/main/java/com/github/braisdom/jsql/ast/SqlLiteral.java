@@ -1,9 +1,9 @@
 package com.github.braisdom.jsql.ast;
 
-public class ScalarNode extends Aliasable implements Projectional, Expression, BetweenNode.Operand {
+public class SqlLiteral extends Aliasable implements Projectional, Expression, BetweenOperatorNode.Operand, SqlFunctionOperand {
     private Object value;
 
-    public ScalarNode(Object value) {
+    public SqlLiteral(Object value) {
         this.value = value;
     }
 

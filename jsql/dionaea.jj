@@ -107,8 +107,7 @@ TOKEN : {
     < #DIGIT: ["0"-"9"] > |
     < DECIMAL_LITERAL: (["-"])? ["1"-"9"] (["0"-"9"])* > |
     < FLOATING_LITERAL: (["-"])? (["0"-"9"])+ "." (["0"-"9"])*  >|
-    < BOOLEAN_LITERAL: ("true" | "false") > |
-    < DATASET_REF: "#" <IDENTIFIER> ("." <IDENTIFIER>)* >
+    < BOOLEAN_LITERAL: ("true" | "false") >
 }
 
 JSqlNode JSqlNode():
@@ -174,7 +173,7 @@ void Projectional(DatasetNode datasetNode):
 {
     [
         (projectional = SymbolNode() [ "as" token = <IDENTIFIER> { projectional.setAlias(token.image); } ] ) |
-        (projectional = ScalarNode() [ "as" token = <IDENTIFIER> { projectional.setAlias(token.image); } ] ) |
+        (projectional = SqlLiteral() [ "as" token = <IDENTIFIER> { projectional.setAlias(token.image); } ] ) |
         (projectional = SqlFunctionCallNode() "as" token = <IDENTIFIER> { projectional.setAlias(token.image); } )
     ] {  datasetNode.addProjectional(projectional); }
 }
@@ -182,34 +181,33 @@ void Projectional(DatasetNode datasetNode):
 SqlFunctionCallNode SqlFunctionCallNode():
 {
     SqlFunctionCallNode sqlFunctionCallNode = new SqlFunctionCallNode();
-    Expression parameter;
-    Token expr;
+    SqlFunctionOperand operand;
 }
 {
     (
-        "{fn"
-            <IDENTIFIER> { sqlFunctionCallNode.setName(getToken(0).image); }
-            "("
-                parameter = SqlFunctionParameter() { sqlFunctionCallNode.addExpression(parameter); }
-                ( "," parameter = SqlFunctionParameter() { sqlFunctionCallNode.addExpression(parameter); } )*
-            ")"
-        "}"
+        <IDENTIFIER> { sqlFunctionCallNode.setName(getToken(0).image); }
+        "("
+            [
+                operand = SqlFunctionOperand() { sqlFunctionCallNode.addOperands(operand); }
+                ( "," operand = SqlFunctionOperand() { sqlFunctionCallNode.addOperands(operand); } )*
+            ]
+        ")"
     ) { return sqlFunctionCallNode; }
 }
 
-Expression SqlFunctionParameter():
+SqlFunctionOperand SqlFunctionOperand():
 {
-    Expression parameter;
+    SqlFunctionOperand operand;
 }
 {
     (
-        parameter = ScalarNode() { return parameter; } |
-        parameter = SymbolNode() { return parameter; } |
-        parameter = SqlFunctionCallNode() { return parameter; }
+        operand = SqlLiteral() { return operand; } |
+        operand = SymbolNode() { return operand; } |
+        (operand = SqlFunctionCallNode() { return operand; })
     )
 }
 
-ScalarNode ScalarNode():
+SqlLiteral SqlLiteral():
 {
     Object value = null;
     Token token;
@@ -218,7 +216,7 @@ ScalarNode ScalarNode():
     ( token = <STRINGVAL> { value = token.image; } |
       token = <DECIMAL_LITERAL> { value = Integer.parseInt(token.image); } |
       token = <FLOATING_LITERAL> { value = Float.parseFloat(token.image); }
-    ) { return new ScalarNode(value); }
+    ) { return new SqlLiteral(value); }
 }
 
 MissingDataNode MissingDataNode():
@@ -235,10 +233,27 @@ MissingDataNode MissingDataNode():
 
 SymbolNode SymbolNode():
 {
-    Token token;
+    SymbolNode symbolNode = new SymbolNode();
 }
 {
-    ( ":" token = <IDENTIFIER> ) { return new SymbolNode(token.image); }
+    (
+        ( ":" <IDENTIFIER> ) { symbolNode.setSymbolName(token.image); } |
+        ( "#" <IDENTIFIER> { symbolNode.setDatasetName(token.image); } "." <IDENTIFIER> ) { symbolNode.setSymbolName(token.image); }
+    )
+    { return symbolNode; }
+}
+
+IsNullOperatorNode IsNullOperatorNode():
+{
+    IsNullOperatorNode isNullOperatorNode = new IsNullOperatorNode();
+    Symbol symbol;
+}
+{
+    symbol = SymbolNode() { isNullOperatorNode.setSymbol(symbol); }
+    [
+        "is null" { isNullOperatorNode.setNull(true); } |
+        "is not null" { isNullOperatorNode.setNull(false); }
+    ] { return isNullOperatorNode; }
 }
 
 String Name():

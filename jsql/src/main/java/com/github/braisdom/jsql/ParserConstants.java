@@ -102,8 +102,6 @@ interface ParserConstants {
   int FLOATING_LITERAL = 53;
   /** RegularExpression Id. */
   int BOOLEAN_LITERAL = 54;
-  /** RegularExpression Id. */
-  int DATASET_REF = 55;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -165,8 +163,7 @@ interface ParserConstants {
     "<DECIMAL_LITERAL>",
     "<FLOATING_LITERAL>",
     "<BOOLEAN_LITERAL>",
-    "<DATASET_REF>",
-    "\"{fn\"",
+    "\"#\"",
   };
 
 }

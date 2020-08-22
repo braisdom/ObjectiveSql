@@ -1,6 +1,6 @@
 package com.github.braisdom.jsql.ast;
 
-public class Aliasable {
+public abstract class Aliasable {
     private String alias;
 
     public String getAlias() {

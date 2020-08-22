@@ -1,8 +1,8 @@
 package com.github.braisdom.jsql.ast;
 
-public class MissingDataNode implements Expression {
+public class IsNullOperatorNode implements Expression {
     private SymbolNode symbol;
-    private boolean missing;
+    private boolean isNull;
 
     public SymbolNode getSymbol() {
         return symbol;
@@ -12,11 +12,11 @@ public class MissingDataNode implements Expression {
         this.symbol = symbol;
     }
 
-    public boolean isMissing() {
-        return missing;
+    public boolean isNull() {
+        return isNull;
     }
 
-    public void setMissing(boolean missing) {
-        this.missing = missing;
+    public void setNull(boolean aNull) {
+        isNull = aNull;
     }
 }

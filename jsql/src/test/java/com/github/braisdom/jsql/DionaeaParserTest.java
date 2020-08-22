@@ -26,7 +26,7 @@ public class DionaeaParserTest {
     @Test
     public void testDatasetNode() throws ParseException {
         String importString = "typedef dataset Member(Timestamp purchaseBegin) {\r\n" +
-                " projection [:id, 11 as username, {fn max(:id, 12) } as max]\r\n" +
+                " projection [:id, #tem.name as username, max(:id, '12', mzx()) as max]\r\n" +
                 "}";
         InputStream is = new ByteArrayInputStream(importString.getBytes(Charset.forName("UTF-8")));
         Parser parser = new Parser(is, Charset.forName("UTF-8").name());
