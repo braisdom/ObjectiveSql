@@ -3,7 +3,7 @@ package com.github.braisdom.jsql.ast;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SqlFunctionCallNode extends Aliasable implements Projectional {
+public class SqlFunctionCallNode extends Aliasable implements Projectional, SqlFunctionParameter {
     private String name;
     private List<Expression> expressions = new ArrayList<>();
 
