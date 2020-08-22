@@ -1,6 +1,6 @@
 package com.github.braisdom.jsql.ast;
 
-public class IsNullOperatorNode implements Expression {
+public class IsNullOperatorNode implements Expression, SqlFunctionOperand {
     private SymbolNode symbol;
     private boolean isNull;
 

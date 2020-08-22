@@ -1,7 +1,5 @@
 options {
-    LOOKAHEAD = 1;
-    CHOICE_AMBIGUITY_CHECK = 3;
-    OTHER_AMBIGUITY_CHECK = 2;
+    LOOKAHEAD = 4;
     STATIC = false;
     DEBUG_PARSER = false;
     DEBUG_LOOKAHEAD = false;
@@ -185,6 +183,7 @@ SqlFunctionCallNode SqlFunctionCallNode():
 }
 {
     (
+        [ <IDENTIFIER> { sqlFunctionCallNode.setType(token.image); } "." ]
         <IDENTIFIER> { sqlFunctionCallNode.setName(getToken(0).image); }
         "("
             [
@@ -202,8 +201,9 @@ SqlFunctionOperand SqlFunctionOperand():
 {
     (
         operand = SqlLiteral() { return operand; } |
+        LOOKAHEAD( IsNullOperatorNode() ) operand = IsNullOperatorNode() { return operand; } |
         operand = SymbolNode() { return operand; } |
-        (operand = SqlFunctionCallNode() { return operand; })
+        operand = SqlFunctionCallNode() { return operand; }
     )
 }
 
@@ -217,18 +217,6 @@ SqlLiteral SqlLiteral():
       token = <DECIMAL_LITERAL> { value = Integer.parseInt(token.image); } |
       token = <FLOATING_LITERAL> { value = Float.parseFloat(token.image); }
     ) { return new SqlLiteral(value); }
-}
-
-MissingDataNode MissingDataNode():
-{
-    SymbolNode  symbolNode;
-    MissingDataNode missingData = new MissingDataNode();
-}
-{
-    (
-        ( symbolNode = SymbolNode() ) { missingData.setSymbol(symbolNode); }
-        ( <IS_NULL> { missingData.setMissing(true); } | <IS_NOT_NULL> { missingData.setMissing(false); } )
-    ) { return missingData; }
 }
 
 SymbolNode SymbolNode():
@@ -246,13 +234,13 @@ SymbolNode SymbolNode():
 IsNullOperatorNode IsNullOperatorNode():
 {
     IsNullOperatorNode isNullOperatorNode = new IsNullOperatorNode();
-    Symbol symbol;
+    SymbolNode symbolNode;
 }
 {
-    symbol = SymbolNode() { isNullOperatorNode.setSymbol(symbol); }
+    symbolNode = SymbolNode() { isNullOperatorNode.setSymbol(symbolNode); }
     [
-        "is null" { isNullOperatorNode.setNull(true); } |
-        "is not null" { isNullOperatorNode.setNull(false); }
+        <IS_NULL> { isNullOperatorNode.setNull(true); } |
+        <IS_NOT_NULL> { isNullOperatorNode.setNull(false); }
     ] { return isNullOperatorNode; }
 }
 
