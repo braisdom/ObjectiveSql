@@ -29,7 +29,7 @@ public class DionaeaParserTest {
                 "   :id, " +
                 "   #tem.name as username, " +
                 "   :name, " +
-                "   Iso.if(:id is null, '12', fun()) as max" +
+                "   Iso.if(:id is null, '12', func()) as max" +
                 " ]\r\n" +
                 "}";
         InputStream is = new ByteArrayInputStream(importString.getBytes(Charset.forName("UTF-8")));

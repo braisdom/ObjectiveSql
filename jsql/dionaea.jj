@@ -42,28 +42,30 @@ SKIP :
 
 TOKEN :
 {
-    < EQ: "=" >
+    < EQ: "==" >
 |   < GT: ">" >
 |   < LT: "<" >
-|   < HOOK: "?" >
 |   < LE: "<=" >
 |   < GE: ">=" >
-|   < NE: "<>" >
-|   < NE2: "!=" >
-|   < PLUS: "+" >
+|   < NE: "!=" >
+|   < SC_OR: "||" >
+|   < SC_AND: "&&" >
+}
+
+TOKEN:
+{
+    < IN: "&=" >
+|   < BETWEEN: "~" >
+|   < LIKE: "~=" >
+}
+
+TOKEN:
+{
+   < PLUS: "+" >
 |   < MINUS: "-" >
 |   < STAR: "*" >
 |   < SLASH: "/" >
-|   < PERCENT_REMAINDER: "%" >
-}
-
-TOKEN :
-{
-    < SC_OR: "||" >
-|   < SC_AND: "&&" >
-|   < IN: "~=" >
-|   < BETWEEN: "~" >
-
+|   < REM: "%" >
 }
 
 TOKEN :
@@ -74,7 +76,11 @@ TOKEN :
 | < RBRACE: "}" >
 | < LBRACKET: "[" >
 | < RBRACKET: "]" >
-| < SEMICOLON: ";" >
+}
+
+TOKEN :
+{
+  < SEMICOLON: ";" >
 | < COMMA: "," >
 | < DOT: "." >
 | < COLON: ":" >
@@ -95,8 +101,7 @@ TOKEN : {
     < PROJECTION : "projection" > |
     < FROM : "from" > |
     < AS : "as" > |
-    < IS_NULL : "is null" > |
-    < IS_NOT_NULL : "is not null" >
+    < NULL : "null" >
 }
 
 TOKEN : {
@@ -147,7 +152,8 @@ DatasetNode DatasetNode():
             ( "," parameter = FormalParameterNode() { datasetNode.addFormalParameter(parameter); } )*
         ")"
         "{"
-            <PROJECTION> "[" Projectional(datasetNode) ( "," Projectional(datasetNode))* "]"
+            <PROJECTION>
+            ("[" Projectional(datasetNode) ( "," Projectional(datasetNode))* "]")
         "}"
     )
     { return datasetNode; }
@@ -183,15 +189,10 @@ SqlFunctionCallNode SqlFunctionCallNode():
 }
 {
     (
-        [ LOOKAHEAD(3) ( <IDENTIFIER> { sqlFunctionCallNode.setType(token.image); } "." )]
+        [ LOOKAHEAD(2) ( <IDENTIFIER> { sqlFunctionCallNode.setType(token.image); } "." )]
         <IDENTIFIER> { sqlFunctionCallNode.setName(getToken(0).image); }
         "("
             [
-                [
-                    LOOKAHEAD( IsNullOperatorNode() )
-                    operand = IsNullOperatorNode() { sqlFunctionCallNode.addOperands(operand); }
-                    [ <COMMA> ]
-                ]
                 operand = SqlFunctionOperand() { sqlFunctionCallNode.addOperands(operand); }
                 ( "," operand = SqlFunctionOperand() { sqlFunctionCallNode.addOperands(operand); } )*
             ]
@@ -209,6 +210,34 @@ SqlFunctionOperand SqlFunctionOperand():
         operand = SymbolNode() { return operand; } |
         operand = SqlFunctionCallNode() { return operand; }
     )
+}
+
+InOperatorNode InOperatorNode():
+{
+    InOperatorNode inOperatorNode;
+    InOperatorNode.Operand operand;
+    SymbolNode symbolNode;
+
+}
+{
+    (
+        symbolNode = SymbolNode() <IN>
+        "("
+            operand = InOperatorNodeOperand() { inOperatorNode.addItem(operand); }
+            ( "," operand = InOperatorNodeOperand() { inOperatorNode.addItem(operand); } )*
+        ")"
+    )
+}
+
+InOperatorNode.Operand InOperatorNodeOperand():
+{
+    InOperatorNode.Operand operand;
+}
+{
+    [
+        operand = SqlLiteral()
+        operand = SymbolNode()
+    ] { return operand; }
 }
 
 SqlLiteral SqlLiteral():
@@ -233,19 +262,6 @@ SymbolNode SymbolNode():
         ( "#" <IDENTIFIER> { symbolNode.setDatasetName(token.image); } "." <IDENTIFIER> ) { symbolNode.setSymbolName(token.image); }
     )
     { return symbolNode; }
-}
-
-IsNullOperatorNode IsNullOperatorNode():
-{
-    IsNullOperatorNode isNullOperatorNode = new IsNullOperatorNode();
-    SymbolNode symbolNode;
-}
-{
-    symbolNode = SymbolNode() { isNullOperatorNode.setSymbol(symbolNode); }
-    [
-        <IS_NULL> { isNullOperatorNode.setNull(true); } |
-        <IS_NOT_NULL> { isNullOperatorNode.setNull(false); }
-    ] { return isNullOperatorNode; }
 }
 
 String Name():
