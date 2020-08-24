@@ -30,7 +30,8 @@ public class DionaeaParserTest {
                 "   #table.name as username, \r\n" +
                 "   :name, \r\n" +
                 "   Iso.if(:id, max(:id)) as max \r\n" +
-                " ]\r\n" +
+                " ],\r\n" +
+                " from (#demo.table as demo_table)" +
                 "}";
         InputStream is = new ByteArrayInputStream(importString.getBytes(Charset.forName("UTF-8")));
         Parser parser = new Parser(is, Charset.forName("UTF-8").name());

@@ -13,19 +13,22 @@ typedef case DetectName() {
 -- comment
 typedef dataset Member(Timestamp purchaseBegin) {
     projection [
-        :id,
+        createMaxDate(),
         :member_no as member_no,
         Iso.max(:id) as max_member_id
     ],
     from [#pumper.member as member],
-    predicate (:status = 1 && :birthday > purchaseBegin),
+    predicate (:status == 1 && :birthday > purchaseBegin),
     join [left(MemberProducts as mp, mp.member_id == member.id)],
     group [],
     order [-:id],
-    having ()
+    having ();
 }
 
-func append(Member member) {
+func JProjection createMaxDate() {
+    if(t == true)
+        return Iso.max(:id);
+    return (#table.column_name => max_date);
 }
 
 -- comment

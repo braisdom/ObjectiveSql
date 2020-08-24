@@ -87,17 +87,19 @@ interface ParserConstants {
   /** RegularExpression Id. */
   int NULL = 46;
   /** RegularExpression Id. */
-  int IDENTIFIER = 47;
+  int TYPE_NAME = 47;
   /** RegularExpression Id. */
-  int LETTER = 48;
+  int IDENTIFIER = 48;
   /** RegularExpression Id. */
-  int DIGIT = 49;
+  int LETTER = 49;
   /** RegularExpression Id. */
-  int DECIMAL_LITERAL = 50;
+  int DIGIT = 50;
   /** RegularExpression Id. */
-  int FLOATING_LITERAL = 51;
+  int DECIMAL_LITERAL = 51;
   /** RegularExpression Id. */
-  int BOOLEAN_LITERAL = 52;
+  int FLOATING_LITERAL = 52;
+  /** RegularExpression Id. */
+  int BOOLEAN_LITERAL = 53;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -151,6 +153,7 @@ interface ParserConstants {
     "\"from\"",
     "\"as\"",
     "\"null\"",
+    "<TYPE_NAME>",
     "<IDENTIFIER>",
     "<LETTER>",
     "<DIGIT>",

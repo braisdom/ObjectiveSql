@@ -7,6 +7,7 @@ public class DatasetNode {
     private String name;
     private List<FormalParameterNode> formalParameterNodes = new ArrayList<>();
     private List<Projectional> projectionals = new ArrayList<>();
+    private List<Queryable> fromNodes = new ArrayList<>();
 
     public void addFormalParameter(FormalParameterNode formalParameterNode) {
         formalParameterNodes.add(formalParameterNode);
@@ -30,5 +31,13 @@ public class DatasetNode {
 
     public List<Projectional> getProjectionals() {
         return projectionals;
+    }
+
+    public void addFromNode(Queryable fromNode) {
+        fromNodes.add(fromNode);
+    }
+
+    public List<Queryable> getFromNodes() {
+        return fromNodes;
     }
 }

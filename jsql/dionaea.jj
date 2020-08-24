@@ -109,6 +109,7 @@ TOKEN : {
 }
 
 TOKEN : {
+    < TYPE_NAME: (["A"-"Z"]) (<IDENTIFIER>)* > |
     < IDENTIFIER: <LETTER> (<LETTER> | <DIGIT>)* > |
     < #LETTER: ["_", "a"-"z", "A"-"Z"] > |
     < #DIGIT: ["0"-"9"] > |
@@ -145,18 +146,27 @@ ImportNode ImportNode():
 DatasetNode DatasetNode():
 {
     final DatasetNode datasetNode = new DatasetNode();
+    Queryable fromNode;
     FormalParameterNode parameter;
     Projectional projectional;
 }
 {
     (
-        <TYPEDEF> <DATASET> <IDENTIFIER> { datasetNode.setName(getToken(0).image); }
+        <TYPEDEF> <DATASET> <TYPE_NAME> { datasetNode.setName(getToken(0).image); }
         "("
             parameter = FormalParameterNode() { datasetNode.addFormalParameter(parameter); }
             ( "," parameter = FormalParameterNode() { datasetNode.addFormalParameter(parameter); } )*
         ")"
         "{"
-            <PROJECTION> ("[" Projectional(datasetNode) ( "," Projectional(datasetNode))* "]")
+            <PROJECTION> ("[" Projectional(datasetNode) ( "," Projectional(datasetNode))* "]") <COMMA>
+            <FROM> "("
+                        (
+                            ( fromNode = SymbolNode() [ <AS> <IDENTIFIER> { fromNode.setAlias(token.image); } ]
+                                { datasetNode.addFromNode(fromSymbolNode); } ) |
+                            ( fromNode = <TYPE_NAME> [ <AS> <IDENTIFIER> { fromNode.setAlias(token.image); } ]
+                                                            { datasetNode.addFromNode(fromSymbolNode); } )
+                        )
+                    ")"
         "}"
     )
     { return datasetNode; }
