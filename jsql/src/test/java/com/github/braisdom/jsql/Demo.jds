@@ -5,9 +5,6 @@ typedef native func Integer max(Symbol symbol);
 typedef native func Number abs(Symbol symbol);
 
 typedef case DetectName() {
-    case member.projections.name
-        when
-    end
 }
 
 -- comment

@@ -105,8 +105,18 @@ TOKEN : {
     < PROJECTION : "projection" > |
     < FROM : "from" > |
     < AS : "as" > |
+    < RETURN : "return" > |
     < NULL : "null" >
 }
+
+TOKEN : {
+    < JSYMBOL : "JSymbol" > |
+    < JPROJECTION : "JProjection" > |
+    < JTYPE : "JType" > |
+    < JPREDICATE : "JPredicate" > |
+    < JQuery : "JQuery" >
+}
+
 
 TOKEN : {
     < TYPE_NAME: (["A"-"Z"]) (<IDENTIFIER>)* > |
@@ -146,7 +156,7 @@ ImportNode ImportNode():
 DatasetNode DatasetNode():
 {
     final DatasetNode datasetNode = new DatasetNode();
-    Queryable fromNode;
+    FromNode fromNode;
     FormalParameterNode parameter;
     Projectional projectional;
 }
@@ -161,15 +171,24 @@ DatasetNode DatasetNode():
             <PROJECTION> ("[" Projectional(datasetNode) ( "," Projectional(datasetNode))* "]") <COMMA>
             <FROM> "("
                         (
-                            ( fromNode = SymbolNode() [ <AS> <IDENTIFIER> { fromNode.setAlias(token.image); } ]
-                                { datasetNode.addFromNode(fromSymbolNode); } ) |
-                            ( fromNode = <TYPE_NAME> [ <AS> <IDENTIFIER> { fromNode.setAlias(token.image); } ]
-                                                            { datasetNode.addFromNode(fromSymbolNode); } )
+                            fromNode = FromNode() { datasetNode.addFromNode(fromNode); }
+                            ( <COMMA> fromNode = FromNode() { datasetNode.addFromNode(fromNode); } )*
                         )
                     ")"
         "}"
     )
     { return datasetNode; }
+}
+
+FromNode FromNode():
+{
+    FromNode fromNode;
+}
+{
+    (
+        LOOKAHEAD(SqlFunctionCallNode()) fromNode = SqlFunctionCallNode() [ <AS> <IDENTIFIER> { fromNode.setAlias(token.image); } ] |
+        LOOKAHEAD(SymbolNode()) fromNode = SymbolNode() [ <AS> <IDENTIFIER> { fromNode.setAlias(token.image); } ]
+    ) { return fromNode; }
 }
 
 FormalParameterNode FormalParameterNode():
@@ -178,7 +197,7 @@ FormalParameterNode FormalParameterNode():
     String name;
 }
 {
-    (<IDENTIFIER> { type = getToken(0).image; } <IDENTIFIER> { name = getToken(0).image; })
+    (<TYPE_NAME> { type = getToken(0).image; } <IDENTIFIER> { name = getToken(0).image; })
     { return new FormalParameterNode(type, name); }
 }
 
@@ -189,8 +208,7 @@ void Projectional(DatasetNode datasetNode):
 }
 {
     (
-        LOOKAHEAD(ExpressionNode() <AS> <IDENTIFIER>)
-            (projectional = ExpressionNode() <AS> token = <IDENTIFIER> { projectional.setAlias(token.image); } ) |
+        LOOKAHEAD(ExpressionNode() <AS> <IDENTIFIER>) (projectional = ExpressionNode() <AS> token = <IDENTIFIER> { projectional.setAlias(token.image); } ) |
         LOOKAHEAD(SymbolNode()) (projectional = SymbolNode() [ <AS> token = <IDENTIFIER> { projectional.setAlias(token.image); } ] ) |
         LOOKAHEAD(SqlLiteral()) (projectional = SqlLiteral() [ <AS> token = <IDENTIFIER> { projectional.setAlias(token.image); } ] ) |
         (projectional = SqlFunctionCallNode() <AS> token = <IDENTIFIER> { projectional.setAlias(token.image); } )
@@ -204,8 +222,8 @@ SqlFunctionCallNode SqlFunctionCallNode():
 }
 {
     (
-        [ LOOKAHEAD(2) ( <IDENTIFIER> { sqlFunctionCallNode.setType(token.image); } "." )]
-        <IDENTIFIER> { sqlFunctionCallNode.setName(getToken(0).image); }
+        [ LOOKAHEAD(2) ( <TYPE_NAME> { sqlFunctionCallNode.setType(token.image); } "." )]
+        (<IDENTIFIER> | <TYPE_NAME> ) { sqlFunctionCallNode.setName(getToken(0).image); }
         "("
             [
                 operand = SqlFunctionOperand() { sqlFunctionCallNode.addOperands(operand); }

@@ -85,21 +85,33 @@ interface ParserConstants {
   /** RegularExpression Id. */
   int AS = 45;
   /** RegularExpression Id. */
-  int NULL = 46;
+  int RETURN = 46;
   /** RegularExpression Id. */
-  int TYPE_NAME = 47;
+  int NULL = 47;
   /** RegularExpression Id. */
-  int IDENTIFIER = 48;
+  int JSYMBOL = 48;
   /** RegularExpression Id. */
-  int LETTER = 49;
+  int JPROJECTION = 49;
   /** RegularExpression Id. */
-  int DIGIT = 50;
+  int JTYPE = 50;
   /** RegularExpression Id. */
-  int DECIMAL_LITERAL = 51;
+  int JPREDICATE = 51;
   /** RegularExpression Id. */
-  int FLOATING_LITERAL = 52;
+  int JQuery = 52;
   /** RegularExpression Id. */
-  int BOOLEAN_LITERAL = 53;
+  int TYPE_NAME = 53;
+  /** RegularExpression Id. */
+  int IDENTIFIER = 54;
+  /** RegularExpression Id. */
+  int LETTER = 55;
+  /** RegularExpression Id. */
+  int DIGIT = 56;
+  /** RegularExpression Id. */
+  int DECIMAL_LITERAL = 57;
+  /** RegularExpression Id. */
+  int FLOATING_LITERAL = 58;
+  /** RegularExpression Id. */
+  int BOOLEAN_LITERAL = 59;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -152,7 +164,13 @@ interface ParserConstants {
     "\"projection\"",
     "\"from\"",
     "\"as\"",
+    "\"return\"",
     "\"null\"",
+    "\"JSymbol\"",
+    "\"JProjection\"",
+    "\"JType\"",
+    "\"JPredicate\"",
+    "\"JQuery\"",
     "<TYPE_NAME>",
     "<IDENTIFIER>",
     "<LETTER>",
