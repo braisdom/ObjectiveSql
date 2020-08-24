@@ -3,12 +3,12 @@ package com.github.braisdom.jsql.ast;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JSqlNode {
+public class SqlNode {
 
     private final List<ImportNode> importNodes = new ArrayList<>();
     private final List<DatasetNode> datasetNodes = new ArrayList<>();
 
-    public JSqlNode() {
+    public SqlNode() {
     }
 
     public void addImportNode(ImportNode enumNode) {

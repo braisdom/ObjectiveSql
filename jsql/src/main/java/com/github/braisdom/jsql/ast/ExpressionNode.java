@@ -1,17 +1,17 @@
 package com.github.braisdom.jsql.ast;
 
-public class ExpressionNode extends Aliasable implements ExpressionOperand, Projectional {
-    private boolean parened;
+public class ExpressionNode extends Aliasable implements ExpressionOperand, Projectional, LogicExpressionOperand {
+    private boolean enclosed;
     private ExpressionOperand left;
     private String operator;
     private ExpressionOperand right;
 
-    public boolean isParened() {
-        return parened;
+    public boolean isEnclosed() {
+        return enclosed;
     }
 
-    public void setParened(boolean parened) {
-        this.parened = parened;
+    public void setEnclosed(boolean enclosed) {
+        this.enclosed = enclosed;
     }
 
     public ExpressionOperand getLeft() {

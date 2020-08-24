@@ -117,17 +117,17 @@ TOKEN : {
     < BOOLEAN_LITERAL: ("true" | "false") >
 }
 
-JSqlNode JSqlNode():
+SqlNode SqlNode():
 {
-    final JSqlNode jsqlNode = new JSqlNode();
+    final SqlNode sqlNode = new SqlNode();
     ImportNode importNode;
     DatasetNode datasetNode;
 }
 {
     (
-        importNode = ImportNode() { jsqlNode.addImportNode(importNode); } |
-        datasetNode = DatasetNode() { jsqlNode.addDatasetNode(datasetNode); }
-    )* { return jsqlNode; }
+        importNode = ImportNode() { sqlNode.addImportNode(importNode); } |
+        datasetNode = DatasetNode() { sqlNode.addDatasetNode(datasetNode); }
+    )* { return sqlNode; }
 }
 
 ImportNode ImportNode():
@@ -245,7 +245,7 @@ ExpressionOperand ExpressionOperand():
         operand = SymbolNode() { return operand; } |
         "(" expressionNode = ExpressionNode() ")"
         {
-            expressionNode.setParened(true);
+            expressionNode.setEnclosed(true);
             return expressionNode;
         }
     )
@@ -272,7 +272,8 @@ SqlLiteral SqlLiteral():
 {
     ( token = <STRINGVAL> { value = token.image; } |
       token = <DECIMAL_LITERAL> { value = Integer.parseInt(token.image); } |
-      token = <FLOATING_LITERAL> { value = Float.parseFloat(token.image); }
+      token = <FLOATING_LITERAL> { value = Float.parseFloat(token.image); } |
+      token = <NULL> { value = null; }
     ) { return new SqlLiteral(value); }
 }
 

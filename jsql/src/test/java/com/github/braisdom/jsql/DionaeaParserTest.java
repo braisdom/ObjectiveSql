@@ -1,6 +1,6 @@
 package com.github.braisdom.jsql;
 
-import com.github.braisdom.jsql.ast.JSqlNode;
+import com.github.braisdom.jsql.ast.SqlNode;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -15,7 +15,7 @@ public class DionaeaParserTest {
         String importString = "import com.github.braisdom.dionaea.Func;";
         InputStream is = new ByteArrayInputStream(importString.getBytes(Charset.forName("UTF-8")));
         Parser parser = new Parser(is, Charset.forName("UTF-8").name());
-        JSqlNode JSQLNode =  parser.JSqlNode();
+        SqlNode JSQLNode =  parser.SqlNode();
 
         Assert.assertNotNull(JSQLNode);
         Assert.assertTrue(JSQLNode.getImportNodes().size() == 1);
@@ -34,7 +34,7 @@ public class DionaeaParserTest {
                 "}";
         InputStream is = new ByteArrayInputStream(importString.getBytes(Charset.forName("UTF-8")));
         Parser parser = new Parser(is, Charset.forName("UTF-8").name());
-        JSqlNode jsqlNode = parser.JSqlNode();
+        SqlNode jsqlNode = parser.SqlNode();
 
         Assert.assertNotNull(jsqlNode);
         Assert.assertTrue(jsqlNode.getDatasetNodes().size() == 1);
