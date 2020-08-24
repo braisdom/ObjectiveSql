@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SqlFunctionCallNode extends Aliasable implements Projectional, SqlFunctionOperand, ExpressionOperand {
+    private List<SqlFunctionOperand> operands = new ArrayList<>();
     private String type;
     private String name;
-    private List<SqlFunctionOperand> operands = new ArrayList<>();
 
     public String getType() {
         return type;

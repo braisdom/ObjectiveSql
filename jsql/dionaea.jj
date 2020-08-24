@@ -48,7 +48,11 @@ TOKEN :
 |   < LE: "<=" >
 |   < GE: ">=" >
 |   < NE: "!=" >
-|   < SC_OR: "||" >
+}
+
+TOKEN :
+{
+    < SC_OR: "||" >
 |   < SC_AND: "&&" >
 }
 
@@ -152,8 +156,7 @@ DatasetNode DatasetNode():
             ( "," parameter = FormalParameterNode() { datasetNode.addFormalParameter(parameter); } )*
         ")"
         "{"
-            <PROJECTION>
-            ("[" Projectional(datasetNode) ( "," Projectional(datasetNode))* "]")
+            <PROJECTION> ("[" Projectional(datasetNode) ( "," Projectional(datasetNode))* "]")
         "}"
     )
     { return datasetNode; }
@@ -175,11 +178,13 @@ void Projectional(DatasetNode datasetNode):
     Token token;
 }
 {
-    [
-        (projectional = SymbolNode() [ "as" token = <IDENTIFIER> { projectional.setAlias(token.image); } ] ) |
-        (projectional = SqlLiteral() [ "as" token = <IDENTIFIER> { projectional.setAlias(token.image); } ] ) |
-        (projectional = SqlFunctionCallNode() "as" token = <IDENTIFIER> { projectional.setAlias(token.image); } )
-    ] {  datasetNode.addProjectional(projectional); }
+    (
+        LOOKAHEAD(ExpressionNode() <AS> <IDENTIFIER>)
+            (projectional = ExpressionNode() <AS> token = <IDENTIFIER> { projectional.setAlias(token.image); } ) |
+        LOOKAHEAD(SymbolNode()) (projectional = SymbolNode() [ <AS> token = <IDENTIFIER> { projectional.setAlias(token.image); } ] ) |
+        LOOKAHEAD(SqlLiteral()) (projectional = SqlLiteral() [ <AS> token = <IDENTIFIER> { projectional.setAlias(token.image); } ] ) |
+        (projectional = SqlFunctionCallNode() <AS> token = <IDENTIFIER> { projectional.setAlias(token.image); } )
+    ) {  datasetNode.addProjectional(projectional); }
 }
 
 SqlFunctionCallNode SqlFunctionCallNode():
@@ -215,22 +220,34 @@ SqlFunctionOperand SqlFunctionOperand():
 ExpressionNode ExpressionNode():
 {
     ExpressionNode expressionNode = new ExpressionNode();
+    ExpressionOperand left;
+    String operator;
+    ExpressionOperand right;
 }
 {
     (
-        ( ExpressionNodeOperand() ( ExpressionOperator() ExpressionNodeOperand() )* ) |
-        ( "(" ( ExpressionNodeOperand() ( ExpressionOperator() ExpressionNodeOperand() )* ) ")" ) *
+        (
+            left = ExpressionOperand() { expressionNode.setLeft(left); }
+            operator = ExpressionOperator() { expressionNode.setOperator(operator); }
+            right = ExpressionOperand() { expressionNode.setRight(right); }
+        )*
     ) { return expressionNode; }
 }
 
-ExpressionNode.Operand ExpressionNodeOperand():
+ExpressionOperand ExpressionOperand():
 {
-    ExpressionNode.Operand operand;
+    ExpressionOperand operand = null;
+    ExpressionNode expressionNode;
 }
 {
     (
         operand = SqlLiteral() { return operand; } |
-        operand = SymbolNode() { return operand; }
+        operand = SymbolNode() { return operand; } |
+        "(" expressionNode = ExpressionNode() ")"
+        {
+            expressionNode.setParened(true);
+            return expressionNode;
+        }
     )
 }
 
@@ -245,34 +262,6 @@ String ExpressionOperator():
         <SLASH> { return token.image; } |
         <REM> { return token.image; }
     )
-}
-
-InOperatorNode InOperatorNode():
-{
-    InOperatorNode inOperatorNode;
-    InOperatorNode.Operand operand;
-    SymbolNode symbolNode;
-
-}
-{
-    (
-        symbolNode = SymbolNode() <IN>
-        "("
-            operand = InOperatorNodeOperand() { inOperatorNode.addItem(operand); }
-            ( "," operand = InOperatorNodeOperand() { inOperatorNode.addItem(operand); } )*
-        ")"
-    )
-}
-
-InOperatorNode.Operand InOperatorNodeOperand():
-{
-    InOperatorNode.Operand operand;
-}
-{
-    [
-        operand = SqlLiteral() |
-        operand = SymbolNode()
-    ] { return operand; }
 }
 
 SqlLiteral SqlLiteral():
@@ -294,9 +283,7 @@ SymbolNode SymbolNode():
 {
     (
         ( ":" <IDENTIFIER> ) { symbolNode.setSymbolName(token.image); } |
-        LOOKAHEAD(2) ( "#" <IDENTIFIER> { symbolNode.setSymbolName(token.image); } ) |
-        LOOKAHEAD(3) ( "#" <IDENTIFIER> { symbolNode.setDatasetName(token.image); }
-                       "." <IDENTIFIER> { symbolNode.setSymbolName(token.image); } )
+        ( "#" <IDENTIFIER> { symbolNode.setDatasetName(token.image); } [ "." <IDENTIFIER> { symbolNode.setSymbolName(token.image); } ] )
     )
     { return symbolNode; }
 }

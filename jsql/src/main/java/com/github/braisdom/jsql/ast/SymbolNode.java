@@ -1,7 +1,7 @@
 package com.github.braisdom.jsql.ast;
 
 public class SymbolNode extends Aliasable implements Projectional, ExpressionOperand,
-        BetweenOperatorNode.Operand, SqlFunctionOperand, LogicExpressionOperand {
+        BetweenOperatorNode.Operand, SqlFunctionOperand, LogicExpressionOperand, InOperatorNode.Operand {
     private String datasetName;
     private String symbolName;
 
