@@ -55,8 +55,8 @@ TOKEN :
 TOKEN:
 {
     < IN: "&=" >
-|   < BETWEEN: "~" >
-|   < LIKE: "~=" >
+|   < BETWEEN: "~=" >
+|   < LIKE: "~" >
 }
 
 TOKEN:
@@ -212,6 +212,41 @@ SqlFunctionOperand SqlFunctionOperand():
     )
 }
 
+ExpressionNode ExpressionNode():
+{
+    ExpressionNode expressionNode = new ExpressionNode();
+}
+{
+    (
+        ( ExpressionNodeOperand() ( ExpressionOperator() ExpressionNodeOperand() )* ) |
+        ( "(" ( ExpressionNodeOperand() ( ExpressionOperator() ExpressionNodeOperand() )* ) ")" ) *
+    ) { return expressionNode; }
+}
+
+ExpressionNode.Operand ExpressionNodeOperand():
+{
+    ExpressionNode.Operand operand;
+}
+{
+    (
+        operand = SqlLiteral() { return operand; } |
+        operand = SymbolNode() { return operand; }
+    )
+}
+
+String ExpressionOperator():
+{
+}
+{
+    (
+        <PLUS> { return token.image; } |
+        <MINUS> { return token.image; } |
+        <STAR> { return token.image; } |
+        <SLASH> { return token.image; } |
+        <REM> { return token.image; }
+    )
+}
+
 InOperatorNode InOperatorNode():
 {
     InOperatorNode inOperatorNode;
@@ -235,7 +270,7 @@ InOperatorNode.Operand InOperatorNodeOperand():
 }
 {
     [
-        operand = SqlLiteral()
+        operand = SqlLiteral() |
         operand = SymbolNode()
     ] { return operand; }
 }
@@ -259,7 +294,9 @@ SymbolNode SymbolNode():
 {
     (
         ( ":" <IDENTIFIER> ) { symbolNode.setSymbolName(token.image); } |
-        ( "#" <IDENTIFIER> { symbolNode.setDatasetName(token.image); } "." <IDENTIFIER> ) { symbolNode.setSymbolName(token.image); }
+        LOOKAHEAD(2) ( "#" <IDENTIFIER> { symbolNode.setSymbolName(token.image); } ) |
+        LOOKAHEAD(3) ( "#" <IDENTIFIER> { symbolNode.setDatasetName(token.image); }
+                       "." <IDENTIFIER> { symbolNode.setSymbolName(token.image); } )
     )
     { return symbolNode; }
 }

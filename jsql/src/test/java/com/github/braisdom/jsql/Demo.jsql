@@ -19,7 +19,7 @@ typedef dataset Member(Timestamp purchaseBegin) {
     ],
     from [#pumper.member as member],
     predicate (:status = 1 && :birthday > purchaseBegin),
-    join [left(MemberProducts as mp, mp.member_id == member.id),],
+    join [left(MemberProducts as mp, mp.member_id == member.id)],
     group [],
     order [-:id],
     having ()
