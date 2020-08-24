@@ -260,7 +260,16 @@ String ExpressionOperator():
         <MINUS> { return token.image; } |
         <STAR> { return token.image; } |
         <SLASH> { return token.image; } |
-        <REM> { return token.image; }
+        <REM> { return token.image; } |
+        <SC_OR> { return token.image; } |
+        <SC_AND> { return token.image; } |
+        <LIKE> { return token.image; } |
+        <EQ> { return token.image; } |
+        <GT> { return token.image; } |
+        <GE> { return token.image; } |
+        <NE> { return token.image; } |
+        <LT> { return token.image; } |
+        <LE> { return token.image; }
     )
 }
 

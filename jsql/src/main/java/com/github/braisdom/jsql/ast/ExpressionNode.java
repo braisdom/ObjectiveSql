@@ -1,6 +1,6 @@
 package com.github.braisdom.jsql.ast;
 
-public class ExpressionNode extends Aliasable implements ExpressionOperand, Projectional, LogicExpressionOperand {
+public class ExpressionNode extends Aliasable implements ExpressionOperand, Projectional {
     private boolean enclosed;
     private ExpressionOperand left;
     private String operator;
