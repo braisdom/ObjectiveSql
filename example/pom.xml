@@ -73,6 +73,11 @@
             <systemPath>${java.home}/../lib/tools.jar</systemPath>
             <optional>true</optional>
         </dependency>
+        <dependency>
+            <groupId>com.github.braisdom</groupId>
+            <artifactId>funcsql-jds</artifactId>
+            <version>1.0</version>
+        </dependency>
     </dependencies>
 
     <build>

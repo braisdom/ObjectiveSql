@@ -1,5 +1,5 @@
 package com.github.braisdom.jds;
 
-public @interface Dionaea {
+public @interface SupportJDS {
     String packageName() default "";
 }

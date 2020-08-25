@@ -8,7 +8,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 
-public class DionaeaParserTest {
+public class SupportJDSParserTest {
 
     @Test
     public void testImportNode() throws ParseException {

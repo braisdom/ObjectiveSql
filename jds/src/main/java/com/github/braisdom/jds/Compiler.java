@@ -82,7 +82,7 @@ public class Compiler extends AbstractProcessor {
     @Override
     public Set<String> getSupportedAnnotationTypes() {
         Set<String> supportedOptions = new HashSet<>();
-        supportedOptions.add(Dionaea.class.getCanonicalName());
+        supportedOptions.add(SupportJDS.class.getCanonicalName());
         return supportedOptions;
     }
 
