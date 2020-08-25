@@ -32,7 +32,7 @@ public class SupportJDSParserTest {
                 "   Iso.if(:id, max(:id)) as max \r\n" +
                 " ],\r\n" +
                 " from (Member(:id, 123, 'abc', max()) as demo_table, #table.column), \r\n" +
-                " predicate ( (((:id + 10) < 20) == 0) && :name > 0 )" +
+                " predicate (((:id + 10) != :id) != (:id + 10))" +
                 "}";
         InputStream is = new ByteArrayInputStream(importString.getBytes(Charset.forName("UTF-8")));
         Parser parser = new Parser(is, Charset.forName("UTF-8").name());

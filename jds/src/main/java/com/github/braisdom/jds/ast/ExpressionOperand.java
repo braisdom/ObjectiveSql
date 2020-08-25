@@ -1,4 +1,4 @@
 package com.github.braisdom.jds.ast;
 
-public interface ExpressionOperand {
+public interface ExpressionOperand extends LogicExpressionOperand {
 }

@@ -2,9 +2,9 @@ package com.github.braisdom.jds.ast;
 
 public class LogicExpression implements ExpressionOperand {
     private boolean enclosed;
-    private ExpressionOperand left;
+    private LogicExpressionOperand left;
     private String operator;
-    private ExpressionOperand right;
+    private LogicExpressionOperand right;
 
     public boolean isEnclosed() {
         return enclosed;
@@ -14,11 +14,11 @@ public class LogicExpression implements ExpressionOperand {
         this.enclosed = enclosed;
     }
 
-    public ExpressionOperand getLeft() {
+    public LogicExpressionOperand getLeft() {
         return left;
     }
 
-    public void setLeft(ExpressionOperand left) {
+    public void setLeft(LogicExpressionOperand left) {
         this.left = left;
     }
 
@@ -30,11 +30,11 @@ public class LogicExpression implements ExpressionOperand {
         this.operator = operator;
     }
 
-    public ExpressionOperand getRight() {
+    public LogicExpressionOperand getRight() {
         return right;
     }
 
-    public void setRight(ExpressionOperand right) {
+    public void setRight(LogicExpressionOperand right) {
         this.right = right;
     }
 }

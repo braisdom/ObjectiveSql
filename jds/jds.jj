@@ -178,8 +178,7 @@ DatasetNode DatasetNode():
                             ( <COMMA> fromNode = FromNode() { datasetNode.addFromNode(fromNode); } )*
                         )
                     ")"
-            [ <COMMA> <PREDICATE> "(" logicExpression = LogicExpression() ")" { datasetNode.setPredicate(logicExpression); }
-            ]
+            [ <COMMA> <PREDICATE> "(" logicExpression = LogicExpression() ")" { datasetNode.setPredicate(logicExpression); } ]
         "}"
     )
     { return datasetNode; }
@@ -287,21 +286,21 @@ ExpressionOperand ExpressionOperand():
 LogicExpression LogicExpression():
 {
     LogicExpression logicExpression = new LogicExpression();
-    ExpressionOperand left;
+    LogicExpressionOperand left;
     String operator;
-    ExpressionOperand right;
+    LogicExpressionOperand right;
 }
 {
     (
         (
-            left = ExpressionOperand() { logicExpression.setLeft(left); }
-            operator = ExpressionOperator() { logicExpression.setOperator(operator); }
-            right = ExpressionOperand() { logicExpression.setRight(right); }
+            left = LogicExpressionOperand() { logicExpression.setLeft(left); }
+            operator = LogicOperator() { logicExpression.setOperator(operator); }
+            right = LogicExpressionOperand() { logicExpression.setRight(right); }
         )*
     ) { return logicExpression; }
 }
 
-ExpressionOperand LogicExpressionOperand():
+LogicExpressionOperand LogicExpressionOperand():
 {
     ExpressionOperand operand = null;
     LogicExpression logicExpression;
@@ -309,7 +308,7 @@ ExpressionOperand LogicExpressionOperand():
 {
     (
         LOOKAHEAD(ExpressionOperand()) operand = ExpressionOperand() { return operand; } |
-        LOOKAHEAD("(" LogicExpression()) "(" logicExpression = LogicExpression() ")"
+        "(" logicExpression = LogicExpression() ")"
         {
             logicExpression.setEnclosed(true);
             return logicExpression;
@@ -340,7 +339,8 @@ String LogicOperator() :
 }
 {
     <SC_AND> { return token.image; } |
-    <SC_OR> { return token.image; }
+    <SC_OR> { return token.image; } |
+    CompareOperator() { return token.image; }
 }
 
 String CompareOperator() :
@@ -365,7 +365,7 @@ SqlLiteral SqlLiteral():
     ( token = <STRINGVAL> { value = token.image; } |
       token = <DECIMAL_LITERAL> { value = Integer.parseInt(token.image); } |
       token = <FLOATING_LITERAL> { value = Float.parseFloat(token.image); } |
-      token = <ZERO> { value = Integer.parseInt(token.image); }
+      token = <ZERO> { value = Integer.parseInt(token.image); } |
       token = <NULL> { value = null; }
     ) { return new SqlLiteral(value); }
 }
