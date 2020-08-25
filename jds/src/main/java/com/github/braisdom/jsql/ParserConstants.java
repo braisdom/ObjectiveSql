@@ -83,35 +83,37 @@ interface ParserConstants {
   /** RegularExpression Id. */
   int FROM = 44;
   /** RegularExpression Id. */
-  int AS = 45;
+  int PREDICATE = 45;
   /** RegularExpression Id. */
-  int RETURN = 46;
+  int AS = 46;
   /** RegularExpression Id. */
-  int NULL = 47;
+  int RETURN = 47;
   /** RegularExpression Id. */
-  int JSYMBOL = 48;
+  int NULL = 48;
   /** RegularExpression Id. */
-  int JPROJECTION = 49;
+  int JSYMBOL = 49;
   /** RegularExpression Id. */
-  int JTYPE = 50;
+  int JPROJECTION = 50;
   /** RegularExpression Id. */
-  int JPREDICATE = 51;
+  int JTYPE = 51;
   /** RegularExpression Id. */
-  int JQuery = 52;
+  int JPREDICATE = 52;
   /** RegularExpression Id. */
-  int TYPE_NAME = 53;
+  int JQuery = 53;
   /** RegularExpression Id. */
-  int IDENTIFIER = 54;
+  int TYPE_NAME = 54;
   /** RegularExpression Id. */
-  int LETTER = 55;
+  int IDENTIFIER = 55;
   /** RegularExpression Id. */
-  int DIGIT = 56;
+  int LETTER = 56;
   /** RegularExpression Id. */
-  int DECIMAL_LITERAL = 57;
+  int DIGIT = 57;
   /** RegularExpression Id. */
-  int FLOATING_LITERAL = 58;
+  int DECIMAL_LITERAL = 58;
   /** RegularExpression Id. */
-  int BOOLEAN_LITERAL = 59;
+  int FLOATING_LITERAL = 59;
+  /** RegularExpression Id. */
+  int BOOLEAN_LITERAL = 60;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -163,6 +165,7 @@ interface ParserConstants {
     "\"dataset\"",
     "\"projection\"",
     "\"from\"",
+    "\"predicate\"",
     "\"as\"",
     "\"return\"",
     "\"null\"",

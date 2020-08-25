@@ -12,8 +12,8 @@
     <modules>
         <module>apt</module>
         <module>core</module>
+        <module>jds</module>
         <module>example</module>
-        <module>dionaea</module>
     </modules>
 
     <build>

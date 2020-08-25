@@ -104,6 +104,7 @@ TOKEN : {
     < DATASET : "dataset" > |
     < PROJECTION : "projection" > |
     < FROM : "from" > |
+    < PREDICATE : "predicate" > |
     < AS : "as" > |
     < RETURN : "return" > |
     < NULL : "null" >
@@ -156,9 +157,10 @@ ImportNode ImportNode():
 DatasetNode DatasetNode():
 {
     final DatasetNode datasetNode = new DatasetNode();
-    FromNode fromNode;
     FormalParameterNode parameter;
     Projectional projectional;
+    FromNode fromNode;
+    LogicExpression logicExpression;
 }
 {
     (
@@ -175,6 +177,8 @@ DatasetNode DatasetNode():
                             ( <COMMA> fromNode = FromNode() { datasetNode.addFromNode(fromNode); } )*
                         )
                     ")"
+            [ <COMMA> <PREDICATE> "(" logicExpression = LogicExpression() ")"
+            ]
         "}"
     )
     { return datasetNode; }
@@ -279,6 +283,39 @@ ExpressionOperand ExpressionOperand():
     )
 }
 
+LogicExpression LogicExpression():
+{
+    LogicExpression logicExpression = new LogicExpression();
+    ExpressionOperand left;
+    String operator;
+    ExpressionOperand right;
+}
+{
+    (
+        (
+            left = ExpressionOperand() { logicExpression.setLeft(left); }
+            operator = ExpressionOperator() { logicExpression.setOperator(operator); }
+            right = ExpressionOperand() { logicExpression.setRight(right); }
+        )*
+    ) { return logicExpression; }
+}
+
+ExpressionOperand LogicExpressionOperand():
+{
+    ExpressionOperand operand = null;
+    LogicExpression logicExpression;
+}
+{
+    (
+        LOOKAHEAD(ExpressionOperand()) operand = ExpressionOperand() { return operand; } |
+        LOOKAHEAD("(" LogicExpression()) "(" logicExpression = LogicExpression() ")"
+        {
+            logicExpression.setEnclosed(true);
+            return logicExpression;
+        }
+    )
+}
+
 String ExpressionOperator():
 {
 }
@@ -292,13 +329,30 @@ String ExpressionOperator():
         <SC_OR> { return token.image; } |
         <SC_AND> { return token.image; } |
         <LIKE> { return token.image; } |
-        <EQ> { return token.image; } |
-        <GT> { return token.image; } |
-        <GE> { return token.image; } |
-        <NE> { return token.image; } |
-        <LT> { return token.image; } |
-        <LE> { return token.image; }
+        CompareOperator()
     )
+}
+
+String LogicOperator() :
+{
+
+}
+{
+    <SC_AND> { return token.image; } |
+    <SC_OR> { return token.image; }
+}
+
+String CompareOperator() :
+{
+
+}
+{
+    <EQ> { return token.image; } |
+    <GT> { return token.image; } |
+    <GE> { return token.image; } |
+    <NE> { return token.image; } |
+    <LT> { return token.image; } |
+    <LE> { return token.image; }
 }
 
 SqlLiteral SqlLiteral():
