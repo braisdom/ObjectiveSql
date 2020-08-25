@@ -1,6 +1,6 @@
 package com.github.braisdom.funcsql.example;
 
-import com.github.braisdom.jsql.Dionaea;
+import com.github.braisdom.jds.Dionaea;
 import com.github.braisdom.funcsql.HelloImmutable;
 
 @Dionaea
