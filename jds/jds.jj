@@ -11,10 +11,10 @@ options {
 
 PARSER_BEGIN(Parser)
 
-package com.github.braisdom.jsql;
+package com.github.braisdom.jds;
 
 import java.util.*;
-import com.github.braisdom.jsql.ast.*;
+import com.github.braisdom.jds.ast.*;
 
 public final class Parser {
 
@@ -125,6 +125,7 @@ TOKEN : {
     < #LETTER: ["_", "a"-"z", "A"-"Z"] > |
     < #DIGIT: ["0"-"9"] > |
     < DECIMAL_LITERAL: (["-"])? ["1"-"9"] (["0"-"9"])* > |
+    < ZERO: "0" > |
     < FLOATING_LITERAL: (["-"])? (["0"-"9"])+ "." (["0"-"9"])*  >|
     < BOOLEAN_LITERAL: ("true" | "false") >
 }
@@ -177,7 +178,7 @@ DatasetNode DatasetNode():
                             ( <COMMA> fromNode = FromNode() { datasetNode.addFromNode(fromNode); } )*
                         )
                     ")"
-            [ <COMMA> <PREDICATE> "(" logicExpression = LogicExpression() ")"
+            [ <COMMA> <PREDICATE> "(" logicExpression = LogicExpression() ")" { datasetNode.setPredicate(logicExpression); }
             ]
         "}"
     )
@@ -329,7 +330,7 @@ String ExpressionOperator():
         <SC_OR> { return token.image; } |
         <SC_AND> { return token.image; } |
         <LIKE> { return token.image; } |
-        CompareOperator()
+        CompareOperator() { return token.image; }
     )
 }
 
@@ -364,6 +365,7 @@ SqlLiteral SqlLiteral():
     ( token = <STRINGVAL> { value = token.image; } |
       token = <DECIMAL_LITERAL> { value = Integer.parseInt(token.image); } |
       token = <FLOATING_LITERAL> { value = Float.parseFloat(token.image); } |
+      token = <ZERO> { value = Integer.parseInt(token.image); }
       token = <NULL> { value = null; }
     ) { return new SqlLiteral(value); }
 }

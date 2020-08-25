@@ -1,0 +1,1 @@
+javacc -OUTPUT_DIRECTORY:src/main/java/com/github/braisdom/jds jds.jj

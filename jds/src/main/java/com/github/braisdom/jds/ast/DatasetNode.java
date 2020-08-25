@@ -8,6 +8,7 @@ public class DatasetNode {
     private List<FormalParameterNode> formalParameterNodes = new ArrayList<>();
     private List<Projectional> projectionals = new ArrayList<>();
     private List<FromNode> fromNodes = new ArrayList<>();
+    private LogicExpression predicate;
 
     public void addFormalParameter(FormalParameterNode formalParameterNode) {
         formalParameterNodes.add(formalParameterNode);
@@ -39,5 +40,13 @@ public class DatasetNode {
 
     public List<FromNode> getFromNodes() {
         return fromNodes;
+    }
+
+    public LogicExpression getPredicate() {
+        return predicate;
+    }
+
+    public void setPredicate(LogicExpression predicate) {
+        this.predicate = predicate;
     }
 }
