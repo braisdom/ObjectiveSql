@@ -1,7 +1,7 @@
 package com.github.braisdom.jds.ast;
 
 public class SqlLiteral extends Aliasable implements Projectional, ExpressionOperand,
-        BetweenOperatorNode.Operand, SqlFunctionOperand, InOperatorNode.Operand {
+        BetweenOperatorNode.Operand, SqlFunctionOperand, InOperatorNode.Operand, CompareExpressionOperand {
     private Object value;
 
     public SqlLiteral(Object value) {

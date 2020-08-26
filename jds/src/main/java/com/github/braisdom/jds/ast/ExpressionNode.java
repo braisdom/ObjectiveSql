@@ -1,6 +1,6 @@
 package com.github.braisdom.jds.ast;
 
-public class ExpressionNode extends Aliasable implements ExpressionOperand, Projectional {
+public class ExpressionNode extends Aliasable implements ExpressionOperand, Projectional, CompareExpressionOperand {
     private boolean enclosed;
     private ExpressionOperand left;
     private String operator;

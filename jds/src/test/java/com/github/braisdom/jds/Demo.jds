@@ -4,22 +4,20 @@ import com.github.braisdom.jsql.Iso;
 typedef native func Integer max(Symbol symbol);
 typedef native func Number abs(Symbol symbol);
 
-typedef case DetectName() {
+typedef case BirthdayName() {
+
 }
 
 -- comment
 typedef dataset Member(Timestamp purchaseBegin) {
     projection [
-        createMaxDate(),
-        :member_no as member_no,
-        Iso.max(:id) as max_member_id
-    ],
-    from [#pumper.member as member],
-    predicate (:status == 1 && :birthday > purchaseBegin),
-    join [left(MemberProducts as mp, mp.member_id == member.id)],
-    group [],
-    order [-:id],
-    having ();
+        :member_no -> member_no,
+        createMaxDate() -> max_date,
+        BirthdayName() -> birthday_name,
+        Iso.max(:id) -> max_member_id
+    ];
+    from #pumper.member;
+    predicate (:status == 1 && :birthday > purchaseBegin);
 }
 
 func JProjection createMaxDate() {
@@ -29,10 +27,16 @@ func JProjection createMaxDate() {
 }
 
 -- comment
-query purchasedMember(String[] skus, Timestamp purchaseBegin, Timestamp purchaseEnd) {
-    var member = new Member(purchaseBegin);
+func JQuery purchasedMember(String[] skus, Timestamp purchaseBegin, Timestamp purchaseEnd) {
+    Member member = new Member(purchaseBegin);
+    Product product = new Product();
+    Category category = new Category();
 
-    member.predicates.And(:birthday ~= (purchaseBegin, purchaseEnd));
+    member.predicates.and(:birthday ~= (purchaseBegin, purchaseEnd));
+    member.predicates.or(:member_id > 10);
+
+    product.joins.leftJoin(category).on(category.product_id == self.product_id);
+    member.joins.leftJoin(product).on(product.member_id == self.member_id);
 
     if(skus.length > 0)
         member.predicates.And(:id >= 10);

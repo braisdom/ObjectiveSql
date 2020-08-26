@@ -1,10 +1,10 @@
 package com.github.braisdom.jds.ast;
 
-public class LogicExpression implements LogicExpressionOperand, CompareExpressionOperand {
+public class CompareExpressionNode implements CompareExpressionOperand, LogicExpressionOperand, ExpressionOperand {
     private boolean enclosed;
-    private LogicExpressionOperand left;
+    private CompareExpressionOperand left;
     private String operator;
-    private LogicExpressionOperand right;
+    private CompareExpressionOperand right;
 
     public boolean isEnclosed() {
         return enclosed;
@@ -14,11 +14,11 @@ public class LogicExpression implements LogicExpressionOperand, CompareExpressio
         this.enclosed = enclosed;
     }
 
-    public LogicExpressionOperand getLeft() {
+    public CompareExpressionOperand getLeft() {
         return left;
     }
 
-    public void setLeft(LogicExpressionOperand left) {
+    public void setLeft(CompareExpressionOperand left) {
         this.left = left;
     }
 
@@ -30,11 +30,11 @@ public class LogicExpression implements LogicExpressionOperand, CompareExpressio
         this.operator = operator;
     }
 
-    public LogicExpressionOperand getRight() {
+    public CompareExpressionOperand getRight() {
         return right;
     }
 
-    public void setRight(LogicExpressionOperand right) {
+    public void setRight(CompareExpressionOperand right) {
         this.right = right;
     }
 }

@@ -73,49 +73,53 @@ interface ParserConstants {
   /** RegularExpression Id. */
   int BACK_QUOTED_IDENTIFIER = 39;
   /** RegularExpression Id. */
-  int IMPORT = 40;
+  int PROJECTION_ALIAS = 40;
   /** RegularExpression Id. */
-  int TYPEDEF = 41;
+  int IMPORT = 41;
   /** RegularExpression Id. */
-  int DATASET = 42;
+  int TYPEDEF = 42;
   /** RegularExpression Id. */
-  int PROJECTION = 43;
+  int DATASET = 43;
   /** RegularExpression Id. */
-  int FROM = 44;
+  int PROJECTION = 44;
   /** RegularExpression Id. */
-  int PREDICATE = 45;
+  int FROM = 45;
   /** RegularExpression Id. */
-  int AS = 46;
+  int PREDICATE = 46;
   /** RegularExpression Id. */
-  int RETURN = 47;
+  int AS = 47;
   /** RegularExpression Id. */
-  int NULL = 48;
+  int RETURN = 48;
   /** RegularExpression Id. */
-  int JSYMBOL = 49;
+  int NULL = 49;
   /** RegularExpression Id. */
-  int JPROJECTION = 50;
+  int JSYMBOL = 50;
   /** RegularExpression Id. */
-  int JTYPE = 51;
+  int JPROJECTION = 51;
   /** RegularExpression Id. */
-  int JPREDICATE = 52;
+  int JTYPE = 52;
   /** RegularExpression Id. */
-  int JQuery = 53;
+  int JPREDICATE = 53;
   /** RegularExpression Id. */
-  int TYPE_NAME = 54;
+  int JQuery = 54;
   /** RegularExpression Id. */
-  int IDENTIFIER = 55;
+  int TYPE_NAME = 55;
   /** RegularExpression Id. */
-  int LETTER = 56;
+  int IDENTIFIER = 56;
   /** RegularExpression Id. */
-  int DIGIT = 57;
+  int LETTER = 57;
   /** RegularExpression Id. */
-  int DECIMAL_LITERAL = 58;
+  int DIGIT = 58;
   /** RegularExpression Id. */
-  int ZERO = 59;
+  int DECIMAL_LITERAL = 59;
   /** RegularExpression Id. */
-  int FLOATING_LITERAL = 60;
+  int ZERO = 60;
   /** RegularExpression Id. */
-  int BOOLEAN_LITERAL = 61;
+  int NUMBER_SIGN = 61;
+  /** RegularExpression Id. */
+  int FLOATING_LITERAL = 62;
+  /** RegularExpression Id. */
+  int BOOLEAN_LITERAL = 63;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -162,13 +166,14 @@ interface ParserConstants {
     "<STRINGVAL>",
     "<DBSTRINGVAL>",
     "<BACK_QUOTED_IDENTIFIER>",
+    "<PROJECTION_ALIAS>",
     "\"import\"",
     "\"typedef\"",
     "\"dataset\"",
     "\"projection\"",
     "\"from\"",
     "\"predicate\"",
-    "\"as\"",
+    "\"->\"",
     "\"return\"",
     "\"null\"",
     "\"JSymbol\"",
@@ -182,9 +187,9 @@ interface ParserConstants {
     "<DIGIT>",
     "<DECIMAL_LITERAL>",
     "\"0\"",
+    "\"#\"",
     "<FLOATING_LITERAL>",
     "<BOOLEAN_LITERAL>",
-    "\"#\"",
   };
 
 }

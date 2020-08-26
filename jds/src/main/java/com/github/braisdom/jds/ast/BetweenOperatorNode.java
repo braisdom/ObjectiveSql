@@ -1,6 +1,6 @@
 package com.github.braisdom.jds.ast;
 
-public class BetweenOperatorNode implements ExpressionOperand {
+public class BetweenOperatorNode {
     private boolean negated;
     private SymbolNode symbolNode;
     private Operand lower;

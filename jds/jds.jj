@@ -93,9 +93,10 @@ TOKEN :
 }
 
 TOKEN : {
-    < STRINGVAL: ( "'" ( ~["'"] | ["\'"] )* "'") > |
-    < DBSTRINGVAL: ( "\"" ( ~["\""] )* "\"") > |
-    < BACK_QUOTED_IDENTIFIER: "`" ( (~["`"]) )+ "`" >
+    < STRINGVAL: ( "'" ( ~["'","\n","\r"] )* "'") > |
+    < DBSTRINGVAL: ( "\"" ( ~["\"","\n","\r"] )* "\"") > |
+    < BACK_QUOTED_IDENTIFIER: "`" ( (~["`"]) )+ "`" > |
+    < PROJECTION_ALIAS: (<QUOTE> ( <IDENTIFIER> )* <QUOTE>) >
 }
 
 TOKEN : {
@@ -105,7 +106,7 @@ TOKEN : {
     < PROJECTION : "projection" > |
     < FROM : "from" > |
     < PREDICATE : "predicate" > |
-    < AS : "as" > |
+    < AS : "->" > |
     < RETURN : "return" > |
     < NULL : "null" >
 }
@@ -121,11 +122,12 @@ TOKEN : {
 
 TOKEN : {
     < TYPE_NAME: (["A"-"Z"]) (<IDENTIFIER>)* > |
-    < IDENTIFIER: <LETTER> (<LETTER> | <DIGIT>)* > |
-    < #LETTER: ["_", "a"-"z", "A"-"Z"] > |
+    < IDENTIFIER: (["a"-"z"] | ["A"-"Z"]) (<LETTER> | <DIGIT>)* > |
+    < #LETTER: ("_" | ["a"-"z"] | ["A"-"Z"]) > |
     < #DIGIT: ["0"-"9"] > |
     < DECIMAL_LITERAL: (["-"])? ["1"-"9"] (["0"-"9"])* > |
     < ZERO: "0" > |
+    < NUMBER_SIGN: "#" > |
     < FLOATING_LITERAL: (["-"])? (["0"-"9"])+ "." (["0"-"9"])*  >|
     < BOOLEAN_LITERAL: ("true" | "false") >
 }
@@ -158,41 +160,64 @@ ImportNode ImportNode():
 DatasetNode DatasetNode():
 {
     final DatasetNode datasetNode = new DatasetNode();
-    FormalParameterNode parameter;
-    Projectional projectional;
     FromNode fromNode;
     LogicExpression logicExpression;
 }
 {
     (
-        <TYPEDEF> <DATASET> <TYPE_NAME> { datasetNode.setName(getToken(0).image); }
-        "("
-            parameter = FormalParameterNode() { datasetNode.addFormalParameter(parameter); }
-            ( "," parameter = FormalParameterNode() { datasetNode.addFormalParameter(parameter); } )*
-        ")"
+        <TYPEDEF> <DATASET> <TYPE_NAME> { datasetNode.setName(getToken(0).image); } "(" DatasetParameter(datasetNode) ")"
         "{"
-            <PROJECTION> ("[" Projectional(datasetNode) ( "," Projectional(datasetNode))* "]") <COMMA>
-            <FROM> "("
-                        (
-                            fromNode = FromNode() { datasetNode.addFromNode(fromNode); }
-                            ( <COMMA> fromNode = FromNode() { datasetNode.addFromNode(fromNode); } )*
-                        )
-                    ")"
+            <PROJECTION> ProjectionList(datasetNode)<COMMA>
+            <FROM> FromNode(datasetNode)
             [ <COMMA> <PREDICATE> "(" logicExpression = LogicExpression() ")" { datasetNode.setPredicate(logicExpression); } ]
         "}"
     )
     { return datasetNode; }
 }
 
-FromNode FromNode():
+void DatasetParameter(DatasetNode datasetNode) :
+{
+    FormalParameterNode parameter;
+}
+{
+    parameter = FormalParameterNode() { datasetNode.addFormalParameter(parameter); }
+    ( "," parameter = FormalParameterNode() { datasetNode.addFormalParameter(parameter); } )*
+}
+
+void ProjectionList(DatasetNode datasetNode) :
+{
+    Projectional projectional;
+}
+{
+    (
+        "["
+            (projectional = Projectional() { datasetNode.addProjectional(projectional); })
+
+            (
+                (<COMMA> projectional = Projectional() { datasetNode.addProjectional(projectional); })
+            )*
+        "]"
+    )
+}
+
+Projectional Projectional():
+{
+    Projectional projectional = null;
+}
+{
+    (
+        ( projectional = SqlLiteral() (<AS> <STRINGVAL> { projectional.setAlias(token.image); })  ) |
+        ( projectional = SymbolNode() (<AS> <STRINGVAL> { projectional.setAlias(token.image); })  ) |
+        ( projectional = SqlFunctionCallNode() (<AS> <STRINGVAL> { projectional.setAlias(token.image); })  )
+    ) { return projectional; }
+}
+
+void FromNode(DatasetNode dataset):
 {
     FromNode fromNode;
 }
 {
-    (
-        LOOKAHEAD(SqlFunctionCallNode()) fromNode = SqlFunctionCallNode() [ <AS> <IDENTIFIER> { fromNode.setAlias(token.image); } ] |
-        LOOKAHEAD(SymbolNode()) fromNode = SymbolNode() [ <AS> <IDENTIFIER> { fromNode.setAlias(token.image); } ]
-    ) { return fromNode; }
+    fromNode = SymbolNode() { dataset.setFromNode(fromNode); }
 }
 
 FormalParameterNode FormalParameterNode():
@@ -205,20 +230,6 @@ FormalParameterNode FormalParameterNode():
     { return new FormalParameterNode(type, name); }
 }
 
-void Projectional(DatasetNode datasetNode):
-{
-    Projectional projectional = null;
-    Token token;
-}
-{
-    (
-        LOOKAHEAD(ExpressionNode() <AS> <IDENTIFIER>) (projectional = ExpressionNode() <AS> token = <IDENTIFIER> { projectional.setAlias(token.image); } ) |
-        LOOKAHEAD(SymbolNode()) (projectional = SymbolNode() [ <AS> token = <IDENTIFIER> { projectional.setAlias(token.image); } ] ) |
-        LOOKAHEAD(SqlLiteral()) (projectional = SqlLiteral() [ <AS> token = <IDENTIFIER> { projectional.setAlias(token.image); } ] ) |
-        (projectional = SqlFunctionCallNode() <AS> token = <IDENTIFIER> { projectional.setAlias(token.image); } )
-    ) {  datasetNode.addProjectional(projectional); }
-}
-
 SqlFunctionCallNode SqlFunctionCallNode():
 {
     SqlFunctionCallNode sqlFunctionCallNode = new SqlFunctionCallNode();
@@ -226,14 +237,17 @@ SqlFunctionCallNode SqlFunctionCallNode():
 }
 {
     (
-        [ LOOKAHEAD(2) ( <TYPE_NAME> { sqlFunctionCallNode.setType(token.image); } "." )]
-        (<IDENTIFIER> | <TYPE_NAME> ) { sqlFunctionCallNode.setName(getToken(0).image); }
-        "("
+        [
+            LOOKAHEAD(2)
+            ( <TYPE_NAME> { sqlFunctionCallNode.setType(token.image); } "." )
+        ]
+        ( ( <IDENTIFIER> | <TYPE_NAME> ) { sqlFunctionCallNode.setName(getToken(0).image); })
+        <LPAREN>
             [
                 operand = SqlFunctionOperand() { sqlFunctionCallNode.addOperands(operand); }
                 ( "," operand = SqlFunctionOperand() { sqlFunctionCallNode.addOperands(operand); } )*
             ]
-        ")"
+        <RPAREN>
     ) { return sqlFunctionCallNode; }
 }
 
@@ -259,6 +273,7 @@ ExpressionNode ExpressionNode():
 {
     (
         (
+            LOOKAHEAD(2)
             left = ExpressionOperand() { expressionNode.setLeft(left); }
             operator = ExpressionOperator() { expressionNode.setOperator(operator); }
             right = ExpressionOperand() { expressionNode.setRight(right); }
@@ -293,24 +308,64 @@ LogicExpression LogicExpression():
 {
     (
         (
+            LOOKAHEAD(3)
+            (
+                left = LogicExpressionOperand() { logicExpression.setLeft(left); }
+                operator = LogicOperator() { logicExpression.setOperator(operator); }
+                right = LogicExpressionOperand() { logicExpression.setRight(right); }
+            )* |
             left = LogicExpressionOperand() { logicExpression.setLeft(left); }
-            operator = LogicOperator() { logicExpression.setOperator(operator); }
-            right = LogicExpressionOperand() { logicExpression.setRight(right); }
-        )*
+        )
     ) { return logicExpression; }
 }
 
 LogicExpressionOperand LogicExpressionOperand():
 {
-    ExpressionOperand operand = null;
+    LogicExpressionOperand operand = null;
     LogicExpression logicExpression;
 }
 {
     (
-        LOOKAHEAD(ExpressionOperand()) operand = ExpressionOperand() { return operand; } |
+        LOOKAHEAD(CompareExpressionNode()) operand = CompareExpressionNode() { return operand; } |
         "(" logicExpression = LogicExpression() ")"
         {
             logicExpression.setEnclosed(true);
+            return logicExpression;
+        }
+    )
+}
+
+CompareExpressionNode CompareExpressionNode():
+{
+    CompareExpressionNode compareExpression = new CompareExpressionNode();
+    CompareExpressionOperand left;
+    String operator;
+    CompareExpressionOperand right;
+}
+{
+    (
+        (
+            LOOKAHEAD(2)
+            left = CompareExpressionOperand() { compareExpression.setLeft(left); }
+            operator = CompareOperator() { compareExpression.setOperator(operator); }
+            right = CompareExpressionOperand() { compareExpression.setRight(right); }
+        )*
+    ) { return compareExpression; }
+}
+
+CompareExpressionOperand CompareExpressionOperand():
+{
+    CompareExpressionNode compareExpressionNode = null;
+    CompareExpressionOperand operand;
+}
+{
+    (
+        LOOKAHEAD(2) operand = SqlLiteral() { return operand; } |
+        LOOKAHEAD(3) operand = SymbolNode() { return operand; } |
+        LOOKAHEAD(3) operand = ExpressionNode() { return operand; } |
+        LOOKAHEAD(3) "(" compareExpressionNode = CompareExpressionNode() ")"
+        {
+            compareExpressionNode.setEnclosed(true);
             return logicExpression;
         }
     )
@@ -325,27 +380,20 @@ String ExpressionOperator():
         <MINUS> { return token.image; } |
         <STAR> { return token.image; } |
         <SLASH> { return token.image; } |
-        <REM> { return token.image; } |
-        <SC_OR> { return token.image; } |
-        <SC_AND> { return token.image; } |
-        <LIKE> { return token.image; } |
-        CompareOperator() { return token.image; }
+        <REM> { return token.image; }
     )
 }
 
 String LogicOperator() :
 {
-
 }
 {
     <SC_AND> { return token.image; } |
-    <SC_OR> { return token.image; } |
-    CompareOperator() { return token.image; }
+    <SC_OR> { return token.image; }
 }
 
 String CompareOperator() :
 {
-
 }
 {
     <EQ> { return token.image; } |
@@ -376,8 +424,8 @@ SymbolNode SymbolNode():
 }
 {
     (
-        ( ":" <IDENTIFIER> ) { symbolNode.setSymbolName(token.image); } |
-        ( "#" <IDENTIFIER> { symbolNode.setDatasetName(token.image); } [ "." <IDENTIFIER> { symbolNode.setSymbolName(token.image); } ] )
+        ( <COLON> <IDENTIFIER> ) { symbolNode.setSymbolName(token.image); } |
+        ( <NUMBER_SIGN> <IDENTIFIER> { symbolNode.setDatasetName(token.image); } [ "." <IDENTIFIER> { symbolNode.setSymbolName(token.image); } ] )
     )
     { return symbolNode; }
 }
