@@ -169,7 +169,7 @@ DatasetNode DatasetNode():
         "{"
             <PROJECTION> ProjectionList(datasetNode) <COMMA>
             <FROM> FromNode(datasetNode)
-            [ <COMMA> <PREDICATE> "(" logicExpressionNode = MathematicExpressionNode() ")" { datasetNode.setPredicate(logicExpressionNode); } ]
+            [ <COMMA> <PREDICATE> "(" logicExpressionNode = CompareExpressionNode() ")" { datasetNode.setPredicate(logicExpressionNode); } ]
         "}"
     )
     { return datasetNode; }
@@ -270,6 +270,7 @@ ExpressionNode MathematicExpressionNode():
     String operator;
 }
 {
+    { expressionNode.setExpressionType(ExpressionType.MATHEMATIC); }
     (
         (
             MathematicExpressionOperand(expressionNode)
@@ -298,6 +299,44 @@ void MathematicExpressionOperand(ExpressionNode expressionNode):
     )
 }
 
+ExpressionNode CompareExpressionNode():
+{
+    ExpressionNode expressionNode = new ExpressionNode();
+    Object operand;
+    String operator;
+}
+{
+    { expressionNode.setExpressionType(ExpressionType.COMPARE); }
+    (
+        (
+            CompareExpressionOperand(expressionNode)
+            operator = CompareExpressionOperator() { expressionNode.addOperand(operator); }
+            CompareExpressionOperand(expressionNode)
+        )
+    ) { return expressionNode; }
+}
+
+void CompareExpressionOperand(ExpressionNode expressionNode):
+{
+    ExpressionNode enclosedExpression;
+    ExpressionOperand operand = null;
+}
+{
+    (
+        LOOKAHEAD(2) operand = SqlLiteral() { expressionNode.addOperand(operand); } |
+        LOOKAHEAD(3) operand = SymbolNode() { expressionNode.addOperand(operand); } |
+        LOOKAHEAD( "(" MathematicExpressionNode() ")")
+        "("
+            operand = MathematicExpressionNode() { expressionNode.addOperand(operand); }
+        ")" |
+        LOOKAHEAD( "(" CompareExpressionNode() ")")
+        "("
+            enclosedExpression = CompareExpressionNode() { expressionNode.addOperand(new EnclosedExpression(enclosedExpression)); }
+        ")"
+    )
+}
+
+
 String MathematicExpressionOperator():
 {
 }
@@ -319,7 +358,7 @@ String LogicOperator() :
     <SC_OR> { return token.image; }
 }
 
-String CompareOperator() :
+String CompareExpressionOperator() :
 {
 }
 {
