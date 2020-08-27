@@ -161,7 +161,7 @@ DatasetNode DatasetNode():
 {
     final DatasetNode datasetNode = new DatasetNode();
     FromNode fromNode;
-    LogicExpression logicExpression;
+    LogicExpressionNode logicExpressionNode;
 }
 {
     (
@@ -169,7 +169,7 @@ DatasetNode DatasetNode():
         "{"
             <PROJECTION> ProjectionList(datasetNode)<COMMA>
             <FROM> FromNode(datasetNode)
-            [ <COMMA> <PREDICATE> "(" logicExpression = LogicExpression() ")" { datasetNode.setPredicate(logicExpression); } ]
+            [ <COMMA> <PREDICATE> "(" logicExpressionNode = LogicExpressionNode() ")" { datasetNode.setPredicate(logicExpressionNode); } ]
         "}"
     )
     { return datasetNode; }
@@ -298,40 +298,30 @@ ExpressionOperand ExpressionOperand():
     )
 }
 
-LogicExpression LogicExpression():
+LogicExpressionNode LogicExpressionNode():
 {
-    LogicExpression logicExpression = new LogicExpression();
-    LogicExpressionOperand left;
+    LogicExpressionNode logicExpressionNode = new LogicExpressionNode();
     String operator;
-    LogicExpressionOperand right;
 }
 {
     (
+        ( LogicExpressionOperand(logicExpressionNode) )
         (
-            LOOKAHEAD(3)
-            (
-                left = LogicExpressionOperand() { logicExpression.setLeft(left); }
-                operator = LogicOperator() { logicExpression.setOperator(operator); }
-                right = LogicExpressionOperand() { logicExpression.setRight(right); }
-            )* |
-            left = LogicExpressionOperand() { logicExpression.setLeft(left); }
-        )
-    ) { return logicExpression; }
+            operator = LogicOperator() { logicExpressionNode.addOperand(operator);  }
+            LogicExpressionOperand(logicExpressionNode)
+        )*
+    ) { return logicExpressionNode; }
 }
 
-LogicExpressionOperand LogicExpressionOperand():
+void LogicExpressionOperand(LogicExpressionNode logicExpressionNode):
 {
     LogicExpressionOperand operand = null;
-    LogicExpression logicExpression;
 }
 {
     (
-        LOOKAHEAD(CompareExpressionNode()) operand = CompareExpressionNode() { return operand; } |
-        "(" logicExpression = LogicExpression() ")"
-        {
-            logicExpression.setEnclosed(true);
-            return logicExpression;
-        }
+        LOOKAHEAD(3)
+        operand = CompareExpressionNode() { logicExpressionNode.addOperand(operand); } |
+        ( "(" operand = CompareExpressionNode() ")" ) { logicExpressionNode.add(new EnclosedExpression(operand)); }
     )
 }
 
@@ -339,7 +329,6 @@ CompareExpressionNode CompareExpressionNode():
 {
     CompareExpressionNode compareExpression = new CompareExpressionNode();
     CompareExpressionOperand left;
-    String operator;
     CompareExpressionOperand right;
 }
 {
@@ -347,7 +336,7 @@ CompareExpressionNode CompareExpressionNode():
         (
             LOOKAHEAD(2)
             left = CompareExpressionOperand() { compareExpression.setLeft(left); }
-            operator = CompareOperator() { compareExpression.setOperator(operator); }
+            CompareOperator() { compareExpression.setOperator(token.image); }
             right = CompareExpressionOperand() { compareExpression.setRight(right); }
         )*
     ) { return compareExpression; }
@@ -361,12 +350,11 @@ CompareExpressionOperand CompareExpressionOperand():
 {
     (
         LOOKAHEAD(2) operand = SqlLiteral() { return operand; } |
-        LOOKAHEAD(3) operand = SymbolNode() { return operand; } |
-        LOOKAHEAD(3) operand = ExpressionNode() { return operand; } |
-        LOOKAHEAD(3) "(" compareExpressionNode = CompareExpressionNode() ")"
+        LOOKAHEAD(4) operand = SymbolNode() { return operand; } |
+        LOOKAHEAD("(" CompareExpressionNode() ")") "(" compareExpressionNode = CompareExpressionNode() ")"
         {
             compareExpressionNode.setEnclosed(true);
-            return logicExpression;
+            return compareExpressionNode;
         }
     )
 }

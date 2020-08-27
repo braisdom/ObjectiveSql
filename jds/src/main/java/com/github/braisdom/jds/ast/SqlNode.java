@@ -7,7 +7,7 @@ public class SqlNode {
 
     private final List<ImportNode> importNodes = new ArrayList<>();
     private final List<DatasetNode> datasetNodes = new ArrayList<>();
-    private LogicExpression logicExpression;
+    private LogicExpressionNode logicExpressionNode;
 
     public SqlNode() {
     }
@@ -28,11 +28,11 @@ public class SqlNode {
         return datasetNodes;
     }
 
-    public LogicExpression getLogicExpression() {
-        return logicExpression;
+    public LogicExpressionNode getLogicExpressionNode() {
+        return logicExpressionNode;
     }
 
-    public void setLogicExpression(LogicExpression logicExpression) {
-        this.logicExpression = logicExpression;
+    public void setLogicExpressionNode(LogicExpressionNode logicExpressionNode) {
+        this.logicExpressionNode = logicExpressionNode;
     }
 }

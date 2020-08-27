@@ -37,7 +37,7 @@ public class SupportJDSParserTest {
                 "   'string' -> 'string_column'" +
                 " ],\r\n" +
                 " from #database.sample_table, \r\n" +
-                " predicate ((:member_id > 10 || :name == 'hello') && :member_id == 10)" +
+                " predicate (:member_id > 10)" +
                 "}";
         InputStream is = new ByteArrayInputStream(importString.getBytes(Charset.forName("UTF-8")));
         Parser parser = new Parser(is, Charset.forName("UTF-8").name());
