@@ -161,15 +161,15 @@ DatasetNode DatasetNode():
 {
     final DatasetNode datasetNode = new DatasetNode();
     FromNode fromNode;
-    LogicExpressionNode logicExpressionNode;
+    ExpressionNode logicExpressionNode;
 }
 {
     (
-        <TYPEDEF> <DATASET> <TYPE_NAME> { datasetNode.setName(getToken(0).image); } "(" DatasetParameter(datasetNode) ")"
+        <TYPEDEF> <DATASET> <TYPE_NAME> { datasetNode.setName(token.image); } "(" DatasetParameter(datasetNode) ")"
         "{"
-            <PROJECTION> ProjectionList(datasetNode)<COMMA>
+            <PROJECTION> ProjectionList(datasetNode) <COMMA>
             <FROM> FromNode(datasetNode)
-            [ <COMMA> <PREDICATE> "(" logicExpressionNode = LogicExpressionNode() ")" { datasetNode.setPredicate(logicExpressionNode); } ]
+            [ <COMMA> <PREDICATE> "(" logicExpressionNode = MathematicExpressionNode() ")" { datasetNode.setPredicate(logicExpressionNode); } ]
         "}"
     )
     { return datasetNode; }
@@ -263,103 +263,42 @@ SqlFunctionOperand SqlFunctionOperand():
     )
 }
 
-ExpressionNode ExpressionNode():
+ExpressionNode MathematicExpressionNode():
 {
     ExpressionNode expressionNode = new ExpressionNode();
-    ExpressionOperand left;
+    Object operand;
     String operator;
-    ExpressionOperand right;
 }
 {
     (
         (
-            LOOKAHEAD(2)
-            left = ExpressionOperand() { expressionNode.setLeft(left); }
-            operator = ExpressionOperator() { expressionNode.setOperator(operator); }
-            right = ExpressionOperand() { expressionNode.setRight(right); }
-        )*
+            MathematicExpressionOperand(expressionNode)
+            operator = MathematicExpressionOperator() { expressionNode.addOperand(operator); }
+            MathematicExpressionOperand(expressionNode)
+            (
+                operator = MathematicExpressionOperator() { expressionNode.addOperand(operator); }
+                MathematicExpressionOperand(expressionNode)
+            ) *
+        )
     ) { return expressionNode; }
 }
 
-ExpressionOperand ExpressionOperand():
+void MathematicExpressionOperand(ExpressionNode expressionNode):
 {
+    ExpressionNode enclosedExpression;
     ExpressionOperand operand = null;
-    ExpressionNode expressionNode;
 }
 {
     (
-        operand = SqlLiteral() { return operand; } |
-        operand = SymbolNode() { return operand; } |
-        "(" expressionNode = ExpressionNode() ")"
-        {
-            expressionNode.setEnclosed(true);
-            return expressionNode;
-        }
+        operand = SqlLiteral() { expressionNode.addOperand(operand); } |
+        operand = SymbolNode() { expressionNode.addOperand(operand); } |
+        "("
+            enclosedExpression = MathematicExpressionNode() { expressionNode.addOperand(new EnclosedExpression(enclosedExpression)); }
+        ")"
     )
 }
 
-LogicExpressionNode LogicExpressionNode():
-{
-    LogicExpressionNode logicExpressionNode = new LogicExpressionNode();
-    String operator;
-}
-{
-    (
-        ( LogicExpressionOperand(logicExpressionNode) )
-        (
-            operator = LogicOperator() { logicExpressionNode.addOperand(operator);  }
-            LogicExpressionOperand(logicExpressionNode)
-        )*
-    ) { return logicExpressionNode; }
-}
-
-void LogicExpressionOperand(LogicExpressionNode logicExpressionNode):
-{
-    LogicExpressionOperand operand = null;
-}
-{
-    (
-        LOOKAHEAD(3)
-        operand = CompareExpressionNode() { logicExpressionNode.addOperand(operand); } |
-        ( "(" operand = CompareExpressionNode() ")" ) { logicExpressionNode.add(new EnclosedExpression(operand)); }
-    )
-}
-
-CompareExpressionNode CompareExpressionNode():
-{
-    CompareExpressionNode compareExpression = new CompareExpressionNode();
-    CompareExpressionOperand left;
-    CompareExpressionOperand right;
-}
-{
-    (
-        (
-            LOOKAHEAD(2)
-            left = CompareExpressionOperand() { compareExpression.setLeft(left); }
-            CompareOperator() { compareExpression.setOperator(token.image); }
-            right = CompareExpressionOperand() { compareExpression.setRight(right); }
-        )*
-    ) { return compareExpression; }
-}
-
-CompareExpressionOperand CompareExpressionOperand():
-{
-    CompareExpressionNode compareExpressionNode = null;
-    CompareExpressionOperand operand;
-}
-{
-    (
-        LOOKAHEAD(2) operand = SqlLiteral() { return operand; } |
-        LOOKAHEAD(4) operand = SymbolNode() { return operand; } |
-        LOOKAHEAD("(" CompareExpressionNode() ")") "(" compareExpressionNode = CompareExpressionNode() ")"
-        {
-            compareExpressionNode.setEnclosed(true);
-            return compareExpressionNode;
-        }
-    )
-}
-
-String ExpressionOperator():
+String MathematicExpressionOperator():
 {
 }
 {

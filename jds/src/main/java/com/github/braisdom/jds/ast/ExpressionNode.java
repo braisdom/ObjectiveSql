@@ -1,40 +1,16 @@
 package com.github.braisdom.jds.ast;
 
-public class ExpressionNode extends Aliasable implements ExpressionOperand, Projectional, CompareExpressionOperand {
-    private boolean enclosed;
-    private ExpressionOperand left;
-    private String operator;
-    private ExpressionOperand right;
+import java.util.ArrayList;
+import java.util.List;
 
-    public boolean isEnclosed() {
-        return enclosed;
+public class ExpressionNode extends Aliasable implements Expression, Projectional {
+    private List expressionOperands = new ArrayList();
+
+    public void addOperand(Object operand) {
+        expressionOperands.add(operand);
     }
 
-    public void setEnclosed(boolean enclosed) {
-        this.enclosed = enclosed;
-    }
-
-    public ExpressionOperand getLeft() {
-        return left;
-    }
-
-    public void setLeft(ExpressionOperand left) {
-        this.left = left;
-    }
-
-    public String getOperator() {
-        return operator;
-    }
-
-    public void setOperator(String operator) {
-        this.operator = operator;
-    }
-
-    public ExpressionOperand getRight() {
-        return right;
-    }
-
-    public void setRight(ExpressionOperand right) {
-        this.right = right;
+    public List getExpressionOperands() {
+        return expressionOperands;
     }
 }
