@@ -169,7 +169,7 @@ DatasetNode DatasetNode():
         "{"
             <PROJECTION> ProjectionList(datasetNode) <COMMA>
             <FROM> FromNode(datasetNode)
-            [ <COMMA> <PREDICATE> "(" logicExpressionNode = CompareExpressionNode() ")" { datasetNode.setPredicate(logicExpressionNode); } ]
+            [ <COMMA> <PREDICATE> "(" logicExpressionNode = LogicExpressionNode() ")" { datasetNode.setPredicate(logicExpressionNode); } ]
         "}"
     )
     { return datasetNode; }
@@ -336,6 +336,55 @@ void CompareExpressionOperand(ExpressionNode expressionNode):
     )
 }
 
+ExpressionNode LogicExpressionNode():
+{
+    ExpressionNode expressionNode = new ExpressionNode();
+    Object operand;
+    String operator;
+}
+{
+    { expressionNode.setExpressionType(ExpressionType.LOGIC); }
+    (
+        LOOKAHEAD(LogicExpressionOperand(expressionNode))
+        (
+            LogicExpressionOperand(expressionNode)
+        ) |
+        (
+            LogicExpressionOperand(expressionNode)
+            operator = LogicExpressionOperator() { expressionNode.addOperand(operator); }
+            LogicExpressionOperand(expressionNode)
+        )
+        LOOKAHEAD(LogicExpressionOperator() LogicExpressionOperand(expressionNode))
+        (
+            operator = LogicExpressionOperator() { expressionNode.addOperand(operator); }
+            LogicExpressionOperand(expressionNode)
+        ) *
+    ) { return expressionNode; }
+}
+
+void LogicExpressionOperand(ExpressionNode expressionNode):
+{
+    ExpressionNode enclosedExpression;
+    ExpressionOperand operand = null;
+}
+{
+    (
+        LOOKAHEAD( "(" MathematicExpressionNode() ")")
+        "("
+            operand = MathematicExpressionNode() { expressionNode.addOperand(operand); }
+        ")" |
+        LOOKAHEAD( "(" LogicExpressionNode() ")")
+        "("
+            operand = LogicExpressionNode() { expressionNode.addOperand(operand); }
+        ")" |
+        LOOKAHEAD( "(" CompareExpressionNode() ")")
+        "("
+            enclosedExpression = CompareExpressionNode() { expressionNode.addOperand(new EnclosedExpression(enclosedExpression)); }
+        ")" |
+        LOOKAHEAD( CompareExpressionNode() )
+        enclosedExpression = CompareExpressionNode() { expressionNode.addOperand(enclosedExpression); }
+    )
+}
 
 String MathematicExpressionOperator():
 {
@@ -350,7 +399,7 @@ String MathematicExpressionOperator():
     )
 }
 
-String LogicOperator() :
+String LogicExpressionOperator() :
 {
 }
 {
