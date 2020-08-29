@@ -10,7 +10,6 @@
     <version>1.0-SNAPSHOT</version>
 
     <modules>
-        <module>apt</module>
         <module>core</module>
         <module>jds</module>
         <module>example</module>

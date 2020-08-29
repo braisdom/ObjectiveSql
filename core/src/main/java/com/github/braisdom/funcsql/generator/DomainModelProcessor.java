@@ -1,9 +1,5 @@
 package com.github.braisdom.funcsql.generator;
 
-import com.github.braisdom.funcsql.apt.APTBuilder;
-import com.github.braisdom.funcsql.apt.AnnotationValues;
-import com.github.braisdom.funcsql.apt.JavacAnnotationHandler;
-import com.github.braisdom.funcsql.apt.SpiLoadUtil;
 import com.sun.tools.javac.api.JavacTrees;
 import com.sun.tools.javac.processing.JavacProcessingEnvironment;
 import com.sun.tools.javac.tree.JCTree;
@@ -19,14 +15,11 @@ import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public abstract class DomainModelProcessor extends AbstractProcessor {
-    private List<JavacAnnotationHandler> handlers;
     private Messager messager;
     private Elements elementUtils;
     private JavacTrees javacTrees;
@@ -37,13 +30,6 @@ public abstract class DomainModelProcessor extends AbstractProcessor {
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
         super.init(processingEnv);
-
-        try {
-            handlers = SpiLoadUtil.readAllFromIterator(SpiLoadUtil.findServices(JavacAnnotationHandler.class,
-                    JavacAnnotationHandler.class.getClassLoader()));
-        } catch (IOException e) {
-            System.err.println(e.getMessage());
-        }
 
         this.classloader = ClassLoader.getSystemClassLoader();
         this.messager = processingEnv.getMessager();

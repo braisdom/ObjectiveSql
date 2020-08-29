@@ -1,4 +1,4 @@
-package com.github.braisdom.funcsql.apt;
+package com.github.braisdom.funcsql.generator;
 
 import com.sun.tools.javac.code.Flags;
 import com.sun.tools.javac.code.TypeTag;
@@ -17,14 +17,14 @@ import java.util.ArrayList;
 
 public final class APTBuilder {
 
-    private final JCTree.JCClassDecl classDecl;
+    private final JCClassDecl classDecl;
     private final Element element;
     private final JCTree ast;
     private final TreeMaker treeMaker;
     private final Names names;
     private final Messager messager;
 
-    public APTBuilder(JCTree.JCClassDecl classDecl, Element element, JCTree ast, TreeMaker treeMaker,
+    public APTBuilder(JCClassDecl classDecl, Element element, JCTree ast, TreeMaker treeMaker,
                       Names names, Messager messager) {
         this.classDecl = classDecl;
         this.element = element;
@@ -71,7 +71,7 @@ public final class APTBuilder {
         classDecl.defs = classDecl.defs.append(variableDecl);
     }
 
-    public void inject(JCTree.JCMethodDecl methodDecl) {
+    public void inject(JCMethodDecl methodDecl) {
         if(!Utils.containsMethod(classDecl.sym, methodDecl, false))
             classDecl.defs = classDecl.defs.append(methodDecl);
     }
@@ -238,7 +238,7 @@ public final class APTBuilder {
         }
 
         return treeMaker.MethodDef(treeMaker.Modifiers(Flags.PUBLIC | Flags.FINAL),
-                toName(setterName), returnType, List.<JCTree.JCTypeParameter>nil(), List.of(parameter),
+                toName(setterName), returnType, List.<JCTypeParameter>nil(), List.of(parameter),
                 List.nil(), treeMaker.Block(0, statements.toList()), null);
     }
 

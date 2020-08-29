@@ -1,4 +1,4 @@
-package com.github.braisdom.funcsql.apt;
+package com.github.braisdom.funcsql.generator;
 
 import com.sun.tools.javac.code.Flags;
 import com.sun.tools.javac.tree.JCTree;
@@ -22,7 +22,7 @@ public class StatementBuilder {
     }
 
     public StatementBuilder append(JCExpression varType, String varName, Class invokedClass,
-                                String method, List<JCExpression> params) {
+                                   String method, List<JCExpression> params) {
         JCExpression methodInvocation = treeMaker.Apply(List.nil(), treeMaker.Select(aptBuilder.typeRef(invokedClass),
                 aptBuilder.toName(method)), params);
         jcStatements.append(treeMaker.VarDef(treeMaker.Modifiers(Flags.PARAMETER), aptBuilder.toName(varName),
@@ -31,14 +31,14 @@ public class StatementBuilder {
     }
 
     public StatementBuilder append(String varName, String methodName, JCExpression... params) {
-        JCTree.JCExpression methodRef = treeMaker.Select(aptBuilder.varRef(varName),
+        JCExpression methodRef = treeMaker.Select(aptBuilder.varRef(varName),
                 aptBuilder.toName(methodName));
         jcStatements.append(treeMaker.Exec(treeMaker.Apply(List.nil(), methodRef, List.from(params))));
         return this;
     }
 
     public StatementBuilder append(Class clazz, String methodName, JCExpression... params) {
-        JCTree.JCExpression methodRef = treeMaker.Select(aptBuilder.typeRef(clazz),
+        JCExpression methodRef = treeMaker.Select(aptBuilder.typeRef(clazz),
                 aptBuilder.toName(methodName));
         jcStatements.append(treeMaker.Exec(treeMaker.Apply(List.nil(), methodRef, List.from(params))));
         return this;
@@ -57,7 +57,7 @@ public class StatementBuilder {
     }
 
     public StatementBuilder append(JCExpression varType, String name, String invokedClassName,
-                                    String method, JCExpression... params) {
+                                   String method, JCExpression... params) {
         JCExpression methodInvoke = treeMaker.Apply(List.nil(), treeMaker.Select(aptBuilder.typeRef(invokedClassName),
                 aptBuilder.toName(method)), List.from(params));
         jcStatements.append(treeMaker.VarDef(treeMaker.Modifiers(Flags.PARAMETER), aptBuilder.toName(name),

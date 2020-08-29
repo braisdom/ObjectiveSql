@@ -1,4 +1,4 @@
-package com.github.braisdom.funcsql.apt;
+package com.github.braisdom.funcsql.generator;
 
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.tree.JCTree;

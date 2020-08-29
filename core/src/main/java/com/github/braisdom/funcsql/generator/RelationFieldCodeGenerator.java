@@ -1,8 +1,6 @@
 package com.github.braisdom.funcsql.generator;
 
 import com.github.braisdom.funcsql.annotations.Relation;
-import com.github.braisdom.funcsql.apt.APTBuilder;
-import com.github.braisdom.funcsql.apt.AnnotationValues;
 import com.github.braisdom.funcsql.relation.RelationType;
 import com.github.braisdom.funcsql.relation.Relationship;
 import com.github.braisdom.funcsql.util.WordUtil;

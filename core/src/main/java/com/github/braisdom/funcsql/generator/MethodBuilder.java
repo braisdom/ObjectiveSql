@@ -1,4 +1,4 @@
-package com.github.braisdom.funcsql.apt;
+package com.github.braisdom.funcsql.generator;
 
 import com.sun.tools.javac.code.Flags;
 import com.sun.tools.javac.code.TypeTag;
@@ -65,14 +65,14 @@ public class MethodBuilder {
 
 
     public MethodBuilder setReturnStatement(String varName, String methodName, JCExpression... params) {
-        JCTree.JCExpression methodRef = treeMaker.Select(aptBuilder.varRef(varName),
+        JCExpression methodRef = treeMaker.Select(aptBuilder.varRef(varName),
                 aptBuilder.toName(methodName));
         this.returnStatement = treeMaker.Apply(List.nil(), methodRef, List.from(params));
         return this;
     }
 
     public MethodBuilder setReturnStatement(Class clazz, String methodName, JCExpression... params) {
-        JCTree.JCExpression methodRef = treeMaker.Select(aptBuilder.typeRef(clazz),
+        JCExpression methodRef = treeMaker.Select(aptBuilder.typeRef(clazz),
                 aptBuilder.toName(methodName));
         this.returnStatement = treeMaker.Apply(List.nil(), methodRef, List.from(params));
         return this;

@@ -3,8 +3,6 @@ package com.github.braisdom.funcsql.generator;
 import com.github.braisdom.funcsql.Query;
 import com.github.braisdom.funcsql.Table;
 import com.github.braisdom.funcsql.annotations.Queryable;
-import com.github.braisdom.funcsql.apt.*;
-import com.github.braisdom.funcsql.apt.MethodBuilder;
 import com.github.braisdom.funcsql.util.WordUtil;
 import com.google.auto.service.AutoService;
 import com.sun.tools.javac.code.Flags;

@@ -1,7 +1,5 @@
 package com.github.braisdom.funcsql.example;
 
-import com.github.braisdom.funcsql.HelloImmutable;
-
 public class QueryExample {
 
 //    private static final String[] MEMBER_NAMES = {"Joe","Juan","Jack","Albert","Jonathan","Justin","Terry","Gerald","Keith","Samuel",
@@ -102,7 +100,4 @@ public class QueryExample {
 //        queryByPredicate();
 //        queryOrders();
 //    }
-    public static void main(String[] args) {
-        HelloImmutable immutable = new HelloImmutable();
-    }
 }
