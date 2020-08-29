@@ -1,9 +1,7 @@
 package com.github.braisdom.funcsql.example;
 
 import com.github.braisdom.funcsql.HelloImmutable;
-import com.github.braisdom.jds.SupportJDS;
 
-@SupportJDS
 public class QueryExample {
 
 //    private static final String[] MEMBER_NAMES = {"Joe","Juan","Jack","Albert","Jonathan","Justin","Terry","Gerald","Keith","Samuel",

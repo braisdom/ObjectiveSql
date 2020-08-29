@@ -4,26 +4,12 @@ import com.github.braisdom.jsql.Iso;
 typedef native func Integer max(Symbol symbol);
 typedef native func Number abs(Symbol symbol);
 
-typedef case BirthdayName() {
-
-}
-
 -- comment
 typedef dataset Member(Timestamp purchaseBegin) {
-    projection [
-        :member_no -> member_no,
-        createMaxDate() -> max_date,
-        BirthdayName() -> birthday_name,
-        Iso.max(:id) -> max_member_id
-    ];
-    from #pumper.member;
-    predicate (:status == 1 && :birthday > purchaseBegin);
-}
+    Projection member_id;
+    Projection name;
 
-func JProjection createMaxDate() {
-    if(t == true)
-        return Iso.max(:id);
-    return (#table.column_name => max_date);
+    From
 }
 
 -- comment

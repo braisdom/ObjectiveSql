@@ -1,24 +1,11 @@
 package com.github.braisdom.jds;
 
-import com.github.braisdom.jds.ast.CompilationUnit;
-import com.github.braisdom.jds.ast.body.BodyDeclaration;
-import org.junit.Assert;
 import org.junit.Test;
-
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.nio.charset.Charset;
 
 public class SupportJDSParserTest {
 
     @Test
-    public void testImportNode() throws ParseException {
-        String importString = "class Test{ static { System.out.println(); } }";
-        InputStream is = new ByteArrayInputStream(importString.getBytes(Charset.forName("UTF-8")));
-        GeneratedJavaParser parser = new GeneratedJavaParser(importString);
-
-        CompilationUnit compilationUnit = parser.CompilationUnit();
-        System.out.println(compilationUnit);
+    public void testImportNode() {
     }
 //
 //    @Test
