@@ -4,7 +4,7 @@ import com.github.braisdom.funcsql.*;
 import com.github.braisdom.funcsql.annotations.DomainModel;
 import com.github.braisdom.funcsql.annotations.PrimaryKey;
 import com.github.braisdom.funcsql.annotations.Transient;
-import com.github.braisdom.funcsql.apt.APTUtils;
+import com.github.braisdom.funcsql.apt.APTBuilder;
 import com.github.braisdom.funcsql.apt.AnnotationValues;
 import com.github.braisdom.funcsql.apt.MethodBuilder;
 import com.github.braisdom.funcsql.apt.StatementBuilder;
@@ -29,29 +29,29 @@ import java.util.Map;
 public class DomainModelCodeGenerator extends DomainModelProcessor {
 
     @Override
-    public void handle(AnnotationValues annotationValues, JCTree ast, APTUtils aptUtils) {
-        handleSetterGetter(annotationValues, aptUtils);
-        handlePrimary(annotationValues, aptUtils);
-        handleTableName(aptUtils);
-        handleCreateQueryMethod(aptUtils);
-        handleCreatePersistenceMethod(aptUtils);
-        handleSaveMethod(aptUtils);
-        handleCreateMethod(aptUtils);
-        handleCreateArrayMethod(aptUtils);
-        handleUpdateMethod(annotationValues, aptUtils);
-        handleUpdate2Method(aptUtils);
-        handleDestroyMethod(annotationValues, aptUtils);
-        handleDestroy2Method(aptUtils);
-        handleExecuteMethod(aptUtils);
-        handleQueryMethod(aptUtils);
-        handleQuery2Method(aptUtils);
-        handleQuery3Method(aptUtils);
-        handleQueryFirstMethod(aptUtils);
-        handleQueryFirst2Method(aptUtils);
-        handleCountMethod(aptUtils);
-        handleValidateMethod(aptUtils);
-        handleNewInstanceFromMethod(aptUtils);
-        handleRawAttributesField(aptUtils);
+    public void handle(AnnotationValues annotationValues, JCTree ast, APTBuilder aptBuilder) {
+        handleSetterGetter(annotationValues, aptBuilder);
+        handlePrimary(annotationValues, aptBuilder);
+        handleTableName(aptBuilder);
+        handleCreateQueryMethod(aptBuilder);
+        handleCreatePersistenceMethod(aptBuilder);
+        handleSaveMethod(aptBuilder);
+        handleCreateMethod(aptBuilder);
+        handleCreateArrayMethod(aptBuilder);
+        handleUpdateMethod(annotationValues, aptBuilder);
+        handleUpdate2Method(aptBuilder);
+        handleDestroyMethod(annotationValues, aptBuilder);
+        handleDestroy2Method(aptBuilder);
+        handleExecuteMethod(aptBuilder);
+        handleQueryMethod(aptBuilder);
+        handleQuery2Method(aptBuilder);
+        handleQuery3Method(aptBuilder);
+        handleQueryFirstMethod(aptBuilder);
+        handleQueryFirst2Method(aptBuilder);
+        handleCountMethod(aptBuilder);
+        handleValidateMethod(aptBuilder);
+        handleNewInstanceFromMethod(aptBuilder);
+        handleRawAttributesField(aptBuilder);
     }
 
     @Override
@@ -59,420 +59,420 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
         return DomainModel.class;
     }
 
-    private void handleSetterGetter(AnnotationValues annotationValues, APTUtils aptUtils) {
-        java.util.List<JCVariableDecl> fields = aptUtils.getFields();
+    private void handleSetterGetter(AnnotationValues annotationValues, APTBuilder aptBuilder) {
+        java.util.List<JCVariableDecl> fields = aptBuilder.getFields();
         DomainModel domainModel = annotationValues.getAnnotationValue(DomainModel.class);
-        aptUtils.getTreeMaker().at(aptUtils.get().pos);
+        aptBuilder.getTreeMaker().at(aptBuilder.get().pos);
         for (JCVariableDecl field : fields) {
-            if (!aptUtils.isStatic(field.mods)) {
-                JCTree.JCMethodDecl setter = aptUtils.newSetter(field, domainModel.fluent());
-                JCTree.JCMethodDecl getter = aptUtils.newGetter(field);
+            if (!aptBuilder.isStatic(field.mods)) {
+                JCTree.JCMethodDecl setter = aptBuilder.newSetter(field, domainModel.fluent());
+                JCTree.JCMethodDecl getter = aptBuilder.newGetter(field);
 
-                aptUtils.inject(setter);
-                aptUtils.inject(getter);
+                aptBuilder.inject(setter);
+                aptBuilder.inject(getter);
             }
         }
     }
 
-    private void handlePrimary(AnnotationValues annotationValues, APTUtils aptUtils) {
-        TreeMaker treeMaker = aptUtils.getTreeMaker();
+    private void handlePrimary(AnnotationValues annotationValues, APTBuilder aptBuilder) {
+        TreeMaker treeMaker = aptBuilder.getTreeMaker();
         DomainModel domainModel = annotationValues.getAnnotationValue(DomainModel.class);
 
-        JCTree.JCAnnotation annotation = treeMaker.Annotation(aptUtils.typeRef(PrimaryKey.class),
-                List.of(treeMaker.Assign(treeMaker.Ident(aptUtils.toName("name")),
+        JCTree.JCAnnotation annotation = treeMaker.Annotation(aptBuilder.typeRef(PrimaryKey.class),
+                List.of(treeMaker.Assign(treeMaker.Ident(aptBuilder.toName("name")),
                         treeMaker.Literal(domainModel.primaryColumnName()))));
         JCModifiers modifiers = treeMaker.Modifiers(Flags.PRIVATE);
         modifiers.annotations = modifiers.annotations.append(annotation);
 
         JCVariableDecl primaryField = treeMaker.VarDef(modifiers,
-                aptUtils.toName(domainModel.primaryFieldName()), aptUtils.typeRef(domainModel.primaryClass()), null);
+                aptBuilder.toName(domainModel.primaryFieldName()), aptBuilder.typeRef(domainModel.primaryClass()), null);
 
-        aptUtils.inject(primaryField);
-        aptUtils.inject(aptUtils.newSetter(primaryField, domainModel.fluent()));
-        aptUtils.inject(aptUtils.newGetter(primaryField));
+        aptBuilder.inject(primaryField);
+        aptBuilder.inject(aptBuilder.newSetter(primaryField, domainModel.fluent()));
+        aptBuilder.inject(aptBuilder.newGetter(primaryField));
     }
 
-    private void handleTableName(APTUtils aptUtils) {
-        TreeMaker treeMaker = aptUtils.getTreeMaker();
+    private void handleTableName(APTBuilder aptBuilder) {
+        TreeMaker treeMaker = aptBuilder.getTreeMaker();
 
         JCModifiers modifiers = treeMaker.Modifiers(Flags.PUBLIC | Flags.STATIC | Flags.FINAL);
 
         JCMethodInvocation methodInvocation = treeMaker.Apply(List.nil(),
-                treeMaker.Select(aptUtils.typeRef(Table.class), aptUtils.toName("getTableName")),
-                List.of(aptUtils.classRef(aptUtils.getClassName())));
+                treeMaker.Select(aptBuilder.typeRef(Table.class), aptBuilder.toName("getTableName")),
+                List.of(aptBuilder.classRef(aptBuilder.getClassName())));
         JCVariableDecl tableNameField = treeMaker.VarDef(modifiers,
-                aptUtils.toName("TABLE_NAME"), aptUtils.typeRef(String.class), methodInvocation);
+                aptBuilder.toName("TABLE_NAME"), aptBuilder.typeRef(String.class), methodInvocation);
 
-        aptUtils.inject(tableNameField);
+        aptBuilder.inject(tableNameField);
     }
 
-    private void handleCreateQueryMethod(APTUtils aptUtils) {
-        MethodBuilder methodBuilder = aptUtils.createMethodBuilder();
-        StatementBuilder statementBuilder = aptUtils.createBlockBuilder();
+    private void handleCreateQueryMethod(APTBuilder aptBuilder) {
+        MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
+        StatementBuilder statementBuilder = aptBuilder.createBlockBuilder();
 
-        statementBuilder.append(aptUtils.typeRef(QueryFactory.class), "queryFactory", Database.class,
+        statementBuilder.append(aptBuilder.typeRef(QueryFactory.class), "queryFactory", Database.class,
                 "getQueryFactory", List.nil());
 
-        methodBuilder.setReturnStatement("queryFactory", "createQuery", aptUtils.classRef(aptUtils.getClassName()));
+        methodBuilder.setReturnStatement("queryFactory", "createQuery", aptBuilder.classRef(aptBuilder.getClassName()));
 
-        aptUtils.inject(methodBuilder
+        aptBuilder.inject(methodBuilder
                 .addStatements(statementBuilder.build())
-                .setReturnType(Query.class, aptUtils.typeRef(aptUtils.getClassName()))
+                .setReturnType(Query.class, aptBuilder.typeRef(aptBuilder.getClassName()))
                 .build("createQuery", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
 
-    private void handleCreatePersistenceMethod(APTUtils aptUtils) {
-        MethodBuilder methodBuilder = aptUtils.createMethodBuilder();
-        StatementBuilder statementBuilder = aptUtils.createBlockBuilder();
+    private void handleCreatePersistenceMethod(APTBuilder aptBuilder) {
+        MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
+        StatementBuilder statementBuilder = aptBuilder.createBlockBuilder();
 
-        statementBuilder.append(aptUtils.typeRef(PersistenceFactory.class), "persistenceFactory", Database.class,
+        statementBuilder.append(aptBuilder.typeRef(PersistenceFactory.class), "persistenceFactory", Database.class,
                 "getPersistenceFactory", List.nil());
 
         methodBuilder.setReturnStatement("persistenceFactory", "createPersistence",
-                aptUtils.classRef(aptUtils.getClassName()));
+                aptBuilder.classRef(aptBuilder.getClassName()));
 
-        aptUtils.inject(methodBuilder
+        aptBuilder.inject(methodBuilder
                 .addStatements(statementBuilder.build())
-                .setReturnType(Persistence.class, aptUtils.typeRef(aptUtils.getClassName()))
+                .setReturnType(Persistence.class, aptBuilder.typeRef(aptBuilder.getClassName()))
                 .build("createPersistence", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
 
-    private void handleSaveMethod(APTUtils aptUtils) {
-        MethodBuilder methodBuilder = aptUtils.createMethodBuilder();
-        TreeMaker treeMaker = aptUtils.getTreeMaker();
-        StatementBuilder statementBuilder = aptUtils.createBlockBuilder();
+    private void handleSaveMethod(APTBuilder aptBuilder) {
+        MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
+        TreeMaker treeMaker = aptBuilder.getTreeMaker();
+        StatementBuilder statementBuilder = aptBuilder.createBlockBuilder();
 
-        statementBuilder.append(aptUtils.newGenericsType(Persistence.class, aptUtils.getClassName()), "persistence",
+        statementBuilder.append(aptBuilder.newGenericsType(Persistence.class, aptBuilder.getClassName()), "persistence",
                 "createPersistence");
 
         statementBuilder.append("persistence", "save",
-                aptUtils.varRef("this"), aptUtils.varRef("skipValidation"));
+                aptBuilder.varRef("this"), aptBuilder.varRef("skipValidation"));
 
-        aptUtils.inject(methodBuilder
+        aptBuilder.inject(methodBuilder
                 .addStatements(statementBuilder.build())
                 .addParameter("skipValidation", treeMaker.TypeIdent(TypeTag.BOOLEAN))
                 .setThrowsClauses(SQLException.class)
                 .build("save", Flags.PUBLIC | Flags.FINAL));
     }
 
-    private void handleCreateMethod(APTUtils aptUtils) {
-        MethodBuilder methodBuilder = aptUtils.createMethodBuilder();
-        TreeMaker treeMaker = aptUtils.getTreeMaker();
-        StatementBuilder statementBuilder = aptUtils.createBlockBuilder();
+    private void handleCreateMethod(APTBuilder aptBuilder) {
+        MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
+        TreeMaker treeMaker = aptBuilder.getTreeMaker();
+        StatementBuilder statementBuilder = aptBuilder.createBlockBuilder();
 
-        statementBuilder.append(aptUtils.newGenericsType(Persistence.class, aptUtils.getClassName()), "persistence",
+        statementBuilder.append(aptBuilder.newGenericsType(Persistence.class, aptBuilder.getClassName()), "persistence",
                 "createPersistence");
 
         methodBuilder.setReturnStatement("persistence", "insert",
-                aptUtils.varRef("dirtyObject"), aptUtils.varRef("skipValidation"));
+                aptBuilder.varRef("dirtyObject"), aptBuilder.varRef("skipValidation"));
 
-        aptUtils.inject(methodBuilder
-                .setReturnType(aptUtils.typeRef(aptUtils.getClassName()))
+        aptBuilder.inject(methodBuilder
+                .setReturnType(aptBuilder.typeRef(aptBuilder.getClassName()))
                 .addStatements(statementBuilder.build())
-                .addParameter("dirtyObject", aptUtils.typeRef(aptUtils.getClassName()))
+                .addParameter("dirtyObject", aptBuilder.typeRef(aptBuilder.getClassName()))
                 .addParameter("skipValidation", treeMaker.TypeIdent(TypeTag.BOOLEAN))
                 .setThrowsClauses(SQLException.class)
                 .build("create", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
 
-    private void handleCreateArrayMethod(APTUtils aptUtils) {
-        MethodBuilder methodBuilder = aptUtils.createMethodBuilder();
-        TreeMaker treeMaker = aptUtils.getTreeMaker();
-        StatementBuilder statementBuilder = aptUtils.createBlockBuilder();
+    private void handleCreateArrayMethod(APTBuilder aptBuilder) {
+        MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
+        TreeMaker treeMaker = aptBuilder.getTreeMaker();
+        StatementBuilder statementBuilder = aptBuilder.createBlockBuilder();
 
-        statementBuilder.append(aptUtils.newGenericsType(Persistence.class, aptUtils.getClassName()), "persistence",
+        statementBuilder.append(aptBuilder.newGenericsType(Persistence.class, aptBuilder.getClassName()), "persistence",
                 "createPersistence");
 
         methodBuilder.setReturnStatement("persistence", "insert",
-                aptUtils.varRef("dirtyObjects"), aptUtils.varRef("skipValidation"));
+                aptBuilder.varRef("dirtyObjects"), aptBuilder.varRef("skipValidation"));
 
-        aptUtils.inject(methodBuilder
-                .setReturnType(aptUtils.newArrayType(treeMaker.TypeIdent(TypeTag.INT)))
+        aptBuilder.inject(methodBuilder
+                .setReturnType(aptBuilder.newArrayType(treeMaker.TypeIdent(TypeTag.INT)))
                 .addStatements(statementBuilder.build())
-                .addParameter("dirtyObjects", aptUtils.newArrayType(aptUtils.getClassName()))
+                .addParameter("dirtyObjects", aptBuilder.newArrayType(aptBuilder.getClassName()))
                 .addParameter("skipValidation", treeMaker.TypeIdent(TypeTag.BOOLEAN))
                 .setThrowsClauses(SQLException.class)
                 .build("create", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
 
-    private void handleUpdateMethod(AnnotationValues annotationValues, APTUtils aptUtils) {
-        MethodBuilder methodBuilder = aptUtils.createMethodBuilder();
-        TreeMaker treeMaker = aptUtils.getTreeMaker();
-        StatementBuilder statementBuilder = aptUtils.createBlockBuilder();
+    private void handleUpdateMethod(AnnotationValues annotationValues, APTBuilder aptBuilder) {
+        MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
+        TreeMaker treeMaker = aptBuilder.getTreeMaker();
+        StatementBuilder statementBuilder = aptBuilder.createBlockBuilder();
         DomainModel domainModel = annotationValues.getAnnotationValue(DomainModel.class);
 
-        statementBuilder.append(aptUtils.newGenericsType(Persistence.class, aptUtils.getClassName()), "persistence",
+        statementBuilder.append(aptBuilder.newGenericsType(Persistence.class, aptBuilder.getClassName()), "persistence",
                 "createPersistence");
 
         methodBuilder.setReturnStatement("persistence", "update",
-                aptUtils.varRef("id"), aptUtils.varRef("dirtyObject"), aptUtils.varRef("skipValidation"));
+                aptBuilder.varRef("id"), aptBuilder.varRef("dirtyObject"), aptBuilder.varRef("skipValidation"));
 
-        aptUtils.inject(methodBuilder
+        aptBuilder.inject(methodBuilder
                 .setReturnType(treeMaker.TypeIdent(TypeTag.INT))
                 .addStatements(statementBuilder.build())
-                .addParameter("id", aptUtils.typeRef(domainModel.primaryClass()))
-                .addParameter("dirtyObject", aptUtils.typeRef(aptUtils.getClassName()))
+                .addParameter("id", aptBuilder.typeRef(domainModel.primaryClass()))
+                .addParameter("dirtyObject", aptBuilder.typeRef(aptBuilder.getClassName()))
                 .addParameter("skipValidation", treeMaker.TypeIdent(TypeTag.BOOLEAN))
                 .setThrowsClauses(SQLException.class)
                 .build("update", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
 
-    private void handleUpdate2Method(APTUtils aptUtils) {
-        MethodBuilder methodBuilder = aptUtils.createMethodBuilder();
-        TreeMaker treeMaker = aptUtils.getTreeMaker();
-        StatementBuilder statementBuilder = aptUtils.createBlockBuilder();
+    private void handleUpdate2Method(APTBuilder aptBuilder) {
+        MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
+        TreeMaker treeMaker = aptBuilder.getTreeMaker();
+        StatementBuilder statementBuilder = aptBuilder.createBlockBuilder();
 
-        statementBuilder.append(aptUtils.newGenericsType(Persistence.class, aptUtils.getClassName()), "persistence",
+        statementBuilder.append(aptBuilder.newGenericsType(Persistence.class, aptBuilder.getClassName()), "persistence",
                 "createPersistence");
 
         methodBuilder.setReturnStatement("persistence", "update",
-                aptUtils.varRef("updates"), aptUtils.varRef("predicates"));
+                aptBuilder.varRef("updates"), aptBuilder.varRef("predicates"));
 
-        aptUtils.inject(methodBuilder
+        aptBuilder.inject(methodBuilder
                 .setReturnType(treeMaker.TypeIdent(TypeTag.INT))
                 .addStatements(statementBuilder.build())
-                .addParameter("updates", aptUtils.typeRef(String.class))
-                .addParameter("predicates", aptUtils.typeRef(String.class))
+                .addParameter("updates", aptBuilder.typeRef(String.class))
+                .addParameter("predicates", aptBuilder.typeRef(String.class))
                 .setThrowsClauses(SQLException.class)
                 .build("update", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
 
-    private void handleDestroyMethod(AnnotationValues annotationValues, APTUtils aptUtils) {
-        MethodBuilder methodBuilder = aptUtils.createMethodBuilder();
-        TreeMaker treeMaker = aptUtils.getTreeMaker();
-        StatementBuilder statementBuilder = aptUtils.createBlockBuilder();
+    private void handleDestroyMethod(AnnotationValues annotationValues, APTBuilder aptBuilder) {
+        MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
+        TreeMaker treeMaker = aptBuilder.getTreeMaker();
+        StatementBuilder statementBuilder = aptBuilder.createBlockBuilder();
         DomainModel domainModel = annotationValues.getAnnotationValue(DomainModel.class);
 
-        statementBuilder.append(aptUtils.newGenericsType(Persistence.class, aptUtils.getClassName()), "persistence",
+        statementBuilder.append(aptBuilder.newGenericsType(Persistence.class, aptBuilder.getClassName()), "persistence",
                 "createPersistence");
 
         methodBuilder.setReturnStatement("persistence", "delete",
-                aptUtils.varRef("id"));
+                aptBuilder.varRef("id"));
 
-        aptUtils.inject(methodBuilder
+        aptBuilder.inject(methodBuilder
                 .setReturnType(treeMaker.TypeIdent(TypeTag.INT))
                 .addStatements(statementBuilder.build())
-                .addParameter("id", aptUtils.typeRef(domainModel.primaryClass()))
+                .addParameter("id", aptBuilder.typeRef(domainModel.primaryClass()))
                 .setThrowsClauses(SQLException.class)
                 .build("destroy", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
 
-    private void handleDestroy2Method(APTUtils aptUtils) {
-        MethodBuilder methodBuilder = aptUtils.createMethodBuilder();
-        TreeMaker treeMaker = aptUtils.getTreeMaker();
-        StatementBuilder statementBuilder = aptUtils.createBlockBuilder();
+    private void handleDestroy2Method(APTBuilder aptBuilder) {
+        MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
+        TreeMaker treeMaker = aptBuilder.getTreeMaker();
+        StatementBuilder statementBuilder = aptBuilder.createBlockBuilder();
 
-        statementBuilder.append(aptUtils.newGenericsType(Persistence.class, aptUtils.getClassName()), "persistence",
+        statementBuilder.append(aptBuilder.newGenericsType(Persistence.class, aptBuilder.getClassName()), "persistence",
                 "createPersistence");
 
         methodBuilder.setReturnStatement("persistence", "delete",
-                aptUtils.varRef("predicate"));
+                aptBuilder.varRef("predicate"));
 
-        aptUtils.inject(methodBuilder
+        aptBuilder.inject(methodBuilder
                 .setReturnType(treeMaker.TypeIdent(TypeTag.INT))
                 .addStatements(statementBuilder.build())
-                .addParameter("predicate", aptUtils.typeRef(String.class))
+                .addParameter("predicate", aptBuilder.typeRef(String.class))
                 .setThrowsClauses(SQLException.class)
                 .build("destroy", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
 
-    private void handleExecuteMethod(APTUtils aptUtils) {
-        MethodBuilder methodBuilder = aptUtils.createMethodBuilder();
+    private void handleExecuteMethod(APTBuilder aptBuilder) {
+        MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
 
         methodBuilder.setReturnStatement(Table.class, "execute",
-                aptUtils.varRef("sql"), aptUtils.varRef("params"));
+                aptBuilder.varRef("sql"), aptBuilder.varRef("params"));
 
-        aptUtils.inject(methodBuilder
-                .setReturnType(aptUtils.getTreeMaker().TypeIdent(TypeTag.INT))
-                .addParameter("sql", aptUtils.typeRef(String.class))
-                .addVarargsParameter("params", aptUtils.typeRef(Object.class))
+        aptBuilder.inject(methodBuilder
+                .setReturnType(aptBuilder.getTreeMaker().TypeIdent(TypeTag.INT))
+                .addParameter("sql", aptBuilder.typeRef(String.class))
+                .addVarargsParameter("params", aptBuilder.typeRef(Object.class))
                 .setThrowsClauses(SQLException.class)
                 .build("execute", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
 
-    private void handleQueryMethod(APTUtils aptUtils) {
-        MethodBuilder methodBuilder = aptUtils.createMethodBuilder();
-        StatementBuilder statementBuilder = aptUtils.createBlockBuilder();
+    private void handleQueryMethod(APTBuilder aptBuilder) {
+        MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
+        StatementBuilder statementBuilder = aptBuilder.createBlockBuilder();
 
-        statementBuilder.append(aptUtils.newGenericsType(Query.class, aptUtils.getClassName()), "query",
+        statementBuilder.append(aptBuilder.newGenericsType(Query.class, aptBuilder.getClassName()), "query",
                 "createQuery");
         statementBuilder.append("query", "where",
-                List.of(aptUtils.varRef("predicate"), aptUtils.varRef("params")));
+                List.of(aptBuilder.varRef("predicate"), aptBuilder.varRef("params")));
 
         methodBuilder.setReturnStatement("query", "execute");
-        aptUtils.inject(methodBuilder
+        aptBuilder.inject(methodBuilder
                 .addStatements(statementBuilder.build())
-                .addParameter("predicate", aptUtils.typeRef(String.class))
-                .addVarargsParameter("params", aptUtils.typeRef(Object.class))
+                .addParameter("predicate", aptBuilder.typeRef(String.class))
+                .addVarargsParameter("params", aptBuilder.typeRef(Object.class))
                 .setThrowsClauses(SQLException.class)
-                .setReturnType(java.util.List.class, aptUtils.typeRef(aptUtils.getClassName()))
+                .setReturnType(java.util.List.class, aptBuilder.typeRef(aptBuilder.getClassName()))
                 .build("query", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
 
-    private void handleQuery2Method(APTUtils aptUtils) {
-        MethodBuilder methodBuilder = aptUtils.createMethodBuilder();
-        StatementBuilder statementBuilder = aptUtils.createBlockBuilder();
+    private void handleQuery2Method(APTBuilder aptBuilder) {
+        MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
+        StatementBuilder statementBuilder = aptBuilder.createBlockBuilder();
 
-        statementBuilder.append(aptUtils.newGenericsType(Query.class, aptUtils.getClassName()), "query",
+        statementBuilder.append(aptBuilder.newGenericsType(Query.class, aptBuilder.getClassName()), "query",
                 "createQuery");
         statementBuilder.append("query", "where",
-                List.of(aptUtils.varRef("predicate"), aptUtils.varRef("params")));
+                List.of(aptBuilder.varRef("predicate"), aptBuilder.varRef("params")));
 
-        methodBuilder.setReturnStatement("query", "execute", aptUtils.varRef("relations"));
-        aptUtils.inject(methodBuilder
+        methodBuilder.setReturnStatement("query", "execute", aptBuilder.varRef("relations"));
+        aptBuilder.inject(methodBuilder
                 .addStatements(statementBuilder.build())
-                .addParameter("predicate", aptUtils.typeRef(String.class))
+                .addParameter("predicate", aptBuilder.typeRef(String.class))
                 .addArrayParameter("relations", Relationship.class)
-                .addVarargsParameter("params", aptUtils.typeRef(Object.class))
+                .addVarargsParameter("params", aptBuilder.typeRef(Object.class))
                 .setThrowsClauses(SQLException.class)
-                .setReturnType(java.util.List.class, aptUtils.typeRef(aptUtils.getClassName()))
+                .setReturnType(java.util.List.class, aptBuilder.typeRef(aptBuilder.getClassName()))
                 .build("query", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
 
-    private void handleQuery3Method(APTUtils aptUtils) {
-        MethodBuilder methodBuilder = aptUtils.createMethodBuilder();
-        StatementBuilder statementBuilder = aptUtils.createBlockBuilder();
+    private void handleQuery3Method(APTBuilder aptBuilder) {
+        MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
+        StatementBuilder statementBuilder = aptBuilder.createBlockBuilder();
 
-        methodBuilder.setReturnStatement(Table.class, "query", aptUtils.classRef(aptUtils.getClassName()),
-                aptUtils.varRef("sql"), aptUtils.varRef("params"));
-        aptUtils.inject(methodBuilder
+        methodBuilder.setReturnStatement(Table.class, "query", aptBuilder.classRef(aptBuilder.getClassName()),
+                aptBuilder.varRef("sql"), aptBuilder.varRef("params"));
+        aptBuilder.inject(methodBuilder
                 .addStatements(statementBuilder.build())
-                .addParameter("sql", aptUtils.typeRef(String.class))
-                .addVarargsParameter("params", aptUtils.typeRef(Object.class))
+                .addParameter("sql", aptBuilder.typeRef(String.class))
+                .addVarargsParameter("params", aptBuilder.typeRef(Object.class))
                 .setThrowsClauses(SQLException.class)
-                .setReturnType(java.util.List.class, aptUtils.typeRef(aptUtils.getClassName()))
+                .setReturnType(java.util.List.class, aptBuilder.typeRef(aptBuilder.getClassName()))
                 .build("queryBySql", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
 
-    private void handleQueryFirstMethod(APTUtils aptUtils) {
-        MethodBuilder methodBuilder = aptUtils.createMethodBuilder();
-        StatementBuilder statementBuilder = aptUtils.createBlockBuilder();
+    private void handleQueryFirstMethod(APTBuilder aptBuilder) {
+        MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
+        StatementBuilder statementBuilder = aptBuilder.createBlockBuilder();
 
-        statementBuilder.append(aptUtils.newGenericsType(Query.class, aptUtils.getClassName()), "query",
+        statementBuilder.append(aptBuilder.newGenericsType(Query.class, aptBuilder.getClassName()), "query",
                 "createQuery");
         statementBuilder.append("query", "where",
-                List.of(aptUtils.varRef("predicate"), aptUtils.varRef("params")));
+                List.of(aptBuilder.varRef("predicate"), aptBuilder.varRef("params")));
 
-        methodBuilder.setReturnStatement("query", "queryFirst", aptUtils.varRef("relations"));
-        aptUtils.inject(methodBuilder
+        methodBuilder.setReturnStatement("query", "queryFirst", aptBuilder.varRef("relations"));
+        aptBuilder.inject(methodBuilder
                 .addStatements(statementBuilder.build())
-                .addParameter("predicate", aptUtils.typeRef(String.class))
+                .addParameter("predicate", aptBuilder.typeRef(String.class))
                 .addArrayParameter("relations", Relationship.class)
-                .addVarargsParameter("params", aptUtils.typeRef(Object.class))
+                .addVarargsParameter("params", aptBuilder.typeRef(Object.class))
                 .setThrowsClauses(SQLException.class)
-                .setReturnType(aptUtils.typeRef(aptUtils.getClassName()))
+                .setReturnType(aptBuilder.typeRef(aptBuilder.getClassName()))
                 .build("queryFirst", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
 
-    private void handleQueryFirst2Method(APTUtils aptUtils) {
-        MethodBuilder methodBuilder = aptUtils.createMethodBuilder();
-        StatementBuilder statementBuilder = aptUtils.createBlockBuilder();
+    private void handleQueryFirst2Method(APTBuilder aptBuilder) {
+        MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
+        StatementBuilder statementBuilder = aptBuilder.createBlockBuilder();
 
-        statementBuilder.append(aptUtils.newGenericsType(Query.class, aptUtils.getClassName()), "query",
+        statementBuilder.append(aptBuilder.newGenericsType(Query.class, aptBuilder.getClassName()), "query",
                 "createQuery");
         statementBuilder.append("query", "where",
-                List.of(aptUtils.varRef("predicate"), aptUtils.varRef("params")));
+                List.of(aptBuilder.varRef("predicate"), aptBuilder.varRef("params")));
 
         methodBuilder.setReturnStatement("query", "queryFirst");
-        aptUtils.inject(methodBuilder
+        aptBuilder.inject(methodBuilder
                 .addStatements(statementBuilder.build())
-                .addParameter("predicate", aptUtils.typeRef(String.class))
-                .addVarargsParameter("params", aptUtils.typeRef(Object.class))
+                .addParameter("predicate", aptBuilder.typeRef(String.class))
+                .addVarargsParameter("params", aptBuilder.typeRef(Object.class))
                 .setThrowsClauses(SQLException.class)
-                .setReturnType(aptUtils.typeRef(aptUtils.getClassName()))
+                .setReturnType(aptBuilder.typeRef(aptBuilder.getClassName()))
                 .build("queryFirst", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
 
-    private void handleCountMethod(APTUtils aptUtils) {
-        MethodBuilder methodBuilder = aptUtils.createMethodBuilder();
+    private void handleCountMethod(APTBuilder aptBuilder) {
+        MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
 
-        methodBuilder.setReturnStatement(Table.class, "count", aptUtils.classRef(aptUtils.getClassName()),
-                aptUtils.varRef("sql"), aptUtils.varRef("params"));
+        methodBuilder.setReturnStatement(Table.class, "count", aptBuilder.classRef(aptBuilder.getClassName()),
+                aptBuilder.varRef("sql"), aptBuilder.varRef("params"));
 
-        aptUtils.inject(methodBuilder
-                .addParameter("sql", aptUtils.typeRef(String.class))
-                .addVarargsParameter("params", aptUtils.typeRef(Object.class))
+        aptBuilder.inject(methodBuilder
+                .addParameter("sql", aptBuilder.typeRef(String.class))
+                .addVarargsParameter("params", aptBuilder.typeRef(Object.class))
                 .setThrowsClauses(SQLException.class)
-                .setReturnType(aptUtils.getTreeMaker().TypeIdent(TypeTag.INT))
+                .setReturnType(aptBuilder.getTreeMaker().TypeIdent(TypeTag.INT))
                 .build("count", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
 
-    private void handleValidateMethod(APTUtils aptUtils) {
-        MethodBuilder methodBuilder = aptUtils.createMethodBuilder();
-        TreeMaker treeMaker = aptUtils.getTreeMaker();
+    private void handleValidateMethod(APTBuilder aptBuilder) {
+        MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
+        TreeMaker treeMaker = aptBuilder.getTreeMaker();
 
-        JCTree.JCExpression methodRef = treeMaker.Select(aptUtils.typeRef(Table.class),
-                aptUtils.toName("validate"));
-        JCReturn jcReturn = treeMaker.Return(treeMaker.Apply(List.nil(), methodRef, List.of(aptUtils.varRef("this"),
-                aptUtils.getTreeMaker().Literal(true))));
-        JCCatch jcCatch = treeMaker.Catch(aptUtils.newVar(ValidationException.class, "ex"),
-                treeMaker.Block(0, List.of(treeMaker.Return(aptUtils.methodCall("ex", "getViolations")))));
+        JCTree.JCExpression methodRef = treeMaker.Select(aptBuilder.typeRef(Table.class),
+                aptBuilder.toName("validate"));
+        JCReturn jcReturn = treeMaker.Return(treeMaker.Apply(List.nil(), methodRef, List.of(aptBuilder.varRef("this"),
+                aptBuilder.getTreeMaker().Literal(true))));
+        JCCatch jcCatch = treeMaker.Catch(aptBuilder.newVar(ValidationException.class, "ex"),
+                treeMaker.Block(0, List.of(treeMaker.Return(aptBuilder.methodCall("ex", "getViolations")))));
 
         JCTry jcTry = treeMaker.Try(treeMaker.Block(0, List.of(jcReturn)), List.of(jcCatch),
                 treeMaker.Block(0, List.nil()));
 
-        aptUtils.inject(methodBuilder
-                .setReturnType(aptUtils.newArrayType(Validator.Violation.class))
+        aptBuilder.inject(methodBuilder
+                .setReturnType(aptBuilder.newArrayType(Validator.Violation.class))
                 .addStatement(jcTry)
                 .build("validate", Flags.PUBLIC | Flags.FINAL));
     }
 
-    private void handleNewInstanceFromMethod(APTUtils aptUtils) {
-        MethodBuilder methodBuilder = aptUtils.createMethodBuilder();
-        TreeMaker treeMaker = aptUtils.getTreeMaker();
-        StatementBuilder statementBuilder = aptUtils.createBlockBuilder();
+    private void handleNewInstanceFromMethod(APTBuilder aptBuilder) {
+        MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
+        TreeMaker treeMaker = aptBuilder.getTreeMaker();
+        StatementBuilder statementBuilder = aptBuilder.createBlockBuilder();
 
-        JCExpression createInstance = treeMaker.TypeCast(aptUtils.typeRef(aptUtils.getClassName()),
-                treeMaker.Apply(List.nil(), treeMaker.Select(aptUtils.typeRef(ClassUtils.class),
-                        aptUtils.toName("createNewInstance")), List.of(aptUtils.classRef(aptUtils.getClassName()))));
-        statementBuilder.append(aptUtils.typeRef(aptUtils.getClassName()), "bean", createInstance);
-        statementBuilder.append(PropertyUtils.class, "populate", aptUtils.varRef("bean"),
-                aptUtils.varRef("properties"), aptUtils.varRef("underLine"));
+        JCExpression createInstance = treeMaker.TypeCast(aptBuilder.typeRef(aptBuilder.getClassName()),
+                treeMaker.Apply(List.nil(), treeMaker.Select(aptBuilder.typeRef(ClassUtils.class),
+                        aptBuilder.toName("createNewInstance")), List.of(aptBuilder.classRef(aptBuilder.getClassName()))));
+        statementBuilder.append(aptBuilder.typeRef(aptBuilder.getClassName()), "bean", createInstance);
+        statementBuilder.append(PropertyUtils.class, "populate", aptBuilder.varRef("bean"),
+                aptBuilder.varRef("properties"), aptBuilder.varRef("underLine"));
 
-        methodBuilder.setReturnStatement(aptUtils.varRef("bean"));
+        methodBuilder.setReturnStatement(aptBuilder.varRef("bean"));
 
-        aptUtils.inject(methodBuilder
+        aptBuilder.inject(methodBuilder
                 .addStatements(statementBuilder.build())
                 .addParameter("properties", Map.class)
                 .addParameter("underLine", treeMaker.TypeIdent(TypeTag.BOOLEAN))
-                .setReturnType(aptUtils.typeRef(aptUtils.getClassName()))
+                .setReturnType(aptBuilder.typeRef(aptBuilder.getClassName()))
                 .build("newInstanceFrom", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
 
-    private void handleRawAttributesField(APTUtils aptUtils) {
-        TreeMaker treeMaker = aptUtils.getTreeMaker();
-        JCExpression rawAttributesType = treeMaker.TypeApply(aptUtils.typeRef(Map.class),
-                List.of(aptUtils.typeRef(String.class), aptUtils.typeRef(Object.class)));
-        JCExpression rawAttributesInit = treeMaker.NewClass(null, List.nil(), aptUtils.typeRef(HashMap.class.getName()),
+    private void handleRawAttributesField(APTBuilder aptBuilder) {
+        TreeMaker treeMaker = aptBuilder.getTreeMaker();
+        JCExpression rawAttributesType = treeMaker.TypeApply(aptBuilder.typeRef(Map.class),
+                List.of(aptBuilder.typeRef(String.class), aptBuilder.typeRef(Object.class)));
+        JCExpression rawAttributesInit = treeMaker.NewClass(null, List.nil(), aptBuilder.typeRef(HashMap.class.getName()),
                 List.nil(), null);
         JCModifiers modifiers = treeMaker.Modifiers(Flags.PRIVATE | Flags.FINAL);
-        modifiers.annotations = modifiers.annotations.append(treeMaker.Annotation(aptUtils.typeRef(Transient.class), List.nil()));
+        modifiers.annotations = modifiers.annotations.append(treeMaker.Annotation(aptBuilder.typeRef(Transient.class), List.nil()));
 
-        aptUtils.inject(treeMaker.VarDef(modifiers, aptUtils.toName("rawAttributes"), rawAttributesType, rawAttributesInit));
+        aptBuilder.inject(treeMaker.VarDef(modifiers, aptBuilder.toName("rawAttributes"), rawAttributesType, rawAttributesInit));
 
-        MethodBuilder getRawAttributeMethodBuilder = aptUtils.createMethodBuilder();
-        JCReturn getRawAttributeReturn = treeMaker.Return(aptUtils
-                .methodCall("rawAttributes", "get", aptUtils.varRef("name")));
-        aptUtils.inject(getRawAttributeMethodBuilder
+        MethodBuilder getRawAttributeMethodBuilder = aptBuilder.createMethodBuilder();
+        JCReturn getRawAttributeReturn = treeMaker.Return(aptBuilder
+                .methodCall("rawAttributes", "get", aptBuilder.varRef("name")));
+        aptBuilder.inject(getRawAttributeMethodBuilder
                 .addStatement(getRawAttributeReturn)
                 .addParameter("name", String.class)
-                .setReturnType(aptUtils.typeRef(Object.class))
+                .setReturnType(aptBuilder.typeRef(Object.class))
                 .build("getRawAttribute", Flags.PUBLIC | Flags.FINAL));
 
-        MethodBuilder setRawAttributeMethodBuilder = aptUtils.createMethodBuilder();
-        JCExpression setRawAttributeExpression = aptUtils.methodCall("rawAttributes", "put",
-                aptUtils.varRef("name"), aptUtils.varRef("value"));
-        aptUtils.inject(setRawAttributeMethodBuilder
+        MethodBuilder setRawAttributeMethodBuilder = aptBuilder.createMethodBuilder();
+        JCExpression setRawAttributeExpression = aptBuilder.methodCall("rawAttributes", "put",
+                aptBuilder.varRef("name"), aptBuilder.varRef("value"));
+        aptBuilder.inject(setRawAttributeMethodBuilder
                 .addStatement(treeMaker.Exec(setRawAttributeExpression))
                 .addParameter("name", String.class)
                 .addParameter("value", Object.class)
                 .build("setRawAttribute", Flags.PUBLIC | Flags.FINAL));
 
-        MethodBuilder getRawAttributesMethodBuilder = aptUtils.createMethodBuilder();
-        JCReturn getRawAttributesReturn = treeMaker.Return(aptUtils.varRef("rawAttributes"));
-        aptUtils.inject(getRawAttributesMethodBuilder
+        MethodBuilder getRawAttributesMethodBuilder = aptBuilder.createMethodBuilder();
+        JCReturn getRawAttributesReturn = treeMaker.Return(aptBuilder.varRef("rawAttributes"));
+        aptBuilder.inject(getRawAttributesMethodBuilder
                 .addStatement(getRawAttributesReturn)
-                .setReturnType(aptUtils.newGenericsType(Map.class, String.class, Object.class))
+                .setReturnType(aptBuilder.newGenericsType(Map.class, String.class, Object.class))
                 .build("getRawAttributes", Flags.PUBLIC | Flags.FINAL));
     }
 }

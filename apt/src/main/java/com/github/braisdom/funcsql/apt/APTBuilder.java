@@ -15,7 +15,7 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import java.util.ArrayList;
 
-public final class APTUtils {
+public final class APTBuilder {
 
     private final JCTree.JCClassDecl classDecl;
     private final Element element;
@@ -24,8 +24,8 @@ public final class APTUtils {
     private final Names names;
     private final Messager messager;
 
-    public APTUtils(JCTree.JCClassDecl classDecl, Element element, JCTree ast, TreeMaker treeMaker,
-             Names names, Messager messager) {
+    public APTBuilder(JCTree.JCClassDecl classDecl, Element element, JCTree ast, TreeMaker treeMaker,
+                      Names names, Messager messager) {
         this.classDecl = classDecl;
         this.element = element;
         this.ast = ast;

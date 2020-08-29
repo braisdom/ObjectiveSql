@@ -1,6 +1,6 @@
 package com.github.braisdom.funcsql.generator;
 
-import com.github.braisdom.funcsql.apt.APTUtils;
+import com.github.braisdom.funcsql.apt.APTBuilder;
 import com.github.braisdom.funcsql.apt.AnnotationValues;
 import com.github.braisdom.funcsql.apt.JavacAnnotationHandler;
 import com.github.braisdom.funcsql.apt.SpiLoadUtil;
@@ -67,8 +67,8 @@ public abstract class DomainModelProcessor extends AbstractProcessor {
                 classDecl = getClassDecl((JCTree.JCVariableDecl) ast);
             else
                 classDecl = null;
-            APTUtils aptUtils = new APTUtils(classDecl, element, ast, treeMaker, names, messager);
-            handle(new AnnotationValues(ast, classloader), ast, aptUtils);
+            APTBuilder aptBuilder = new APTBuilder(classDecl, element, ast, treeMaker, names, messager);
+            handle(new AnnotationValues(ast, classloader), ast, aptBuilder);
         }
         return true;
     }
@@ -93,5 +93,5 @@ public abstract class DomainModelProcessor extends AbstractProcessor {
 
     protected abstract Class<? extends Annotation> getAnnotationClass();
 
-    protected abstract void handle(AnnotationValues annotationValues, JCTree ast, APTUtils aptUtils);
+    protected abstract void handle(AnnotationValues annotationValues, JCTree ast, APTBuilder aptBuilder);
 }
