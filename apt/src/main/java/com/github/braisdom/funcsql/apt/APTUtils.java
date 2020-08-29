@@ -2,7 +2,6 @@ package com.github.braisdom.funcsql.apt;
 
 import com.sun.tools.javac.code.Flags;
 import com.sun.tools.javac.code.TypeTag;
-import com.sun.tools.javac.jvm.ClassWriter;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.JCTree.*;
 import com.sun.tools.javac.tree.TreeMaker;
@@ -25,7 +24,7 @@ public final class APTUtils {
     private final Names names;
     private final Messager messager;
 
-    APTUtils(JCTree.JCClassDecl classDecl, Element element, JCTree ast, TreeMaker treeMaker,
+    public APTUtils(JCTree.JCClassDecl classDecl, Element element, JCTree ast, TreeMaker treeMaker,
              Names names, Messager messager) {
         this.classDecl = classDecl;
         this.element = element;

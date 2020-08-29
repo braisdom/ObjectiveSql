@@ -65,14 +65,14 @@
             <artifactId>javassist</artifactId>
             <version>3.26.0-GA</version>
         </dependency>
-        <dependency>
-            <groupId>com.sun</groupId>
-            <artifactId>tools</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${java.home}/../lib/tools.jar</systemPath>
-            <optional>true</optional>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.sun</groupId>-->
+            <!--<artifactId>tools</artifactId>-->
+            <!--<version>1.0</version>-->
+            <!--<scope>system</scope>-->
+            <!--<systemPath>${java.home}/../lib/tools.jar</systemPath>-->
+            <!--<optional>true</optional>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>com.github.braisdom</groupId>
             <artifactId>funcsql-jds</artifactId>

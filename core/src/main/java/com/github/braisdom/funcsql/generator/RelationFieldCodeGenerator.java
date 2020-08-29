@@ -7,6 +7,7 @@ import com.github.braisdom.funcsql.apt.JavacAnnotationHandler;
 import com.github.braisdom.funcsql.relation.RelationType;
 import com.github.braisdom.funcsql.relation.Relationship;
 import com.github.braisdom.funcsql.util.WordUtil;
+import com.google.auto.service.AutoService;
 import com.sun.tools.javac.code.Flags;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.JCTree.JCExpression;
@@ -14,8 +15,11 @@ import com.sun.tools.javac.tree.JCTree.JCModifiers;
 import com.sun.tools.javac.tree.TreeMaker;
 import org.mangosdk.spi.ProviderFor;
 
-@ProviderFor(JavacAnnotationHandler.class)
-public class RelationFieldCodeGenerator extends JavacAnnotationHandler<Relation> {
+import javax.annotation.processing.Processor;
+import java.lang.annotation.Annotation;
+
+@AutoService(Processor.class)
+public class RelationFieldCodeGenerator extends DomainModelProcessor {
 
     @Override
     public void handle(AnnotationValues annotationValues, JCTree ast, APTUtils aptUtils) {
@@ -23,6 +27,11 @@ public class RelationFieldCodeGenerator extends JavacAnnotationHandler<Relation>
         JCTree.JCVariableDecl relationField = (JCTree.JCVariableDecl) ast;
 
         handleRelationField(relation, relationField, aptUtils);
+    }
+
+    @Override
+    protected Class<? extends Annotation> getAnnotationClass() {
+        return Relation.class;
     }
 
     private void handleRelationField(Relation relation, JCTree.JCVariableDecl relationField, APTUtils aptUtils) {

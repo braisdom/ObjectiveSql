@@ -1,15 +1,28 @@
 
 import com.github.braisdom.jsql.Iso;
 
-typedef native func Integer max(Symbol symbol);
-typedef native func Number abs(Symbol symbol);
+typedef native func max(Symbol symbol);
+typedef native func abs(Symbol symbol);
 
 -- comment
-typedef dataset Member(Timestamp purchaseBegin) {
-    Projection member_id;
-    Projection name;
+dataset class Member {
+    String member_id;
+    String name;
+    Timestamp birthday;
 
-    From
+    projections showOnSalesQuery = [
+        :member_no
+    ];
+
+    from #pumper.member;
+
+    public Member() {
+
+    }
+
+    private void enable() {
+
+    }
 }
 
 -- comment

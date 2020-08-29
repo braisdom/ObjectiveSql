@@ -6,16 +6,19 @@ import com.github.braisdom.funcsql.annotations.Queryable;
 import com.github.braisdom.funcsql.apt.*;
 import com.github.braisdom.funcsql.apt.MethodBuilder;
 import com.github.braisdom.funcsql.util.WordUtil;
+import com.google.auto.service.AutoService;
 import com.sun.tools.javac.code.Flags;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.List;
 import org.mangosdk.spi.ProviderFor;
 
+import javax.annotation.processing.Processor;
+import java.lang.annotation.Annotation;
 import java.sql.SQLException;
 
-@ProviderFor(JavacAnnotationHandler.class)
-public class QueryMethodCodeGenerator extends JavacAnnotationHandler<Queryable> {
+@AutoService(Processor.class)
+public class QueryMethodCodeGenerator extends DomainModelProcessor {
 
     @Override
     public void handle(AnnotationValues annotationValues, JCTree ast, APTUtils aptUtils) {
@@ -44,5 +47,10 @@ public class QueryMethodCodeGenerator extends JavacAnnotationHandler<Queryable> 
                 .setThrowsClauses(SQLException.class)
                 .setReturnType(java.util.List.class, aptUtils.typeRef(aptUtils.getClassName()))
                 .build(methodName, Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
+    }
+
+    @Override
+    protected Class<? extends Annotation> getAnnotationClass() {
+        return Queryable.class;
     }
 }
