@@ -2,13 +2,19 @@ package com.github.braisdom.funcsql.advanced;
 
 public interface Dataset {
 
-    Column[] getColumns();
+    Dataset setProjections(Column... columns);
 
-    Predicate getPredicate();
+    Dataset addProjections(Column... columns);
 
-    Join[] getJoins();
+    Dataset from(Dataset dataset);
 
-    Order[] getOrders();
+    Dataset join(Dataset dataset, Predicate onCondition);
 
-    void setProjections(Column... columns);
+    Dataset groupBy(Column... columns);
+
+    Dataset orderBy(Column... columns);
+
+    Dataset limit(int limit);
+
+    Dataset offset(int offset);
 }
