@@ -1,6 +1,6 @@
 package com.github.braisdom.funcsql.advanced;
 
-public interface Sqlable {
+public interface Sqlize {
 
     String toSql();
 }
