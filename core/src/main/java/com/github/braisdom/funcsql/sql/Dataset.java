@@ -1,10 +1,12 @@
 package com.github.braisdom.funcsql.sql;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
 public interface Dataset<T> extends Sqlizable, Expression {
 
+    @SyntaxSupported(DatabaseType.All)
     Dataset select(Expression... projections);
 
     Dataset from(Dataset... datasets);
@@ -12,6 +14,10 @@ public interface Dataset<T> extends Sqlizable, Expression {
     Dataset where(Expression expression);
 
     Dataset leftOuterJoin(Dataset dataset, Expression onExpression);
+
+    Dataset rightOuterJoin(Dataset dataset, Expression onExpression);
+
+    Dataset innerJoin(Dataset dataset, Expression onExpression);
 
     Dataset groupBy(Expression... expressions);
 
@@ -27,5 +33,5 @@ public interface Dataset<T> extends Sqlizable, Expression {
 
     Dataset unionAll(Dataset dataset);
 
-    List<T> execute() throws SQLFormatException, SQLException;
+    List<T> query(Connection connection) throws SQLFormatException, SQLException;
 }
