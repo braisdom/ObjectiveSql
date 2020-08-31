@@ -13,7 +13,7 @@ public class LiteralExpression extends AbstractExpression {
     @Override
     public String toSql(ExpressionContext expressionContext) {
         if(rawLiteral == null)
-            return "NULL";
+            return " NULL ";
         if(String.class.isAssignableFrom(rawLiteral.getClass()))
             return String.format("'%s'", String.valueOf(rawLiteral));
         return String.valueOf(rawLiteral);

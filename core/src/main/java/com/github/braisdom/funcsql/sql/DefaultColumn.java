@@ -76,12 +76,12 @@ public class DefaultColumn extends AbstractExpression implements Column {
 
     @Override
     public Expression between(Expression left, Expression right) {
-        return null;
+        return new ColumnExpression(this, new BetweenExpression(false, left, right));
     }
 
     @Override
     public Expression notBetween(Expression left, Expression right) {
-        return null;
+        return new ColumnExpression(this, new BetweenExpression(true, left, right));
     }
 
     @Override

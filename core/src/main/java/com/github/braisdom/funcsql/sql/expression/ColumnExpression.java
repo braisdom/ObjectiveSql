@@ -16,6 +16,6 @@ public class ColumnExpression extends AbstractExpression {
 
     @Override
     public String toSql(ExpressionContext expressionContext) {
-        return String.format("%s %s", column.toSql(expressionContext), expression.toSql(expressionContext));
+        return String.format(" %s %s ", column.toSql(expressionContext), expression.toSql(expressionContext));
     }
 }
