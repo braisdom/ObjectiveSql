@@ -13,11 +13,11 @@ public interface Dataset<T> extends Sqlizable {
 
     Dataset join(Dataset dataset, Expression onExpression);
 
-    Dataset groupBy(Column... columns);
+    Dataset groupBy(Expression... expressions);
 
     Dataset having(Expression expression);
 
-    Dataset orderBy(Column... columns);
+    Dataset orderBy(Expression... expressions);
 
     Dataset limit(int limit);
 
