@@ -1,6 +1,6 @@
 package com.github.braisdom.funcsql.sql;
 
-public class SQLFormatException extends RuntimeException {
+public class SQLFormatException extends Exception {
     public SQLFormatException() {
     }
 

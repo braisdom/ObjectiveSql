@@ -11,7 +11,7 @@ public interface Dataset<T> extends Sqlizable {
 
     Dataset where(Expression expression);
 
-    Dataset join(Dataset dataset, Expression expression);
+    Dataset join(Dataset dataset, Expression onExpression);
 
     Dataset groupBy(Column... columns);
 
