@@ -16,12 +16,12 @@ public class DefaultColumn extends AbstractExpression implements Column {
 
     @Override
     public Expression asc() {
-        return new ColumnExpression(this, new DefaultExpression(" ASC "));
+        return new ColumnExpression(this, new PlainExpression(" ASC "));
     }
 
     @Override
     public Expression desc() {
-        return new ColumnExpression(this, new DefaultExpression(" DESC "));
+        return new ColumnExpression(this, new PlainExpression(" DESC "));
     }
 
     @Override

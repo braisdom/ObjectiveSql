@@ -20,7 +20,7 @@ public class InExpression extends AbstractExpression {
     }
 
     @Override
-    public Expression as(ExpressionContext expressionContext, String alias) {
+    public Expression as(String alias) {
         throw new UnsupportedOperationException("The in expression cannot be aliased");
     }
 

@@ -2,11 +2,11 @@ package com.github.braisdom.funcsql.sql.expression;
 
 import com.github.braisdom.funcsql.sql.ExpressionContext;
 
-public class DefaultExpression extends AbstractExpression {
+public class PlainExpression extends AbstractExpression {
 
     private final Object expression;
 
-    public DefaultExpression(Object expression) {
+    public PlainExpression(Object expression) {
         this.expression = expression;
     }
 

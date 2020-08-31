@@ -5,8 +5,11 @@ import com.github.braisdom.funcsql.sql.ExpressionContext;
 
 public abstract class AbstractExpression implements Expression {
 
+    private String alias;
+
     @Override
-    public Expression as(ExpressionContext expressionContext, String alias) {
-        return new DefaultExpression(String.format("(%s) AS %s", toSql(expressionContext), expressionContext.quote(alias)));
+    public Expression as(String alias) {
+        this.alias = alias;
+        return this;
     }
 }
