@@ -1,4 +1,5 @@
 package com.github.braisdom.funcsql.sql;
 
-public interface Expression {
+public interface Expression extends Sqlizable {
+
 }
