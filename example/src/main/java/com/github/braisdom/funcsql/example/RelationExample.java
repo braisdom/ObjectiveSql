@@ -50,7 +50,6 @@ public class RelationExample {
 
         Assert.assertNotNull(member);
         Assert.assertTrue(member.getOrders().size() > 0);
-        System.out.println();
     }
 
     private static void queryManyMembersWithOrders() throws SQLException {
