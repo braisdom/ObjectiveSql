@@ -2,7 +2,7 @@ package com.github.braisdom.funcsql.sql;
 
 public interface Dataset {
 
-    Dataset select(Columnizable... columnizables);
+    Dataset select(Expression... projections);
 
     Dataset from(Dataset dataset);
 
@@ -19,4 +19,8 @@ public interface Dataset {
     Dataset limit(int limit);
 
     Dataset offset(int offset);
+
+    Dataset union(Dataset dataset);
+
+    Dataset unionAll(Dataset dataset);
 }
