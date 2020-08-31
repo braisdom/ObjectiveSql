@@ -4,7 +4,7 @@ import java.sql.Timestamp;
 
 public class Expressions {
 
-    public static Expression paren(Expression... expressions) {
+    public static Expression paren(Expression expression) {
         return null;
     }
 

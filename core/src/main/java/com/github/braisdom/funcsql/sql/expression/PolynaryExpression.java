@@ -3,7 +3,10 @@ package com.github.braisdom.funcsql.sql.expression;
 import com.github.braisdom.funcsql.sql.Expression;
 import com.github.braisdom.funcsql.sql.SQLContext;
 
-public class RelationExpression extends AbstractExpression {
+import java.util.Arrays;
+import java.util.List;
+
+public class PolynaryExpression extends AbstractExpression {
 
     public static final String PLUS = "+";
     public static final String MINUS = "-";
@@ -15,7 +18,7 @@ public class RelationExpression extends AbstractExpression {
     private final Expression right;
     private final Expression[] others;
 
-    public RelationExpression(String operator, Expression left, Expression right, Expression... others) {
+    public PolynaryExpression(String operator, Expression left, Expression right, Expression... others) {
         this.operator = operator;
         this.left = left;
         this.right = right;
@@ -24,6 +27,11 @@ public class RelationExpression extends AbstractExpression {
 
     @Override
     public String toSql(SQLContext sqlContext) {
-        return null;
+        List<Expression> expressions = Arrays.asList(new Expression[]{left, right});
+        expressions.addAll(Arrays.asList(others));
+
+        String[] expressionStrings = expressions.stream()
+                .map(expression -> expression.toSql(sqlContext)).toArray(String[]::new);
+        return String.join(operator, expressionStrings);
     }
 }
