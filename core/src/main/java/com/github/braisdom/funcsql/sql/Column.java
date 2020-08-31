@@ -8,7 +8,7 @@ public interface Column extends Expression {
 
     Expression lt(Expression expr);
 
-    Expression gr(Expression expr);
+    Expression gt(Expression expr);
 
     Expression eq(Expression expr);
 
@@ -18,11 +18,11 @@ public interface Column extends Expression {
 
     Expression ne(Expression expr);
 
-    Expression in(Expression expression, Expression... others);
+    Expression in(Expression expr, Expression... others);
 
     Expression in(Dataset dataset);
 
-    Expression notIn(Expression expression, Expression... others);
+    Expression notIn(Expression expr, Expression... others);
 
     Expression notIn(Dataset dataset);
 

@@ -1,6 +1,6 @@
 package com.github.braisdom.funcsql.sql.expression;
 
-import com.github.braisdom.funcsql.sql.SQLContext;
+import com.github.braisdom.funcsql.sql.ExpressionContext;
 
 public class DefaultExpression extends AbstractExpression {
 
@@ -11,7 +11,7 @@ public class DefaultExpression extends AbstractExpression {
     }
 
     @Override
-    public String toSql(SQLContext sqlContext) {
+    public String toSql(ExpressionContext expressionContext) {
         return String.valueOf(expression);
     }
 }

@@ -1,7 +1,7 @@
 package com.github.braisdom.funcsql.sql.expression;
 
 import com.github.braisdom.funcsql.sql.Expression;
-import com.github.braisdom.funcsql.sql.SQLContext;
+import com.github.braisdom.funcsql.sql.ExpressionContext;
 
 public class ParenExpression extends AbstractExpression {
 
@@ -12,7 +12,7 @@ public class ParenExpression extends AbstractExpression {
     }
 
     @Override
-    public String toSql(SQLContext sqlContext) {
-        return String.format("(%s)", expression.toSql(sqlContext));
+    public String toSql(ExpressionContext expressionContext) {
+        return String.format("(%s)", expression.toSql(expressionContext));
     }
 }

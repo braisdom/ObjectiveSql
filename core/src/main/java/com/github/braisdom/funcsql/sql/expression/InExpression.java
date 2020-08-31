@@ -1,7 +1,7 @@
 package com.github.braisdom.funcsql.sql.expression;
 
 import com.github.braisdom.funcsql.sql.Expression;
-import com.github.braisdom.funcsql.sql.SQLContext;
+import com.github.braisdom.funcsql.sql.ExpressionContext;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,14 +20,14 @@ public class InExpression extends AbstractExpression {
     }
 
     @Override
-    public Expression as(SQLContext sqlContext, String alias) {
+    public Expression as(ExpressionContext expressionContext, String alias) {
         throw new UnsupportedOperationException("The in expression cannot be aliased");
     }
 
     @Override
-    public String toSql(SQLContext sqlContext) {
+    public String toSql(ExpressionContext expressionContext) {
         String[] expressionStrings = expressions.stream()
-                .map(expression -> expression.toSql(sqlContext)).toArray(String[]::new);
+                .map(expression -> expression.toSql(expressionContext)).toArray(String[]::new);
         return String.format(" %s IN (%s)", negated ? "NOT" : "", String.join(" , ", expressionStrings));
     }
 }

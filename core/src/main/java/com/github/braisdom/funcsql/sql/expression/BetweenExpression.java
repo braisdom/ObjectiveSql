@@ -1,7 +1,7 @@
 package com.github.braisdom.funcsql.sql.expression;
 
 import com.github.braisdom.funcsql.sql.Expression;
-import com.github.braisdom.funcsql.sql.SQLContext;
+import com.github.braisdom.funcsql.sql.ExpressionContext;
 
 public class BetweenExpression extends AbstractExpression {
 
@@ -16,8 +16,8 @@ public class BetweenExpression extends AbstractExpression {
     }
 
     @Override
-    public String toSql(SQLContext sqlContext) {
+    public String toSql(ExpressionContext expressionContext) {
         return String.format(" %s BETWEEN %s AND %s ",
-                negated ? "NOT" : "", left.toSql(sqlContext), right.toSql(sqlContext));
+                negated ? "NOT" : "", left.toSql(expressionContext), right.toSql(expressionContext));
     }
 }

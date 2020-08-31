@@ -1,7 +1,7 @@
 package com.github.braisdom.funcsql.sql.expression;
 
 import com.github.braisdom.funcsql.sql.Expression;
-import com.github.braisdom.funcsql.sql.SQLContext;
+import com.github.braisdom.funcsql.sql.ExpressionContext;
 
 import java.util.Arrays;
 import java.util.List;
@@ -35,12 +35,12 @@ public class PolynaryExpression extends AbstractExpression {
     }
 
     @Override
-    public String toSql(SQLContext sqlContext) {
+    public String toSql(ExpressionContext expressionContext) {
         List<Expression> expressions = Arrays.asList(new Expression[]{left, right});
         expressions.addAll(Arrays.asList(others));
 
         String[] expressionStrings = expressions.stream()
-                .map(expression -> expression.toSql(sqlContext)).toArray(String[]::new);
+                .map(expression -> expression.toSql(expressionContext)).toArray(String[]::new);
         return String.join(operator, expressionStrings);
     }
 }

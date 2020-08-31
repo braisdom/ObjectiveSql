@@ -2,7 +2,7 @@ package com.github.braisdom.funcsql.sql.expression;
 
 import com.github.braisdom.funcsql.sql.Column;
 import com.github.braisdom.funcsql.sql.Expression;
-import com.github.braisdom.funcsql.sql.SQLContext;
+import com.github.braisdom.funcsql.sql.ExpressionContext;
 
 public class ColumnExpression extends AbstractExpression {
 
@@ -15,7 +15,7 @@ public class ColumnExpression extends AbstractExpression {
     }
 
     @Override
-    public String toSql(SQLContext sqlContext) {
-        return String.format("%s %s", column.toSql(sqlContext), expression.toSql(sqlContext));
+    public String toSql(ExpressionContext expressionContext) {
+        return String.format("%s %s", column.toSql(expressionContext), expression.toSql(expressionContext));
     }
 }

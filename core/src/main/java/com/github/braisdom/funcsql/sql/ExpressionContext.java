@@ -1,6 +1,6 @@
 package com.github.braisdom.funcsql.sql;
 
-public interface SQLContext {
+public interface ExpressionContext {
 
     String getAlias(Dataset dataset);
 
