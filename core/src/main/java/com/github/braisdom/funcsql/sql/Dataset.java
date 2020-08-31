@@ -1,6 +1,9 @@
 package com.github.braisdom.funcsql.sql;
 
-public interface Dataset {
+import java.sql.SQLException;
+import java.util.List;
+
+public interface Dataset<T> extends Sqlizable {
 
     Dataset select(Expression... projections);
 
@@ -23,4 +26,6 @@ public interface Dataset {
     Dataset union(Dataset dataset);
 
     Dataset unionAll(Dataset dataset);
+
+    List<T> execute() throws SQLException;
 }
