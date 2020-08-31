@@ -1,4 +1,4 @@
-package com.github.braisdom.funcsql.advanced;
+package com.github.braisdom.funcsql.sql;
 
 public interface Join {
 
