@@ -1,7 +1,5 @@
 package com.github.braisdom.funcsql.sql;
 
-import java.util.Collection;
-
 public interface Column extends Expression {
 
     Expression asc();
@@ -20,20 +18,16 @@ public interface Column extends Expression {
 
     Expression ne(Expression expr);
 
-    Expression in(Collection scalars);
-
-    Expression in(Object... scalars);
+    Expression in(Expression expression, Expression... others);
 
     Expression in(Dataset dataset);
 
-    Expression notIn(Collection scalars);
-
-    Expression notIn(Object... scalars);
+    Expression notIn(Expression expression, Expression... others);
 
     Expression notIn(Dataset dataset);
 
-    Expression between(Expression begin, Expression end);
+    Expression between(Expression left, Expression right);
 
-    Expression notBetween(Expression begin, Expression end);
+    Expression notBetween(Expression left, Expression right);
 
 }

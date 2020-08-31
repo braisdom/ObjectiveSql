@@ -7,14 +7,17 @@ public class BetweenExpression extends AbstractExpression {
 
     private final Expression left;
     private final Expression right;
+    private final boolean negated;
 
-    public BetweenExpression(Expression left, Expression right) {
+    public BetweenExpression(boolean negated, Expression left, Expression right) {
+        this.negated = negated;
         this.left = left;
         this.right = right;
     }
 
     @Override
     public String toSql(SQLContext sqlContext) {
-        return String.format(" BETWEEN %s AND %s ", left.toSql(sqlContext), right.toSql(sqlContext));
+        return String.format(" %s BETWEEN %s AND %s ",
+                negated ? "NOT" : "", left.toSql(sqlContext), right.toSql(sqlContext));
     }
 }
