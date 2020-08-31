@@ -14,6 +14,13 @@ public class PolynaryExpression extends AbstractExpression {
     public static final String DIVIDE = " / ";
     public static final String AND = " and ";
     public static final String OR = " or ";
+    public static final String LT = " < ";
+    public static final String LE = " <= ";
+    public static final String GT = " > ";
+    public static final String GE = " >= ";
+    public static final String NE = " <> ";
+    public static final String NE2 = " != ";
+    public static final String EQ = " = ";
 
     private final String operator;
     private final Expression left;

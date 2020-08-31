@@ -1,6 +1,5 @@
 package com.github.braisdom.funcsql.sql.expression;
 
-import com.github.braisdom.funcsql.sql.Expression;
 import com.github.braisdom.funcsql.sql.SQLContext;
 
 public class DefaultExpression extends AbstractExpression {

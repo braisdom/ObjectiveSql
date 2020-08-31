@@ -2,11 +2,11 @@ package com.github.braisdom.funcsql.sql.expression;
 
 import com.github.braisdom.funcsql.sql.SQLContext;
 
-public class Literal extends AbstractExpression {
+public class LiteralExpression extends AbstractExpression {
 
     private final Object rawLiteral;
 
-    public Literal(Object rawLiteral) {
+    public LiteralExpression(Object rawLiteral) {
         this.rawLiteral = rawLiteral;
     }
 
