@@ -10,11 +10,11 @@ public interface Dataset {
 
     Dataset join(Dataset dataset, Expression expression);
 
-    Dataset groupBy(Columnizable... columnizables);
+    Dataset groupBy(Column... columns);
 
     Dataset having(Expression expression);
 
-    Dataset orderBy(Columnizable... columnizables);
+    Dataset orderBy(Column... columns);
 
     Dataset limit(int limit);
 

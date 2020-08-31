@@ -2,7 +2,7 @@ package com.github.braisdom.funcsql.sql;
 
 import java.util.Collection;
 
-public interface Columnizable extends Sqlizable, Expression {
+public interface Column extends Expression {
 
     Expression asc();
 
