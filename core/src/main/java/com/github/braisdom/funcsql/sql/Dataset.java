@@ -6,7 +6,6 @@ import java.util.List;
 
 public interface Dataset<T> extends Sqlizable, Expression {
 
-    @SyntaxSupported(DatabaseType.All)
     Dataset select(Expression... projections);
 
     Dataset from(Dataset... datasets);

@@ -5,12 +5,10 @@ import com.github.braisdom.funcsql.sql.expression.*;
 public class DefaultColumn extends AbstractExpression implements Column {
 
     private final Dataset dataset;
-    private final Class domainModelClass;
     private final String columnName;
 
-    public DefaultColumn(Dataset dataset, Class domainModelClass, String columnName) {
+    public DefaultColumn(Dataset dataset, String columnName) {
         this.dataset = dataset;
-        this.domainModelClass = domainModelClass;
         this.columnName = columnName;
     }
 
