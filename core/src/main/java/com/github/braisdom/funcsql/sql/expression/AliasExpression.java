@@ -3,17 +3,17 @@ package com.github.braisdom.funcsql.sql.expression;
 import com.github.braisdom.funcsql.sql.Expression;
 import com.github.braisdom.funcsql.sql.SQLContext;
 
-public class Literal implements Expression {
+public class AliasExpression implements Expression {
 
-    private final Object rawLiteral;
+    private final Expression expression;
 
-    public Literal(Object rawLiteral) {
-        this.rawLiteral = rawLiteral;
+    public AliasExpression(Expression expression) {
+        this.expression = expression;
     }
 
     @Override
     public Expression as(String alias) {
-        return null;
+        throw new UnsupportedOperationException("The AliasExpression cannot be aliased");
     }
 
     @Override
