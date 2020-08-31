@@ -27,5 +27,5 @@ public interface Dataset<T> extends Sqlizable {
 
     Dataset unionAll(Dataset dataset);
 
-    List<T> execute() throws SQLException;
+    List<T> execute() throws SQLFormatException, SQLException;
 }

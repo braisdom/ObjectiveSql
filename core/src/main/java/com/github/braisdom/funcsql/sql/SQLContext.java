@@ -4,5 +4,5 @@ public interface SQLContext {
 
     String getAlias(Dataset dataset);
 
-    String quote(Expression expression);
+    String quote(String quotableString);
 }

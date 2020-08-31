@@ -12,12 +12,14 @@ public class Literal implements Expression {
     }
 
     @Override
-    public Expression as(String alias) {
-        return null;
+    public Expression as(SQLContext sqlContext, String alias) {
+        return new DefaultExpression(String.format("(%s) AS %s", toSql(sqlContext), sqlContext.quote(alias)));
     }
 
     @Override
     public String toSql(SQLContext sqlContext) {
-        return null;
+        if(rawLiteral == null)
+            return "null";
+        return String.valueOf(rawLiteral);
     }
 }

@@ -12,7 +12,7 @@ public class AliasExpression implements Expression {
     }
 
     @Override
-    public Expression as(String alias) {
+    public Expression as(SQLContext sqlContext, String alias) {
         throw new UnsupportedOperationException("The AliasExpression cannot be aliased");
     }
 

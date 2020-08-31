@@ -20,7 +20,7 @@ public class Expressions {
         return null;
     }
 
-    public static Expression slash(Expression left, Expression right, Expression... others) {
+    public static Expression divide(Expression left, Expression right, Expression... others) {
         return null;
     }
 
