@@ -1,4 +1,4 @@
-package com.github.braisdom.funcsql.sql;
+package com.github.braisdom.funcsql.osql;
 
 public interface Column extends Expression {
 

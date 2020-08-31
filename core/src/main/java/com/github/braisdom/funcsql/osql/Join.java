@@ -1,4 +1,4 @@
-package com.github.braisdom.funcsql.sql;
+package com.github.braisdom.funcsql.osql;
 
 public class Join {
     public static final int LEFT_OUTER_JOIN = 1;

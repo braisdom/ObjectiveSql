@@ -1,4 +1,4 @@
-package com.github.braisdom.funcsql.sql;
+package com.github.braisdom.funcsql.osql;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -1,6 +1,6 @@
-package com.github.braisdom.funcsql.sql.expression;
+package com.github.braisdom.funcsql.osql.expression;
 
-import com.github.braisdom.funcsql.sql.ExpressionContext;
+import com.github.braisdom.funcsql.osql.ExpressionContext;
 
 public class PlainExpression extends AbstractExpression {
 

@@ -1,7 +1,7 @@
-package com.github.braisdom.funcsql.sql;
+package com.github.braisdom.funcsql.osql;
 
 import com.github.braisdom.funcsql.annotations.DomainModel;
-import com.github.braisdom.funcsql.sql.expression.AbstractExpression;
+import com.github.braisdom.funcsql.osql.expression.AbstractExpression;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -18,6 +18,13 @@ public class DefaultDataset<T> extends AbstractExpression implements Dataset<T> 
     private Dataset[] fromDatasets;
     private Expression whereExpression;
     private List<Join> joins;
+    private Expression[] groupByExpressions;
+    private Expression havingExpression;
+    private Expression[] orderByExpressions;
+    private int limit = -1;
+    private int offset = -1;
+    private Dataset[] unionDatasets;
+    private Dataset[] unionAllDatasets;
 
     public DefaultDataset(Class<T> modelClass) {
         Objects.requireNonNull(modelClass, "The modelClass cannot be null");
@@ -71,37 +78,44 @@ public class DefaultDataset<T> extends AbstractExpression implements Dataset<T> 
 
     @Override
     public Dataset groupBy(Expression... expressions) {
-        return null;
+        this.groupByExpressions = expressions;
+        return this;
     }
 
     @Override
     public Dataset having(Expression expression) {
-        return null;
+        this.havingExpression = expression;
+        return this;
     }
 
     @Override
     public Dataset orderBy(Expression... expressions) {
-        return null;
+        this.orderByExpressions = expressions;
+        return this;
     }
 
     @Override
     public Dataset limit(int limit) {
-        return null;
+        this.limit = limit;
+        return this;
     }
 
     @Override
     public Dataset offset(int offset) {
-        return null;
+        this.offset = offset;
+        return this;
     }
 
     @Override
-    public Dataset union(Dataset dataset) {
-        return null;
+    public Dataset union(Dataset... datasets) {
+        this.unionDatasets = datasets;
+        return this;
     }
 
     @Override
-    public Dataset unionAll(Dataset dataset) {
-        return null;
+    public Dataset unionAll(Dataset... datasets) {
+        this.unionAllDatasets = datasets;
+        return this;
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.github.braisdom.funcsql.sql;
+package com.github.braisdom.funcsql.osql;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -30,9 +30,9 @@ public interface Dataset<T> extends Sqlizable, Expression {
 
     Dataset offset(int offset);
 
-    Dataset union(Dataset dataset);
+    Dataset union(Dataset... datasets);
 
-    Dataset unionAll(Dataset dataset);
+    Dataset unionAll(Dataset... datasets);
 
     List<T> query(Connection connection) throws SQLFormatException, SQLException;
 }

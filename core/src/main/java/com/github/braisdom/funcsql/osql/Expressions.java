@@ -1,8 +1,8 @@
-package com.github.braisdom.funcsql.sql;
+package com.github.braisdom.funcsql.osql;
 
-import com.github.braisdom.funcsql.sql.expression.LiteralExpression;
-import com.github.braisdom.funcsql.sql.expression.ParenExpression;
-import com.github.braisdom.funcsql.sql.expression.PolynaryExpression;
+import com.github.braisdom.funcsql.osql.expression.LiteralExpression;
+import com.github.braisdom.funcsql.osql.expression.ParenExpression;
+import com.github.braisdom.funcsql.osql.expression.PolynaryExpression;
 
 import java.sql.Timestamp;
 
