@@ -2,7 +2,9 @@ package com.github.braisdom.funcsql.sql;
 
 public interface Columnizable extends Sqlizable, Expression {
 
-    Expression as(String alias);
+    Expression asc();
+
+    Expression desc();
 
     Expression lt(Expression expression);
 

@@ -2,15 +2,17 @@ package com.github.braisdom.funcsql.sql;
 
 public interface Dataset {
 
-    Dataset setProjections(Columnizable... columnizables);
-
-    Dataset addProjections(Columnizable... columnizables);
+    Dataset select(Columnizable... columnizables);
 
     Dataset from(Dataset dataset);
 
-    Dataset join(Dataset dataset, Predicate onCondition);
+    Dataset where(Expression expression);
+
+    Dataset join(Dataset dataset, Expression expression);
 
     Dataset groupBy(Columnizable... columnizables);
+
+    Dataset having(Expression expression);
 
     Dataset orderBy(Columnizable... columnizables);
 
