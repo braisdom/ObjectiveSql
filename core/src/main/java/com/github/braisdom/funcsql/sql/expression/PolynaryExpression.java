@@ -8,10 +8,12 @@ import java.util.List;
 
 public class PolynaryExpression extends AbstractExpression {
 
-    public static final String PLUS = "+";
-    public static final String MINUS = "-";
-    public static final String MULTIPLY = "*";
-    public static final String DIVIDE = "/";
+    public static final String PLUS = " + ";
+    public static final String MINUS = " - ";
+    public static final String MULTIPLY = " * ";
+    public static final String DIVIDE = " / ";
+    public static final String AND = " and ";
+    public static final String OR = " or ";
 
     private final String operator;
     private final Expression left;
