@@ -19,6 +19,8 @@ public interface Dataset<T> extends Sqlizable, Expression {
 
     Dataset innerJoin(Dataset dataset, Expression onExpression);
 
+    Dataset fullJoin(Dataset dataset, Expression onExpression);
+
     Dataset groupBy(Expression... expressions);
 
     Dataset having(Expression expression);

@@ -86,6 +86,10 @@ public class DefaultColumn extends AbstractExpression implements Column {
 
     @Override
     public String toSql(ExpressionContext expressionContext) {
-        return null;
+        String tableAlias = expressionContext.getAlias(dataset);
+        String columnAlias = getAlias();
+        return String.format("%s.%s %s",
+                expressionContext.quote(tableAlias), expressionContext.quote(columnName),
+                columnAlias == null ? "" : " AS " + columnAlias);
     }
 }

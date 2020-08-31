@@ -12,4 +12,8 @@ public abstract class AbstractExpression implements Expression {
         this.alias = alias;
         return this;
     }
+
+    protected String getAlias() {
+        return alias;
+    }
 }
