@@ -383,10 +383,10 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
         MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
 
         methodBuilder.setReturnStatement(Tables.class, "count", aptBuilder.classRef(aptBuilder.getClassName()),
-                aptBuilder.varRef("sql"), aptBuilder.varRef("params"));
+                aptBuilder.varRef("predicate"), aptBuilder.varRef("params"));
 
         aptBuilder.inject(methodBuilder
-                .addParameter("sql", aptBuilder.typeRef(String.class))
+                .addParameter("predicate", aptBuilder.typeRef(String.class))
                 .addVarargsParameter("params", aptBuilder.typeRef(Object.class))
                 .setThrowsClauses(SQLException.class)
                 .setReturnType(aptBuilder.getTreeMaker().TypeIdent(TypeTag.INT))
