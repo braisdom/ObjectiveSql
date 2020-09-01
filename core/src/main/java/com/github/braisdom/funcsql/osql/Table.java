@@ -5,12 +5,12 @@ import com.github.braisdom.funcsql.osql.expression.AbstractExpression;
 
 import java.util.Objects;
 
-public class DefaultDataset extends AbstractExpression implements Dataset {
+public class Table extends AbstractExpression implements Dataset {
 
     protected final DomainModel domainModel;
     protected final Class modelClass;
 
-    public DefaultDataset(Class modelClass) {
+    public Table(Class modelClass) {
         Objects.requireNonNull(modelClass, "The modelClass cannot be null");
         this.modelClass = modelClass;
         this.domainModel = (DomainModel) modelClass.getAnnotation(DomainModel.class);

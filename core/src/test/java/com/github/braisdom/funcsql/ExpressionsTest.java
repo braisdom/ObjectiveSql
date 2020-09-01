@@ -7,7 +7,6 @@ import com.sun.tools.javac.util.Assert;
 import org.junit.jupiter.api.Test;
 
 import java.sql.Timestamp;
-import java.util.Date;
 
 import static com.github.braisdom.funcsql.osql.expression.Expressions.literal;
 import static com.github.braisdom.funcsql.osql.expression.Expressions.plus;
@@ -38,11 +37,6 @@ public class ExpressionsTest {
 
         @Override
         public String toTimestamp(Timestamp timestamp) {
-            return null;
-        }
-
-        @Override
-        public String toTimestamp(Date date) {
             return null;
         }
     }

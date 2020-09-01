@@ -14,6 +14,4 @@ public interface ExpressionContext {
     String quoteString(String stringValue);
 
     String toTimestamp(Timestamp timestamp);
-
-    String toTimestamp(Date date);
 }
