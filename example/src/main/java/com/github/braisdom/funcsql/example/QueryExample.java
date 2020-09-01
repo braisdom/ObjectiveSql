@@ -25,7 +25,7 @@ public class QueryExample {
             "Frank","Scott","Eric","Stephen","Andrew","Raymond","Gregory","Joshua","Jerry","Dennis","Walter","Patrick","Peter","Harold",
             "Douglas","Henry","Carl","Arthur","Ryan","Roger"};
 
-    private static void prepareQueryData() throws SQLException {
+    public static void prepareQueryData() throws SQLException {
         List<Member> members = new ArrayList<>();
         List<Order> orders = new ArrayList<>();
 
