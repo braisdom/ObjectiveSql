@@ -21,7 +21,6 @@ public class Select extends AbstractExpression implements Dataset {
     protected Dataset[] unionDatasets;
     protected Dataset[] unionAllDatasets;
 
-
     public Select project(Expression projection, Expression... projections) {
         this.projections.add(projection);
         if (projections.length > 0)
@@ -104,6 +103,15 @@ public class Select extends AbstractExpression implements Dataset {
         processWhere(expressionContext, sql);
         processJoins(expressionContext, sql);
         processGroupBy(expressionContext, sql);
+        processOrderBy(expressionContext, sql);
+
+        if (offset > 0)
+            sql.append(" OFFSET ").append(offset);
+
+        if (limit > 0)
+            sql.append(" LIMIT ").append(limit);
+
+        processUnion(expressionContext, sql);
 
         return sql.toString();
     }
@@ -119,7 +127,7 @@ public class Select extends AbstractExpression implements Dataset {
     }
 
     private void processFrom(ExpressionContext expressionContext, StringBuilder sql) {
-        if (fromDatasets.length == 0)
+        if (fromDatasets != null && fromDatasets.length == 0)
             throw new SQLStatementException("The from cause is required for select statement");
 
         sql.append(" FROM ");
@@ -129,14 +137,14 @@ public class Select extends AbstractExpression implements Dataset {
     }
 
     private void processWhere(ExpressionContext expressionContext, StringBuilder sql) {
-        if(whereExpression != null) {
+        if (whereExpression != null) {
             sql.append(" WHERE ");
             sql.append(whereExpression.toSql(expressionContext));
         }
     }
 
     private void processJoins(ExpressionContext expressionContext, StringBuilder sql) {
-        if (joinExpressions.size() > 0) {
+        if (joinExpressions != null && joinExpressions.size() > 0) {
             String[] joinStrings = joinExpressions.stream()
                     .map(joinExpression -> joinExpression.toSql(expressionContext)).toArray(String[]::new);
             sql.append(String.join(" ", joinStrings));
@@ -144,16 +152,37 @@ public class Select extends AbstractExpression implements Dataset {
     }
 
     private void processGroupBy(ExpressionContext expressionContext, StringBuilder sql) {
-        if(groupByExpressions.length > 0) {
+        if (groupByExpressions != null && groupByExpressions.length > 0) {
             sql.append(" GROUP BY ");
             String[] groupByStrings = Arrays.stream(groupByExpressions)
                     .map(groupBy -> groupBy.toSql(expressionContext)).toArray(String[]::new);
             sql.append(String.join(", ", groupByStrings));
 
-            if(havingExpression != null) {
+            if (havingExpression != null) {
                 sql.append(" HAVING ");
                 sql.append(havingExpression.toSql(expressionContext));
             }
+        }
+    }
+
+    private void processOrderBy(ExpressionContext expressionContext, StringBuilder sql) {
+        if (orderByExpressions != null && orderByExpressions.length > 0) {
+            sql.append(" ORDER BY ");
+            String[] orderByStrings = Arrays.stream(orderByExpressions)
+                    .map(orderBy -> orderBy.toSql(expressionContext)).toArray(String[]::new);
+            sql.append(String.join(", ", orderByStrings));
+        }
+    }
+
+    private void processUnion(ExpressionContext expressionContext, StringBuilder sql) {
+        if (unionDatasets != null && unionDatasets.length > 0) {
+            Arrays.stream(unionDatasets).forEach(
+                    dataset -> sql.append(" UNION ").append(dataset.toSql(expressionContext)).append(" "));
+        }
+
+        if (unionAllDatasets != null && unionAllDatasets.length > 0) {
+            Arrays.stream(unionAllDatasets).forEach(
+                    dataset -> sql.append(" UNION ALL ").append(dataset.toSql(expressionContext)).append(" "));
         }
     }
 }

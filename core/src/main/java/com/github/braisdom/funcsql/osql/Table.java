@@ -6,7 +6,7 @@ import com.github.braisdom.funcsql.osql.expression.AbstractExpression;
 import java.util.Arrays;
 import java.util.Objects;
 
-public class Table extends AbstractExpression implements Dataset {
+public class Table extends AbstractExpression {
 
     protected final DomainModel domainModel;
     protected final Class modelClass;
