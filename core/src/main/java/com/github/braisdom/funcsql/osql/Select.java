@@ -1,6 +1,7 @@
 package com.github.braisdom.funcsql.osql;
 
 import com.github.braisdom.funcsql.osql.expression.AbstractExpression;
+import com.github.braisdom.funcsql.osql.expression.JoinExpression;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,7 +12,7 @@ public class Select extends AbstractExpression implements Dataset {
     protected List<Expression> projections = new ArrayList<>();
     protected Dataset[] fromDatasets;
     protected Expression whereExpression;
-    protected List<Join> joins;
+    protected List<JoinExpression> joinExpressions;
     protected Expression[] groupByExpressions;
     protected Expression havingExpression;
     protected Expression[] orderByExpressions;
@@ -39,22 +40,22 @@ public class Select extends AbstractExpression implements Dataset {
     }
 
     public Select leftOuterJoin(Dataset dataset, Expression onExpression) {
-        this.joins.add(new Join(Join.LEFT_OUTER_JOIN, dataset, onExpression));
+        this.joinExpressions.add(new JoinExpression(JoinExpression.LEFT_OUTER_JOIN, dataset, onExpression));
         return this;
     }
 
     public Select rightOuterJoin(Dataset dataset, Expression onExpression) {
-        this.joins.add(new Join(Join.RIGHT_OUTER_JOIN, dataset, onExpression));
+        this.joinExpressions.add(new JoinExpression(JoinExpression.RIGHT_OUTER_JOIN, dataset, onExpression));
         return this;
     }
 
     public Select innerJoin(Dataset dataset, Expression onExpression) {
-        this.joins.add(new Join(Join.INNER_JOIN, dataset, onExpression));
+        this.joinExpressions.add(new JoinExpression(JoinExpression.INNER_JOIN, dataset, onExpression));
         return this;
     }
 
     public Select fullJoin(Dataset dataset, Expression onExpression) {
-        this.joins.add(new Join(Join.FULL_JOIN, dataset, onExpression));
+        this.joinExpressions.add(new JoinExpression(JoinExpression.FULL_JOIN, dataset, onExpression));
         return this;
     }
 
