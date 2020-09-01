@@ -39,6 +39,7 @@ public class DefaultExpressionContext implements ExpressionContext {
             case PostgreSQL:
             case Oracle:
             case SQLite:
+            case MsSqlServer:
                 return String.format("\"%s\"", tableName);
             case All:
                 return String.format("\"%s\"", tableName);
@@ -55,6 +56,7 @@ public class DefaultExpressionContext implements ExpressionContext {
             case PostgreSQL:
             case Oracle:
             case SQLite:
+            case MsSqlServer:
                 return String.format("\"%s\"", columnName);
             case All:
                 return String.format("\"%s\"", columnName);
