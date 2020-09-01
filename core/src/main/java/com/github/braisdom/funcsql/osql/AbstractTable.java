@@ -21,6 +21,7 @@ public abstract class AbstractTable extends AbstractExpression implements Datase
         String[] nameParts = Tables.getTableName(modelClass).split("\\.");
         String[] quotedNameParts = Arrays.stream(nameParts)
                 .map(namePart -> expressionContext.quoteTable(namePart)).toArray(String[]::new);
-        return String.join("\\.", quotedNameParts);
+        String tableAlias = expressionContext.getAlias(this, true);
+        return String.format("%s AS %s", String.join("\\.", quotedNameParts), tableAlias);
     }
 }
