@@ -20,12 +20,14 @@ public class QueryMethodCodeGenerator extends DomainModelProcessor {
     @Override
     public void handle(AnnotationValues annotationValues, JCTree ast, APTBuilder aptBuilder) {
         JCTree.JCVariableDecl field = (JCTree.JCVariableDecl) aptBuilder.get();
+        if(ast == null || field == null)
+            return;
 
         TreeMaker treeMaker = aptBuilder.getTreeMaker();
         String methodName = WordUtil.camelize("queryBy_" + field.getName(), true);
 
         MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
-        StatementBuilder statementBuilder = aptBuilder.createBlockBuilder();
+        StatementBuilder statementBuilder = aptBuilder.createStatementBuilder();
 
         methodBuilder.addParameter("value", field.vartype);
 

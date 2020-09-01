@@ -37,6 +37,12 @@ public class StatementBuilder {
         return this;
     }
 
+    public StatementBuilder append(String methodName, JCExpression... params) {
+        JCExpression methodRef = treeMaker.Ident(aptBuilder.toName(methodName));
+        jcStatements.append(treeMaker.Exec(treeMaker.Apply(List.nil(), methodRef, List.from(params))));
+        return this;
+    }
+
     public StatementBuilder append(Class clazz, String methodName, JCExpression... params) {
         JCExpression methodRef = treeMaker.Select(aptBuilder.typeRef(clazz),
                 aptBuilder.toName(methodName));

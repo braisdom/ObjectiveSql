@@ -16,6 +16,11 @@ public class ExpressionsTest {
     private static class ExpressionContextTest implements ExpressionContext {
 
         @Override
+        public DatabaseType getDatabaseType() {
+            return null;
+        }
+
+        @Override
         public String getAlias(Dataset dataset, boolean forceCreate) {
             return null;
         }

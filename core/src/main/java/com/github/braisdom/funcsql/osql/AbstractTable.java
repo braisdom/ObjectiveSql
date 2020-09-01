@@ -6,12 +6,12 @@ import com.github.braisdom.funcsql.osql.expression.AbstractExpression;
 import java.util.Arrays;
 import java.util.Objects;
 
-public class Table extends AbstractExpression {
+public abstract class AbstractTable extends AbstractExpression implements Dataset {
 
     protected final DomainModel domainModel;
     protected final Class modelClass;
 
-    public Table(Class modelClass) {
+    public AbstractTable(Class modelClass) {
         Objects.requireNonNull(modelClass, "The modelClass cannot be null");
         this.modelClass = modelClass;
         this.domainModel = (DomainModel) modelClass.getAnnotation(DomainModel.class);

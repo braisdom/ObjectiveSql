@@ -38,7 +38,7 @@ public final class APTBuilder {
         return new MethodBuilder(this);
     }
 
-    public StatementBuilder createBlockBuilder() {
+    public StatementBuilder createStatementBuilder() {
         return new StatementBuilder(this);
     }
 
@@ -71,8 +71,12 @@ public final class APTBuilder {
         classDecl.defs = classDecl.defs.append(variableDecl);
     }
 
+    public void inject(JCClassDecl classDecl) {
+        this.classDecl.defs = this.classDecl.defs.append(classDecl);
+    }
+
     public void inject(JCMethodDecl methodDecl) {
-        if(!Utils.containsMethod(classDecl.sym, methodDecl, false))
+        if (!Utils.containsMethod(classDecl.sym, methodDecl, false))
             classDecl.defs = classDecl.defs.append(methodDecl);
     }
 
@@ -122,15 +126,33 @@ public final class APTBuilder {
         return e;
     }
 
+    public JCClassDecl classDef(int modifiers, String name, Class clazz) {
+        return treeMaker.ClassDef(treeMaker.Modifiers(modifiers), toName(name), List.nil(),
+                typeRef(clazz), List.nil(), List.nil());
+    }
+
+    public JCMethodDecl createConstructor(int modifiers, List<JCVariableDecl> parameters,
+                                          List<JCStatement> statements) {
+        return treeMaker.MethodDef(
+                treeMaker.Modifiers(modifiers),
+                names.init,
+                null,
+                List.nil(),
+                parameters,
+                List.nil(),
+                treeMaker.Block(0, statements),
+                null);
+    }
+
     public JCExpression staticMethodCall(Class<?> clazz, String methodName, JCExpression... params) {
         return treeMaker.Apply(List.nil(), treeMaker.Select(typeRef(clazz.getName()), toName(methodName)), List.from(params));
     }
 
-    public JCExpression methodCall(String methodName, JCExpression... params) {
+    public JCMethodInvocation methodCall(String methodName, JCExpression... params) {
         return treeMaker.Apply(List.nil(), treeMaker.Ident(toName(methodName)), List.from(params));
     }
 
-    public JCExpression methodCall(String varName, String methodName, JCExpression... params) {
+    public JCMethodInvocation methodCall(String varName, String methodName, JCExpression... params) {
         return treeMaker.Apply(List.nil(), treeMaker.Select(treeMaker.Ident(toName(varName)), toName(methodName)), List.from(params));
     }
 
@@ -191,14 +213,14 @@ public final class APTBuilder {
     }
 
     public boolean isStatic(JCModifiers modifiers) {
-        return (modifiers.flags & Flags.STATIC)  != 0;
+        return (modifiers.flags & Flags.STATIC) != 0;
     }
 
     public java.util.List<JCVariableDecl> getFields() {
         java.util.List fields = new ArrayList();
         List<JCTree> members = classDecl.defs;
         for (JCTree member : members) {
-            if(member instanceof JCVariableDecl) {
+            if (member instanceof JCVariableDecl) {
                 fields.add(member);
             }
         }
@@ -209,7 +231,7 @@ public final class APTBuilder {
     public JCMethodDecl newGetter(JCVariableDecl field) {
         String fieldName = field.name.toString();
         String getterName;
-        if(isBoolean(field.vartype))
+        if (isBoolean(field.vartype))
             getterName = Utils.camelize(String.format("%s_%s", "is", fieldName), true);
         else
             getterName = Utils.camelize(String.format("%s_%s", "get", fieldName), true);
@@ -232,7 +254,7 @@ public final class APTBuilder {
         JCExpression returnType = treeMaker.TypeIdent(TypeTag.VOID);
 
         statements.append(treeMaker.Exec(assign));
-        if(returnThis) {
+        if (returnThis) {
             returnType = typeRef(classDecl.name.toString());
             statements.append(treeMaker.Return(varRef("this")));
         }

@@ -4,6 +4,7 @@ import com.github.braisdom.funcsql.*;
 import com.github.braisdom.funcsql.annotations.DomainModel;
 import com.github.braisdom.funcsql.annotations.PrimaryKey;
 import com.github.braisdom.funcsql.annotations.Transient;
+import com.github.braisdom.funcsql.osql.AbstractTable;
 import com.github.braisdom.funcsql.reflection.ClassUtils;
 import com.github.braisdom.funcsql.reflection.PropertyUtils;
 import com.github.braisdom.funcsql.relation.Relationship;
@@ -48,6 +49,7 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
         handleValidateMethod(aptBuilder);
         handleNewInstanceFromMethod(aptBuilder);
         handleRawAttributesField(aptBuilder);
+        handleTableClass(aptBuilder);
     }
 
     @Override
@@ -104,7 +106,7 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
 
     private void handleCreateQueryMethod(APTBuilder aptBuilder) {
         MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
-        StatementBuilder statementBuilder = aptBuilder.createBlockBuilder();
+        StatementBuilder statementBuilder = aptBuilder.createStatementBuilder();
 
         statementBuilder.append(aptBuilder.typeRef(QueryFactory.class), "queryFactory", Databases.class,
                 "getQueryFactory", List.nil());
@@ -119,7 +121,7 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
 
     private void handleCreatePersistenceMethod(APTBuilder aptBuilder) {
         MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
-        StatementBuilder statementBuilder = aptBuilder.createBlockBuilder();
+        StatementBuilder statementBuilder = aptBuilder.createStatementBuilder();
 
         statementBuilder.append(aptBuilder.typeRef(PersistenceFactory.class), "persistenceFactory", Databases.class,
                 "getPersistenceFactory", List.nil());
@@ -136,7 +138,7 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
     private void handleSaveMethod(APTBuilder aptBuilder) {
         MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
         TreeMaker treeMaker = aptBuilder.getTreeMaker();
-        StatementBuilder statementBuilder = aptBuilder.createBlockBuilder();
+        StatementBuilder statementBuilder = aptBuilder.createStatementBuilder();
 
         statementBuilder.append(aptBuilder.newGenericsType(Persistence.class, aptBuilder.getClassName()), "persistence",
                 "createPersistence");
@@ -154,7 +156,7 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
     private void handleCreateMethod(APTBuilder aptBuilder) {
         MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
         TreeMaker treeMaker = aptBuilder.getTreeMaker();
-        StatementBuilder statementBuilder = aptBuilder.createBlockBuilder();
+        StatementBuilder statementBuilder = aptBuilder.createStatementBuilder();
 
         statementBuilder.append(aptBuilder.newGenericsType(Persistence.class, aptBuilder.getClassName()), "persistence",
                 "createPersistence");
@@ -174,7 +176,7 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
     private void handleCreateArrayMethod(APTBuilder aptBuilder) {
         MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
         TreeMaker treeMaker = aptBuilder.getTreeMaker();
-        StatementBuilder statementBuilder = aptBuilder.createBlockBuilder();
+        StatementBuilder statementBuilder = aptBuilder.createStatementBuilder();
 
         statementBuilder.append(aptBuilder.newGenericsType(Persistence.class, aptBuilder.getClassName()), "persistence",
                 "createPersistence");
@@ -194,7 +196,7 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
     private void handleUpdateMethod(AnnotationValues annotationValues, APTBuilder aptBuilder) {
         MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
         TreeMaker treeMaker = aptBuilder.getTreeMaker();
-        StatementBuilder statementBuilder = aptBuilder.createBlockBuilder();
+        StatementBuilder statementBuilder = aptBuilder.createStatementBuilder();
         DomainModel domainModel = annotationValues.getAnnotationValue(DomainModel.class);
 
         statementBuilder.append(aptBuilder.newGenericsType(Persistence.class, aptBuilder.getClassName()), "persistence",
@@ -216,7 +218,7 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
     private void handleUpdate2Method(APTBuilder aptBuilder) {
         MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
         TreeMaker treeMaker = aptBuilder.getTreeMaker();
-        StatementBuilder statementBuilder = aptBuilder.createBlockBuilder();
+        StatementBuilder statementBuilder = aptBuilder.createStatementBuilder();
 
         statementBuilder.append(aptBuilder.newGenericsType(Persistence.class, aptBuilder.getClassName()), "persistence",
                 "createPersistence");
@@ -236,7 +238,7 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
     private void handleDestroyMethod(AnnotationValues annotationValues, APTBuilder aptBuilder) {
         MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
         TreeMaker treeMaker = aptBuilder.getTreeMaker();
-        StatementBuilder statementBuilder = aptBuilder.createBlockBuilder();
+        StatementBuilder statementBuilder = aptBuilder.createStatementBuilder();
         DomainModel domainModel = annotationValues.getAnnotationValue(DomainModel.class);
 
         statementBuilder.append(aptBuilder.newGenericsType(Persistence.class, aptBuilder.getClassName()), "persistence",
@@ -256,7 +258,7 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
     private void handleDestroy2Method(APTBuilder aptBuilder) {
         MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
         TreeMaker treeMaker = aptBuilder.getTreeMaker();
-        StatementBuilder statementBuilder = aptBuilder.createBlockBuilder();
+        StatementBuilder statementBuilder = aptBuilder.createStatementBuilder();
 
         statementBuilder.append(aptBuilder.newGenericsType(Persistence.class, aptBuilder.getClassName()), "persistence",
                 "createPersistence");
@@ -288,7 +290,7 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
 
     private void handleQueryMethod(APTBuilder aptBuilder) {
         MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
-        StatementBuilder statementBuilder = aptBuilder.createBlockBuilder();
+        StatementBuilder statementBuilder = aptBuilder.createStatementBuilder();
 
         statementBuilder.append(aptBuilder.newGenericsType(Query.class, aptBuilder.getClassName()), "query",
                 "createQuery");
@@ -307,7 +309,7 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
 
     private void handleQuery2Method(APTBuilder aptBuilder) {
         MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
-        StatementBuilder statementBuilder = aptBuilder.createBlockBuilder();
+        StatementBuilder statementBuilder = aptBuilder.createStatementBuilder();
 
         statementBuilder.append(aptBuilder.newGenericsType(Query.class, aptBuilder.getClassName()), "query",
                 "createQuery");
@@ -327,7 +329,7 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
 
     private void handleQuery3Method(APTBuilder aptBuilder) {
         MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
-        StatementBuilder statementBuilder = aptBuilder.createBlockBuilder();
+        StatementBuilder statementBuilder = aptBuilder.createStatementBuilder();
 
         methodBuilder.setReturnStatement(Tables.class, "query", aptBuilder.classRef(aptBuilder.getClassName()),
                 aptBuilder.varRef("sql"), aptBuilder.varRef("params"));
@@ -342,7 +344,7 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
 
     private void handleQueryFirstMethod(APTBuilder aptBuilder) {
         MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
-        StatementBuilder statementBuilder = aptBuilder.createBlockBuilder();
+        StatementBuilder statementBuilder = aptBuilder.createStatementBuilder();
 
         statementBuilder.append(aptBuilder.newGenericsType(Query.class, aptBuilder.getClassName()), "query",
                 "createQuery");
@@ -362,7 +364,7 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
 
     private void handleQueryFirst2Method(APTBuilder aptBuilder) {
         MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
-        StatementBuilder statementBuilder = aptBuilder.createBlockBuilder();
+        StatementBuilder statementBuilder = aptBuilder.createStatementBuilder();
 
         statementBuilder.append(aptBuilder.newGenericsType(Query.class, aptBuilder.getClassName()), "query",
                 "createQuery");
@@ -416,7 +418,7 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
     private void handleNewInstanceFromMethod(APTBuilder aptBuilder) {
         MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
         TreeMaker treeMaker = aptBuilder.getTreeMaker();
-        StatementBuilder statementBuilder = aptBuilder.createBlockBuilder();
+        StatementBuilder statementBuilder = aptBuilder.createStatementBuilder();
 
         JCExpression createInstance = treeMaker.TypeCast(aptBuilder.typeRef(aptBuilder.getClassName()),
                 treeMaker.Apply(List.nil(), treeMaker.Select(aptBuilder.typeRef(ClassUtils.class),
@@ -470,5 +472,17 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
                 .addStatement(getRawAttributesReturn)
                 .setReturnType(aptBuilder.newGenericsType(Map.class, String.class, Object.class))
                 .build("getRawAttributes", Flags.PUBLIC | Flags.FINAL));
+    }
+
+    private void handleTableClass(APTBuilder aptBuilder) {
+        JCClassDecl classDecl = aptBuilder.classDef(Flags.PUBLIC | Flags.FINAL | Flags.STATIC,
+                "Table", AbstractTable.class);
+        StatementBuilder statementBuilder = aptBuilder.createStatementBuilder();
+        statementBuilder.append("super", aptBuilder.classRef(aptBuilder.getClassName()));
+
+        JCMethodDecl constructor = aptBuilder.createConstructor(Flags.PUBLIC, List.nil(), statementBuilder.build());
+        classDecl.defs = classDecl.defs.append(constructor);
+
+        aptBuilder.inject(classDecl);
     }
 }
