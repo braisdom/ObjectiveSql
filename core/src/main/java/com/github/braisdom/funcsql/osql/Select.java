@@ -96,7 +96,53 @@ public class Select extends AbstractExpression implements Dataset {
 
     @Override
     public String toSql(ExpressionContext expressionContext) {
-        return null;
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT ");
+
+        processProjections(expressionContext, sql);
+        processFrom(expressionContext, sql);
+        processWhere(expressionContext, sql);
+        processJoins(expressionContext, sql);
+
+        return sql.toString();
     }
 
+    private void processProjections(ExpressionContext expressionContext, StringBuilder sql) {
+        if (projections.size() == 0)
+            sql.append(" * ");
+        else {
+            String[] projectionStrings = projections.stream()
+                    .map(projection -> projection.toSql(expressionContext)).toArray(String[]::new);
+            sql.append(String.join(",", projectionStrings));
+        }
+    }
+
+    private void processFrom(ExpressionContext expressionContext, StringBuilder sql) {
+        if (fromDatasets.length == 0)
+            throw new SQLStatementException("The from cause is required for select statement");
+
+        sql.append(" FROM ");
+        String[] fromStrings = Arrays.stream(fromDatasets)
+                .map(dataset -> dataset.toSql(expressionContext)).toArray(String[]::new);
+        sql.append(String.join(", ", fromStrings));
+    }
+
+    private void processWhere(ExpressionContext expressionContext, StringBuilder sql) {
+        if(whereExpression != null) {
+            sql.append(" WHERE ");
+            sql.append(whereExpression.toSql(expressionContext));
+        }
+    }
+
+    private void processJoins(ExpressionContext expressionContext, StringBuilder sql) {
+        if (joinExpressions.size() > 0) {
+            String[] joinStrings = joinExpressions.stream()
+                    .map(joinExpression -> joinExpression.toSql(expressionContext)).toArray(String[]::new);
+            sql.append(String.join(" ", joinStrings));
+        }
+    }
+
+    private void processGroupBy(ExpressionContext expressionContext, StringBuilder sql) {
+
+    }
 }

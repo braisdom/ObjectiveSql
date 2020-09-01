@@ -3,6 +3,7 @@ package com.github.braisdom.funcsql.osql;
 import com.github.braisdom.funcsql.annotations.DomainModel;
 import com.github.braisdom.funcsql.osql.expression.AbstractExpression;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 public class Table extends AbstractExpression implements Dataset {
@@ -19,6 +20,9 @@ public class Table extends AbstractExpression implements Dataset {
 
     @Override
     public String toSql(ExpressionContext expressionContext) {
-        return expressionContext.quoteTable(domainModel.tableName());
+        String[] nameParts = domainModel.tableName().split(".");
+        String[] quotedNameParts = Arrays.stream(nameParts)
+                .map(namePart -> expressionContext.quoteTable(namePart)).toArray(String[]::new);
+        return String.join(".", quotedNameParts);
     }
 }
