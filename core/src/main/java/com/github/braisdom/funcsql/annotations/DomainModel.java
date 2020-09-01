@@ -13,8 +13,6 @@ public @interface DomainModel {
 
     String tableName() default "";
 
-    String sqlFileName() default "";
-
     boolean fluent() default true;
 
     Class<?> primaryClass() default Integer.class;
@@ -26,6 +24,4 @@ public @interface DomainModel {
     boolean skipNullValueOnUpdating() default true;
 
     boolean allFieldsPersistent() default true;
-
-    boolean disableGeneratedId() default false;
 }

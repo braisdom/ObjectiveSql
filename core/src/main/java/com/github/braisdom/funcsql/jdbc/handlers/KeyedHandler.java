@@ -34,7 +34,7 @@ import java.util.Map;
  * retrieve rows from the table like this:
  * <pre>
  * ResultSetHandler h = new KeyedHandler("id");
- * Map found = (Map) queryRunner.query("select id, name, age from person", h);
+ * Map found = (Map) queryRunner.query("project id, name, age from person", h);
  * Map jane = (Map) found.get(new Long(1)); // jane's id is 1
  * String janesName = (String) jane.get("name");
  * Integer janesAge = (Integer) jane.get("age");

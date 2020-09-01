@@ -1,6 +1,6 @@
 package com.github.braisdom.funcsql.osql;
 
-public class Join {
+final class Join {
     public static final int LEFT_OUTER_JOIN = 1;
     public static final int RIGHT_OUTER_JOIN = 2;
     public static final int INNER_JOIN = 3;
