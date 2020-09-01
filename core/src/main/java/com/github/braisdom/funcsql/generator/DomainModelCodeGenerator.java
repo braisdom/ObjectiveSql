@@ -6,6 +6,7 @@ import com.github.braisdom.funcsql.annotations.PrimaryKey;
 import com.github.braisdom.funcsql.annotations.Transient;
 import com.github.braisdom.funcsql.osql.AbstractTable;
 import com.github.braisdom.funcsql.osql.Column;
+import com.github.braisdom.funcsql.osql.Dataset;
 import com.github.braisdom.funcsql.osql.DefaultColumn;
 import com.github.braisdom.funcsql.reflection.ClassUtils;
 import com.github.braisdom.funcsql.reflection.PropertyUtils;
@@ -480,17 +481,23 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
         JCClassDecl classDecl = aptBuilder.classDef(Flags.PUBLIC | Flags.FINAL | Flags.STATIC,
                 "Table", AbstractTable.class);
         TreeMaker treeMaker = aptBuilder.getTreeMaker();
-        StatementBuilder statementBuilder = aptBuilder.createStatementBuilder();
-        statementBuilder.append("super", aptBuilder.classRef(aptBuilder.getClassName()));
+        StatementBuilder constructorStatement = aptBuilder.createStatementBuilder();
+        StatementBuilder asTableStatement = aptBuilder.createStatementBuilder();
+        MethodBuilder asTableMethod = aptBuilder.createMethodBuilder();
 
-        JCMethodDecl constructor = aptBuilder.createConstructor(Flags.PRIVATE, List.nil(), statementBuilder.build());
+        constructorStatement.append("super", aptBuilder.classRef(aptBuilder.getClassName()));
+        JCMethodDecl constructor = aptBuilder.createConstructor(Flags.PRIVATE, List.nil(), constructorStatement.build());
         classDecl.defs = classDecl.defs.append(constructor);
+
+        asTableMethod.setReturnType(aptBuilder.typeRef(aptBuilder.getClassName() + ".Table"));
+        asTableMethod.setReturnStatement(treeMaker.NewClass(null, List.nil(), aptBuilder.typeRef("Table"),
+                List.nil(), null));
 
         JCVariableDecl[] fields = aptBuilder.getFields();
         for (JCVariableDecl field : fields) {
             if (!aptBuilder.isStatic(field.mods)) {
                 JCExpression init = aptBuilder.staticMethodCall(DefaultColumn.class, "create",
-                        aptBuilder.varRef("this"), treeMaker.Literal(field.name.toString()));
+                        aptBuilder.classRef(aptBuilder.getClassName()), aptBuilder.varRef("this"), treeMaker.Literal(field.name.toString()));
                 JCVariableDecl var = aptBuilder.newVar(Flags.PUBLIC | Flags.FINAL,
                         Column.class, field.name.toString(), init);
 
@@ -498,6 +505,7 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
             }
         }
 
+        aptBuilder.inject(asTableMethod.build("asTable", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
         aptBuilder.inject(classDecl);
     }
 }

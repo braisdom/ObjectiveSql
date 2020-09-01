@@ -1,19 +1,22 @@
 package com.github.braisdom.funcsql.osql;
 
+import com.github.braisdom.funcsql.Tables;
 import com.github.braisdom.funcsql.osql.expression.*;
 
 public class DefaultColumn extends AbstractExpression implements Column {
 
+    private final Class domainModelClass;
     private final Dataset dataset;
     private final String columnName;
 
-    public static Column create(Dataset dataset, String name) {
-        return new DefaultColumn(dataset, name);
+    public static Column create(Class domainModelClass, Dataset dataset, String name) {
+        return new DefaultColumn(domainModelClass, dataset, name);
     }
 
-    public DefaultColumn(Dataset dataset, String columnName) {
+    public DefaultColumn(Class domainModelClass, Dataset dataset, String columnName) {
+        this.domainModelClass = domainModelClass;
         this.dataset = dataset;
-        this.columnName = columnName;
+        this.columnName = Tables.getColumnName(domainModelClass, columnName);
     }
 
     @Override
