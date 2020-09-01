@@ -1,8 +1,12 @@
 package com.github.braisdom.funcsql.osql;
 
+import com.github.braisdom.funcsql.DatabaseType;
+
 import java.sql.Timestamp;
 
 public interface ExpressionContext {
+
+    DatabaseType getDatabaseType();
 
     String getAlias(Dataset dataset, boolean forceCreate);
 
