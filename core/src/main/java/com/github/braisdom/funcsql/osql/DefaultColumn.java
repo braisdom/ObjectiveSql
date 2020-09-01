@@ -7,6 +7,10 @@ public class DefaultColumn extends AbstractExpression implements Column {
     private final Dataset dataset;
     private final String columnName;
 
+    public static Column create(Dataset dataset, String name) {
+        return new DefaultColumn(dataset, name);
+    }
+
     public DefaultColumn(Dataset dataset, String columnName) {
         this.dataset = dataset;
         this.columnName = columnName;

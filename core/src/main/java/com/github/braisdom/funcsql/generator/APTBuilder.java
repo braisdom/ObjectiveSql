@@ -156,9 +156,8 @@ public final class APTBuilder {
         return treeMaker.Apply(List.nil(), treeMaker.Select(treeMaker.Ident(toName(varName)), toName(methodName)), List.from(params));
     }
 
-    public JCExpression newVar(Class<?> clazz, String methodName, JCExpression... params) {
-        return treeMaker.Apply(List.nil(), treeMaker.Select(
-                typeRef(clazz.getName()), toName(methodName)), List.from(params));
+    public JCVariableDecl newVar(int modifiers, Class<?> clazz, String name, JCExpression init) {
+        return treeMaker.VarDef(treeMaker.Modifiers(modifiers), toName(name), typeRef(clazz), init);
     }
 
     public JCVariableDecl newVar(Class<?> clazz, String name) {
@@ -216,16 +215,16 @@ public final class APTBuilder {
         return (modifiers.flags & Flags.STATIC) != 0;
     }
 
-    public java.util.List<JCVariableDecl> getFields() {
-        java.util.List fields = new ArrayList();
+    public JCVariableDecl[] getFields() {
+        java.util.List<JCVariableDecl> fields = new ArrayList();
         List<JCTree> members = classDecl.defs;
         for (JCTree member : members) {
             if (member instanceof JCVariableDecl) {
-                fields.add(member);
+                fields.add((JCVariableDecl) member);
             }
         }
 
-        return fields;
+        return fields.toArray(new JCVariableDecl[]{});
     }
 
     public JCMethodDecl newGetter(JCVariableDecl field) {
