@@ -1,7 +1,7 @@
-package com.github.braisdom.funcsql.osql;
+package com.github.braisdom.funcsql.sql;
 
-import com.github.braisdom.funcsql.osql.expression.AbstractExpression;
-import com.github.braisdom.funcsql.osql.expression.JoinExpression;
+import com.github.braisdom.funcsql.sql.expression.AbstractExpression;
+import com.github.braisdom.funcsql.sql.expression.JoinExpression;
 
 import java.util.ArrayList;
 import java.util.Arrays;

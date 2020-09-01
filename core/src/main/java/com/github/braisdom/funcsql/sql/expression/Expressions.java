@@ -1,6 +1,6 @@
-package com.github.braisdom.funcsql.osql.expression;
+package com.github.braisdom.funcsql.sql.expression;
 
-import com.github.braisdom.funcsql.osql.Expression;
+import com.github.braisdom.funcsql.sql.Expression;
 
 import java.sql.Timestamp;
 
@@ -49,6 +49,23 @@ public class Expressions {
     public static Expression literal(Double doubleLiteral) {
         return new LiteralExpression(doubleLiteral);
     }
+
+    public static Expression $(String string) {
+        return new LiteralExpression(string);
+    }
+
+    public static Expression $(Integer integer) {
+        return new LiteralExpression(integer);
+    }
+
+    public static Expression $(Float floatLiteral) {
+        return new LiteralExpression(floatLiteral);
+    }
+
+    public static Expression $(Double doubleLiteral) {
+        return new LiteralExpression(doubleLiteral);
+    }
+
 
     public static Expression literal(Timestamp timestamp) {
         return null;

@@ -3,13 +3,7 @@ package com.github.braisdom.funcsql;
 import com.github.braisdom.funcsql.annotations.DomainModel;
 import com.github.braisdom.funcsql.annotations.Queryable;
 import com.github.braisdom.funcsql.annotations.Relation;
-import com.github.braisdom.funcsql.osql.AbstractTable;
-import com.github.braisdom.funcsql.osql.Column;
-import com.github.braisdom.funcsql.osql.DefaultColumn;
 import com.github.braisdom.funcsql.relation.RelationType;
-import com.github.braisdom.funcsql.relation.Relationship;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 
 import java.util.List;
 

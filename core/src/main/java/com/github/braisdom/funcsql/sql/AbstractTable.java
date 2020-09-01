@@ -1,8 +1,7 @@
-package com.github.braisdom.funcsql.osql;
+package com.github.braisdom.funcsql.sql;
 
 import com.github.braisdom.funcsql.Tables;
-import com.github.braisdom.funcsql.annotations.DomainModel;
-import com.github.braisdom.funcsql.osql.expression.AbstractExpression;
+import com.github.braisdom.funcsql.sql.expression.AbstractExpression;
 
 import java.util.Arrays;
 import java.util.Objects;

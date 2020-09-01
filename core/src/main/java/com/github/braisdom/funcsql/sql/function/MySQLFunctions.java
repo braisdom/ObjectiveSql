@@ -1,4 +1,4 @@
-package com.github.braisdom.funcsql.osql.function;
+package com.github.braisdom.funcsql.sql.function;
 
 public class MySQLFunctions extends IsoFunctions {
 }

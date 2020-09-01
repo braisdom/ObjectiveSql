@@ -1,4 +1,4 @@
-package com.github.braisdom.funcsql.osql;
+package com.github.braisdom.funcsql.sql;
 
 import com.github.braisdom.funcsql.DatabaseType;
 

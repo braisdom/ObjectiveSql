@@ -1,4 +1,4 @@
-package com.github.braisdom.funcsql.osql;
+package com.github.braisdom.funcsql.sql;
 
 public class SQLStatementException extends RuntimeException {
     public SQLStatementException() {

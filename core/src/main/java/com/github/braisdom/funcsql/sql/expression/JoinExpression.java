@@ -1,8 +1,8 @@
-package com.github.braisdom.funcsql.osql.expression;
+package com.github.braisdom.funcsql.sql.expression;
 
-import com.github.braisdom.funcsql.osql.Dataset;
-import com.github.braisdom.funcsql.osql.Expression;
-import com.github.braisdom.funcsql.osql.ExpressionContext;
+import com.github.braisdom.funcsql.sql.Dataset;
+import com.github.braisdom.funcsql.sql.Expression;
+import com.github.braisdom.funcsql.sql.ExpressionContext;
 
 import java.util.Objects;
 

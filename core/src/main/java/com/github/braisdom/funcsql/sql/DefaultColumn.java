@@ -1,7 +1,7 @@
-package com.github.braisdom.funcsql.osql;
+package com.github.braisdom.funcsql.sql;
 
 import com.github.braisdom.funcsql.Tables;
-import com.github.braisdom.funcsql.osql.expression.*;
+import com.github.braisdom.funcsql.sql.expression.*;
 
 public class DefaultColumn extends AbstractExpression implements Column {
 

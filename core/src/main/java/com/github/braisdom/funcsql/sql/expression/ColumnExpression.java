@@ -1,8 +1,8 @@
-package com.github.braisdom.funcsql.osql.expression;
+package com.github.braisdom.funcsql.sql.expression;
 
-import com.github.braisdom.funcsql.osql.Column;
-import com.github.braisdom.funcsql.osql.Expression;
-import com.github.braisdom.funcsql.osql.ExpressionContext;
+import com.github.braisdom.funcsql.sql.Column;
+import com.github.braisdom.funcsql.sql.Expression;
+import com.github.braisdom.funcsql.sql.ExpressionContext;
 
 public class ColumnExpression extends AbstractExpression {
 

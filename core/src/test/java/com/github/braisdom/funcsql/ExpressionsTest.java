@@ -1,15 +1,15 @@
 package com.github.braisdom.funcsql;
 
-import com.github.braisdom.funcsql.osql.Dataset;
-import com.github.braisdom.funcsql.osql.Expression;
-import com.github.braisdom.funcsql.osql.ExpressionContext;
+import com.github.braisdom.funcsql.sql.Dataset;
+import com.github.braisdom.funcsql.sql.Expression;
+import com.github.braisdom.funcsql.sql.ExpressionContext;
 import com.sun.tools.javac.util.Assert;
 import org.junit.jupiter.api.Test;
 
 import java.sql.Timestamp;
 
-import static com.github.braisdom.funcsql.osql.expression.Expressions.literal;
-import static com.github.braisdom.funcsql.osql.expression.Expressions.plus;
+import static com.github.braisdom.funcsql.sql.expression.Expressions.literal;
+import static com.github.braisdom.funcsql.sql.expression.Expressions.plus;
 
 public class ExpressionsTest {
 

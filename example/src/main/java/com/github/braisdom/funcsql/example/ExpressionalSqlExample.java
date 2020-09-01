@@ -5,9 +5,8 @@ import com.github.braisdom.funcsql.DatabaseType;
 import com.github.braisdom.funcsql.Databases;
 import com.github.braisdom.funcsql.Tables;
 import com.github.braisdom.funcsql.example.Domains.Member;
-import com.github.braisdom.funcsql.osql.DefaultExpressionContext;
-import com.github.braisdom.funcsql.osql.Select;
-import com.github.braisdom.funcsql.osql.expression.Expressions;
+import com.github.braisdom.funcsql.sql.DefaultExpressionContext;
+import com.github.braisdom.funcsql.sql.Select;
 import org.junit.Assert;
 
 import java.io.File;
@@ -16,8 +15,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import static com.github.braisdom.funcsql.example.Domains.createTables;
-import static com.github.braisdom.funcsql.osql.expression.Expressions.and;
-import static com.github.braisdom.funcsql.osql.expression.Expressions.literal;
+import static com.github.braisdom.funcsql.sql.expression.Expressions.*;
 
 public class ExpressionalSqlExample {
 
@@ -38,7 +36,7 @@ public class ExpressionalSqlExample {
 
         Select select = new Select();
         select.from(member)
-                .where(and(member.name.eq(literal("Jack")), member.gender.eq(literal(0))));
+                .where(and(member.name.eq($("Jack")), member.gender.eq($(0))));
 
         String sql = select.toSql(new DefaultExpressionContext(DatabaseType.SQLite));
         List<Member> members = Tables.query(new BeanModelDescriptor<>(Member.class), sql);

@@ -1,6 +1,4 @@
-package com.github.braisdom.funcsql.osql;
-
-import java.sql.SQLSyntaxErrorException;
+package com.github.braisdom.funcsql.sql;
 
 public interface Sqlizable {
 
