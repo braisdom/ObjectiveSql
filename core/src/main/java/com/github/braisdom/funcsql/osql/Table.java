@@ -19,7 +19,6 @@ public class Table extends AbstractExpression implements Dataset {
 
     @Override
     public String toSql(ExpressionContext expressionContext) {
-
         return expressionContext.quoteTable(domainModel.tableName());
     }
 }
