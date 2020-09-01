@@ -4,6 +4,8 @@ import com.github.braisdom.funcsql.osql.Dataset;
 import com.github.braisdom.funcsql.osql.Expression;
 import com.github.braisdom.funcsql.osql.ExpressionContext;
 
+import java.util.Objects;
+
 public class JoinExpression implements Expression {
     public static final int LEFT_OUTER_JOIN = 1;
     public static final int RIGHT_OUTER_JOIN = 2;
@@ -15,6 +17,8 @@ public class JoinExpression implements Expression {
     public final Expression onExpression;
 
     public JoinExpression(int joinType, Dataset dataset, Expression onExpression) {
+        Objects.requireNonNull(dataset, "The dataset cannot be null");
+        Objects.requireNonNull(onExpression, "The onExpression cannot be null");
         this.joinType = joinType;
         this.dataset = dataset;
         this.onExpression = onExpression;
@@ -27,6 +31,22 @@ public class JoinExpression implements Expression {
 
     @Override
     public String toSql(ExpressionContext expressionContext) {
-        return null;
+        String joinTypeString = null;
+        switch (joinType) {
+            case LEFT_OUTER_JOIN:
+                joinTypeString = "LEFT OUTER JOIN";
+                break;
+            case RIGHT_OUTER_JOIN:
+                joinTypeString = "RIGHT OUTER JOIN";
+                break;
+            case INNER_JOIN:
+                joinTypeString = "FULL JOIN";
+                break;
+            case FULL_JOIN:
+                joinTypeString = "FULL JOIN";
+                break;
+        }
+        return String.format(" %s %s %s ", joinTypeString, dataset.toSql(expressionContext),
+                onExpression.toSql(expressionContext));
     }
 }

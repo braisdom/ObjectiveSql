@@ -103,6 +103,7 @@ public class Select extends AbstractExpression implements Dataset {
         processFrom(expressionContext, sql);
         processWhere(expressionContext, sql);
         processJoins(expressionContext, sql);
+        processGroupBy(expressionContext, sql);
 
         return sql.toString();
     }
@@ -143,6 +144,16 @@ public class Select extends AbstractExpression implements Dataset {
     }
 
     private void processGroupBy(ExpressionContext expressionContext, StringBuilder sql) {
+        if(groupByExpressions.length > 0) {
+            sql.append(" GROUP BY ");
+            String[] groupByStrings = Arrays.stream(groupByExpressions)
+                    .map(groupBy -> groupBy.toSql(expressionContext)).toArray(String[]::new);
+            sql.append(String.join(", ", groupByStrings));
 
+            if(havingExpression != null) {
+                sql.append(" HAVING ");
+                sql.append(havingExpression.toSql(expressionContext));
+            }
+        }
     }
 }
