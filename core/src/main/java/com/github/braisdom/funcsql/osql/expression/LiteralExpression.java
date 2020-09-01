@@ -2,7 +2,7 @@ package com.github.braisdom.funcsql.osql.expression;
 
 import com.github.braisdom.funcsql.osql.ExpressionContext;
 
-public class LiteralExpression extends AbstractExpression {
+final class LiteralExpression extends AbstractExpression {
 
     private final Object rawLiteral;
 

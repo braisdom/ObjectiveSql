@@ -6,28 +6,51 @@ import com.github.braisdom.funcsql.osql.ExpressionContext;
 import com.sun.tools.javac.util.Assert;
 import org.junit.jupiter.api.Test;
 
+import java.sql.Timestamp;
+import java.util.Date;
+
 import static com.github.braisdom.funcsql.osql.expression.Expressions.literal;
 import static com.github.braisdom.funcsql.osql.expression.Expressions.plus;
 
 public class ExpressionsTest {
 
-    private static class DefaultExpressionContext implements ExpressionContext {
+    private static class ExpressionContextTest implements ExpressionContext {
 
         @Override
-        public String getAlias(Dataset dataset) {
+        public String getAlias(Dataset dataset, boolean forceCreate) {
             return null;
         }
 
         @Override
-        public String quote(String quotableString) {
-            return String.format("\"%s\"", quotableString);
+        public String quoteTableName(String tableName) {
+            return null;
+        }
+
+        @Override
+        public String quoteColumnName(String columnName) {
+            return null;
+        }
+
+        @Override
+        public String quoteStringValue(String stringValue) {
+            return null;
+        }
+
+        @Override
+        public String toTimestamp(Timestamp timestamp) {
+            return null;
+        }
+
+        @Override
+        public String toTimestamp(Date date) {
+            return null;
         }
     }
 
     @Test
     public void testPlus() {
         Expression plusExpression = plus(literal(10), literal(20));
-        String sqlPart = plusExpression.toSql(new DefaultExpressionContext());
+        String sqlPart = plusExpression.toSql(new ExpressionContextTest());
         Assert.check(sqlPart.equalsIgnoreCase("10 + 20"));
     }
 }

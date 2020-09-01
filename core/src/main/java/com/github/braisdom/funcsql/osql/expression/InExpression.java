@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class InExpression extends AbstractExpression {
+final class InExpression extends AbstractExpression {
 
     private final List<Expression> expressions = new ArrayList<>();
 
