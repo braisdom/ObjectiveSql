@@ -10,7 +10,6 @@ import com.github.braisdom.funcsql.util.WordUtil;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import java.lang.reflect.Field;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -18,7 +17,7 @@ import java.util.*;
  * @author braisdom
  * @since 1.0
  */
-public final class Table {
+public final class Tables {
 
     public static final String DEFAULT_PRIMARY_KEY = "id";
     public static final String DEFAULT_KEY_SUFFIX = "id";
@@ -102,7 +101,7 @@ public final class Table {
     }
 
     public static final void installValidator(Validator validator) {
-        Table.validator = validator;
+        Tables.validator = validator;
     }
 
     public static final void validate(Object bean) throws ValidationException {
@@ -141,17 +140,17 @@ public final class Table {
     }
 
     public static final <T> List<T> query(DomainModelDescriptor<T> domainModelDescriptor, String sql, Object... params) throws SQLException {
-        return (List<T>) Database.execute((connection, sqlExecutor) ->
+        return (List<T>) Databases.execute((connection, sqlExecutor) ->
                 sqlExecutor.query(connection, sql, domainModelDescriptor, params));
     }
 
     public static final int execute(String sql, Object... params) throws SQLException {
-        return Database.execute((connection, sqlExecutor) ->
+        return Databases.execute((connection, sqlExecutor) ->
                 sqlExecutor.execute(connection, sql, params));
     }
 
     public static final int count(Class<?> domainModelClass, String predicate, Object... params) throws SQLException {
-        Query<?> query = Database.getQueryFactory().createQuery(domainModelClass);
+        Query<?> query = Databases.getQueryFactory().createQuery(domainModelClass);
         String countAlias = "_count";
         List rows = query.select("COUNT(*) AS " + countAlias).where(predicate, params).execute();
 

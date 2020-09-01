@@ -1,6 +1,6 @@
 package com.github.braisdom.funcsql.example;
 
-import com.github.braisdom.funcsql.Database;
+import com.github.braisdom.funcsql.Databases;
 import com.github.braisdom.funcsql.relation.Relationship;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.Assert;
@@ -65,8 +65,8 @@ public class RelationExample {
         if (file.exists())
             file.delete();
 
-        Database.installConnectionFactory(new SqliteConnectionFactory(file.getPath()));
-        Connection connection = Database.getConnectionFactory().getConnection();
+        Databases.installConnectionFactory(new SqliteConnectionFactory(file.getPath()));
+        Connection connection = Databases.getConnectionFactory().getConnection();
         Domains.createTables(connection);
 
         prepareRelationData();

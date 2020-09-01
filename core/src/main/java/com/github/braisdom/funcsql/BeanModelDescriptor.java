@@ -32,7 +32,7 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
     public BeanModelDescriptor(Class<T> domainModelClass) {
         Objects.requireNonNull(domainModelClass, "The domainModelClass cannot be null");
 
-        if(Table.getPrimaryKey(domainModelClass) == null)
+        if(Tables.getPrimaryKey(domainModelClass) == null)
             throw new DomainModelException(String.format("The %s has no primary key", domainModelClass.getSimpleName()));
 
         this.domainModelClass = domainModelClass;
@@ -66,12 +66,12 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
 
     @Override
     public String getTableName() {
-        return Table.getTableName(domainModelClass);
+        return Tables.getTableName(domainModelClass);
     }
 
     @Override
     public PrimaryKey getPrimaryKey() {
-        return Table.getPrimaryKey(domainModelClass);
+        return Tables.getPrimaryKey(domainModelClass);
     }
 
     @Override
@@ -134,7 +134,7 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
 
     protected Field[] getColumnizableFields(Class domainModelClass, boolean insertable, boolean updatable) {
         DomainModel domainModel = (DomainModel) domainModelClass.getAnnotation(DomainModel.class);
-        Field primaryField = Table.getPrimaryField(domainModelClass);
+        Field primaryField = Tables.getPrimaryField(domainModelClass);
         Field[] fields = domainModelClass.getDeclaredFields();
 
         if (domainModel.allFieldsPersistent()) {

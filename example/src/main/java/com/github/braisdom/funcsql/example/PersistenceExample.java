@@ -1,6 +1,6 @@
 package com.github.braisdom.funcsql.example;
 
-import com.github.braisdom.funcsql.Database;
+import com.github.braisdom.funcsql.Databases;
 import com.github.braisdom.funcsql.Validator;
 import com.google.gson.GsonBuilder;
 import org.junit.Assert;
@@ -171,8 +171,8 @@ public class PersistenceExample {
         if (file.exists())
             file.delete();
 
-        Database.installConnectionFactory(new SqliteConnectionFactory(file.getPath()));
-        Domains.createTables(Database.getConnectionFactory().getConnection());
+        Databases.installConnectionFactory(new SqliteConnectionFactory(file.getPath()));
+        Domains.createTables(Databases.getConnectionFactory().getConnection());
 
         createSimpleMember();
         createSimpleMemberCopyFromMap();

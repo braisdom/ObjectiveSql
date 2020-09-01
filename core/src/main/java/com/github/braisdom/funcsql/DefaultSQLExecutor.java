@@ -13,7 +13,7 @@ import java.util.List;
 
 public class DefaultSQLExecutor<T> implements SQLExecutor<T> {
 
-    private static final Logger logger = Database.getLoggerFactory().create(DefaultSQLExecutor.class);
+    private static final Logger logger = Databases.getLoggerFactory().create(DefaultSQLExecutor.class);
     private final QueryRunner queryRunner;
 
     public DefaultSQLExecutor() {
@@ -23,7 +23,7 @@ public class DefaultSQLExecutor<T> implements SQLExecutor<T> {
     @Override
     public List<T> query(Connection connection, String sql, DomainModelDescriptor domainModelDescriptor,
                          Object... params) throws SQLException {
-        return Database.sqlBenchmarking(()->
+        return Databases.sqlBenchmarking(()->
                 queryRunner.query(connection, sql,
                         new DomainModelListHandler(domainModelDescriptor, connection.getMetaData()), params), logger, sql, params);
     }
@@ -31,7 +31,7 @@ public class DefaultSQLExecutor<T> implements SQLExecutor<T> {
     @Override
     public T insert(Connection connection, String sql,
                     DomainModelDescriptor domainModelDescriptor, Object... params) throws SQLException {
-        return (T) Database.sqlBenchmarking(() ->
+        return (T) Databases.sqlBenchmarking(() ->
                 queryRunner.insert(connection, sql,
                         new DomainModelHandler(domainModelDescriptor, connection.getMetaData()), params), logger, sql, params);
     }
@@ -39,13 +39,13 @@ public class DefaultSQLExecutor<T> implements SQLExecutor<T> {
     @Override
     public int[] insert(Connection connection, String sql,
                       DomainModelDescriptor domainModelDescriptor, Object[][] params) throws SQLException {
-        return Database.sqlBenchmarking(() ->
+        return Databases.sqlBenchmarking(() ->
                 queryRunner.insertBatch(connection, sql, params), logger, sql, params);
     }
 
     @Override
     public int execute(Connection connection, String sql, Object... params) throws SQLException {
-        return Database.sqlBenchmarking(() ->
+        return Databases.sqlBenchmarking(() ->
                 queryRunner.update(connection, sql, params), logger, sql, params);
     }
 }
@@ -53,7 +53,7 @@ public class DefaultSQLExecutor<T> implements SQLExecutor<T> {
 abstract class AbstractResultSetHandler<T> implements ResultSetHandler<T> {
 
     protected Object getValue(Class fieldType, Object value) {
-        JDBCDataTypeRiser dataTypeRiser = Database.getJdbcDataTypeRiser();
+        JDBCDataTypeRiser dataTypeRiser = Databases.getJdbcDataTypeRiser();
         if(Float.class.isAssignableFrom(fieldType) )
             return dataTypeRiser.risingFloat(value);
         else if(Double.class.isAssignableFrom(fieldType))

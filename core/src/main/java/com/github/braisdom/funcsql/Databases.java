@@ -11,7 +11,7 @@ import java.util.Objects;
 import java.util.logging.Level;
 
 @SuppressWarnings("ALL")
-public final class Database {
+public final class Databases {
 
     private static QueryFactory queryFactory = new QueryFactory() {
         @Override
@@ -75,46 +75,46 @@ public final class Database {
     public static void installConnectionFactory(ConnectionFactory connectionFactory) {
         Objects.requireNonNull(connectionFactory, "The connectionFactory cannot be null");
 
-        Database.connectionFactory = connectionFactory;
+        Databases.connectionFactory = connectionFactory;
     }
 
     public static void installSqlExecutor(SQLExecutor sqlExecutor) {
         Objects.requireNonNull(sqlExecutor, "The sqlExecutor cannot be null");
 
-        Database.sqlExecutor = sqlExecutor;
+        Databases.sqlExecutor = sqlExecutor;
     }
 
     public static void installQueryFacotry(QueryFactory queryFactory) {
         Objects.requireNonNull(sqlExecutor, "The queryFactory cannot be null");
 
-        Database.queryFactory = queryFactory;
+        Databases.queryFactory = queryFactory;
     }
 
     public static void installPersistenceFactory(PersistenceFactory persistenceFactory) {
         Objects.requireNonNull(sqlExecutor, "The persistenceFactory cannot be null");
 
-        Database.persistenceFactory = persistenceFactory;
+        Databases.persistenceFactory = persistenceFactory;
     }
 
     public static void installLoggerFactory(LoggerFactory loggerFactory) {
         Objects.requireNonNull(sqlExecutor, "The loggerFactory cannot be null");
 
-        Database.loggerFactory = loggerFactory;
+        Databases.loggerFactory = loggerFactory;
     }
 
     public static void installQuoter(Quoter quoter) {
         Objects.requireNonNull(sqlExecutor, "The quoter cannot be null");
 
-        Database.quoter = quoter;
+        Databases.quoter = quoter;
     }
 
     public static void installStandardDataTypeRiser(JDBCDataTypeRiser JDBCDataTypeRiser) {
-        Database.jdbcDataTypeRiser = JDBCDataTypeRiser;
+        Databases.jdbcDataTypeRiser = JDBCDataTypeRiser;
     }
 
     public static <T, R> R execute(DatabaseInvoke<T, R> databaseInvoke) throws SQLException {
-        ConnectionFactory connectionFactory = Database.getConnectionFactory();
-        SQLExecutor<T> sqlExecutor = Database.getSqlExecutor();
+        ConnectionFactory connectionFactory = Databases.getConnectionFactory();
+        SQLExecutor<T> sqlExecutor = Databases.getSqlExecutor();
         Connection connection = connectionFactory.getConnection();
 
         try {

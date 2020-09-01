@@ -36,9 +36,9 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
         Objects.requireNonNull(dirtyObject, "The dirtyObject cannot be null");
 
         if(!skipValidation)
-            Table.validate(dirtyObject);
+            Tables.validate(dirtyObject);
 
-        return Database.execute((connection, sqlExecutor) -> {
+        return Databases.execute((connection, sqlExecutor) -> {
             String[] columnNames = domainModelDescriptor.getInsertableColumns();
             String tableName = domainModelDescriptor.getTableName();
             String sql = formatInsertSql(tableName, columnNames);
@@ -66,9 +66,9 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
         Objects.requireNonNull(dirtyObjects, "The dirtyObject cannot be null");
 
         if(!skipValidation)
-            Table.validate(dirtyObjects);
+            Tables.validate(dirtyObjects);
 
-        return Database.execute((connection, sqlExecutor) -> {
+        return Databases.execute((connection, sqlExecutor) -> {
             String[] columnNames = domainModelDescriptor.getInsertableColumns();
             Object[][] values = new Object[dirtyObjects.length][columnNames.length];
 
@@ -98,12 +98,12 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
         Objects.requireNonNull(dirtyObject, "The dirtyObject cannot be null");
 
         if(!skipValidation)
-            Table.validate(dirtyObject);
+            Tables.validate(dirtyObject);
 
         PrimaryKey primaryKey = domainModelDescriptor.getPrimaryKey();
         ensurePrimaryKeyNotNull(primaryKey);
 
-        return Database.execute((connection, sqlExecutor) -> {
+        return Databases.execute((connection, sqlExecutor) -> {
             String[] rawColumnNames = domainModelDescriptor.getUpdatableColumns();
             String[] columnNames = Arrays.stream(rawColumnNames)
                     .filter(rawColumnName -> {
@@ -144,7 +144,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
         ensureNotBlank(updates, "updates");
         ensureNotBlank(updates, "predication");
 
-        return Database.execute((connection, sqlExecutor) -> {
+        return Databases.execute((connection, sqlExecutor) -> {
             String sql = formatUpdateSql(domainModelDescriptor.getTableName(), updates, predication);
             return sqlExecutor.execute(connection, sql);
         });
@@ -155,7 +155,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
         Objects.requireNonNull(predication, "The criteria cannot be null");
         ensureNotBlank(predication, "predication");
 
-        return Database.execute((connection, sqlExecutor) -> {
+        return Databases.execute((connection, sqlExecutor) -> {
             String sql = formatDeleteSql(domainModelDescriptor.getTableName(), predication);
             return sqlExecutor.execute(connection, sql);
         });
@@ -168,8 +168,8 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
         PrimaryKey primaryKey = domainModelDescriptor.getPrimaryKey();
         ensurePrimaryKeyNotNull(primaryKey);
 
-        return Database.execute((connection, sqlExecutor) -> {
-            Quoter quoter = Database.getQuoter();
+        return Databases.execute((connection, sqlExecutor) -> {
+            Quoter quoter = Databases.getQuoter();
             String sql = formatDeleteSql(domainModelDescriptor.getTableName(),
                     String.format("%s = %s", quoter.quoteColumn(primaryKey.name()), quoter.quoteValue(id)));
             return sqlExecutor.execute(connection, sql);
@@ -180,7 +180,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
     public int execute(String sql) throws SQLException {
         Objects.requireNonNull(sql, "The sql cannot be null");
 
-        return Database.execute((connection, sqlExecutor) ->
+        return Databases.execute((connection, sqlExecutor) ->
                 sqlExecutor.execute(connection, sql));
     }
 

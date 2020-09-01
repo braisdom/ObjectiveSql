@@ -19,7 +19,7 @@ public class DefaultQuery<T> extends AbstractQuery<T> {
 
     @Override
     public List<T> execute(Relationship... relationships) throws SQLException {
-        ConnectionFactory connectionFactory = Database.getConnectionFactory();
+        ConnectionFactory connectionFactory = Databases.getConnectionFactory();
         Connection connection = connectionFactory.getConnection();
 
         try {

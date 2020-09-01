@@ -1,7 +1,7 @@
 package com.github.braisdom.funcsql.generator;
 
 import com.github.braisdom.funcsql.Query;
-import com.github.braisdom.funcsql.Table;
+import com.github.braisdom.funcsql.Tables;
 import com.github.braisdom.funcsql.annotations.Queryable;
 import com.github.braisdom.funcsql.util.WordUtil;
 import com.google.auto.service.AutoService;
@@ -31,7 +31,7 @@ public class QueryMethodCodeGenerator extends DomainModelProcessor {
 
         statementBuilder.append(aptBuilder.newGenericsType(Query.class, aptBuilder.getClassName()),
                 "query", aptBuilder.getClassName(), "createQuery");
-        statementBuilder.append(String.class, "columnName", Table.class, "getColumnName",
+        statementBuilder.append(String.class, "columnName", Tables.class, "getColumnName",
                 aptBuilder.classRef(aptBuilder.getClassName()), treeMaker.Literal(field.getName().toString()));
         JCTree.JCExpression stringFormatExpression = aptBuilder.staticMethodCall(String.class,
                 "format", treeMaker.Literal("%s = ?"), treeMaker.Literal(field.name.toString()));

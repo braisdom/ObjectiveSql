@@ -63,10 +63,10 @@ public class RelationshipNetwork implements RelationProcessor.Context {
 
     protected List queryObjects(Class clazz, String associatedColumnName,
                                 Object[] associatedValues, String condition) throws SQLException {
-        String relationTableName = Table.getTableName(clazz);
+        String relationTableName = Tables.getTableName(clazz);
 
-        SQLExecutor sqlExecutor = Database.getSqlExecutor();
-        Quoter quoter = Database.getQuoter();
+        SQLExecutor sqlExecutor = Databases.getSqlExecutor();
+        Quoter quoter = Databases.getQuoter();
 
         String relationConditions = StringUtil.isBlank(condition)
                 ? String.format(" %s IN (%s) ", associatedColumnName, quoter.quoteValue(associatedValues))

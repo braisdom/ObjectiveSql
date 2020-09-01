@@ -1,7 +1,7 @@
 package com.github.braisdom.funcsql.relation;
 
 import com.github.braisdom.funcsql.DomainModelException;
-import com.github.braisdom.funcsql.Table;
+import com.github.braisdom.funcsql.Tables;
 import com.github.braisdom.funcsql.annotations.PrimaryKey;
 import com.github.braisdom.funcsql.annotations.Relation;
 import com.github.braisdom.funcsql.reflection.PropertyUtils;
@@ -64,12 +64,12 @@ public final class Relationship {
     public String getPrimaryKey() {
         if (StringUtil.isBlank(relation.primaryKey())) {
             if (isBelongsTo()) {
-                PrimaryKey primaryKey = Table.getPrimaryKey(getBaseClass());
+                PrimaryKey primaryKey = Tables.getPrimaryKey(getBaseClass());
                 if(primaryKey == null)
                     throw new DomainModelException(String.format("The %s has no primary key", getBaseClass().getSimpleName()));
                 return primaryKey.name();
             } else {
-                PrimaryKey primaryKey = Table.getPrimaryKey(getRelatedClass());
+                PrimaryKey primaryKey = Tables.getPrimaryKey(getRelatedClass());
                 if(primaryKey == null)
                     throw new DomainModelException(String.format("The %s has no primary key", getRelatedClass().getSimpleName()));
                 return primaryKey.name();
@@ -82,10 +82,10 @@ public final class Relationship {
         if (StringUtil.isBlank(relation.foreignKey())) {
             if (isBelongsTo()) {
                 String rawForeignKey = getRelatedClass().getSimpleName();
-                return Table.encodeDefaultKey(WordUtil.underscore(rawForeignKey));
+                return Tables.encodeDefaultKey(WordUtil.underscore(rawForeignKey));
             } else {
                 String rawForeignKey = baseClass.getSimpleName();
-                return Table.encodeDefaultKey(WordUtil.underscore(rawForeignKey));
+                return Tables.encodeDefaultKey(WordUtil.underscore(rawForeignKey));
             }
         } else
             return relation.foreignKey();
@@ -94,9 +94,9 @@ public final class Relationship {
     public String getPrimaryAssociationFieldName() {
         if (StringUtil.isBlank(relation.primaryFieldName())) {
             if(isBelongsTo())
-                return Table.getPrimaryField(getRelatedClass()).getName();
+                return Tables.getPrimaryField(getRelatedClass()).getName();
             else
-                return Table.getPrimaryField(getBaseClass()).getName();
+                return Tables.getPrimaryField(getBaseClass()).getName();
         } else
             return relation.primaryFieldName();
     }
@@ -105,10 +105,10 @@ public final class Relationship {
         if (StringUtil.isBlank(relation.foreignFieldName())) {
             if (isBelongsTo()) {
                 String rawForeignFieldName = WordUtil.underscore(getRelatedClass().getSimpleName());
-                return WordUtil.camelize(Table.encodeDefaultKey(rawForeignFieldName), true);
+                return WordUtil.camelize(Tables.encodeDefaultKey(rawForeignFieldName), true);
             } else {
                 String rawForeignFieldName = WordUtil.underscore(getBaseClass().getSimpleName());
-                return WordUtil.camelize(Table.encodeDefaultKey(rawForeignFieldName), true);
+                return WordUtil.camelize(Tables.encodeDefaultKey(rawForeignFieldName), true);
             }
         } else
             return relation.foreignFieldName();

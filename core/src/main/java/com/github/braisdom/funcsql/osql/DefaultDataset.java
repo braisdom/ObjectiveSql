@@ -11,20 +11,20 @@ import java.util.Objects;
 
 public class DefaultDataset<T> extends AbstractExpression implements Dataset<T> {
 
-    private final DomainModel domainModel;
-    private final Class<T> modelClass;
+    protected final DomainModel domainModel;
+    protected final Class<T> modelClass;
 
-    private Expression[] projections;
-    private Dataset[] fromDatasets;
-    private Expression whereExpression;
-    private List<Join> joins;
-    private Expression[] groupByExpressions;
-    private Expression havingExpression;
-    private Expression[] orderByExpressions;
-    private int limit = -1;
-    private int offset = -1;
-    private Dataset[] unionDatasets;
-    private Dataset[] unionAllDatasets;
+    protected Expression[] projections;
+    protected Dataset[] fromDatasets;
+    protected Expression whereExpression;
+    protected List<Join> joins;
+    protected Expression[] groupByExpressions;
+    protected Expression havingExpression;
+    protected Expression[] orderByExpressions;
+    protected int limit = -1;
+    protected int offset = -1;
+    protected Dataset[] unionDatasets;
+    protected Dataset[] unionAllDatasets;
 
     public DefaultDataset(Class<T> modelClass) {
         Objects.requireNonNull(modelClass, "The modelClass cannot be null");

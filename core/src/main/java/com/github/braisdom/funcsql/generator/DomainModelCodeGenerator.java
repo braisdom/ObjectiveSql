@@ -94,7 +94,7 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
         JCModifiers modifiers = treeMaker.Modifiers(Flags.PUBLIC | Flags.STATIC | Flags.FINAL);
 
         JCMethodInvocation methodInvocation = treeMaker.Apply(List.nil(),
-                treeMaker.Select(aptBuilder.typeRef(Table.class), aptBuilder.toName("getTableName")),
+                treeMaker.Select(aptBuilder.typeRef(Tables.class), aptBuilder.toName("getTableName")),
                 List.of(aptBuilder.classRef(aptBuilder.getClassName())));
         JCVariableDecl tableNameField = treeMaker.VarDef(modifiers,
                 aptBuilder.toName("TABLE_NAME"), aptBuilder.typeRef(String.class), methodInvocation);
@@ -106,7 +106,7 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
         MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
         StatementBuilder statementBuilder = aptBuilder.createBlockBuilder();
 
-        statementBuilder.append(aptBuilder.typeRef(QueryFactory.class), "queryFactory", Database.class,
+        statementBuilder.append(aptBuilder.typeRef(QueryFactory.class), "queryFactory", Databases.class,
                 "getQueryFactory", List.nil());
 
         methodBuilder.setReturnStatement("queryFactory", "createQuery", aptBuilder.classRef(aptBuilder.getClassName()));
@@ -121,7 +121,7 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
         MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
         StatementBuilder statementBuilder = aptBuilder.createBlockBuilder();
 
-        statementBuilder.append(aptBuilder.typeRef(PersistenceFactory.class), "persistenceFactory", Database.class,
+        statementBuilder.append(aptBuilder.typeRef(PersistenceFactory.class), "persistenceFactory", Databases.class,
                 "getPersistenceFactory", List.nil());
 
         methodBuilder.setReturnStatement("persistenceFactory", "createPersistence",
@@ -275,7 +275,7 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
     private void handleExecuteMethod(APTBuilder aptBuilder) {
         MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
 
-        methodBuilder.setReturnStatement(Table.class, "execute",
+        methodBuilder.setReturnStatement(Tables.class, "execute",
                 aptBuilder.varRef("sql"), aptBuilder.varRef("params"));
 
         aptBuilder.inject(methodBuilder
@@ -329,7 +329,7 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
         MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
         StatementBuilder statementBuilder = aptBuilder.createBlockBuilder();
 
-        methodBuilder.setReturnStatement(Table.class, "query", aptBuilder.classRef(aptBuilder.getClassName()),
+        methodBuilder.setReturnStatement(Tables.class, "query", aptBuilder.classRef(aptBuilder.getClassName()),
                 aptBuilder.varRef("sql"), aptBuilder.varRef("params"));
         aptBuilder.inject(methodBuilder
                 .addStatements(statementBuilder.build())
@@ -382,7 +382,7 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
     private void handleCountMethod(APTBuilder aptBuilder) {
         MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
 
-        methodBuilder.setReturnStatement(Table.class, "count", aptBuilder.classRef(aptBuilder.getClassName()),
+        methodBuilder.setReturnStatement(Tables.class, "count", aptBuilder.classRef(aptBuilder.getClassName()),
                 aptBuilder.varRef("sql"), aptBuilder.varRef("params"));
 
         aptBuilder.inject(methodBuilder
@@ -397,7 +397,7 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
         MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
         TreeMaker treeMaker = aptBuilder.getTreeMaker();
 
-        JCTree.JCExpression methodRef = treeMaker.Select(aptBuilder.typeRef(Table.class),
+        JCTree.JCExpression methodRef = treeMaker.Select(aptBuilder.typeRef(Tables.class),
                 aptBuilder.toName("validate"));
         JCReturn jcReturn = treeMaker.Return(treeMaker.Apply(List.nil(), methodRef, List.of(aptBuilder.varRef("this"),
                 aptBuilder.getTreeMaker().Literal(true))));

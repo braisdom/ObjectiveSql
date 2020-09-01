@@ -28,6 +28,4 @@ public @interface DomainModel {
     boolean allFieldsPersistent() default true;
 
     boolean disableGeneratedId() default false;
-
-    Class<? extends TableDefinition> definition() default TableDefinition.class;
 }

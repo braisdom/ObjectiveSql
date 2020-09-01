@@ -70,11 +70,11 @@ public abstract class AbstractQuery<T> implements Query<T> {
     }
 
     protected <C> List<C> executeInternally(Connection connection, String sql) throws SQLException {
-        SQLExecutor sqlExecutor = Database.getSqlExecutor();
+        SQLExecutor sqlExecutor = Databases.getSqlExecutor();
         return sqlExecutor.query(connection, sql, domainModelDescriptor, params);
     }
 
     protected String getTableName(Class tableClass) {
-        return Table.getTableName(tableClass);
+        return Tables.getTableName(tableClass);
     }
 }
