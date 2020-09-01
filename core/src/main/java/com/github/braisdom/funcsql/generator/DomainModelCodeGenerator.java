@@ -7,13 +7,13 @@ import com.github.braisdom.funcsql.annotations.Transient;
 import com.github.braisdom.funcsql.reflection.ClassUtils;
 import com.github.braisdom.funcsql.reflection.PropertyUtils;
 import com.github.braisdom.funcsql.relation.Relationship;
-import com.google.auto.service.AutoService;
 import com.sun.tools.javac.code.Flags;
 import com.sun.tools.javac.code.TypeTag;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.JCTree.*;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.List;
+import org.mangosdk.spi.ProviderFor;
 
 import javax.annotation.processing.Processor;
 import java.lang.annotation.Annotation;
@@ -21,7 +21,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-@AutoService(Processor.class)
+@ProviderFor(Processor.class)
 public class DomainModelCodeGenerator extends DomainModelProcessor {
 
     @Override

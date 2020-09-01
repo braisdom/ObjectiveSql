@@ -4,17 +4,17 @@ import com.github.braisdom.funcsql.annotations.Relation;
 import com.github.braisdom.funcsql.relation.RelationType;
 import com.github.braisdom.funcsql.relation.Relationship;
 import com.github.braisdom.funcsql.util.WordUtil;
-import com.google.auto.service.AutoService;
 import com.sun.tools.javac.code.Flags;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.JCTree.JCExpression;
 import com.sun.tools.javac.tree.JCTree.JCModifiers;
 import com.sun.tools.javac.tree.TreeMaker;
+import org.mangosdk.spi.ProviderFor;
 
 import javax.annotation.processing.Processor;
 import java.lang.annotation.Annotation;
 
-@AutoService(Processor.class)
+@ProviderFor(Processor.class)
 public class RelationFieldCodeGenerator extends DomainModelProcessor {
 
     @Override

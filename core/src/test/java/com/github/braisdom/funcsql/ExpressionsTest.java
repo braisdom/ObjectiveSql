@@ -6,8 +6,8 @@ import com.github.braisdom.funcsql.osql.ExpressionContext;
 import com.sun.tools.javac.util.Assert;
 import org.junit.jupiter.api.Test;
 
-import static com.github.braisdom.funcsql.osql.Expressions.literal;
-import static com.github.braisdom.funcsql.osql.Expressions.plus;
+import static com.github.braisdom.funcsql.osql.expression.Expressions.literal;
+import static com.github.braisdom.funcsql.osql.expression.Expressions.plus;
 
 public class ExpressionsTest {
 

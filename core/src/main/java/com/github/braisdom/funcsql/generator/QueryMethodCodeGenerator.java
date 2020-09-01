@@ -4,17 +4,17 @@ import com.github.braisdom.funcsql.Query;
 import com.github.braisdom.funcsql.Tables;
 import com.github.braisdom.funcsql.annotations.Queryable;
 import com.github.braisdom.funcsql.util.WordUtil;
-import com.google.auto.service.AutoService;
 import com.sun.tools.javac.code.Flags;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.List;
+import org.mangosdk.spi.ProviderFor;
 
 import javax.annotation.processing.Processor;
 import java.lang.annotation.Annotation;
 import java.sql.SQLException;
 
-@AutoService(Processor.class)
+@ProviderFor(Processor.class)
 public class QueryMethodCodeGenerator extends DomainModelProcessor {
 
     @Override
