@@ -7,11 +7,11 @@ public interface ExpressionContext {
 
     String getAlias(Dataset dataset, boolean forceCreate);
 
-    String quoteTableName(String tableName);
+    String quoteTable(String tableName);
 
-    String quoteColumnName(String columnName);
+    String quoteColumn(String columnName);
 
-    String quoteStringValue(String stringValue);
+    String quoteString(String stringValue);
 
     String toTimestamp(Timestamp timestamp);
 

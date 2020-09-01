@@ -22,17 +22,17 @@ public class ExpressionsTest {
         }
 
         @Override
-        public String quoteTableName(String tableName) {
+        public String quoteTable(String tableName) {
             return null;
         }
 
         @Override
-        public String quoteColumnName(String columnName) {
+        public String quoteColumn(String columnName) {
             return null;
         }
 
         @Override
-        public String quoteStringValue(String stringValue) {
+        public String quoteString(String stringValue) {
             return null;
         }
 

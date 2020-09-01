@@ -3,7 +3,7 @@ package com.github.braisdom.funcsql.osql.expression;
 import com.github.braisdom.funcsql.osql.Expression;
 import com.github.braisdom.funcsql.osql.ExpressionContext;
 
-final class BetweenExpression extends AbstractExpression {
+public class BetweenExpression extends AbstractExpression {
 
     private final Expression left;
     private final Expression right;

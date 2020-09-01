@@ -6,7 +6,7 @@ import com.github.braisdom.funcsql.osql.ExpressionContext;
 import java.util.Arrays;
 import java.util.List;
 
-final class PolynaryExpression extends AbstractExpression {
+public class PolynaryExpression extends AbstractExpression {
 
     public static final String PLUS = " + ";
     public static final String MINUS = " - ";

@@ -3,7 +3,7 @@ package com.github.braisdom.funcsql.osql.expression;
 import com.github.braisdom.funcsql.osql.Expression;
 import com.github.braisdom.funcsql.osql.ExpressionContext;
 
-final class ParenExpression extends AbstractExpression {
+public class ParenExpression extends AbstractExpression {
 
     private final Expression expression;
 
