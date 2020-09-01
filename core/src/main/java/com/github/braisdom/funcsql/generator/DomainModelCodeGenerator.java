@@ -49,7 +49,7 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
         handleValidateMethod(aptBuilder);
         handleNewInstanceFromMethod(aptBuilder);
         handleRawAttributesField(aptBuilder);
-        handleTableClass(aptBuilder);
+        handleInnerTableClass(aptBuilder);
     }
 
     @Override
@@ -474,13 +474,13 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
                 .build("getRawAttributes", Flags.PUBLIC | Flags.FINAL));
     }
 
-    private void handleTableClass(APTBuilder aptBuilder) {
+    private void handleInnerTableClass(APTBuilder aptBuilder) {
         JCClassDecl classDecl = aptBuilder.classDef(Flags.PUBLIC | Flags.FINAL | Flags.STATIC,
                 "Table", AbstractTable.class);
         StatementBuilder statementBuilder = aptBuilder.createStatementBuilder();
         statementBuilder.append("super", aptBuilder.classRef(aptBuilder.getClassName()));
 
-        JCMethodDecl constructor = aptBuilder.createConstructor(Flags.PUBLIC, List.nil(), statementBuilder.build());
+        JCMethodDecl constructor = aptBuilder.createConstructor(Flags.PRIVATE, List.nil(), statementBuilder.build());
         classDecl.defs = classDecl.defs.append(constructor);
 
         aptBuilder.inject(classDecl);
