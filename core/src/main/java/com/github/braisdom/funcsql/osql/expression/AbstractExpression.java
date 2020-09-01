@@ -12,7 +12,7 @@ public abstract class AbstractExpression implements Expression {
         return this;
     }
 
-    protected String getAlias() {
+    public String getAlias() {
         return alias;
     }
 }

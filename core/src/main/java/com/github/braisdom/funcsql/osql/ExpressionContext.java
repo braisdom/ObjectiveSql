@@ -1,7 +1,6 @@
 package com.github.braisdom.funcsql.osql;
 
 import java.sql.Timestamp;
-import java.util.Date;
 
 public interface ExpressionContext {
 
