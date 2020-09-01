@@ -1,6 +1,7 @@
 package com.github.braisdom.funcsql.example;
 
 import com.github.braisdom.funcsql.Databases;
+import com.github.braisdom.funcsql.example.Domains.Member;
 import com.github.braisdom.funcsql.relation.Relationship;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.Assert;
@@ -12,16 +13,18 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.github.braisdom.funcsql.example.Domains.*;
+
 public class RelationExample {
 
     private static final String[] MEMBER_NAMES = {"Joe", "Juan", "Jack", "Albert", "Jonathan", "Justin", "Terry"};
 
     private static void prepareRelationData() throws SQLException {
-        List<Domains.Member> members = new ArrayList<>();
-        List<Domains.Order> orders = new ArrayList<>();
+        List<Member> members = new ArrayList<>();
+        List<Order> orders = new ArrayList<>();
 
         for (int i = 1; i <= 6; i++) {
-            members.add(new Domains.Member()
+            members.add(new Member()
                     .setId(i)
                     .setNo("Q200000" + i)
                     .setName(MEMBER_NAMES[i])
@@ -30,7 +33,7 @@ public class RelationExample {
         }
 
         for (int i = 0; i < 100; i++) {
-            orders.add(new Domains.Order()
+            orders.add(new Order()
                     .setNo("20200000" + i)
                     .setMemberId(i % 6 + 1)
                     .setAmount(RandomUtils.nextFloat(10.0f, 30.0f))
@@ -38,23 +41,23 @@ public class RelationExample {
                     .setSalesAt(Timestamp.valueOf("2020-05-01 09:30:00")));
         }
 
-        int[] createdMembersCount = Domains.Member.create(members.toArray(new Domains.Member[]{}), true);
-        int[] createdOrderCount = Domains.Order.create(orders.toArray(new Domains.Order[]{}), true);
+        int[] createdMembersCount = Member.create(members.toArray(new Member[]{}), true);
+        int[] createdOrderCount = Order.create(orders.toArray(new Order[]{}), true);
 
         Assert.assertEquals(createdMembersCount.length, 6);
         Assert.assertEquals(createdOrderCount.length, 100);
     }
 
     private static void queryFirstMemberWithOrders() throws SQLException {
-        Domains.Member member = Domains.Member.queryFirst("id = ?", new Relationship[]{Domains.Member.HAS_MANY_ORDERS}, 3);
+        Member member = Member.queryFirst("id = ?", new Relationship[]{Member.HAS_MANY_ORDERS}, 3);
 
         Assert.assertNotNull(member);
         Assert.assertTrue(member.getOrders().size() > 0);
     }
 
     private static void queryManyMembersWithOrders() throws SQLException {
-        List<Domains.Member> members = Domains.Member.query("id > (?)",
-                new Relationship[]{Domains.Member.HAS_MANY_ORDERS}, 1);
+        List<Member> members = Member.query("id > (?)",
+                new Relationship[]{Member.HAS_MANY_ORDERS}, 1);
 
         System.out.println();
     }
@@ -67,7 +70,7 @@ public class RelationExample {
 
         Databases.installConnectionFactory(new SqliteConnectionFactory(file.getPath()));
         Connection connection = Databases.getConnectionFactory().getConnection();
-        Domains.createTables(connection);
+        createTables(connection);
 
         prepareRelationData();
         queryFirstMemberWithOrders();
