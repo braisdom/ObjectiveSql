@@ -1,4 +1,4 @@
-package com.github.braisdom.objsql.generator;
+package com.github.braisdom.objsql.apt;
 
 import com.sun.tools.javac.api.JavacTrees;
 import com.sun.tools.javac.processing.JavacProcessingEnvironment;

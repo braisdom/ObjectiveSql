@@ -19,7 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.github.braisdom.objsql.generator;
+package com.github.braisdom.objsql.apt;
 
 import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.Tree;

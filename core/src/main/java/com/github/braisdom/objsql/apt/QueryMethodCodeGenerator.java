@@ -1,4 +1,4 @@
-package com.github.braisdom.objsql.generator;
+package com.github.braisdom.objsql.apt;
 
 import com.github.braisdom.objsql.Query;
 import com.github.braisdom.objsql.Tables;
