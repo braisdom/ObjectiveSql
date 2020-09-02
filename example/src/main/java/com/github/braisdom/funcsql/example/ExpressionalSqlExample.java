@@ -15,7 +15,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 import static com.github.braisdom.funcsql.example.Domains.createTables;
-import static com.github.braisdom.funcsql.sql.expression.Expressions.*;
+import static com.github.braisdom.funcsql.sql.expression.Expressions.$;
+import static com.github.braisdom.funcsql.sql.expression.Expressions.and;
 
 public class ExpressionalSqlExample {
 

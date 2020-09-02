@@ -3,7 +3,7 @@ package com.github.braisdom.funcsql.reflection;
 import com.github.braisdom.funcsql.util.StringUtil;
 import com.github.braisdom.funcsql.util.WordUtil;
 
-import javax.el.MethodNotFoundException;
+
 import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
