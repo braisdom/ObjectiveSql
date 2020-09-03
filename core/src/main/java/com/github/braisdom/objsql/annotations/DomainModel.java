@@ -13,7 +13,7 @@ public @interface DomainModel {
 
     boolean fluent() default true;
 
-    Class<?> primaryClass() default java.lang.Integer.class;
+    Class<?> primaryClass() default Integer.class;
 
     String primaryColumnName() default "id";
 
