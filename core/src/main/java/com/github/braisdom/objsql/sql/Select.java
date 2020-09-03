@@ -1,13 +1,17 @@
 package com.github.braisdom.objsql.sql;
 
+import com.github.braisdom.objsql.BeanModelDescriptor;
+import com.github.braisdom.objsql.DatabaseType;
+import com.github.braisdom.objsql.Tables;
 import com.github.braisdom.objsql.sql.expression.AbstractExpression;
 import com.github.braisdom.objsql.sql.expression.JoinExpression;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class Select extends AbstractExpression implements Dataset {
+public class Select<T> extends AbstractExpression implements Dataset {
 
     protected List<Expression> projections = new ArrayList<>();
     protected Dataset[] fromDatasets;
@@ -20,6 +24,14 @@ public class Select extends AbstractExpression implements Dataset {
     protected int offset = -1;
     protected Dataset[] unionDatasets;
     protected Dataset[] unionAllDatasets;
+
+    public Select() {
+        // Do nothing
+    }
+
+    public Select(Dataset dataset) {
+        from(dataset);
+    }
 
     public Select project(Expression projection, Expression... projections) {
         this.projections.add(projection);
@@ -91,6 +103,19 @@ public class Select extends AbstractExpression implements Dataset {
     public Select unionAll(Dataset... datasets) {
         this.unionAllDatasets = datasets;
         return this;
+    }
+
+    public List<T> query(DatabaseType databaseType, Class<T> domainClass) throws SQLException {
+        String sql = toSql(new DefaultExpressionContext(databaseType));
+        return Tables.query(new BeanModelDescriptor<>(domainClass), sql);
+    }
+
+    public T queryFirst(DatabaseType databaseType, Class<T> domainClass) throws SQLException {
+        String sql = toSql(new DefaultExpressionContext(databaseType));
+        List<T> records = Tables.query(new BeanModelDescriptor<>(domainClass), sql);
+        if(records.size() > 0)
+            return records.get(0);
+        else return null;
     }
 
     @Override
