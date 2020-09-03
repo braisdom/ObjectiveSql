@@ -27,7 +27,7 @@ public class ExpressionalSqlExample {
         select.from(member);
 
         String sql = select.toSql(new DefaultExpressionContext(DatabaseType.SQLite));
-        List<Member> members = Tables.query(new BeanModelDescriptor<>(Member.class), sql);
+        List<Member> members = Tables.query(Member.class, sql);
 
         Assert.assertTrue(members.size() == 100);
     }

@@ -21,7 +21,8 @@ public final class Domains {
         @Size(min = 5, max = 20)
         private String no;
 
-        // The queryByName method will be generated, usage example: List<Member> members = Member.queryByName("Benjamin");
+        // The queryByName method will be generated, usage example:
+        // List<Member> members = Member.queryByName("Benjamin");
         @Queryable
         private String name;
 
@@ -29,7 +30,8 @@ public final class Domains {
         private Integer gender;
         private String mobile;
 
-        // The HAS_MANY_ORDERS field will be generated, public static final Relationship HAS_MANY_ORDERS = ...
+        // The HAS_MANY_ORDERS field will be generated,
+        // public static final Relationship HAS_MANY_ORDERS = ...
         @Relation(relationType = RelationType.HAS_MANY)
         private List<Order> orders;
 

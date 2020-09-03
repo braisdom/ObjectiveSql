@@ -96,7 +96,7 @@ public class PersistenceExample {
         extendedAttributes.put("age", 28);
 
         Member newMember = new Member()
-                .setId(12)
+                .setId(1)
                 .setNo("200000")
                 .setName("Smith")
                 .setGender(1)
