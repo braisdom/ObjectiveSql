@@ -10,6 +10,8 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.SOURCE)
 public @interface Syntax {
-    DatabaseType[] value();
+    DatabaseType[] only() default {};
+
+    DatabaseType[] except() default {};
 }
 

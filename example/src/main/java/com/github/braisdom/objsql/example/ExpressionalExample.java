@@ -15,7 +15,7 @@ import static com.github.braisdom.objsql.example.Domains.createTables;
 import static com.github.braisdom.objsql.sql.expression.Expressions.$;
 import static com.github.braisdom.objsql.sql.expression.Expressions.and;
 
-public class ExpressionalSqlExample {
+public class ExpressionalExample {
 
     public static void simpleQuery() throws SQLException {
         Member.Table member = Member.asTable();
@@ -23,7 +23,7 @@ public class ExpressionalSqlExample {
         Select select = new Select();
         select.from(member);
 
-        List<Member> members = select.query(DatabaseType.SQLite, Member.class);
+        List<Member> members = select.fetch(DatabaseType.SQLite, Member.class);
 
         Assert.assertTrue(members.size() == 100);
     }
@@ -34,7 +34,7 @@ public class ExpressionalSqlExample {
         Select select = new Select(member);
         select.where(and(member.name.eq($("Jack")), member.gender.eq($(0))));
 
-        List<Member> members = select.query(DatabaseType.SQLite, Member.class);
+        List<Member> members = select.fetch(DatabaseType.SQLite, Member.class);
 
         Assert.assertTrue(members.size() == 1);
     }
