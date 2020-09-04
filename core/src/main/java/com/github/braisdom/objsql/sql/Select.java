@@ -105,17 +105,9 @@ public class Select<T> extends AbstractExpression implements Dataset {
         return this;
     }
 
-    public List<T> fetch(DatabaseType databaseType, Class<T> domainClass) throws SQLException {
+    public List<T> execute(DatabaseType databaseType, Class<T> domainClass) throws SQLException {
         String sql = toSql(new DefaultExpressionContext(databaseType));
         return Tables.query(new BeanModelDescriptor<>(domainClass), sql);
-    }
-
-    public T fetchFirst(DatabaseType databaseType, Class<T> domainClass) throws SQLException {
-        String sql = toSql(new DefaultExpressionContext(databaseType));
-        List<T> records = Tables.query(new BeanModelDescriptor<>(domainClass), sql);
-        if(records.size() > 0)
-            return records.get(0);
-        else return null;
     }
 
     @Override

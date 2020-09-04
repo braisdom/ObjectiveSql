@@ -23,7 +23,7 @@ public class ExpressionalExample {
         Select select = new Select();
         select.from(member);
 
-        List<Member> members = select.fetch(DatabaseType.SQLite, Member.class);
+        List<Member> members = select.execute(DatabaseType.SQLite, Member.class);
 
         Assert.assertTrue(members.size() == 100);
     }
@@ -34,7 +34,7 @@ public class ExpressionalExample {
         Select select = new Select(member);
         select.where(and(member.name.eq($("Jack")), member.gender.eq($(0))));
 
-        List<Member> members = select.fetch(DatabaseType.SQLite, Member.class);
+        List<Member> members = select.execute(DatabaseType.SQLite, Member.class);
 
         Assert.assertTrue(members.size() == 1);
     }
