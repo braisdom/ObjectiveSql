@@ -16,7 +16,7 @@ public class SqlDateTimeTransitional<T> implements ColumnTransitional<T> {
         if (fieldValue != null) {
             if (DatabaseType.SQLite.nameEquals(databaseMetaData.getDatabaseProductName())) {
                 return fieldValue.toString();
-            } else return fieldValue;
+            } else return fieldValue.toString();
         }
         return null;
     }
