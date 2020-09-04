@@ -66,7 +66,6 @@ public class Expressions {
         return new LiteralExpression(doubleLiteral);
     }
 
-
     public static Expression literal(Timestamp timestamp) {
         return null;
     }

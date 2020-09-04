@@ -32,7 +32,8 @@ public class ExpressionalExample {
         Member.Table member = Member.asTable();
 
         Select select = new Select(member);
-        select.where(and(member.name.eq($("Jack")), member.gender.eq($(0))));
+        select.project(member.id, member.name)
+                .where(and(member.name.eq($("Jack")), member.gender.eq($(0))));
 
         List<Member> members = select.execute(DatabaseType.SQLite, Member.class);
 

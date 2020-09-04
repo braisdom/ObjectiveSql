@@ -3,13 +3,13 @@ package com.github.braisdom.objsql.sql.expression;
 import com.github.braisdom.objsql.sql.Expression;
 import com.github.braisdom.objsql.sql.ExpressionContext;
 
-public class BetweenExpression extends AbstractExpression {
+public class BetweenExpression<T> extends AbstractExpression<T> {
 
     private final Expression left;
     private final Expression right;
     private final boolean negated;
 
-    public BetweenExpression(boolean negated, Expression left, Expression right) {
+    public BetweenExpression(boolean negated, Expression<T> left, Expression<T> right) {
         this.negated = negated;
         this.left = left;
         this.right = right;

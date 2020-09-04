@@ -34,7 +34,7 @@ public class DefaultExpressionContext implements ExpressionContext {
     public String quoteTable(String tableName) {
         switch (databaseType) {
             case MariaDB:
-            case MySQL:
+            case MySQL5:
                 return String.format("`%s`", tableName);
             case PostgreSQL:
             case Oracle:
@@ -51,7 +51,7 @@ public class DefaultExpressionContext implements ExpressionContext {
     public String quoteColumn(String columnName) {
         switch (databaseType) {
             case MariaDB:
-            case MySQL:
+            case MySQL5:
                 return String.format("`%s`", columnName);
             case PostgreSQL:
             case Oracle:
