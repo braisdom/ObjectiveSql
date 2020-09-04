@@ -41,6 +41,10 @@ public final class Domains {
         // The field will not be save into database;
         @Transient
         private String otherInfo;
+
+        public static List<Member> findMembers() {
+            return null;
+        }
     }
 
     @DomainModel

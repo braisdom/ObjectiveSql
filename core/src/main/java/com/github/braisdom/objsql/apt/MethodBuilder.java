@@ -94,6 +94,11 @@ public class MethodBuilder {
         return this;
     }
 
+    public MethodBuilder addParameter(List<JCVariableDecl> parameters) {
+        this.parameters.appendList(parameters);
+        return this;
+    }
+
     public MethodBuilder addParameter(String name, JCExpression type, JCExpression... genTypes) {
         addParameter(name, type, List.from(genTypes));
         return this;

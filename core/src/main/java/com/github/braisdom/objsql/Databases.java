@@ -38,7 +38,7 @@ public final class Databases {
                     sb.append(String.format("'%s'", String.valueOf(value)));
                 sb.append(",");
             }
-            if(sb.length() > 0)
+            if (sb.length() > 0)
                 sb.delete(sb.length() - 1, sb.length());
             return sb.toString();
         }
@@ -61,6 +61,7 @@ public final class Databases {
     private static SQLExecutor sqlExecutor = new DefaultSQLExecutor();
     private static JDBCDataTypeRiser jdbcDataTypeRiser = new DefaultJDBCDataTypeRiser();
     private static ConnectionFactory connectionFactory;
+    private static ThreadLocal<Connection> connectionThreadLocal = new ThreadLocal<>();
 
     @FunctionalInterface
     public static interface DatabaseInvoke<T, R> {
@@ -112,16 +113,40 @@ public final class Databases {
         Databases.jdbcDataTypeRiser = JDBCDataTypeRiser;
     }
 
-    public static <T, R> R execute(DatabaseInvoke<T, R> databaseInvoke) throws SQLException {
-        ConnectionFactory connectionFactory = Databases.getConnectionFactory();
-        SQLExecutor<T> sqlExecutor = Databases.getSqlExecutor();
-        Connection connection = connectionFactory.getConnection();
+    public static <T, R> R executeTransactionally(DatabaseInvoke<T, R> databaseInvoke)
+            throws SQLException, RollbackableException {
+        Connection connection = Databases.getConnectionFactory().getConnection();
+
+        connectionThreadLocal.set(connection);
 
         try {
-            return databaseInvoke.apply(connection, sqlExecutor);
+            return execute(databaseInvoke);
+        } catch (SQLException ex) {
+            connection.rollback();
+            throw ex;
+        } catch (Exception ex) {
+            connection.rollback();
+            throw new RollbackableException(ex.getMessage(), ex);
         } finally {
+            connectionThreadLocal.remove();
             if (connection != null && !connection.isClosed())
                 connection.close();
+        }
+    }
+
+    public static <T, R> R execute(DatabaseInvoke<T, R> databaseInvoke) throws SQLException {
+        Connection connection = connectionThreadLocal.get();
+        SQLExecutor<T> sqlExecutor = Databases.getSqlExecutor();
+        if (connection == null) {
+            try {
+                connection = Databases.getConnectionFactory().getConnection();
+                return databaseInvoke.apply(connection, sqlExecutor);
+            } finally {
+                if (connection != null && !connection.isClosed())
+                    connection.close();
+            }
+        } else {
+            return databaseInvoke.apply(connection, sqlExecutor);
         }
     }
 
@@ -135,7 +160,7 @@ public final class Databases {
         } catch (Exception ex) {
             if (ex instanceof SQLException)
                 throw (SQLException) ex;
-            else if(ex instanceof IllegalArgumentException)
+            else if (ex instanceof IllegalArgumentException)
                 throw (IllegalArgumentException) ex;
             else {
                 logger.error(ex.getMessage(), ex);
