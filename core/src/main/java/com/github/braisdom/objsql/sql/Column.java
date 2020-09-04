@@ -6,7 +6,7 @@ public interface Column extends Expression {
 
     Expression desc();
 
-    <T extends Number> Expression<T> lt(Expression<T> expr);
+    Expression lt(Expression expr);
 
     Expression gt(Expression expr);
 

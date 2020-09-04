@@ -1,6 +1,6 @@
 package com.github.braisdom.objsql.sql;
 
-public interface Expression<T> extends Sqlizable {
+public interface Expression extends Sqlizable {
 
-    Expression<T> as(String alias);
+    Expression as(String alias);
 }

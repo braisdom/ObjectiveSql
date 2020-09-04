@@ -3,6 +3,7 @@ package com.github.braisdom.objsql.example;
 import com.github.braisdom.objsql.DatabaseType;
 import com.github.braisdom.objsql.Databases;
 import com.github.braisdom.objsql.example.Domains.Member;
+import com.github.braisdom.objsql.sql.Expression;
 import com.github.braisdom.objsql.sql.Select;
 import org.junit.Assert;
 
@@ -14,8 +15,9 @@ import java.util.List;
 import static com.github.braisdom.objsql.example.Domains.createTables;
 import static com.github.braisdom.objsql.sql.expression.Expressions.$;
 import static com.github.braisdom.objsql.sql.expression.Expressions.and;
+import static com.github.braisdom.objsql.sql.function.IsoFunctions.count;
 
-public class ExpressionalExample {
+public class IsoExpressionalExample {
 
     public static void simpleQuery() throws SQLException {
         Member.Table member = Member.asTable();
@@ -40,6 +42,17 @@ public class ExpressionalExample {
         Assert.assertTrue(members.size() == 1);
     }
 
+    public static void countFunctionQuery() throws SQLException {
+        Member.Table member = Member.asTable();
+        Select select = new Select(member);
+
+        select.project(count()).where(member.name.eq($("Jack")));
+
+        List<Member> members = select.execute(DatabaseType.SQLite, Member.class);
+
+        Assert.assertTrue(members.size() == 1);
+    }
+
     public static void main(String[] args) throws SQLException {
         File file = new File("query_example.db");
 
@@ -53,5 +66,6 @@ public class ExpressionalExample {
 
         simpleQuery();
         filterQuery();
+        countFunctionQuery();
     }
 }
