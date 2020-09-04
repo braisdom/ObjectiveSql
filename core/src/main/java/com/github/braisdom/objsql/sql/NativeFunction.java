@@ -26,6 +26,8 @@ public class NativeFunction extends AbstractExpression {
     public String toSql(ExpressionContext expressionContext) {
         String[] expressionStrings = Arrays.stream(expressions)
                 .map(expression -> expression.toSql(expressionContext)).toArray(String[]::new);
-        return String.format("%s(%s)", name, String.join(",", expressionStrings));
+        String alias = getAlias();
+        return String.format("%s(%s) %s", name, String.join(",", expressionStrings),
+                alias == null ? "" : " AS " + expressionContext.quoteColumn(alias));
     }
 }
