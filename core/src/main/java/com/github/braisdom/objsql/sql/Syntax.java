@@ -8,8 +8,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Target({ElementType.METHOD, ElementType.TYPE})
-@Retention(RetentionPolicy.SOURCE)
+@Retention(RetentionPolicy.RUNTIME)
 public @interface Syntax {
+    DatabaseType[] value() default {DatabaseType.Unknown};
+
     DatabaseType[] only() default {};
 
     DatabaseType[] except() default {};

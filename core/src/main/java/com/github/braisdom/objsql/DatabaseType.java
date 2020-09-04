@@ -2,5 +2,5 @@ package com.github.braisdom.objsql;
 
 public enum DatabaseType {
 
-    MySQL, PostgreSQL, Oracle, MsSqlServer, MariaDB, SQLite, All
+    MySQL5, MySQL8, PostgreSQL, Oracle, MsSqlServer, MariaDB, SQLite, Clickhouse , All, Unknown
 }
