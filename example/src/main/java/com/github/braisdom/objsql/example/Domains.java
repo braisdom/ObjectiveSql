@@ -2,7 +2,7 @@ package com.github.braisdom.objsql.example;
 
 import com.github.braisdom.objsql.annotations.*;
 import com.github.braisdom.objsql.relation.RelationType;
-import com.github.braisdom.objsql.transition.SqlDateTransitional;
+import com.github.braisdom.objsql.transition.SqlDateTimeTransitional;
 
 import javax.validation.constraints.Size;
 import java.sql.*;
@@ -50,7 +50,7 @@ public final class Domains {
         private Float amount;
         private Float quantity;
 
-        @Column(transition = SqlDateTransitional.class)
+        @Column(transition = SqlDateTimeTransitional.class)
         private Timestamp salesAt;
 
         @Relation(relationType = RelationType.BELONGS_TO)
