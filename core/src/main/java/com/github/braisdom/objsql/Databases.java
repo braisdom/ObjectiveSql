@@ -114,9 +114,10 @@ public final class Databases {
     }
 
     public static <T, R> R executeTransactionally(DatabaseInvoke<T, R> databaseInvoke)
-            throws SQLException, RollbackableException {
+            throws SQLException, RollbackedException {
         Connection connection = Databases.getConnectionFactory().getConnection();
-
+        boolean autoCommit = connection.getAutoCommit();
+        connection.setAutoCommit(false);
         connectionThreadLocal.set(connection);
 
         try {
@@ -126,11 +127,13 @@ public final class Databases {
             throw ex;
         } catch (Exception ex) {
             connection.rollback();
-            throw new RollbackableException(ex.getMessage(), ex);
+            throw new RollbackedException(ex.getMessage(), ex);
         } finally {
             connectionThreadLocal.remove();
-            if (connection != null && !connection.isClosed())
+            if (connection != null && !connection.isClosed()) {
+                connection.setAutoCommit(autoCommit);
                 connection.close();
+            }
         }
     }
 
