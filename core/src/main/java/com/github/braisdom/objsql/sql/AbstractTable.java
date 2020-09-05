@@ -1,7 +1,6 @@
 package com.github.braisdom.objsql.sql;
 
 import com.github.braisdom.objsql.Tables;
-import com.github.braisdom.objsql.sql.expression.AbstractExpression;
 
 import java.util.Arrays;
 import java.util.Objects;

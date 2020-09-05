@@ -1,4 +1,4 @@
-package com.github.braisdom.objsql.sql.expression;
+package com.github.braisdom.objsql.sql;
 
 import com.github.braisdom.objsql.sql.Expression;
 
