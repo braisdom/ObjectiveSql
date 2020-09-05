@@ -31,42 +31,40 @@ public class TransactionalCodeGenerator extends DomainModelProcessor {
 
         TreeMaker treeMaker = aptBuilder.getTreeMaker();
         String originalMethodName = methodDecl.name.toString();
-        List<JCTree.JCStatement> originalStatements = methodDecl.body.getStatements();
-        Name realMethodName = methodDecl.name.append(aptBuilder.toName("InTransaction"));
-        methodDecl.name = realMethodName;
+        methodDecl.name = methodDecl.name.append(aptBuilder.toName("InTransaction"));
 
         MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
         StatementBuilder statementBuilder = aptBuilder.createStatementBuilder();
         if(methodDecl.restype.type.getTag().equals(TypeTag.VOID)) {
-            JCTree.JCExpression expression = createLambda(methodDecl, aptBuilder, statementBuilder);
+            JCTree.JCExpression expression = createLambda(methodDecl, aptBuilder);
             statementBuilder.append(treeMaker.Exec(expression));
         } else {
-            JCTree.JCExpression expression = createLambda(methodDecl, aptBuilder, statementBuilder);
+            JCTree.JCExpression expression = createLambda(methodDecl, aptBuilder);
             statementBuilder.append(treeMaker.Return(expression));
         }
 
+
         methodBuilder.setReturnType(methodDecl.restype);
-        methodBuilder.addParameter(methodDecl.params);
         methodBuilder.addStatements(statementBuilder.build());
         methodBuilder.setThrowsClauses(SQLException.class, RollbackCauseException.class);
         aptBuilder.injectForce(methodBuilder.build(originalMethodName, (int) methodDecl.getModifiers().flags));
     }
 
-    private JCTree.JCExpression createLambda(JCTree.JCMethodDecl methodDecl, APTBuilder aptBuilder,
-                                     StatementBuilder statementBuilder) {
+    private JCTree.JCExpression createLambda(JCTree.JCMethodDecl methodDecl, APTBuilder aptBuilder) {
         TreeMaker treeMaker = aptBuilder.getTreeMaker();
-        List<JCTree.JCStatement> originalStatements = methodDecl.body.getStatements();
         ListBuffer lambdaStatement = new ListBuffer();
-        JCTree.JCExpression methodRef = treeMaker.Select(aptBuilder.typeRef(Databases.class),
-                aptBuilder.toName("executeTransactionally"));
+        JCTree.JCExpression[] expressions = methodDecl.params.stream().map(param -> aptBuilder.varRef(param.name.toString()))
+                .toArray(JCTree.JCExpression[]::new);
 
-        for(JCTree.JCStatement statement:methodDecl.body.getStatements())
-            lambdaStatement.append(statement);
+        JCTree.JCExpression invokeMethodRef = treeMaker.Ident(methodDecl.name);
+//        lambdaStatement.append(treeMaker.Apply(List.nil(), invokeMethodRef, List.from(expressions)));
 
-        if(!(originalStatements.last() instanceof JCTree.JCReturn))
+        if(methodDecl.restype.type.getTag().equals(TypeTag.VOID))
             lambdaStatement.append(treeMaker.Return(treeMaker.Literal(TypeTag.BOT, null)));
 
         JCTree.JCLambda lambda = treeMaker.Lambda(List.nil(), treeMaker.Block(0, lambdaStatement.toList()));
+        JCTree.JCExpression methodRef = treeMaker.Select(aptBuilder.typeRef(Databases.class),
+                aptBuilder.toName("executeTransactionally"));
         return treeMaker.Apply(List.nil(), methodRef, List.of(lambda));
     }
 }

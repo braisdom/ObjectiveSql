@@ -94,8 +94,8 @@ public class MethodBuilder {
         return this;
     }
 
-    public MethodBuilder addParameter(List<JCVariableDecl> parameters) {
-        this.parameters.appendList(parameters);
+    public MethodBuilder addParameter(JCVariableDecl... parameters) {
+        this.parameters.appendList(List.from(parameters));
         return this;
     }
 
