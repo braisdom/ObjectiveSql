@@ -51,6 +51,8 @@ public abstract class DomainModelProcessor extends AbstractProcessor {
                 classDecl = (JCTree.JCClassDecl) ast;
             else if(ast instanceof JCTree.JCVariableDecl)
                 classDecl = getClassDecl((JCTree.JCVariableDecl) ast);
+            else if(ast instanceof JCTree.JCMethodDecl)
+                classDecl = getClassDecl((JCTree.JCMethodDecl) ast);
             else
                 classDecl = null;
             APTBuilder aptBuilder = new APTBuilder(classDecl, element, ast, treeMaker, names, messager);
@@ -60,6 +62,12 @@ public abstract class DomainModelProcessor extends AbstractProcessor {
     }
 
     private JCTree.JCClassDecl getClassDecl(JCTree.JCVariableDecl tree) {
+        String className = tree.sym.owner.getQualifiedName().toString();
+        TypeElement typeElement = elementUtils.getTypeElement(className);
+        return javacTrees.getTree(typeElement);
+    }
+
+    private JCTree.JCClassDecl getClassDecl(JCTree.JCMethodDecl tree) {
         String className = tree.sym.owner.getQualifiedName().toString();
         TypeElement typeElement = elementUtils.getTypeElement(className);
         return javacTrees.getTree(typeElement);

@@ -80,6 +80,10 @@ public final class APTBuilder {
             classDecl.defs = classDecl.defs.append(methodDecl);
     }
 
+    public void injectForce(JCMethodDecl methodDecl) {
+        classDecl.defs = classDecl.defs.append(methodDecl);
+    }
+
     public JCExpression typeRef(String complexName) {
         String[] parts = complexName.split("\\.");
         if (parts.length > 2 && parts[0].equals("java") && parts[1].equals("lang")) {

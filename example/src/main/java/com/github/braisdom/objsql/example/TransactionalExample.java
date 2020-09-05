@@ -15,7 +15,7 @@ import static com.github.braisdom.objsql.example.Domains.createTables;
 
 public class TransactionalExample {
 
-    public static void createNormally() throws SQLException, RollbackCauseException {
+    public static void createNormally() {
         Domains.Member member = new Domains.Member()
                 .setNo("200001")
                 .setName("Alice")
