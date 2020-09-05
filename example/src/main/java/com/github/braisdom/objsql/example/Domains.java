@@ -43,9 +43,10 @@ public final class Domains {
         private String otherInfo;
 
         @Transactional
-        public static void makeOrders(Member member, Order... orders) throws SQLException {
-            create(new Member(), true);
+        public static Member makeOrders(Member member, Order... orders) throws SQLException {
+            Member member1 = create(new Member(), true);
             Order.create(orders, true);
+            return member1;
         }
     }
 
