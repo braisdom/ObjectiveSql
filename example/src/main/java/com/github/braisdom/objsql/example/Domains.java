@@ -42,8 +42,9 @@ public final class Domains {
         @Transient
         private String otherInfo;
 
-        public static List<Member> findMembers() {
-            return null;
+        @Transactional
+        public static void makeOrders(Member member, List<Order> orders) {
+
         }
     }
 

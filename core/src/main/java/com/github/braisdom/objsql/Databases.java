@@ -69,6 +69,11 @@ public final class Databases {
     }
 
     @FunctionalInterface
+    public static interface TransactionalExecutor<R> {
+        R apply() throws Exception;
+    }
+
+    @FunctionalInterface
     public static interface Benchmarkable<R> {
         R apply() throws Exception;
     }
@@ -113,21 +118,21 @@ public final class Databases {
         Databases.jdbcDataTypeRiser = JDBCDataTypeRiser;
     }
 
-    public static <T, R> R executeTransactionally(DatabaseInvoke<T, R> databaseInvoke)
-            throws SQLException, RollbackedException {
+    public static <R> R executeTransactionally(TransactionalExecutor<R> executor)
+            throws SQLException, RollbackCauseException {
         Connection connection = Databases.getConnectionFactory().getConnection();
         boolean autoCommit = connection.getAutoCommit();
         connection.setAutoCommit(false);
         connectionThreadLocal.set(connection);
 
         try {
-            return execute(databaseInvoke);
+            return executor.apply();
         } catch (SQLException ex) {
             connection.rollback();
             throw ex;
         } catch (Exception ex) {
             connection.rollback();
-            throw new RollbackedException(ex.getMessage(), ex);
+            throw new RollbackCauseException(ex.getMessage(), ex);
         } finally {
             connectionThreadLocal.remove();
             if (connection != null && !connection.isClosed()) {
@@ -158,7 +163,7 @@ public final class Databases {
         try {
             long begin = System.currentTimeMillis();
             R result = benchmarkable.apply();
-            logger.info(System.currentTimeMillis() - begin, message, params);
+//            logger.info(System.currentTimeMillis() - begin, message, params);
             return result;
         } catch (Exception ex) {
             if (ex instanceof SQLException)
