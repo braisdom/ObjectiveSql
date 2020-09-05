@@ -32,4 +32,8 @@ public class IsoFunctions {
             }
         };
     }
+
+    public static final NativeFunction sum(Expression expression) {
+        return new NativeFunction("SUM", expression);
+    }
 }
