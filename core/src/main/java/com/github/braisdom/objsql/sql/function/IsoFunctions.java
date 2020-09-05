@@ -36,4 +36,25 @@ public class IsoFunctions {
     public static final NativeFunction sum(Expression expression) {
         return new NativeFunction("SUM", expression);
     }
+
+    public static final NativeFunction avg(Expression expression) {
+        return new NativeFunction("AVG", expression);
+    }
+
+    public static final NativeFunction max(Expression expression) {
+        return new NativeFunction("MAX", expression);
+    }
+
+    public static final NativeFunction min(Expression expression) {
+        return new NativeFunction("MIN", expression);
+    }
+
+    public static final NativeFunction len(Expression expression) {
+        return new NativeFunction("LEN", expression);
+    }
+
+    public static final NativeFunction concat(Expression... expressions) {
+        return new NativeFunction("CONCAT", expressions);
+    }
+
 }

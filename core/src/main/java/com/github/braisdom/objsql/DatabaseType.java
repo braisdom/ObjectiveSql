@@ -5,9 +5,10 @@ public enum DatabaseType {
     MySQL8("MySQL"),
     PostgreSQL("PostgreSQL"),
     Oracle("Oracle"),
-    MsSqlServer("MySQL"),
-    MariaDB("MsSqlServer"),
+    MsSqlServer("MsSqlServer"),
+    MariaDB("MariaDB"),
     SQLite("SQLite"),
+    H2Database("H2Database"),
     Clickhouse("Clickhouse"),
     All("All"),
     Unknown("Unknown");
