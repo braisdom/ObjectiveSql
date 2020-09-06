@@ -111,7 +111,7 @@ public class Select<T> extends AbstractExpression implements Dataset {
 
     public List<T> execute(DatabaseType databaseType, Class<T> domainClass) throws SQLException {
         String sql = toSql(new DefaultExpressionContext(databaseType));
-        return Tables.query(new BeanModelDescriptor<>(domainClass), sql);
+        return Tables.query(domainClass, sql);
     }
 
     @Override
