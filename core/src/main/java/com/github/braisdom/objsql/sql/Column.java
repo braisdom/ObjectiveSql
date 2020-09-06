@@ -6,6 +6,10 @@ public interface Column extends Expression {
 
     Expression desc();
 
+    Expression isNull();
+
+    Expression isNotNull();
+
     Expression lt(Expression expr);
 
     Expression gt(Expression expr);

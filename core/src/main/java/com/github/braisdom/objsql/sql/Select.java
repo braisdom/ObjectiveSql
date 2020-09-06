@@ -3,7 +3,6 @@ package com.github.braisdom.objsql.sql;
 import com.github.braisdom.objsql.BeanModelDescriptor;
 import com.github.braisdom.objsql.DatabaseType;
 import com.github.braisdom.objsql.Tables;
-import com.github.braisdom.objsql.sql.expression.AbstractExpression;
 import com.github.braisdom.objsql.sql.expression.JoinExpression;
 
 import java.sql.SQLException;

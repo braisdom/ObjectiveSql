@@ -1,6 +1,4 @@
-package com.github.braisdom.objsql.sql.expression;
-
-import com.github.braisdom.objsql.sql.Expression;
+package com.github.braisdom.objsql.sql;
 
 public abstract class AbstractExpression implements Expression {
 

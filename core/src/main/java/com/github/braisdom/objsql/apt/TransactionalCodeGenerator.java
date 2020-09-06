@@ -43,7 +43,7 @@ public class TransactionalCodeGenerator extends DomainModelProcessor {
             statementBuilder.append(treeMaker.Return(expression));
         }
 
-
+        methodBuilder.addParameter(methodDecl.params.toArray(JCTree.JCVariableDecl[]::new));
         methodBuilder.setReturnType(methodDecl.restype);
         methodBuilder.addStatements(statementBuilder.build());
         methodBuilder.setThrowsClauses(SQLException.class, RollbackCauseException.class);
@@ -57,10 +57,14 @@ public class TransactionalCodeGenerator extends DomainModelProcessor {
                 .toArray(JCTree.JCExpression[]::new);
 
         JCTree.JCExpression invokeMethodRef = treeMaker.Ident(methodDecl.name);
-//        lambdaStatement.append(treeMaker.Apply(List.nil(), invokeMethodRef, List.from(expressions)));
+        JCTree.JCMethodInvocation originalInvocation = treeMaker.Apply(List.nil(), invokeMethodRef, List.from(expressions));
 
-        if(methodDecl.restype.type.getTag().equals(TypeTag.VOID))
+        if(methodDecl.restype.type.getTag().equals(TypeTag.VOID)) {
+            lambdaStatement.append(treeMaker.Exec(originalInvocation));
             lambdaStatement.append(treeMaker.Return(treeMaker.Literal(TypeTag.BOT, null)));
+        } else {
+            lambdaStatement.append(treeMaker.Return(originalInvocation));
+        }
 
         JCTree.JCLambda lambda = treeMaker.Lambda(List.nil(), treeMaker.Block(0, lambdaStatement.toList()));
         JCTree.JCExpression methodRef = treeMaker.Select(aptBuilder.typeRef(Databases.class),
