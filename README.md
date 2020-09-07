@@ -9,7 +9,7 @@ Commonly, there are two ways of SQL programming in Java, CRUD of Domain Model, a
 
 ```java
 @DomainModel
-public static class Member {
+public class Member {
   @Size(min = 5, max = 20)
   private String no;
   
@@ -29,5 +29,22 @@ public static class Member {
   @Transient
   private String otherInfo;
 }
+```
+
+## You can...
+
+```java
+// Simple querying
+Member member = Member.queryByPrimaryKey(10);
+java.util.List<Member> members = Member.queryAll();
+int count = Member.count("id > ?", 10);
+java.util.List<Member> members = Member.queryByName("Jone");
+java.util.List<Member> members = Member.queryByGender(1);
+
+// Simple inserting
+Member member = Member.create(newMember, true); // The newMember is a instance of Member
+Member member = Member.create(new Member[]{newMember1, newMember2}, true); // The newMember is a instance of Member
+
+
 ```
 
