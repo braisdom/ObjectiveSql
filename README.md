@@ -8,15 +8,10 @@ Commonly, there are two ways of SQL programming in Java, CRUD of Domain Model, a
 ## Definition of DomainModel
 
 ```java
-@DomainModel
+@DomainModel // The annotation of ObjectiveSql, it makes the model has capability of queries and persistence.
 public static class Member {
-	// The validation constraints, it will be applied for validate method.
-  // for example: Validator.Violation[] violations = member.validate();
   @Size(min = 5, max = 20)
   private String no;
-
-  // The queryByName method will be generated, usage example:
-  // List<Member> members = Member.queryByName("Benjamin");
   @Queryable
   private String name;
 
@@ -24,8 +19,6 @@ public static class Member {
   private Integer gender;
   private String mobile;
 
-  // The HAS_MANY_ORDERS field will be generated,
-  // public static final Relationship HAS_MANY_ORDERS = ...
   @Relation(relationType = RelationType.HAS_MANY)
   private List<Order> orders;
 
