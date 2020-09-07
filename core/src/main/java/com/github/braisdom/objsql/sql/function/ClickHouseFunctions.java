@@ -2,6 +2,7 @@ package com.github.braisdom.objsql.sql.function;
 
 import com.github.braisdom.objsql.sql.Expression;
 import com.github.braisdom.objsql.sql.NativeFunction;
+import com.github.braisdom.objsql.sql.expression.LiteralExpression;
 
 public final class ClickHouseFunctions extends IsoFunctions {
 
@@ -12,7 +13,7 @@ public final class ClickHouseFunctions extends IsoFunctions {
      * For a date with time, it means adding the corresponding number of seconds.
      */
     public static NativeFunction plus(Expression expression1, Expression expression2) {
-        return new NativeFunction("PLUS", expression1, expression2);
+        return new NativeFunction("plus", expression1, expression2);
     }
 
     /***
@@ -21,14 +22,14 @@ public final class ClickHouseFunctions extends IsoFunctions {
      * The idea is the same – see above for ‘plus’.
      */
     public static NativeFunction minus(Expression expression1, Expression expression2) {
-        return new NativeFunction("MINUS", expression1, expression2);
+        return new NativeFunction("minus", expression1, expression2);
     }
 
     /***
      * Calculates the product of the numbers.
      */
     public static NativeFunction multiply(Expression expression1, Expression expression2) {
-        return new NativeFunction("MULTIPLY", expression1, expression2);
+        return new NativeFunction("multiply", expression1, expression2);
     }
 
     /***
@@ -157,4 +158,183 @@ public final class ClickHouseFunctions extends IsoFunctions {
     public static NativeFunction toString(Expression expression, Expression formatter) {
         return new NativeFunction("toString", expression, formatter);
     }
+
+    public static NativeFunction cast(Expression expression, Expression dataType) {
+        return new NativeFunction("cast", expression, new LiteralExpression("AS"), dataType);
+    }
+
+    /***
+     * @param expression the value of datetime type
+     */
+    public static NativeFunction toUnixTimestamp(Expression expression) {
+        return new NativeFunction("toUnixTimestamp", expression);
+    }
+
+    /***
+     * @param expression the value of String type
+     * @param timeZone timeZone like "UTC", "GMT", .etc
+     */
+    public static NativeFunction toUnixTimestamp(Expression expression, Expression timeZone) {
+        return new NativeFunction("toUnixTimestamp", expression, timeZone);
+    }
+
+    /***
+     * Converts a date or date with time to a UInt16 number containing the year number (AD).
+     */
+    public static NativeFunction toYear(Expression expression) {
+        return new NativeFunction("toYear", expression);
+    }
+
+    /***
+     * Converts a date or date with time to a UInt8 number containing the month number (1-12).
+     */
+    public static NativeFunction toMonth(Expression expression) {
+        return new NativeFunction("toMonth", expression);
+    }
+
+    /***
+     * Converts a date or date with time to a UInt16 number containing the number of the day of the year (1-366).
+     */
+    public static NativeFunction toDayOfYear(Expression expression) {
+        return new NativeFunction("toDayOfYear", expression);
+    }
+
+    /***
+     * Converts a date or date with time to a UInt8 number containing the number of the day of the month (1-31).
+     */
+    public static NativeFunction toDayOfMonth(Expression expression) {
+        return new NativeFunction("toDayOfMonth", expression);
+    }
+
+    /***
+     * Converts a date or date with time to a UInt8 number containing the number of the day of the
+     * week (Monday is 1, and Sunday is 7).
+     */
+    public static NativeFunction toDayOfWeek(Expression expression) {
+        return new NativeFunction("toDayOfWeek", expression);
+    }
+
+    /***
+     * Converts a date with time to a UInt8 number containing the number of the hour in 24-hour time (0-23).
+     */
+    public static NativeFunction toHour(Expression expression) {
+        return new NativeFunction("toHour", expression);
+    }
+
+    /***
+     * Converts a date with time to a UInt8 number containing the number of the minute of the hour (0-59).
+     */
+    public static NativeFunction toMinute(Expression expression) {
+        return new NativeFunction("toMinute", expression);
+    }
+
+    /***
+     * Converts a date with time to a UInt8 number containing the number of the second in the minute (0-59).
+     */
+    public static NativeFunction toSecond(Expression expression) {
+        return new NativeFunction("toSecond", expression);
+    }
+
+    /***
+     * Accepts zero arguments and returns the current time at one of the moments of request execution.
+     */
+    public static NativeFunction now() {
+        return new NativeFunction("now");
+    }
+
+    /***
+     * Accepts zero arguments and returns the current date at one of the moments of request execution.
+     * The same as ‘toDate(now())’.
+     */
+    public static NativeFunction today() {
+        return new NativeFunction("today");
+    }
+
+    /***
+     * Accepts zero arguments and returns yesterday’s date at one of the moments of request execution.
+     * The same as ‘today() - 1’.
+     */
+    public static NativeFunction yesterday() {
+        return new NativeFunction("yesterday");
+    }
+
+    /***
+     * Converts a date or date with time to a UInt32 number containing the year and month number (YYYY * 100 + MM).
+     */
+    public static NativeFunction toYYYYMM(Expression expression) {
+        return new NativeFunction("toYYYYMM", expression);
+    }
+
+    /***
+     * Converts a date or date with time to a UInt32 number containing the year and month
+     * number (YYYY * 10000 + MM * 100 + DD).
+     */
+    public static NativeFunction toYYYYMMDD(Expression expression) {
+        return new NativeFunction("toYYYYMMDD", expression);
+    }
+
+    /***
+     * Converts a date or date with time to a UInt64 number containing the year and month number
+     * (YYYY * 10000000000 + MM * 100000000 + DD * 1000000 + hh * 10000 + mm * 100 + ss).
+     */
+    public static NativeFunction toYYYYMMDDhhmmss(Expression expression) {
+        return new NativeFunction("toYYYYMMDDhhmmss", expression);
+    }
+
+    /***
+     * Returns the difference between two Date or DateTime values.
+     * @param unit Time unit, in which the returned value is expressed.
+     *             Supported values: second, minute, hour, day, week, month, quarter, year
+     * @param startTime The first time value to compare. Date or DateTime.
+     * @param endTime The second time value to compare. Date or DateTime.
+     */
+    public static NativeFunction dateDiff(Expression unit, Expression startTime, Expression endTime) {
+        return new NativeFunction("dateDiff", unit, startTime, endTime);
+    }
+
+    /***
+     * @param timeZone If specified, it is applied to both startdate and enddate. If not specified,
+     *                 timezones of startdate and enddate are used. If they are not the same, the
+     *                 result is unspecified.
+     */
+    public static NativeFunction dateDiff(Expression unit, Expression startTime,
+                                          Expression endTime, Expression timeZone) {
+        return new NativeFunction("dateDiff", unit, startTime, endTime, timeZone);
+    }
+
+    /***
+     * Function formats a Time according given Format string. N.B.: Format is a constant expression, e.g.
+     * you can not have multiple formats for single result column.
+     */
+    public static NativeFunction formatDateTime(Expression time, Expression formatter) {
+        return new NativeFunction("formatDateTime", time, formatter);
+    }
+
+    /***
+     * @param timeZone timeZone like "UTC", "GMT", .etc
+     */
+    public static NativeFunction formatDateTime(Expression time, Expression formatter, Expression timeZone) {
+        return new NativeFunction("formatDateTime", time, formatter, timeZone);
+    }
+
+    /***
+     * When there is only single argument of integer type, it act in the same way as toDateTime and return DateTime.
+     * @param timeStamp argument of integer type
+     */
+    public static NativeFunction fromUnixTime(Expression timeStamp) {
+        return new NativeFunction("FROM_UNIXTIME", timeStamp);
+    }
+
+    /***
+     * When there are two arguments, first is integer or DateTime, second is constant format string,
+     * it act in the same way as formatDateTime and return String type.
+     * @param timeStamp argument of integer type
+     * @param formatter constant format string
+     */
+    public static NativeFunction fromUnixTime(Expression timeStamp, Expression formatter) {
+        return new NativeFunction("FROM_UNIXTIME", timeStamp, formatter);
+    }
+
+
+
 }
