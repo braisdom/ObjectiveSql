@@ -34,17 +34,29 @@ public class Member {
 ## You can...
 
 ```java
-// Simple querying
+// Querying
 Member member = Member.queryByPrimaryKey(10);
 java.util.List<Member> members = Member.queryAll();
 int count = Member.count("id > ?", 10);
 java.util.List<Member> members = Member.queryByName("Jone");
 java.util.List<Member> members = Member.queryByGender(1);
 
-// Simple inserting
+// Querying with relation
+List<Member> members = Member.query("id > (?)",
+                new Relationship[]{Member.HAS_MANY_ORDERS}, 1);
+
+// Creating
 Member member = Member.create(newMember, true); // The newMember is a instance of Member
 Member member = Member.create(new Member[]{newMember1, newMember2}, true); // The newMember is a instance of Member
 
+// Updating
+Member.update(12, newMember, true);
+Member.update("name = 'Jackson'", "name = 'Smith'");
+
+// Deleting
+Member.destroy(13);
+Member.destroy("name = 'Mary'");
 
 ```
 
+## You can also...
