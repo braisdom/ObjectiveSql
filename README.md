@@ -46,8 +46,10 @@ List<Member> members = Member.query("id > (?)",
                 new Relationship[]{Member.HAS_MANY_ORDERS}, 1);
 
 // Creating
-Member member = Member.create(newMember, true); // The newMember is a instance of Member
-Member member = Member.create(new Member[]{newMember1, newMember2}, true); // The newMember is a instance of Member
+Member member = Member.create(newMember, true);
+
+Member[] newMembers = new Member[]{newMember1, newMember2};
+Member member = Member.create(newMembers, true); 
 
 // Updating
 Member.update(12, newMember, true);
@@ -60,3 +62,20 @@ Member.destroy("name = 'Mary'");
 ```
 
 ## You can also...
+
+```java
+import static com.github.braisdom.objsql.sql.expression.Expressions.$;
+import static com.github.braisdom.objsql.sql.expression.Expressions.and;
+import static com.github.braisdom.objsql.sql.function.IsoFunctions.count;
+
+Member.Table member = Member.asTable();
+
+Select select = new Select(member);
+select.project(member.id, member.name).where(and(member.name.eq($("Jack")), member.gender.eq($(0))));
+
+List<Member> members = select.execute(DatabaseType.SQLite, Member.class);
+
+```
+
+More see: [example](https://github.com/braisdom/ObjectiveSql/tree/master/example/src/main/java/com/github/braisdom/objsql/example)
+
