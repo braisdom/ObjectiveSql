@@ -64,4 +64,8 @@ public class IsoFunctions {
     public static final NativeFunction ltrim(Expression... expressions) {
         return new NativeFunction("LTRIM", expressions);
     }
+
+    public static final NativeFunction IF(Expression expression, Expression expression1, Expression expression2) {
+        return new NativeFunction("IF", expression, expression1, expression2);
+    }
 }
