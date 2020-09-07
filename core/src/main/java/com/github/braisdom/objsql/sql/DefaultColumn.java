@@ -30,6 +30,16 @@ public class DefaultColumn extends AbstractExpression implements Column {
     }
 
     @Override
+    public Expression isNull() {
+        return new ColumnExpression(this, new PlainExpression(" IS NULL "));
+    }
+
+    @Override
+    public Expression isNotNull() {
+        return new ColumnExpression(this, new PlainExpression(" IS NOT NULL "));
+    }
+
+    @Override
     public Expression lt(Expression expr) {
         return new PolynaryExpression(PolynaryExpression.LT, this, expr);
     }

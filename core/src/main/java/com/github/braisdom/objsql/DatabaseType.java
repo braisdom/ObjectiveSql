@@ -10,6 +10,7 @@ public enum DatabaseType {
     SQLite("SQLite"),
     H2Database("H2Database"),
     Clickhouse("Clickhouse"),
+    Hive("hive"),
     All("All"),
     Unknown("Unknown");
 

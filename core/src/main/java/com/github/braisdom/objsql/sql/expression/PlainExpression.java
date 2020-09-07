@@ -1,5 +1,6 @@
 package com.github.braisdom.objsql.sql.expression;
 
+import com.github.braisdom.objsql.sql.AbstractExpression;
 import com.github.braisdom.objsql.sql.ExpressionContext;
 
 public class PlainExpression extends AbstractExpression {
