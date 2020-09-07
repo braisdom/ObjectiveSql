@@ -14,6 +14,12 @@ import java.util.logging.Level;
 @SuppressWarnings("ALL")
 public final class Databases {
 
+    private static LoggerFactory loggerFactory = new LoggerFactory() {
+        @Override
+        public Logger create(Class<?> clazz) {
+            return new LoggerImpl(clazz);
+        }
+    };
     private static SQLExecutor sqlExecutor = new DefaultSQLExecutor();
     private static JDBCDataTypeRiser jdbcDataTypeRiser = new DefaultJDBCDataTypeRiser();
     private static ConnectionFactory connectionFactory;
@@ -54,13 +60,6 @@ public final class Databases {
         @Override
         public <T> Persistence<T> createPersistence(Class<T> clazz) {
             return new DefaultPersistence<>(clazz);
-        }
-    };
-
-    private static LoggerFactory loggerFactory = new LoggerFactory() {
-        @Override
-        public Logger create(Class<?> clazz) {
-            return new LoggerImpl(clazz);
         }
     };
 

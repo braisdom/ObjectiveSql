@@ -4,6 +4,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <parent>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>7</version>
+    </parent>
+
     <groupId>com.github.braisdom</groupId>
     <artifactId>funcsql</artifactId>
     <packaging>pom</packaging>
@@ -14,6 +20,39 @@
         <module>jds</module>
         <module>example</module>
     </modules>
+
+    <licenses>
+        <license>
+            <name>Apache 2</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <connection>scm:git:git@github.com:braisdom/JDrucker.git</connection>
+        <developerConnection>scm:git:git@github.com:braisdom/JDrucker.git</developerConnection>
+        <url>https://github.com/braisdom/JDrucker</url>
+    </scm>
+
+    <issueManagement>
+        <url>https://github.com/braisdom/JDrucker/issues</url>
+    </issueManagement>
+
+    <organization>
+        <name>com.github.braisdom</name>
+        <url>http://www.joowing.com</url>
+    </organization>
+
+    <developers>
+        <developer>
+            <id>braisdom</id>
+            <name>Braisdom Wang</name>
+            <email>wangyonghe@msn.com</email>
+            <url>http://www.objsql.com</url>
+            <timezone>+8</timezone>
+        </developer>
+    </developers>
 
     <build>
         <plugins>

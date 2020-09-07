@@ -40,7 +40,7 @@ public class TransactionalCodeGenerator extends DomainModelProcessor {
         for(JCTree.JCExpression throwExpression : methodDecl.getThrows())
             methodBuilder.addThrowsClauses(throwExpression);
 
-        methodBuilder.addParameter(methodDecl.params.toArray(JCTree.JCVariableDecl[]::new));
+        methodBuilder.addParameter(methodDecl.params.toArray(new JCTree.JCVariableDecl[0]));
         methodBuilder.setReturnType(methodDecl.restype);
         methodBuilder.addStatements(createBody(methodDecl, aptBuilder));
 
