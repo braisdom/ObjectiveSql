@@ -8,24 +8,24 @@ Commonly, there are two ways of SQL programming in Java, CRUD of Domain Model, a
 ## Definition of DomainModel
 
 ```java
-@DomainModel // The annotation of ObjectiveSql, it makes the model has capability of queries and persistence.
+@DomainModel
 public static class Member {
   @Size(min = 5, max = 20)
   private String no;
+  
   @Queryable
   private String name;
-
+  
   @Queryable
   private Integer gender;
   private String mobile;
-
+  
   @Relation(relationType = RelationType.HAS_MANY)
   private List<Order> orders;
 
   @Column(transition = JsonColumnTransitional.class)
   private Map extendedAttributes;
 
-  // The field will not be save into database;
   @Transient
   private String otherInfo;
 }
