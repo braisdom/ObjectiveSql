@@ -49,12 +49,19 @@ public class IsoFunctions {
         return new NativeFunction("MIN", expression);
     }
 
-    public static final NativeFunction len(Expression expression) {
-        return new NativeFunction("LEN", expression);
-    }
-
     public static final NativeFunction concat(Expression... expressions) {
         return new NativeFunction("CONCAT", expressions);
     }
 
+    public static final NativeFunction trim(Expression... expressions) {
+        return new NativeFunction("TRIM", expressions);
+    }
+
+    public static final NativeFunction rtrim(Expression... expressions) {
+        return new NativeFunction("RTRIM", expressions);
+    }
+
+    public static final NativeFunction ltrim(Expression... expressions) {
+        return new NativeFunction("LTRIM", expressions);
+    }
 }
