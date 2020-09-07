@@ -4,6 +4,8 @@ import com.github.braisdom.objsql.Databases;
 import com.github.braisdom.objsql.RollbackCauseException;
 import com.github.braisdom.objsql.ValidationException;
 import com.github.braisdom.objsql.annotations.Transactional;
+import com.github.braisdom.objsql.jdbc.DbUtils;
+import com.github.braisdom.objsql.util.ArrayUtil;
 import com.sun.tools.javac.code.TypeTag;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
@@ -35,10 +37,13 @@ public class TransactionalCodeGenerator extends DomainModelProcessor {
 
         MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
 
+        for(JCTree.JCExpression throwExpression : methodDecl.getThrows())
+            methodBuilder.addThrowsClauses(throwExpression);
+
         methodBuilder.addParameter(methodDecl.params.toArray(JCTree.JCVariableDecl[]::new));
         methodBuilder.setReturnType(methodDecl.restype);
         methodBuilder.addStatements(createBody(methodDecl, aptBuilder));
-        methodBuilder.setThrowsClauses(SQLException.class, RollbackCauseException.class);
+
         aptBuilder.injectForce(methodBuilder.build(originalMethodName, (int) methodDecl.getModifiers().flags));
     }
 
@@ -49,38 +54,70 @@ public class TransactionalCodeGenerator extends DomainModelProcessor {
         StatementBuilder bodyStatement = aptBuilder.createStatementBuilder();
         StatementBuilder tryStatement = aptBuilder.createStatementBuilder();
 
-        bodyStatement.append(aptBuilder.classRef(Connection.class), "connection", treeMaker.Literal(TypeTag.BOT, null));
+        bodyStatement.append(aptBuilder.typeRef(Connection.class), "connection", treeMaker.Literal(TypeTag.BOT, null));
 
         JCTree.JCExpression[] originalParams = methodDecl.params.stream().map(param -> aptBuilder.varRef(param.name.toString()))
                 .toArray(JCTree.JCExpression[]::new);
         JCTree.JCExpression invokeMethodRef = treeMaker.Ident(methodDecl.name);
-        JCTree.JCMethodInvocation originalInvocation = treeMaker.Apply(List.nil(), invokeMethodRef, List.from(originalParams));
+        JCTree.JCMethodInvocation originalMethodInvocation = treeMaker.Apply(List.nil(), invokeMethodRef, List.from(originalParams));
+
+        // connection = com.github.braisdom.objsql.Databases.getConnectionFactory.getConnection();
+        JCTree.JCExpression getConnectionCall = treeMaker.Select(treeMaker.Apply(List.nil(), treeMaker.Select(aptBuilder.typeRef(Databases.class),
+                aptBuilder.toName("getConnectionFactory")), List.nil()), aptBuilder.toName("getConnection"));
+        tryStatement.append(treeMaker.Exec(treeMaker.Assign(aptBuilder.varRef("connection"),
+                treeMaker.Apply(List.nil(), getConnectionCall, List.nil()))));
+
+        // connection.setAutoCommit(false);
+        tryStatement.append(treeMaker.Exec(treeMaker.Apply(List.nil(),
+                treeMaker.Select(aptBuilder.varRef("connection"), aptBuilder.toName("setAutoCommit")),
+                List.of(treeMaker.Literal(false)))));
+
+        // Databases.getConnectionThreadLocal().set(connection);
+        JCTree.JCExpression threadLocalSetCall = treeMaker.Select(treeMaker.Apply(List.nil(), treeMaker.Select(aptBuilder.typeRef(Databases.class),
+                aptBuilder.toName("getConnectionThreadLocal")), List.nil()), aptBuilder.toName("set"));
+        tryStatement.append(treeMaker.Exec(treeMaker.Apply(List.nil(), threadLocalSetCall,
+                List.of(aptBuilder.varRef("connection")))));
 
         if(methodDecl.restype.type.getTag().equals(TypeTag.VOID)) {
-            tryStatement.append(treeMaker.Exec(originalInvocation));
+            tryStatement.append(treeMaker.Exec(originalMethodInvocation));
+            tryStatement.append(treeMaker.Exec(treeMaker.Apply(List.nil(),
+                    treeMaker.Select(aptBuilder.varRef("connection"), aptBuilder.toName("commit")),
+                    List.nil())));
         } else {
-            tryStatement.append(methodDecl.restype, "res", invokeMethodRef);
+            tryStatement.append(methodDecl.restype, "res", originalMethodInvocation);
+            tryStatement.append(treeMaker.Exec(treeMaker.Apply(List.nil(),
+                    treeMaker.Select(aptBuilder.varRef("connection"), aptBuilder.toName("commit")),
+                    List.nil())));
             tryStatement.append(treeMaker.Return(aptBuilder.varRef("res")));
         }
 
         for(JCTree.JCExpression exception : exceptions) {
+            ListBuffer catchBodyStatement = new ListBuffer();
 
-            treeMaker.Throw(aptBuilder.varRef("ex"));
+            // DbUtils.rollbackAndCloseQuietly(connection);
+            catchBodyStatement.append(treeMaker.Exec(
+                    treeMaker.Apply(List.nil(), treeMaker.Select(aptBuilder.typeRef(DbUtils.class),
+                            aptBuilder.toName("rollback")), List.of(aptBuilder.varRef("connection")))));
+            catchBodyStatement.append(treeMaker.Throw(aptBuilder.varRef("ex")));
             catchStatement.append(treeMaker.Catch(aptBuilder.newVar(exception, "ex"),
-                    treeMaker.Block(0, List.of(treeMaker.Return(aptBuilder.methodCall("ex", "getViolations"))))));
+                    treeMaker.Block(0, catchBodyStatement.toList())));
         }
 
-        JCTree.JCCatch jcCatch = treeMaker.Catch(aptBuilder.newVar(ValidationException.class, "ex"),
-                treeMaker.Block(0, List.of(treeMaker.Return(aptBuilder.methodCall("ex", "getViolations")))));
+        JCTree.JCExpression threadLocalRemoveCall = treeMaker.Select(treeMaker.Apply(List.nil(),
+                treeMaker.Select(aptBuilder.typeRef(Databases.class),
+                aptBuilder.toName("getConnectionThreadLocal")), List.nil()), aptBuilder.toName("remove"));
+        JCTree.JCStatement finallyStatement = treeMaker.Exec(treeMaker.Apply(List.nil(), threadLocalRemoveCall, List.nil()));
 
-        JCTree.JCTry jcTry = treeMaker.Try(treeMaker.Block(0, tryStatement.build()), List.of(jcCatch),
-                treeMaker.Block(0, List.nil()));
+        JCTree.JCStatement closeQuietlyStatement = treeMaker.Exec(treeMaker.Apply(List.nil(),
+                treeMaker.Select(aptBuilder.typeRef(DbUtils.class),
+                        aptBuilder.toName("closeQuietly")), List.of(aptBuilder.varRef("connection"))));
+
+
+        JCTree.JCTry jcTry = treeMaker.Try(treeMaker.Block(0, tryStatement.build()), catchStatement.toList(),
+                treeMaker.Block(0, List.of(finallyStatement, closeQuietlyStatement)));
 
         bodyStatement.append(jcTry);
 
-        JCTree.JCLambda lambda = treeMaker.Lambda(List.nil(), treeMaker.Block(0, bodyStatement.build()));
-        JCTree.JCExpression methodRef = treeMaker.Select(aptBuilder.typeRef(Databases.class),
-                aptBuilder.toName("executeTransactionally"));
         return bodyStatement.build();
     }
 }

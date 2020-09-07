@@ -2,7 +2,7 @@ package com.github.braisdom.objsql;
 
 import java.sql.SQLException;
 
-public class RollbackCauseException extends RuntimeException {
+public class RollbackCauseException extends SQLException {
     public RollbackCauseException() {
     }
 

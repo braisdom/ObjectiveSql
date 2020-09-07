@@ -123,7 +123,7 @@ public final class Databases {
         Databases.jdbcDataTypeRiser = JDBCDataTypeRiser;
     }
 
-    public static <R> R executeTransactionally(TransactionalExecutor<R> executor) {
+    public static <R> R executeTransactionally(TransactionalExecutor<R> executor) throws SQLException {
         Connection connection = null;
         try {
             connection = Databases.getConnectionFactory().getConnection();
@@ -132,8 +132,11 @@ public final class Databases {
             R result = executor.apply();
             connection.commit();
             return result;
+        } catch (SQLException ex) {
+            DbUtils.rollback(connection);
+            throw ex;
         } catch (Throwable ex) {
-            DbUtils.rollbackAndCloseQuietly(connection);
+            DbUtils.rollback(connection);
             throw new RollbackCauseException(ex.getMessage(), ex);
         } finally {
             connectionThreadLocal.remove();
@@ -149,8 +152,7 @@ public final class Databases {
                 connection = Databases.getConnectionFactory().getConnection();
                 return databaseInvoke.apply(connection, sqlExecutor);
             } finally {
-                if (connection != null && !connection.isClosed())
-                    connection.close();
+                DbUtils.closeQuietly(connection);
             }
         } else {
             return databaseInvoke.apply(connection, sqlExecutor);
