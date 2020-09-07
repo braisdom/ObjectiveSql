@@ -105,12 +105,12 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
         statementBuilder.append("query", "where",
                 List.of(treeMaker.Literal(String.format("%s = ?", domainModel.primaryColumnName())), aptBuilder.varRef("primaryKey")));
 
-        methodBuilder.setReturnStatement("query", "execute");
+        methodBuilder.setReturnStatement("query", "queryFirst");
         return  methodBuilder
                 .addStatements(statementBuilder.build())
                 .addParameter("primaryKey", primaryField.vartype)
                 .setThrowsClauses(SQLException.class)
-                .setReturnType(java.util.List.class, aptBuilder.typeRef(aptBuilder.getClassName()))
+                .setReturnType(aptBuilder.typeRef(aptBuilder.getClassName()))
                 .build("queryByPrimaryKey", Flags.PUBLIC | Flags.STATIC | Flags.FINAL);
     }
 
