@@ -168,6 +168,10 @@ public final class APTBuilder {
         return treeMaker.VarDef(treeMaker.Modifiers(Flags.PARAMETER), toName(name), typeRef(clazz), null);
     }
 
+    public JCVariableDecl newVar(JCExpression varType, String name) {
+        return treeMaker.VarDef(treeMaker.Modifiers(Flags.PARAMETER), toName(name), varType, null);
+    }
+
     public JCExpression newGenericsType(Class typeClass, JCExpression... genericTypes) {
         return treeMaker.TypeApply(typeRef(typeClass), List.from(genericTypes));
     }

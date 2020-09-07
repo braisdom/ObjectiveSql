@@ -1,5 +1,6 @@
 package com.github.braisdom.objsql;
 
+import com.github.braisdom.objsql.jdbc.DbUtils;
 import com.github.braisdom.objsql.transition.DefaultJDBCDataTypeRiser;
 import com.github.braisdom.objsql.transition.JDBCDataTypeRiser;
 import com.github.braisdom.objsql.util.StringUtil;
@@ -12,6 +13,11 @@ import java.util.logging.Level;
 
 @SuppressWarnings("ALL")
 public final class Databases {
+
+    private static SQLExecutor sqlExecutor = new DefaultSQLExecutor();
+    private static JDBCDataTypeRiser jdbcDataTypeRiser = new DefaultJDBCDataTypeRiser();
+    private static ConnectionFactory connectionFactory;
+    private static ThreadLocal<Connection> connectionThreadLocal = new ThreadLocal<>();
 
     private static QueryFactory queryFactory = new QueryFactory() {
         @Override
@@ -58,11 +64,6 @@ public final class Databases {
         }
     };
 
-    private static SQLExecutor sqlExecutor = new DefaultSQLExecutor();
-    private static JDBCDataTypeRiser jdbcDataTypeRiser = new DefaultJDBCDataTypeRiser();
-    private static ConnectionFactory connectionFactory;
-    private static ThreadLocal<Connection> connectionThreadLocal = new ThreadLocal<>();
-
     @FunctionalInterface
     public static interface DatabaseInvoke<T, R> {
         R apply(Connection connection, SQLExecutor<T> sqlExecutor) throws SQLException;
@@ -76,6 +77,10 @@ public final class Databases {
     @FunctionalInterface
     public static interface Benchmarkable<R> {
         R apply() throws Exception;
+    }
+
+    public static ThreadLocal<Connection> getConnectionThreadLocal() {
+        return connectionThreadLocal;
     }
 
     public static void installConnectionFactory(ConnectionFactory connectionFactory) {
@@ -118,27 +123,21 @@ public final class Databases {
         Databases.jdbcDataTypeRiser = JDBCDataTypeRiser;
     }
 
-    public static <R> R executeTransactionally(TransactionalExecutor<R> executor)
-            throws SQLException, RollbackCauseException {
-        Connection connection = Databases.getConnectionFactory().getConnection();
-        boolean autoCommit = connection.getAutoCommit();
-        connection.setAutoCommit(false);
-        connectionThreadLocal.set(connection);
-
+    public static <R> R executeTransactionally(TransactionalExecutor<R> executor) {
+        Connection connection = null;
         try {
-            return executor.apply();
-        } catch (SQLException ex) {
-            connection.rollback();
-            throw ex;
-        } catch (Exception ex) {
-            connection.rollback();
+            connection = Databases.getConnectionFactory().getConnection();
+            connection.setAutoCommit(false);
+            connectionThreadLocal.set(connection);
+            R result = executor.apply();
+            connection.commit();
+            return result;
+        } catch (Throwable ex) {
+            DbUtils.rollbackAndCloseQuietly(connection);
             throw new RollbackCauseException(ex.getMessage(), ex);
         } finally {
             connectionThreadLocal.remove();
-            if (connection != null && !connection.isClosed()) {
-                connection.setAutoCommit(autoCommit);
-                connection.close();
-            }
+            DbUtils.closeQuietly(connection);
         }
     }
 
@@ -163,7 +162,7 @@ public final class Databases {
         try {
             long begin = System.currentTimeMillis();
             R result = benchmarkable.apply();
-//            logger.info(System.currentTimeMillis() - begin, message, params);
+            logger.info(System.currentTimeMillis() - begin, message, params);
             return result;
         } catch (Exception ex) {
             if (ex instanceof SQLException)

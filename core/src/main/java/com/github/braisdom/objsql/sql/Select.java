@@ -1,6 +1,5 @@
 package com.github.braisdom.objsql.sql;
 
-import com.github.braisdom.objsql.BeanModelDescriptor;
 import com.github.braisdom.objsql.DatabaseType;
 import com.github.braisdom.objsql.Tables;
 import com.github.braisdom.objsql.sql.expression.JoinExpression;
@@ -10,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@Syntax(DatabaseType.All)
 public class Select<T> extends AbstractExpression implements Dataset {
 
     protected List<Expression> projections = new ArrayList<>();
@@ -32,7 +32,6 @@ public class Select<T> extends AbstractExpression implements Dataset {
         from(dataset);
     }
 
-    @Syntax(DatabaseType.All)
     public Select project(Expression projection, Expression... projections) {
         this.projections.add(projection);
         if (projections.length > 0)
@@ -40,25 +39,21 @@ public class Select<T> extends AbstractExpression implements Dataset {
         return this;
     }
 
-    @Syntax(DatabaseType.All)
     public Select from(Dataset... datasets) {
         this.fromDatasets = datasets;
         return this;
     }
 
-    @Syntax(DatabaseType.All)
     public Select where(Expression expression) {
         this.whereExpression = expression;
         return this;
     }
 
-    @Syntax(DatabaseType.All)
     public Select leftOuterJoin(Dataset dataset, Expression onExpression) {
         this.joinExpressions.add(new JoinExpression(JoinExpression.LEFT_OUTER_JOIN, dataset, onExpression));
         return this;
     }
 
-    @Syntax(DatabaseType.All)
     public Select rightOuterJoin(Dataset dataset, Expression onExpression) {
         this.joinExpressions.add(new JoinExpression(JoinExpression.RIGHT_OUTER_JOIN, dataset, onExpression));
         return this;

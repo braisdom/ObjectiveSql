@@ -1,6 +1,8 @@
 package com.github.braisdom.objsql;
 
-public class RollbackCauseException extends Exception {
+import java.sql.SQLException;
+
+public class RollbackCauseException extends RuntimeException {
     public RollbackCauseException() {
     }
 
@@ -14,9 +16,5 @@ public class RollbackCauseException extends Exception {
 
     public RollbackCauseException(Throwable cause) {
         super(cause);
-    }
-
-    public RollbackCauseException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
     }
 }

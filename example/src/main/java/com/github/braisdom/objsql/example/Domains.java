@@ -41,13 +41,6 @@ public final class Domains {
         // The field will not be save into database;
         @Transient
         private String otherInfo;
-
-        @Transactional
-        public static Member makeOrders(Member member, Order... orders) throws SQLException {
-            Member member1 = create(new Member(), true);
-            Order.create(orders, true);
-            return member1;
-        }
     }
 
     @DomainModel
@@ -65,6 +58,12 @@ public final class Domains {
 
         @Relation(relationType = RelationType.HAS_MANY)
         private List<OrderLine> orderLines;
+
+        @Transactional
+        public static void makeOrder(Order order, OrderLine... orderLines) throws SQLException {
+            Order.create(order, true);
+            OrderLine.create(orderLines, true);
+        }
     }
 
     @DomainModel
