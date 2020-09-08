@@ -20,7 +20,7 @@ public class ANSIExpressionsTest {
     }
 
     @Test
-    public void testCount() {
+    public void testCountFunction() {
         TestModel.Table testTable = TestModel.asTable();
 
         Expression countExpr = ANSIFunctions.count();
@@ -32,5 +32,10 @@ public class ANSIExpressionsTest {
         Assertions.assertEquals("COUNT(*)  AS \"count_num\"", aliasedCountExpr.toSql(exprContext).trim());
         Assertions.assertEquals("COUNT(\"T0\".\"name\" )", columnCountExpr.toSql(exprContext).trim());
         Assertions.assertEquals("COUNT(DISTINCT \"T0\".\"name\" )", columnCountDistinctExpr.toSql(exprContext).trim());
+    }
+
+    @Test
+    public void testAggFunction() {
+
     }
 }
