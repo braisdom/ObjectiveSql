@@ -19,6 +19,7 @@ package com.github.braisdom.objsql.sql.function;
 import com.github.braisdom.objsql.DatabaseType;
 import com.github.braisdom.objsql.sql.*;
 import com.github.braisdom.objsql.sql.expression.CaseExpression;
+import com.github.braisdom.objsql.sql.expression.LiteralExpression;
 import com.github.braisdom.objsql.sql.expression.PlainExpression;
 import com.github.braisdom.objsql.util.FunctionWithThrowable;
 import com.github.braisdom.objsql.util.SuppressedException;
@@ -171,5 +172,13 @@ public class ANSIFunctions {
 
     public static final CaseExpression sqlCase(Expression caseExpr) {
         return new CaseExpression(caseExpr);
+    }
+
+    public static Expression groupConcat(Expression... expressions) {
+        return new SqlFunctionCall("group_concat", expressions);
+    }
+
+    public static Expression subStr(Expression expression, int length) {
+        return new SqlFunctionCall("SUBSTR", expression, new LiteralExpression(length));
     }
 }

@@ -241,6 +241,11 @@ public class DefaultColumn extends AbstractExpression implements Column {
     }
 
     @Override
+    public Expression like(String str) {
+        return new ColumnExpression(this, new LiteralExpression(str));
+    }
+
+    @Override
     public String toSql(ExpressionContext expressionContext) {
         String tableAlias = expressionContext.getAlias(dataset, true);
         String columnAlias = getAlias();

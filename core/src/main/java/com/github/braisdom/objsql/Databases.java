@@ -99,8 +99,9 @@ public final class Databases {
     };
 
     /**
-     * Represents a logic of database, it will provide the connection and sql
-     * executor of database, and the concrete logic will be ignored the behavior about connection.
+     * Represents a logic of data , it will provide the connection and sql
+     * executor of database, and the concrete logic will be ignored the behavior
+     * about connection.
      *
      * @param <T>
      * @param <R>
@@ -111,7 +112,8 @@ public final class Databases {
     }
 
     /**
-     * Represents logic will be executed in the transaction(There's only one connection of database)
+     * Represents logic will be executed in the transaction(There's only one
+     * connection of database)
      *
      * @param <R>
      */

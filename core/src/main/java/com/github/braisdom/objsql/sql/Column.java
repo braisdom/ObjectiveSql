@@ -100,4 +100,5 @@ public interface Column extends Expression {
 
     Expression notBetween(Expression left, Expression right);
 
+    Expression like(String str);
 }
