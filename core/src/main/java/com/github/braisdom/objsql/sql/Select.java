@@ -160,7 +160,7 @@ public class Select<T> extends AbstractExpression implements Dataset {
 
     private void processFrom(ExpressionContext expressionContext, StringBuilder sql) {
         if (fromDatasets != null && fromDatasets.length == 0)
-            throw new SQLStatementException("The from cause is required for select statement");
+            throw new SQLSyntaxException("The from cause is required for select statement");
 
         sql.append(" FROM ");
         String[] fromStrings = Arrays.stream(fromDatasets)

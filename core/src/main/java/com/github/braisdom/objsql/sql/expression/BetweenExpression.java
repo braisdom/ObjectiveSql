@@ -19,6 +19,7 @@ package com.github.braisdom.objsql.sql.expression;
 import com.github.braisdom.objsql.sql.AbstractExpression;
 import com.github.braisdom.objsql.sql.Expression;
 import com.github.braisdom.objsql.sql.ExpressionContext;
+import com.github.braisdom.objsql.sql.SQLSyntaxException;
 
 public class BetweenExpression extends AbstractExpression {
 
@@ -33,7 +34,7 @@ public class BetweenExpression extends AbstractExpression {
     }
 
     @Override
-    public String toSql(ExpressionContext expressionContext) {
+    public String toSql(ExpressionContext expressionContext)  throws SQLSyntaxException {
         return String.format(" %s BETWEEN %s AND %s ",
                 negated ? "NOT" : "", left.toSql(expressionContext), right.toSql(expressionContext));
     }

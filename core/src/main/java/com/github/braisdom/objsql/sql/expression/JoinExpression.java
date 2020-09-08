@@ -19,6 +19,7 @@ package com.github.braisdom.objsql.sql.expression;
 import com.github.braisdom.objsql.sql.Dataset;
 import com.github.braisdom.objsql.sql.Expression;
 import com.github.braisdom.objsql.sql.ExpressionContext;
+import com.github.braisdom.objsql.sql.SQLSyntaxException;
 
 import java.util.Objects;
 
@@ -46,7 +47,7 @@ public class JoinExpression implements Expression {
     }
 
     @Override
-    public String toSql(ExpressionContext expressionContext) {
+    public String toSql(ExpressionContext expressionContext) throws SQLSyntaxException {
         String joinTypeString = null;
         switch (joinType) {
             case LEFT_OUTER_JOIN:

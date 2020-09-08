@@ -18,5 +18,5 @@ package com.github.braisdom.objsql.sql;
 
 public interface Sqlizable {
 
-    String toSql(ExpressionContext expressionContext);
+    String toSql(ExpressionContext expressionContext) throws SQLSyntaxException;
 }

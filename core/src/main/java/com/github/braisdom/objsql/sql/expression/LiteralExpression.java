@@ -18,6 +18,7 @@ package com.github.braisdom.objsql.sql.expression;
 
 import com.github.braisdom.objsql.sql.AbstractExpression;
 import com.github.braisdom.objsql.sql.ExpressionContext;
+import com.github.braisdom.objsql.sql.SQLSyntaxException;
 
 public class LiteralExpression extends AbstractExpression {
 
@@ -28,7 +29,7 @@ public class LiteralExpression extends AbstractExpression {
     }
 
     @Override
-    public String toSql(ExpressionContext expressionContext) {
+    public String toSql(ExpressionContext expressionContext) throws SQLSyntaxException {
         if(rawLiteral == null)
             return " NULL ";
         if(String.class.isAssignableFrom(rawLiteral.getClass()))

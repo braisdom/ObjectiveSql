@@ -16,6 +16,8 @@
  */
 package com.github.braisdom.objsql.sql;
 
+import com.github.braisdom.objsql.util.FunctionWithThrowable;
+
 import java.util.Arrays;
 
 public class NativeFunction extends AbstractExpression {
@@ -37,9 +39,11 @@ public class NativeFunction extends AbstractExpression {
     }
 
     @Override
-    public String toSql(ExpressionContext expressionContext) {
+    public String toSql(ExpressionContext expressionContext) throws SQLSyntaxException {
         String[] expressionStrings = Arrays.stream(expressions)
-                .map(expression -> expression.toSql(expressionContext)).toArray(String[]::new);
+                .map(FunctionWithThrowable
+                        .castFunctionWithThrowable(expression -> expression.toSql(expressionContext)))
+                .toArray(String[]::new);
         String alias = getAlias();
         return String.format("%s(%s) %s", name, String.join(",", expressionStrings),
                 alias == null ? "" : " AS " + expressionContext.quoteColumn(alias));

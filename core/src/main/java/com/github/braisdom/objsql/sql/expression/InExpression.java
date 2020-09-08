@@ -19,6 +19,9 @@ package com.github.braisdom.objsql.sql.expression;
 import com.github.braisdom.objsql.sql.AbstractExpression;
 import com.github.braisdom.objsql.sql.Expression;
 import com.github.braisdom.objsql.sql.ExpressionContext;
+import com.github.braisdom.objsql.sql.SQLSyntaxException;
+import com.github.braisdom.objsql.util.FunctionWithThrowable;
+import com.github.braisdom.objsql.util.SuppressedException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,9 +45,16 @@ public class InExpression extends AbstractExpression {
     }
 
     @Override
-    public String toSql(ExpressionContext expressionContext) {
-        String[] expressionStrings = expressions.stream()
-                .map(expression -> expression.toSql(expressionContext)).toArray(String[]::new);
-        return String.format(" %s IN (%s)", negated ? "NOT" : "", String.join(" , ", expressionStrings));
+    public String toSql(ExpressionContext expressionContext) throws SQLSyntaxException {
+        try {
+            String[] expressionStrings = expressions.stream()
+                    .map(FunctionWithThrowable
+                            .castFunctionWithThrowable(expression -> expression.toSql(expressionContext))).toArray(String[]::new);
+            return String.format(" %s IN (%s)", negated ? "NOT" : "", String.join(" , ", expressionStrings));
+        } catch (SuppressedException ex) {
+            if (ex.getCause() instanceof SQLSyntaxException)
+                throw (SQLSyntaxException) ex.getCause();
+            else throw ex;
+        }
     }
 }

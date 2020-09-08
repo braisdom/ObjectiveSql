@@ -17,12 +17,12 @@
 package com.github.braisdom.objsql.sql.function;
 
 import com.github.braisdom.objsql.DatabaseType;
-import com.github.braisdom.objsql.sql.Expression;
-import com.github.braisdom.objsql.sql.ExpressionContext;
-import com.github.braisdom.objsql.sql.NativeFunction;
-import com.github.braisdom.objsql.sql.Syntax;
+import com.github.braisdom.objsql.sql.*;
+import com.github.braisdom.objsql.sql.expression.CaseExpression;
 import com.github.braisdom.objsql.sql.expression.LiteralExpression;
 import com.github.braisdom.objsql.sql.expression.PlainExpression;
+import com.github.braisdom.objsql.util.FunctionWithThrowable;
+import com.github.braisdom.objsql.util.SuppressedException;
 
 import java.util.Arrays;
 
@@ -40,12 +40,19 @@ public class ANSIFunctions {
     public static final Expression countDistinct(Expression expression) {
         return new NativeFunction("COUNT", expression) {
             @Override
-            public String toSql(ExpressionContext expressionContext) {
-                String[] expressionStrings = Arrays.stream(getExpressions())
-                        .map(expression -> expression.toSql(expressionContext)).toArray(String[]::new);
-                String alias = getAlias();
-                return String.format("%s(DISTINCT %s) %s", getName(), String.join(",", expressionStrings),
-                        alias == null ? "" : " AS " + expressionContext.quoteColumn(alias));
+            public String toSql(ExpressionContext expressionContext)  throws SQLSyntaxException {
+                try {
+                    String[] expressionStrings = Arrays.stream(getExpressions())
+                            .map(FunctionWithThrowable
+                                    .castFunctionWithThrowable(expression -> expression.toSql(expressionContext))).toArray(String[]::new);
+                    String alias = getAlias();
+                    return String.format("%s(DISTINCT %s) %s", getName(), String.join(",", expressionStrings),
+                            alias == null ? "" : " AS " + expressionContext.quoteColumn(alias));
+                } catch (SuppressedException ex) {
+                    if (ex.getCause() instanceof SQLSyntaxException)
+                        throw (SQLSyntaxException) ex.getCause();
+                    else throw ex;
+                }
             }
         };
     }
@@ -125,5 +132,13 @@ public class ANSIFunctions {
 
     public static final Expression sqlIf(Expression expression, Expression expression1, Expression expression2) {
         return new NativeFunction("IF", expression, expression1, expression2);
+    }
+
+    public static final CaseExpression sqlCase() {
+        return new CaseExpression();
+    }
+
+    public static final CaseExpression sqlCase(Expression caseExpr) {
+        return new CaseExpression(caseExpr);
     }
 }

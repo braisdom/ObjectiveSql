@@ -19,6 +19,7 @@ package com.github.braisdom.objsql.sql.expression;
 import com.github.braisdom.objsql.sql.AbstractExpression;
 import com.github.braisdom.objsql.sql.Expression;
 import com.github.braisdom.objsql.sql.ExpressionContext;
+import com.github.braisdom.objsql.sql.SQLSyntaxException;
 
 public class ParenExpression extends AbstractExpression {
 
@@ -29,7 +30,7 @@ public class ParenExpression extends AbstractExpression {
     }
 
     @Override
-    public String toSql(ExpressionContext expressionContext) {
+    public String toSql(ExpressionContext expressionContext) throws SQLSyntaxException {
         return String.format("(%s)", expression.toSql(expressionContext));
     }
 }

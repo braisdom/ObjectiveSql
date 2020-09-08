@@ -16,23 +16,23 @@
  */
 package com.github.braisdom.objsql.sql;
 
-public class SQLStatementException extends RuntimeException {
-    public SQLStatementException() {
+public class SQLSyntaxException extends Exception {
+    public SQLSyntaxException() {
     }
 
-    public SQLStatementException(String message) {
+    public SQLSyntaxException(String message) {
         super(message);
     }
 
-    public SQLStatementException(String message, Throwable cause) {
+    public SQLSyntaxException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public SQLStatementException(Throwable cause) {
+    public SQLSyntaxException(Throwable cause) {
         super(cause);
     }
 
-    public SQLStatementException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public SQLSyntaxException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }
