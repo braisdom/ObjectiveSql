@@ -5,6 +5,10 @@ import com.github.braisdom.objsql.relation.Relationship;
 import java.sql.SQLException;
 import java.util.List;
 
+/**
+ * A programmable structure for SQL statement.
+ * @param <T>
+ */
 public interface Query<T> {
 
     Query where(String filter, Object... args);
