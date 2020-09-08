@@ -11,6 +11,8 @@ it will keep updating as fast as possible.
 
 ## Beginning
 
+Install the plugin of IntelliJ, see [ObjectiveSql-IntelliJ-Plugin](https://github.com/braisdom/ObjectiveSql-IntelliJ-Plugin)
+
 ```xml
 <!-- Add dependency to application -->
 <dependency>
@@ -26,8 +28,6 @@ it will keep updating as fast as possible.
 Databases.installConnectionFactory(new SqliteConnectionFactory(file.getPath()));
 
 ```
-
-Install the plugin of IntelliJ, see [ObjectiveSql-IntelliJ-Plugin](https://github.com/braisdom/ObjectiveSql-IntelliJ-Plugin)
 
 ## Definition of DomainModel
 
