@@ -1,9 +1,9 @@
 # To take a new SQL experience in Java
-How is the ObjectiveSql, how does it stand out from the many ORM frameworks?  Although Java is a static language , but it has provided the ability to extend code dynamically since version 1.6([JSR269](https://www.jcp.org/en/jsr/detail?id=269)), makes the same as Ruby, Python, Javascript and other dynamic languages, except that it provides extension point at compiling.
+Although Java is a static language , but it has provided the ability to extend code dynamically since version 1.6([JSR269](https://www.jcp.org/en/jsr/detail?id=269)), makes the same as Ruby, Python, Javascript and other dynamic languages, except that it provides extension point at compiling.
 
-SQL programming in Java has always been a difficult problem. Sometimes it is mixed in Java codess as a string, sometimes it exists in the template language, and when it is encapsulated by Fluent, it cannot be associated with Domain Model also. 
+SQL programming in Java has always been a difficult problem. Sometimes it is mixed in Java codess as a string, sometimes it exists in the template language, and when it is encapsulated by Fluent, it cannot be associated with Domain Model also.
 
-Commonly, there are two ways of SQL programming in Java, CRUD of Domain Model, and the complex querying of analysis, the ObjectiveSql offers both of these ways  with zero code almost.
+Commonly, there are two ways of SQL programming in Java, CRUD behavior of Domain Model, and the complex querying for analysing.
 
 ## Definition of DomainModel
 
