@@ -20,6 +20,10 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
+/**
+ * The class provides the default implementations of structure of SQL
+ * @param <T>
+ */
 public abstract class AbstractQuery<T> implements Query<T> {
 
     protected final DomainModelDescriptor<T> domainModelDescriptor;

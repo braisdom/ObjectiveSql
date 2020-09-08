@@ -30,6 +30,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
 
+/**
+ * The default implementation for <code>DomainModelDescriptor</code> with JavaBean
+ * @param <T>
+ */
 public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
 
     private final static List<Class> COLUMNIZABLE_FIELD_TYPES = Arrays.asList(new Class[]{

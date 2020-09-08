@@ -1,3 +1,19 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.github.braisdom.objsql;
 
 import com.github.braisdom.objsql.jdbc.DbUtils;
@@ -11,18 +27,37 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.logging.Level;
 
+/**
+ * This class consists exclusively of static methods that operate of behavior of database.
+ * and the extension point for application.
+ */
 @SuppressWarnings("ALL")
 public final class Databases {
 
+    /**
+     * The LoggerFactory is definied for too many Log frameworks appearing,
+     * the ObjectiveSql can't decide which one to use
+     */
     private static LoggerFactory loggerFactory = new LoggerFactory() {
         @Override
         public Logger create(Class<?> clazz) {
             return new LoggerImpl(clazz);
         }
     };
+
+    /** The default sql executor for Objective, and customized the implementation when meeting the specific database */
     private static SQLExecutor sqlExecutor = new DefaultSQLExecutor();
+
+    /** The default implementation to rise the column value from database to Java with common way */
     private static JDBCDataTypeRiser jdbcDataTypeRiser = new DefaultJDBCDataTypeRiser();
+
+    /** The connectionFacotory is required in ObjectiveSql, it will be injected at application beginning */
     private static ConnectionFactory connectionFactory;
+
+    /**
+     * Holds the database connection in a thread, and destroy the connection when transaction
+     * terminated or exception occoured.
+     * */
     private static ThreadLocal<Connection> connectionThreadLocal = new ThreadLocal<>();
 
     private static QueryFactory queryFactory = new QueryFactory() {
