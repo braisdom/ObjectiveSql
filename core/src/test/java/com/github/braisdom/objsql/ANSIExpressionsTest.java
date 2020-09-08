@@ -7,6 +7,7 @@ import com.github.braisdom.objsql.sql.function.ANSIFunctions;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static com.github.braisdom.objsql.sql.expression.Expressions.$;
 import static com.github.braisdom.objsql.sql.expression.Expressions.literal;
 
 public class ANSIExpressionsTest {
@@ -50,17 +51,13 @@ public class ANSIExpressionsTest {
     }
 
     @Test
-    public void testStringFunction() {
+    public void testMathFunction() {
         TestModel.Table testTable = TestModel.asTable();
 
-        Expression sumExpr = ANSIFunctions.sum(testTable.id);
-        Expression avgExpr = ANSIFunctions.avg(testTable.id);
-        Expression maxExpr = ANSIFunctions.max(testTable.id);
-        Expression minExpr = ANSIFunctions.min(testTable.id);
+        Expression absExpr = ANSIFunctions.abs(testTable.id);
+        Expression abs2Expr = ANSIFunctions.abs($(12));
 
-        Assertions.assertEquals("SUM(\"T0\".\"id\" )", sumExpr.toSql(exprContext).trim());
-        Assertions.assertEquals("AVG(\"T0\".\"id\" )", avgExpr.toSql(exprContext).trim());
-        Assertions.assertEquals("MAX(\"T0\".\"id\" )", maxExpr.toSql(exprContext).trim());
-        Assertions.assertEquals("MIN(\"T0\".\"id\" )", minExpr.toSql(exprContext).trim());
+        Assertions.assertEquals("ABS(\"T0\".\"id\" )", absExpr.toSql(exprContext).trim());
+        Assertions.assertEquals("ABS(12)", abs2Expr.toSql(exprContext).trim());
     }
 }

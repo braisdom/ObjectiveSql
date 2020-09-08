@@ -62,6 +62,31 @@ public class ANSIFunctions {
         return new NativeFunction("ABS", expression);
     }
 
+    public static final Expression ceil(Expression expression) {
+        return new NativeFunction("CEIL", expression);
+    }
+
+    public static final Expression floor(Expression expression) {
+        return new NativeFunction("FLOOR", expression);
+    }
+
+    public static final Expression sin(Expression expression) {
+        return new NativeFunction("SIN", expression);
+    }
+
+    public static final Expression tan(Expression expression) {
+        return new NativeFunction("TAN", expression);
+    }
+
+    public static final Expression cos(Expression expression) {
+        return new NativeFunction("COS", expression);
+    }
+
+    @Syntax(except = DatabaseType.SQLite)
+    public static final Expression mod(Expression expression1, Expression expression2) {
+        return new NativeFunction("MOD", expression1, expression2);
+    }
+
     public static final Expression sum(Expression expression) {
         return new NativeFunction("SUM", expression);
     }
@@ -76,6 +101,10 @@ public class ANSIFunctions {
 
     public static final Expression min(Expression expression) {
         return new NativeFunction("MIN", expression);
+    }
+
+    public static final Expression len(Expression... expressions) {
+        return new NativeFunction("LEN", expressions);
     }
 
     public static final Expression concat(Expression... expressions) {
