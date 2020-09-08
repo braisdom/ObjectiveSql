@@ -36,6 +36,16 @@ public class ANSIExpressionsTest {
 
     @Test
     public void testAggFunction() {
+        TestModel.Table testTable = TestModel.asTable();
 
+        Expression sumExpr = ANSIFunctions.sum(testTable.id);
+        Expression avgExpr = ANSIFunctions.avg(testTable.id);
+        Expression maxExpr = ANSIFunctions.max(testTable.id);
+        Expression minExpr = ANSIFunctions.min(testTable.id);
+
+        Assertions.assertEquals("SUM(\"T0\".\"id\" )", sumExpr.toSql(exprContext).trim());
+        Assertions.assertEquals("AVG(\"T0\".\"id\" )", avgExpr.toSql(exprContext).trim());
+        Assertions.assertEquals("MAX(\"T0\".\"id\" )", maxExpr.toSql(exprContext).trim());
+        Assertions.assertEquals("MIN(\"T0\".\"id\" )", minExpr.toSql(exprContext).trim());
     }
 }
