@@ -22,6 +22,7 @@ import com.github.braisdom.objsql.sql.ExpressionContext;
 import com.github.braisdom.objsql.sql.NativeFunction;
 import com.github.braisdom.objsql.sql.Syntax;
 import com.github.braisdom.objsql.sql.expression.LiteralExpression;
+import com.github.braisdom.objsql.sql.expression.PlainExpression;
 
 import java.util.Arrays;
 
@@ -29,7 +30,7 @@ import java.util.Arrays;
 public class IsoFunctions {
 
     public static final NativeFunction count() {
-        return new NativeFunction("COUNT", new LiteralExpression("*"));
+        return new NativeFunction("COUNT", new PlainExpression("*"));
     }
 
     public static final NativeFunction count(Expression expression) {

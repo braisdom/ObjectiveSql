@@ -1,9 +1,12 @@
 package com.github.braisdom.objsql;
 
+import com.github.braisdom.objsql.annotations.DomainModel;
 import com.github.braisdom.objsql.sql.Dataset;
 import com.github.braisdom.objsql.sql.Expression;
 import com.github.braisdom.objsql.sql.ExpressionContext;
+import com.github.braisdom.objsql.sql.function.IsoFunctions;
 import com.sun.tools.javac.util.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.sql.Timestamp;
@@ -11,7 +14,7 @@ import java.sql.Timestamp;
 import static com.github.braisdom.objsql.sql.expression.Expressions.literal;
 import static com.github.braisdom.objsql.sql.expression.Expressions.plus;
 
-public class ExpressionsTest {
+public class IsoExpressionsTest {
 
     private static class ExpressionContextTest implements ExpressionContext {
 
@@ -46,10 +49,16 @@ public class ExpressionsTest {
         }
     }
 
+    private ExpressionContextTest exprContext = new ExpressionContextTest();
+
+    @DomainModel
+    private static class TestModel {
+        private String name;
+    }
+
     @Test
-    public void testPlus() {
-        Expression plusExpression = plus(literal(10), literal(20));
-        String sqlPart = plusExpression.toSql(new ExpressionContextTest());
-        Assert.check(sqlPart.equalsIgnoreCase("10 + 20"));
+    public void testCount() {
+        Expression countExpr = IsoFunctions.count();
+        Assertions.assertEquals("COUNT(*)", countExpr.toSql(exprContext).trim());
     }
 }
