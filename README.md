@@ -9,12 +9,6 @@ The ObjectiveSql is a beta version now, but more features will be comed, and it 
 
 ## Beginning
 
-```java
-// Installing the connection factory for ObjectiveSql
-Databases.installConnectionFactory(new SqliteConnectionFactory(file.getPath()));
-
-```
-
 ```xml
 <!-- Add dependency to application -->
 <dependency>
@@ -22,6 +16,13 @@ Databases.installConnectionFactory(new SqliteConnectionFactory(file.getPath()));
   <artifactId>objective-sql</artifactId>
   <version>1.2</version>
 </dependency>
+```
+
+
+```java
+// Installing the connection factory for ObjectiveSql
+Databases.installConnectionFactory(new SqliteConnectionFactory(file.getPath()));
+
 ```
 
 
