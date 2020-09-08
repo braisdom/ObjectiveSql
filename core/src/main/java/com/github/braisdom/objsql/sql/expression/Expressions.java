@@ -81,8 +81,4 @@ public class Expressions {
     public static Expression $(Double doubleLiteral) {
         return new LiteralExpression(doubleLiteral);
     }
-
-    public static Expression literal(Timestamp timestamp) {
-        return null;
-    }
 }
