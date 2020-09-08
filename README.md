@@ -27,7 +27,7 @@ Databases.installConnectionFactory(new SqliteConnectionFactory(file.getPath()));
 
 ```
 
-Install the plugin of IntelliJ, see [ObjectiveSql](https://github.com/braisdom/ObjectiveSql-IntelliJ-Plugin)-IntelliJ-Plugin
+Install the plugin of IntelliJ, see [ObjectiveSql-IntelliJ-Plugin](https://github.com/braisdom/ObjectiveSql-IntelliJ-Plugin)
 
 ## Definition of DomainModel
 
