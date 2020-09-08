@@ -61,8 +61,38 @@ public class DefaultColumn extends AbstractExpression implements Column {
     }
 
     @Override
+    public Expression lt(Integer literal) {
+        return new PolynaryExpression(PolynaryExpression.LT, this, new LiteralExpression(literal));
+    }
+
+    @Override
+    public Expression lt(Float literal) {
+        return new PolynaryExpression(PolynaryExpression.LT, this, new LiteralExpression(literal));
+    }
+
+    @Override
+    public Expression lt(Double literal) {
+        return new PolynaryExpression(PolynaryExpression.LT, this, new LiteralExpression(literal));
+    }
+
+    @Override
     public Expression gt(Expression expr) {
         return new PolynaryExpression(PolynaryExpression.GT, this, expr);
+    }
+
+    @Override
+    public Expression gt(Integer literal) {
+        return new PolynaryExpression(PolynaryExpression.GT, this, new LiteralExpression(literal));
+    }
+
+    @Override
+    public Expression gt(Float literal) {
+        return new PolynaryExpression(PolynaryExpression.GT, this, new LiteralExpression(literal));
+    }
+
+    @Override
+    public Expression gt(Double literal) {
+        return new PolynaryExpression(PolynaryExpression.GT, this, new LiteralExpression(literal));
     }
 
     @Override
@@ -71,8 +101,43 @@ public class DefaultColumn extends AbstractExpression implements Column {
     }
 
     @Override
+    public Expression eq(Integer literal) {
+        return new PolynaryExpression(PolynaryExpression.EQ, this, new LiteralExpression(literal));
+    }
+
+    @Override
+    public Expression eq(Float literal) {
+        return new PolynaryExpression(PolynaryExpression.EQ, this, new LiteralExpression(literal));
+    }
+
+    @Override
+    public Expression eq(Double literal) {
+        return new PolynaryExpression(PolynaryExpression.EQ, this, new LiteralExpression(literal));
+    }
+
+    @Override
+    public Expression eq(String literal) {
+        return new PolynaryExpression(PolynaryExpression.EQ, this, new LiteralExpression(literal));
+    }
+
+    @Override
     public Expression le(Expression expr) {
         return new PolynaryExpression(PolynaryExpression.LE, this, expr);
+    }
+
+    @Override
+    public Expression le(Integer literal) {
+        return new PolynaryExpression(PolynaryExpression.LE, this, new LiteralExpression(literal));
+    }
+
+    @Override
+    public Expression le(Float literal) {
+        return new PolynaryExpression(PolynaryExpression.LE, this, new LiteralExpression(literal));
+    }
+
+    @Override
+    public Expression le(Double literal) {
+        return new PolynaryExpression(PolynaryExpression.LE, this, new LiteralExpression(literal));
     }
 
     @Override
@@ -81,8 +146,68 @@ public class DefaultColumn extends AbstractExpression implements Column {
     }
 
     @Override
+    public Expression ge(Integer literal) {
+        return new PolynaryExpression(PolynaryExpression.GE, this, new LiteralExpression(literal));
+    }
+
+    @Override
+    public Expression ge(Float literal) {
+        return new PolynaryExpression(PolynaryExpression.GE, this, new LiteralExpression(literal));
+    }
+
+    @Override
+    public Expression ge(Double literal) {
+        return new PolynaryExpression(PolynaryExpression.GE, this, new LiteralExpression(literal));
+    }
+
+    @Override
     public Expression ne(Expression expr) {
         return new PolynaryExpression(PolynaryExpression.NE, this, expr);
+    }
+
+    @Override
+    public Expression ne(Integer literal) {
+        return new PolynaryExpression(PolynaryExpression.NE, this, new LiteralExpression(literal));
+    }
+
+    @Override
+    public Expression ne(Float literal) {
+        return new PolynaryExpression(PolynaryExpression.NE, this, new LiteralExpression(literal));
+    }
+
+    @Override
+    public Expression ne(Double literal) {
+        return new PolynaryExpression(PolynaryExpression.NE, this, new LiteralExpression(literal));
+    }
+
+    @Override
+    public Expression ne(String literal) {
+        return new PolynaryExpression(PolynaryExpression.NE, this, new LiteralExpression(literal));
+    }
+
+    @Override
+    public Expression ne2(Expression expr) {
+        return new PolynaryExpression(PolynaryExpression.NE2, this, expr);
+    }
+
+    @Override
+    public Expression ne2(Integer literal) {
+        return new PolynaryExpression(PolynaryExpression.NE2, this, new LiteralExpression(literal));
+    }
+
+    @Override
+    public Expression ne2(Float literal) {
+        return new PolynaryExpression(PolynaryExpression.NE2, this, new LiteralExpression(literal));
+    }
+
+    @Override
+    public Expression ne2(Double literal) {
+        return new PolynaryExpression(PolynaryExpression.NE2, this, new LiteralExpression(literal));
+    }
+
+    @Override
+    public Expression ne2(String literal) {
+        return new PolynaryExpression(PolynaryExpression.NE2, this, new LiteralExpression(literal));
     }
 
     @Override

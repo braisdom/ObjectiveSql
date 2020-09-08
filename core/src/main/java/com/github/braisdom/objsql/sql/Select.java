@@ -19,6 +19,8 @@ package com.github.braisdom.objsql.sql;
 import com.github.braisdom.objsql.DatabaseType;
 import com.github.braisdom.objsql.Tables;
 import com.github.braisdom.objsql.sql.expression.JoinExpression;
+import com.github.braisdom.objsql.util.FunctionWithThrowable;
+import com.github.braisdom.objsql.util.SuppressedException;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -120,13 +122,13 @@ public class Select<T> extends AbstractExpression implements Dataset {
         return this;
     }
 
-    public List<T> execute(DatabaseType databaseType, Class<T> domainClass) throws SQLException {
+    public List<T> execute(DatabaseType databaseType, Class<T> domainClass) throws SQLException, SQLSyntaxException {
         String sql = toSql(new DefaultExpressionContext(databaseType));
         return Tables.query(domainClass, sql);
     }
 
     @Override
-    public String toSql(ExpressionContext expressionContext) {
+    public String toSql(ExpressionContext expressionContext) throws SQLSyntaxException {
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT ");
 
@@ -148,73 +150,108 @@ public class Select<T> extends AbstractExpression implements Dataset {
         return sql.toString();
     }
 
-    private void processProjections(ExpressionContext expressionContext, StringBuilder sql) {
+    private void processProjections(ExpressionContext expressionContext, StringBuilder sql) throws SQLSyntaxException {
         if (projections.size() == 0)
             sql.append(" * ");
         else {
-            String[] projectionStrings = projections.stream()
-                    .map(projection -> projection.toSql(expressionContext)).toArray(String[]::new);
-            sql.append(String.join(",", projectionStrings));
+            try {
+                String[] projectionStrings = projections.stream()
+                        .map(FunctionWithThrowable
+                                .castFunctionWithThrowable(projection -> projection.toSql(expressionContext))).toArray(String[]::new);
+                sql.append(String.join(",", projectionStrings));
+            } catch (SuppressedException ex) {
+                if (ex.getCause() instanceof SQLSyntaxException)
+                    throw (SQLSyntaxException) ex.getCause();
+                else throw ex;
+            }
         }
     }
 
-    private void processFrom(ExpressionContext expressionContext, StringBuilder sql) {
+    private void processFrom(ExpressionContext expressionContext, StringBuilder sql) throws SQLSyntaxException {
         if (fromDatasets != null && fromDatasets.length == 0)
             throw new SQLSyntaxException("The from cause is required for select statement");
 
-        sql.append(" FROM ");
-        String[] fromStrings = Arrays.stream(fromDatasets)
-                .map(dataset -> dataset.toSql(expressionContext)).toArray(String[]::new);
-        sql.append(String.join(", ", fromStrings));
+        try {
+            sql.append(" FROM ");
+            String[] fromStrings = Arrays.stream(fromDatasets)
+                    .map(FunctionWithThrowable
+                            .castFunctionWithThrowable(dataset -> dataset.toSql(expressionContext))).toArray(String[]::new);
+            sql.append(String.join(", ", fromStrings));
+        } catch (SuppressedException ex) {
+            if (ex.getCause() instanceof SQLSyntaxException)
+                throw (SQLSyntaxException) ex.getCause();
+            else throw ex;
+        }
     }
 
-    private void processWhere(ExpressionContext expressionContext, StringBuilder sql) {
+    private void processWhere(ExpressionContext expressionContext, StringBuilder sql) throws SQLSyntaxException {
         if (whereExpression != null) {
             sql.append(" WHERE ");
             sql.append(whereExpression.toSql(expressionContext));
         }
     }
 
-    private void processJoins(ExpressionContext expressionContext, StringBuilder sql) {
-        if (joinExpressions != null && joinExpressions.size() > 0) {
-            String[] joinStrings = joinExpressions.stream()
-                    .map(joinExpression -> joinExpression.toSql(expressionContext)).toArray(String[]::new);
-            sql.append(String.join(" ", joinStrings));
+    private void processJoins(ExpressionContext expressionContext, StringBuilder sql) throws SQLSyntaxException {
+        try {
+            if (joinExpressions != null && joinExpressions.size() > 0) {
+                String[] joinStrings = joinExpressions.stream()
+                        .map(FunctionWithThrowable
+                                .castFunctionWithThrowable(joinExpression -> joinExpression.toSql(expressionContext))).toArray(String[]::new);
+                sql.append(String.join(" ", joinStrings));
+            }
+        } catch (SuppressedException ex) {
+            if (ex.getCause() instanceof SQLSyntaxException)
+                throw (SQLSyntaxException) ex.getCause();
+            else throw ex;
         }
     }
 
-    private void processGroupBy(ExpressionContext expressionContext, StringBuilder sql) {
+    private void processGroupBy(ExpressionContext expressionContext, StringBuilder sql) throws SQLSyntaxException {
         if (groupByExpressions != null && groupByExpressions.length > 0) {
-            sql.append(" GROUP BY ");
-            String[] groupByStrings = Arrays.stream(groupByExpressions)
-                    .map(groupBy -> groupBy.toSql(expressionContext)).toArray(String[]::new);
-            sql.append(String.join(", ", groupByStrings));
+            try {
+                sql.append(" GROUP BY ");
+                String[] groupByStrings = Arrays.stream(groupByExpressions)
+                        .map(FunctionWithThrowable
+                                .castFunctionWithThrowable(groupBy -> groupBy.toSql(expressionContext))).toArray(String[]::new);
+                sql.append(String.join(", ", groupByStrings));
 
-            if (havingExpression != null) {
-                sql.append(" HAVING ");
-                sql.append(havingExpression.toSql(expressionContext));
+                if (havingExpression != null) {
+                    sql.append(" HAVING ");
+                    sql.append(havingExpression.toSql(expressionContext));
+                }
+            } catch (SuppressedException ex) {
+                if (ex.getCause() instanceof SQLSyntaxException)
+                    throw (SQLSyntaxException) ex.getCause();
+                else throw ex;
             }
         }
     }
 
-    private void processOrderBy(ExpressionContext expressionContext, StringBuilder sql) {
+    private void processOrderBy(ExpressionContext expressionContext, StringBuilder sql) throws SQLSyntaxException {
         if (orderByExpressions != null && orderByExpressions.length > 0) {
-            sql.append(" ORDER BY ");
-            String[] orderByStrings = Arrays.stream(orderByExpressions)
-                    .map(orderBy -> orderBy.toSql(expressionContext)).toArray(String[]::new);
-            sql.append(String.join(", ", orderByStrings));
+            try {
+                sql.append(" ORDER BY ");
+                String[] orderByStrings = Arrays.stream(orderByExpressions)
+                        .map(FunctionWithThrowable
+                                .castFunctionWithThrowable(orderBy -> orderBy.toSql(expressionContext))).toArray(String[]::new);
+                sql.append(String.join(", ", orderByStrings));
+            } catch (SuppressedException ex) {
+                if (ex.getCause() instanceof SQLSyntaxException)
+                    throw (SQLSyntaxException) ex.getCause();
+                else throw ex;
+            }
         }
     }
 
-    private void processUnion(ExpressionContext expressionContext, StringBuilder sql) {
-        if (unionDatasets != null && unionDatasets.length > 0) {
-            Arrays.stream(unionDatasets).forEach(
-                    dataset -> sql.append(" UNION ").append(dataset.toSql(expressionContext)).append(" "));
+    private void processUnion(ExpressionContext expressionContext, StringBuilder sql) throws SQLSyntaxException {
+        if (unionDatasets != null) {
+            for(Dataset dataset:unionDatasets)
+                sql.append(" UNION ").append(dataset.toSql(expressionContext)).append(" ");
         }
 
-        if (unionAllDatasets != null && unionAllDatasets.length > 0) {
-            Arrays.stream(unionAllDatasets).forEach(
-                    dataset -> sql.append(" UNION ALL ").append(dataset.toSql(expressionContext)).append(" "));
+        if (unionAllDatasets != null) {
+            for(Dataset dataset:unionAllDatasets)
+                sql.append(" UNION ALL ").append(dataset.toSql(expressionContext)).append(" ");
         }
     }
 }

@@ -3,12 +3,15 @@ package com.github.braisdom.objsql;
 import com.github.braisdom.objsql.annotations.DomainModel;
 import com.github.braisdom.objsql.sql.DefaultExpressionContext;
 import com.github.braisdom.objsql.sql.Expression;
+import com.github.braisdom.objsql.sql.SQLSyntaxException;
+import com.github.braisdom.objsql.sql.expression.CaseExpression;
 import com.github.braisdom.objsql.sql.function.ANSIFunctions;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static com.github.braisdom.objsql.sql.expression.Expressions.$;
 import static com.github.braisdom.objsql.sql.expression.Expressions.literal;
+import static com.github.braisdom.objsql.sql.function.ANSIFunctions.sqlCase;
 
 public class ANSIExpressionsTest {
 
@@ -21,7 +24,7 @@ public class ANSIExpressionsTest {
     }
 
     @Test
-    public void testCountFunction() {
+    public void testCountFunction() throws SQLSyntaxException {
         TestModel.Table testTable = TestModel.asTable();
 
         Expression countExpr = ANSIFunctions.count();
@@ -36,7 +39,7 @@ public class ANSIExpressionsTest {
     }
 
     @Test
-    public void testAggFunction() {
+    public void testAggFunction() throws SQLSyntaxException {
         TestModel.Table testTable = TestModel.asTable();
 
         Expression sumExpr = ANSIFunctions.sum(testTable.id);
@@ -51,7 +54,7 @@ public class ANSIExpressionsTest {
     }
 
     @Test
-    public void testMathFunction() {
+    public void testMathFunction() throws SQLSyntaxException {
         TestModel.Table testTable = TestModel.asTable();
 
         Expression absExpr = ANSIFunctions.abs(testTable.id);
@@ -62,11 +65,29 @@ public class ANSIExpressionsTest {
     }
 
     @Test
-    public void testIfFunction() {
+    public void testIfFunction() throws SQLSyntaxException {
         TestModel.Table testTable = TestModel.asTable();
 
         Expression ifExpr = ANSIFunctions.sqlIf(testTable.id.eq($(12)), $("test"), $("none")).as("name");
 
         Assertions.assertEquals("IF(\"T0\".\"id\"  = 12,'test','none')  AS \"name\"", ifExpr.toSql(exprContext).trim());
+    }
+
+    @Test
+    public void testCase() throws SQLSyntaxException {
+        TestModel.Table testTable = TestModel.asTable();
+
+        CaseExpression caseExpr1 = sqlCase();
+        caseExpr1.when(testTable.id.gt(10), $("hello1"))
+                .when(testTable.id.lt(20), $("hello2"));
+
+        CaseExpression caseExpr2 = sqlCase(testTable.id);
+        caseExpr2.when($(10), $("hello1"))
+                .when($(20), $("hello2"));
+
+        Assertions.assertEquals("CASE  WHEN \"T0\".\"id\"  > 10 THEN 'hello1' WHEN \"T0\".\"id\"  < 20 THEN 'hello2' END",
+                caseExpr1.toSql(exprContext).trim());
+        Assertions.assertEquals("CASE \"T0\".\"id\"  WHEN 10 THEN 'hello1' WHEN 20 THEN 'hello2' END ",
+                caseExpr2.toSql(exprContext));
     }
 }
