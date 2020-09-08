@@ -54,6 +54,10 @@ public class ANSIFunctions {
         return new PlainExpression("CURRENT_TIMESTAMP");
     }
 
+    public static final Expression currentDate() {
+        return new PlainExpression("CURRENT_DATE");
+    }
+
     public static final Expression abs(Expression expression) {
         return new NativeFunction("ABS", expression);
     }
@@ -90,7 +94,7 @@ public class ANSIFunctions {
         return new NativeFunction("LTRIM", expressions);
     }
 
-    public static final Expression If(Expression expression, Expression expression1, Expression expression2) {
+    public static final Expression sqlIf(Expression expression, Expression expression1, Expression expression2) {
         return new NativeFunction("IF", expression, expression1, expression2);
     }
 }
