@@ -19,26 +19,28 @@ package com.github.braisdom.objsql.sql.function;
 import com.github.braisdom.objsql.DatabaseType;
 import com.github.braisdom.objsql.sql.*;
 import com.github.braisdom.objsql.sql.expression.CaseExpression;
-import com.github.braisdom.objsql.sql.expression.LiteralExpression;
 import com.github.braisdom.objsql.sql.expression.PlainExpression;
 import com.github.braisdom.objsql.util.FunctionWithThrowable;
 import com.github.braisdom.objsql.util.SuppressedException;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 @Syntax(DatabaseType.All)
 public class ANSIFunctions {
 
     public static final Expression count() {
-        return new NativeFunction("COUNT", new PlainExpression("*"));
+        return new SqlFunctionCall("COUNT", new PlainExpression("*"));
     }
 
     public static final Expression count(Expression expression) {
-        return new NativeFunction("COUNT", expression);
+        Objects.requireNonNull(expression, "The expression cannot be null");
+        return new SqlFunctionCall("COUNT", expression);
     }
 
     public static final Expression countDistinct(Expression expression) {
-        return new NativeFunction("COUNT", expression) {
+        Objects.requireNonNull(expression, "The expression cannot be null");
+        return new SqlFunctionCall("COUNT", expression) {
             @Override
             public String toSql(ExpressionContext expressionContext)  throws SQLSyntaxException {
                 try {
@@ -66,72 +68,101 @@ public class ANSIFunctions {
     }
 
     public static final Expression abs(Expression expression) {
-        return new NativeFunction("ABS", expression);
+        Objects.requireNonNull(expression, "The expression cannot be null");
+        return new SqlFunctionCall("ABS", expression);
     }
 
     public static final Expression ceil(Expression expression) {
-        return new NativeFunction("CEIL", expression);
+        Objects.requireNonNull(expression, "The expression cannot be null");
+        return new SqlFunctionCall("CEIL", expression);
     }
 
     public static final Expression floor(Expression expression) {
-        return new NativeFunction("FLOOR", expression);
+        Objects.requireNonNull(expression, "The expression cannot be null");
+        return new SqlFunctionCall("FLOOR", expression);
     }
 
     public static final Expression sin(Expression expression) {
-        return new NativeFunction("SIN", expression);
+        Objects.requireNonNull(expression, "The expression cannot be null");
+        return new SqlFunctionCall("SIN", expression);
     }
 
     public static final Expression tan(Expression expression) {
-        return new NativeFunction("TAN", expression);
+        Objects.requireNonNull(expression, "The expression cannot be null");
+        return new SqlFunctionCall("TAN", expression);
     }
 
     public static final Expression cos(Expression expression) {
-        return new NativeFunction("COS", expression);
+        Objects.requireNonNull(expression, "The expression cannot be null");
+        return new SqlFunctionCall("COS", expression);
     }
 
     @Syntax(except = DatabaseType.SQLite)
     public static final Expression mod(Expression expression1, Expression expression2) {
-        return new NativeFunction("MOD", expression1, expression2);
+        Objects.requireNonNull(expression1, "The expression1 cannot be null");
+        Objects.requireNonNull(expression2, "The expression2 cannot be null");
+        return new SqlFunctionCall("MOD", expression1, expression2);
     }
 
     public static final Expression sum(Expression expression) {
-        return new NativeFunction("SUM", expression);
+        Objects.requireNonNull(expression, "The expression cannot be null");
+        return new SqlFunctionCall("SUM", expression);
     }
 
     public static final Expression avg(Expression expression) {
-        return new NativeFunction("AVG", expression);
+        Objects.requireNonNull(expression, "The expression cannot be null");
+        return new SqlFunctionCall("AVG", expression);
     }
 
     public static final Expression max(Expression expression) {
-        return new NativeFunction("MAX", expression);
+        Objects.requireNonNull(expression, "The expression cannot be null");
+        return new SqlFunctionCall("MAX", expression);
     }
 
     public static final Expression min(Expression expression) {
-        return new NativeFunction("MIN", expression);
+        Objects.requireNonNull(expression, "The expression cannot be null");
+        return new SqlFunctionCall("MIN", expression);
     }
 
-    public static final Expression len(Expression... expressions) {
-        return new NativeFunction("LEN", expressions);
+    public static final Expression len(Expression expression) {
+        Objects.requireNonNull(expression, "The expression cannot be null");
+        return new SqlFunctionCall("LEN", expression);
     }
 
-    public static final Expression concat(Expression... expressions) {
-        return new NativeFunction("CONCAT", expressions);
+    public static final Expression concat(Expression... expressions) throws SQLSyntaxException {
+        Objects.requireNonNull(expressions, "The expressions cannot be null");
+        if(expressions.length == 0)
+            throw new SQLSyntaxException("The expressions cannot be empty");
+        return new SqlFunctionCall("CONCAT", expressions);
     }
 
-    public static final Expression trim(Expression... expressions) {
-        return new NativeFunction("TRIM", expressions);
+    public static final Expression trim(Expression... expressions) throws SQLSyntaxException {
+        Objects.requireNonNull(expressions, "The expressions cannot be null");
+        if(expressions.length == 0)
+            throw new SQLSyntaxException("The expressions cannot be empty");
+        return new SqlFunctionCall("TRIM", expressions);
     }
 
-    public static final Expression rtrim(Expression... expressions) {
-        return new NativeFunction("RTRIM", expressions);
+    public static final Expression rtrim(Expression... expressions) throws SQLSyntaxException {
+        Objects.requireNonNull(expressions, "The expressions cannot be null");
+        if(expressions.length == 0)
+            throw new SQLSyntaxException("The expressions cannot be empty");
+        return new SqlFunctionCall("RTRIM", expressions);
     }
 
-    public static final Expression ltrim(Expression... expressions) {
-        return new NativeFunction("LTRIM", expressions);
+    public static final Expression ltrim(Expression... expressions) throws SQLSyntaxException {
+        Objects.requireNonNull(expressions, "The expressions cannot be null");
+        if(expressions.length == 0)
+            throw new SQLSyntaxException("The expressions cannot be empty");
+        return new SqlFunctionCall("LTRIM", expressions);
     }
 
     public static final Expression sqlIf(Expression expression, Expression expression1, Expression expression2) {
-        return new NativeFunction("IF", expression, expression1, expression2);
+        Objects.requireNonNull(expression, "The expression cannot be null");
+        Objects.requireNonNull(expression1, "The expression1 cannot be null");
+        Objects.requireNonNull(expression2, "The expression2 cannot be null");
+
+        return new SqlFunctionCall("IF", expression, expression1, expression2);
     }
 
     public static final CaseExpression sqlCase() {

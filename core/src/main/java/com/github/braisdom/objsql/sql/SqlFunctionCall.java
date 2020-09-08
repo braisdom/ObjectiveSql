@@ -20,12 +20,12 @@ import com.github.braisdom.objsql.util.FunctionWithThrowable;
 
 import java.util.Arrays;
 
-public class NativeFunction extends AbstractExpression {
+public class SqlFunctionCall extends AbstractExpression {
 
     private final String name;
     private final Expression[] expressions;
 
-    public NativeFunction(String name, Expression... expressions) {
+    public SqlFunctionCall(String name, Expression... expressions) {
         this.name = name;
         this.expressions = expressions;
     }
