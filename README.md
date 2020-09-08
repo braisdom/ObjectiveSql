@@ -3,7 +3,7 @@ Although Java is a static language , but it has provided the ability to extend c
 
 SQL programming in Java has always been a difficult problem. Sometimes it is mixed in Java codess as a string, sometimes it exists in the template language, and when it is encapsulated by Fluent, it cannot be associated with Domain Model also.
 
-Commonly, there are two ways of SQL programming in Java, CRUD behavior of Domain Model, and the complex querying for analysing.
+Commonly, there are two ways of SQL programming in Java, CRUD behavior of Domain Model, and the complex querying for data analysing base relation.
 
 The ObjectiveSql is a beta version now, but more features will be comed, and it will get better and better
 
@@ -13,6 +13,15 @@ The ObjectiveSql is a beta version now, but more features will be comed, and it 
 // Installing the connection factory for ObjectiveSql
 Databases.installConnectionFactory(new SqliteConnectionFactory(file.getPath()));
 
+```
+
+```xml
+<!-- Add dependency to application -->
+<dependency>
+  <groupId>com.github.braisdom</groupId>
+  <artifactId>objective-sql</artifactId>
+  <version>1.2</version>
+</dependency>
 ```
 
 
