@@ -60,4 +60,13 @@ public class ANSIExpressionsTest {
         Assertions.assertEquals("ABS(\"T0\".\"id\" )", absExpr.toSql(exprContext).trim());
         Assertions.assertEquals("ABS(12)", abs2Expr.toSql(exprContext).trim());
     }
+
+    @Test
+    public void testIfFunction() {
+        TestModel.Table testTable = TestModel.asTable();
+
+        Expression ifExpr = ANSIFunctions.sqlIf(testTable.id.eq($(12)), $("test"), $("none")).as("name");
+
+        Assertions.assertEquals("IF(\"T0\".\"id\"  = 12,'test','none')  AS \"name\"", ifExpr.toSql(exprContext).trim());
+    }
 }
