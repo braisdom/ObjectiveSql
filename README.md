@@ -5,7 +5,9 @@ SQL programming in Java has always been a difficult problem. Sometimes it is mix
 
 Commonly, there are two ways of SQL programming in Java, CRUD behavior of Domain Model, and the complex querying for data analysing base relation.
 
-The ObjectiveSql is a beta version now, but more features will be comed, and it will get better and better
+The ObjectiveSql is a beta version now, but more features will be comed, and it will get better and better,
+
+it will keep updating as fast as possible.
 
 ## Beginning
 
@@ -25,7 +27,7 @@ Databases.installConnectionFactory(new SqliteConnectionFactory(file.getPath()));
 
 ```
 
-
+Install the plugin of IntelliJ, see [ObjectiveSql](https://github.com/braisdom/ObjectiveSql-IntelliJ-Plugin)-IntelliJ-Plugin
 
 ## Definition of DomainModel
 
