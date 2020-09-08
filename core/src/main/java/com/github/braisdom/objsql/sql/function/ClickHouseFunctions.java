@@ -223,4 +223,101 @@ public final class ClickHouseFunctions extends ANSIFunctions {
     public static Expression fromUnixTime(Expression timeStamp, Expression formatter) {
         return new SqlFunctionCall("FROM_UNIXTIME", timeStamp, formatter);
     }
+
+    public static Expression addYears(Expression timeStamp, int delta) {
+        return new SqlFunctionCall("addYears", timeStamp, new LiteralExpression(delta));
+    }
+
+    public static Expression addYears(String timeColumn, int delta) {
+        return new SqlFunctionCall("addYears", new LiteralExpression(timeColumn), new LiteralExpression(delta));
+    }
+
+    public static Expression addMonths(Expression timeStamp, int delta) {
+        return new SqlFunctionCall("addYears", timeStamp, new LiteralExpression(delta));
+    }
+
+    public static Expression addMonths(String timeColumn, int delta) {
+        return new SqlFunctionCall("addMonths", new LiteralExpression(timeColumn), new LiteralExpression(delta));
+    }
+
+    public static Expression addWeeks(Expression timeStamp, int delta) {
+        return new SqlFunctionCall("addWeeks", timeStamp, new LiteralExpression(delta));
+    }
+
+    public static Expression addWeeks(String timeColumn, int delta) {
+        return new SqlFunctionCall("addWeeks", new LiteralExpression(timeColumn), new LiteralExpression(delta));
+    }
+
+    public static Expression addDays(Expression timeStamp, int delta) {
+        return new SqlFunctionCall("addDays", timeStamp, new LiteralExpression(delta));
+    }
+
+    public static Expression addDays(String timeColumn, int delta) {
+        return new SqlFunctionCall("addDays", new LiteralExpression(timeColumn), new LiteralExpression(delta));
+    }
+
+    public static Expression addHours(Expression timeStamp, int delta) {
+        return new SqlFunctionCall("addHours", timeStamp, new LiteralExpression(delta));
+    }
+
+    public static Expression addHours(String timeColumn, int delta) {
+        return new SqlFunctionCall("addHours", new LiteralExpression(timeColumn), new LiteralExpression(delta));
+    }
+
+    public static Expression subtractYears(Expression timeStamp, int delta) {
+        return new SqlFunctionCall("subtractYears", timeStamp, new LiteralExpression(delta));
+    }
+
+    public static Expression subtractYears(String timeColumn, int delta) {
+        return new SqlFunctionCall("subtractYears", new LiteralExpression(timeColumn), new LiteralExpression(delta));
+    }
+
+    public static Expression subtractMonths(Expression timeStamp, int delta) {
+        return new SqlFunctionCall("subtractYears", timeStamp, new LiteralExpression(delta));
+    }
+
+    public static Expression subtractMonths(String timeColumn, int delta) {
+        return new SqlFunctionCall("subtractYears", new LiteralExpression(timeColumn), new LiteralExpression(delta));
+    }
+
+    public static Expression subtractDays(Expression timeStamp, int delta) {
+        return new SqlFunctionCall("subtractDays", timeStamp, new LiteralExpression(delta));
+    }
+
+    public static Expression subtractDays(String timeColumn, int delta) {
+        return new SqlFunctionCall("subtractDays", new LiteralExpression(timeColumn), new LiteralExpression(delta));
+    }
+
+    public static Expression subtractHours(Expression timeStamp, int delta) {
+        return new SqlFunctionCall("subtractHours", timeStamp, new LiteralExpression(delta));
+    }
+
+    public static Expression subtractHours(String timeColumn, int delta) {
+        return new SqlFunctionCall("subtractHours", new LiteralExpression(timeColumn), new LiteralExpression(delta));
+    }
+
+    public static Expression empty(Expression expression) {
+        return new SqlFunctionCall("empty", expression);
+    }
+
+    public static Expression empty(String dateString) {
+        return new SqlFunctionCall("empty", new LiteralExpression(dateString));
+    }
+
+    public static Expression notEmpty(Expression expression) {
+        return new SqlFunctionCall("notEmpty", expression);
+    }
+
+    public static Expression notEmpty(String dateString) {
+        return new SqlFunctionCall("notEmpty", new LiteralExpression(dateString));
+    }
+
+    public static Expression round(Expression expression) {
+        return new SqlFunctionCall("round", expression);
+    }
+
+    public static Expression length(Expression expression) {
+        return new SqlFunctionCall("length", expression);
+    }
+
 }
