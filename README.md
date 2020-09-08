@@ -29,7 +29,7 @@ Databases.installConnectionFactory(new SqliteConnectionFactory(file.getPath()));
 
 ```
 
-## Definition of DomainModel
+## Define a DomainModel
 
 ```java
 @DomainModel
