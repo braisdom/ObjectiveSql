@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import static com.github.braisdom.objsql.sql.expression.Expressions.literal;
 
-public class IsoExpressionsTest {
+public class ANSIExpressionsTest {
 
     private DefaultExpressionContext exprContext = new DefaultExpressionContext(DatabaseType.SQLite);
 
