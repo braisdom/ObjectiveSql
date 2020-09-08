@@ -16,5 +16,11 @@
  */
 package com.github.braisdom.objsql.sql.function;
 
-public class MySQL5Functions extends ANSIFunctions {
+import com.github.braisdom.objsql.DatabaseType;
+import com.github.braisdom.objsql.sql.Syntax;
+
+@Syntax(only = DatabaseType.MySQL5)
+public class MySQL5Functions {
+
+
 }

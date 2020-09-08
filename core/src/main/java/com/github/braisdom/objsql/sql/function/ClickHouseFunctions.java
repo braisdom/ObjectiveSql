@@ -21,7 +21,7 @@ import com.github.braisdom.objsql.sql.SqlFunctionCall;
 import com.github.braisdom.objsql.sql.expression.LiteralExpression;
 import com.github.braisdom.objsql.sql.expression.PlainExpression;
 
-public final class ClickHouseFunctions extends ANSIFunctions {
+public final class ClickHouseFunctions {
 
     public static Expression toInt8(Expression expression) {
         return new SqlFunctionCall("toInt8", expression);
