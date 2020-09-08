@@ -29,15 +29,15 @@ import java.util.Arrays;
 @Syntax(DatabaseType.All)
 public class ANSIFunctions {
 
-    public static final NativeFunction count() {
+    public static final Expression count() {
         return new NativeFunction("COUNT", new PlainExpression("*"));
     }
 
-    public static final NativeFunction count(Expression expression) {
+    public static final Expression count(Expression expression) {
         return new NativeFunction("COUNT", expression);
     }
 
-    public static final NativeFunction countDistinct(Expression expression) {
+    public static final Expression countDistinct(Expression expression) {
         return new NativeFunction("COUNT", expression) {
             @Override
             public String toSql(ExpressionContext expressionContext) {
@@ -50,39 +50,47 @@ public class ANSIFunctions {
         };
     }
 
-    public static final NativeFunction sum(Expression expression) {
+    public static final Expression currentTimestamp() {
+        return new PlainExpression("CURRENT_TIMESTAMP");
+    }
+
+    public static final Expression abs(Expression expression) {
+        return new NativeFunction("ABS", expression);
+    }
+
+    public static final Expression sum(Expression expression) {
         return new NativeFunction("SUM", expression);
     }
 
-    public static final NativeFunction avg(Expression expression) {
+    public static final Expression avg(Expression expression) {
         return new NativeFunction("AVG", expression);
     }
 
-    public static final NativeFunction max(Expression expression) {
+    public static final Expression max(Expression expression) {
         return new NativeFunction("MAX", expression);
     }
 
-    public static final NativeFunction min(Expression expression) {
+    public static final Expression min(Expression expression) {
         return new NativeFunction("MIN", expression);
     }
 
-    public static final NativeFunction concat(Expression... expressions) {
+    public static final Expression concat(Expression... expressions) {
         return new NativeFunction("CONCAT", expressions);
     }
 
-    public static final NativeFunction trim(Expression... expressions) {
+    public static final Expression trim(Expression... expressions) {
         return new NativeFunction("TRIM", expressions);
     }
 
-    public static final NativeFunction rtrim(Expression... expressions) {
+    public static final Expression rtrim(Expression... expressions) {
         return new NativeFunction("RTRIM", expressions);
     }
 
-    public static final NativeFunction ltrim(Expression... expressions) {
+    public static final Expression ltrim(Expression... expressions) {
         return new NativeFunction("LTRIM", expressions);
     }
 
-    public static final NativeFunction If(Expression expression, Expression expression1, Expression expression2) {
+    public static final Expression If(Expression expression, Expression expression1, Expression expression2) {
         return new NativeFunction("IF", expression, expression1, expression2);
     }
 }
