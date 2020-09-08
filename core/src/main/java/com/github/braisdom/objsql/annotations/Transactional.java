@@ -22,7 +22,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * It indicates that the methods will be executed in database transaction
+ * It indicates that the methods will be executed in database transaction.
+ * The transaction will be rollback when a exception occurred, the rollback cause is
+ * defined at the domain logic method
  */
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.SOURCE)

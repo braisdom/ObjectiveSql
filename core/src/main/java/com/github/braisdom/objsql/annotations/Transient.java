@@ -22,7 +22,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * It indicates that a field will not be persisted into database
+ * It indicates that a field will not be persisted into database.
  */
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
