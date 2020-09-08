@@ -16,5 +16,5 @@
  */
 package com.github.braisdom.objsql.sql.function;
 
-public class MsSqlServerFunctions extends IsoFunctions{
+public class MsSqlServerFunctions extends ANSIFunctions {
 }

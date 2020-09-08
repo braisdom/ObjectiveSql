@@ -27,7 +27,7 @@ import com.github.braisdom.objsql.sql.expression.PlainExpression;
 import java.util.Arrays;
 
 @Syntax(DatabaseType.All)
-public class IsoFunctions {
+public class ANSIFunctions {
 
     public static final NativeFunction count() {
         return new NativeFunction("COUNT", new PlainExpression("*"));

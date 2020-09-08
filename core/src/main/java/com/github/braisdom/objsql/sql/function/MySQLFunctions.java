@@ -16,5 +16,5 @@
  */
 package com.github.braisdom.objsql.sql.function;
 
-public class MySQLFunctions extends IsoFunctions {
+public class MySQLFunctions extends ANSIFunctions {
 }

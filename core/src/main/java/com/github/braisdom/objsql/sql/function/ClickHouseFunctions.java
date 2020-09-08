@@ -20,7 +20,7 @@ import com.github.braisdom.objsql.sql.Expression;
 import com.github.braisdom.objsql.sql.NativeFunction;
 import com.github.braisdom.objsql.sql.expression.LiteralExpression;
 
-public final class ClickHouseFunctions extends IsoFunctions {
+public final class ClickHouseFunctions extends ANSIFunctions {
 
     /***
      * Calculates the sum of the numbers.
