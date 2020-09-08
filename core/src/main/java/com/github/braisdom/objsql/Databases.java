@@ -98,11 +98,23 @@ public final class Databases {
         }
     };
 
+    /**
+     * Represents a logic of database, it will provide the connection and sql
+     * executor of database, and the concrete logic will be ignored the behavior about connection.
+     *
+     * @param <T>
+     * @param <R>
+     */
     @FunctionalInterface
     public static interface DatabaseInvoke<T, R> {
         R apply(Connection connection, SQLExecutor<T> sqlExecutor) throws SQLException;
     }
 
+    /**
+     * Represents logic will be executed in the transaction(There's only one connection of database)
+     *
+     * @param <R>
+     */
     @FunctionalInterface
     public static interface TransactionalExecutor<R> {
         R apply() throws Exception;
