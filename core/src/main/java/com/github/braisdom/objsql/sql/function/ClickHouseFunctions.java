@@ -23,67 +23,67 @@ import com.github.braisdom.objsql.sql.expression.PlainExpression;
 
 public final class ClickHouseFunctions extends ANSIFunctions {
 
-    public static SqlFunctionCall toInt8(Expression expression) {
+    public static Expression toInt8(Expression expression) {
         return new SqlFunctionCall("toInt8", expression);
     }
 
-    public static SqlFunctionCall toInt16(Expression expression) {
+    public static Expression toInt16(Expression expression) {
         return new SqlFunctionCall("toInt16", expression);
     }
 
-    public static SqlFunctionCall toInt32(Expression expression) {
+    public static Expression toInt32(Expression expression) {
         return new SqlFunctionCall("toInt32", expression);
     }
 
-    public static SqlFunctionCall toInt64(Expression expression) {
+    public static Expression toInt64(Expression expression) {
         return new SqlFunctionCall("toInt64", expression);
     }
 
-    public static SqlFunctionCall toUInt8(Expression expression) {
+    public static Expression toUInt8(Expression expression) {
         return new SqlFunctionCall("toUInt8", expression);
     }
 
-    public static SqlFunctionCall toUInt16(Expression expression) {
+    public static Expression toUInt16(Expression expression) {
         return new SqlFunctionCall("toUInt16", expression);
     }
 
-    public static SqlFunctionCall toUInt32(Expression expression) {
+    public static Expression toUInt32(Expression expression) {
         return new SqlFunctionCall("toUInt32", expression);
     }
 
-    public static SqlFunctionCall toUInt64(Expression expression) {
+    public static Expression toUInt64(Expression expression) {
         return new SqlFunctionCall("toUInt64", expression);
     }
 
-    public static SqlFunctionCall toFloat32(Expression expression) {
+    public static Expression toFloat32(Expression expression) {
         return new SqlFunctionCall("toFloat32", expression);
     }
 
-    public static SqlFunctionCall toFloat64(Expression expression) {
+    public static Expression toFloat64(Expression expression) {
         return new SqlFunctionCall("toFloat64", expression);
     }
 
-    public static SqlFunctionCall toDate(Expression expression) {
+    public static Expression toDate(Expression expression) {
         return new SqlFunctionCall("toDate", expression);
     }
 
-    public static SqlFunctionCall toDateTime(Expression expression) {
+    public static Expression toDateTime(Expression expression) {
         return new SqlFunctionCall("toDateTime", expression);
     }
 
-    public static SqlFunctionCall toDecimal32(Expression value, Expression scale) {
+    public static Expression toDecimal32(Expression value, Expression scale) {
         return new SqlFunctionCall("toDecimal32", value, scale);
     }
 
-    public static SqlFunctionCall toDecimal64(Expression value, Expression scale) {
+    public static Expression toDecimal64(Expression value, Expression scale) {
         return new SqlFunctionCall("toDecimal64", value, scale);
     }
 
-    public static SqlFunctionCall toDecimal128(Expression value, Expression scale) {
+    public static Expression toDecimal128(Expression value, Expression scale) {
         return new SqlFunctionCall("toDecimal128", value, scale);
     }
 
-    public static SqlFunctionCall toString(Expression expression) {
+    public static Expression toString(Expression expression) {
         return new SqlFunctionCall("toString", expression);
     }
 
@@ -93,18 +93,18 @@ public final class ClickHouseFunctions extends ANSIFunctions {
      * @param formatter The date and date-with-time formats for the toDate/toDateTime functions are
      *                  defined as follows: "YYYY-MM-DD" or "YYYY-MM-DD hh:mm:ss"
      */
-    public static SqlFunctionCall toString(Expression expression, Expression formatter) {
+    public static Expression toString(Expression expression, Expression formatter) {
         return new SqlFunctionCall("toString", expression, formatter);
     }
 
-    public static SqlFunctionCall cast(Expression expression, Expression dataType) {
+    public static Expression cast(Expression expression, Expression dataType) {
         return new SqlFunctionCall("cast", expression, new PlainExpression(" AS "), dataType);
     }
 
     /***
      * @param expression the value of datetime type
      */
-    public static SqlFunctionCall toUnixTimestamp(Expression expression) {
+    public static Expression toUnixTimestamp(Expression expression) {
         return new SqlFunctionCall("toUnixTimestamp", expression);
     }
 
@@ -112,35 +112,35 @@ public final class ClickHouseFunctions extends ANSIFunctions {
      * @param expression the value of String type
      * @param timeZone timeZone like "UTC", "GMT", .etc
      */
-    public static SqlFunctionCall toUnixTimestamp(Expression expression, Expression timeZone) {
+    public static Expression toUnixTimestamp(Expression expression, Expression timeZone) {
         return new SqlFunctionCall("toUnixTimestamp", expression, timeZone);
     }
 
     /***
      * Converts a date or date with time to a UInt16 number containing the year number (AD).
      */
-    public static SqlFunctionCall toYear(Expression expression) {
+    public static Expression toYear(Expression expression) {
         return new SqlFunctionCall("toYear", expression);
     }
 
     /***
      * Converts a date or date with time to a UInt8 number containing the month number (1-12).
      */
-    public static SqlFunctionCall toMonth(Expression expression) {
+    public static Expression toMonth(Expression expression) {
         return new SqlFunctionCall("toMonth", expression);
     }
 
     /***
      * Converts a date or date with time to a UInt16 number containing the number of the day of the year (1-366).
      */
-    public static SqlFunctionCall toDayOfYear(Expression expression) {
+    public static Expression toDayOfYear(Expression expression) {
         return new SqlFunctionCall("toDayOfYear", expression);
     }
 
     /***
      * Converts a date or date with time to a UInt8 number containing the number of the day of the month (1-31).
      */
-    public static SqlFunctionCall toDayOfMonth(Expression expression) {
+    public static Expression toDayOfMonth(Expression expression) {
         return new SqlFunctionCall("toDayOfMonth", expression);
     }
 
@@ -148,35 +148,35 @@ public final class ClickHouseFunctions extends ANSIFunctions {
      * Converts a date or date with time to a UInt8 number containing the number of the day of the
      * week (Monday is 1, and Sunday is 7).
      */
-    public static SqlFunctionCall toDayOfWeek(Expression expression) {
+    public static Expression toDayOfWeek(Expression expression) {
         return new SqlFunctionCall("toDayOfWeek", expression);
     }
 
     /***
      * Converts a date with time to a UInt8 number containing the number of the hour in 24-hour time (0-23).
      */
-    public static SqlFunctionCall toHour(Expression expression) {
+    public static Expression toHour(Expression expression) {
         return new SqlFunctionCall("toHour", expression);
     }
 
     /***
      * Converts a date with time to a UInt8 number containing the number of the minute of the hour (0-59).
      */
-    public static SqlFunctionCall toMinute(Expression expression) {
+    public static Expression toMinute(Expression expression) {
         return new SqlFunctionCall("toMinute", expression);
     }
 
     /***
      * Converts a date with time to a UInt8 number containing the number of the second in the minute (0-59).
      */
-    public static SqlFunctionCall toSecond(Expression expression) {
+    public static Expression toSecond(Expression expression) {
         return new SqlFunctionCall("toSecond", expression);
     }
 
     /***
      * Accepts zero arguments and returns the current time at one of the moments of request execution.
      */
-    public static SqlFunctionCall now() {
+    public static Expression now() {
         return new SqlFunctionCall("now");
     }
 
@@ -184,7 +184,7 @@ public final class ClickHouseFunctions extends ANSIFunctions {
      * Accepts zero arguments and returns the current date at one of the moments of request execution.
      * The same as ‘toDate(now())’.
      */
-    public static SqlFunctionCall today() {
+    public static Expression today() {
         return new SqlFunctionCall("today");
     }
 
@@ -192,14 +192,14 @@ public final class ClickHouseFunctions extends ANSIFunctions {
      * Accepts zero arguments and returns yesterday’s date at one of the moments of request execution.
      * The same as ‘today() - 1’.
      */
-    public static SqlFunctionCall yesterday() {
+    public static Expression yesterday() {
         return new SqlFunctionCall("yesterday");
     }
 
     /***
      * Converts a date or date with time to a UInt32 number containing the year and month number (YYYY * 100 + MM).
      */
-    public static SqlFunctionCall toYYYYMM(Expression expression) {
+    public static Expression toYYYYMM(Expression expression) {
         return new SqlFunctionCall("toYYYYMM", expression);
     }
 
@@ -207,7 +207,7 @@ public final class ClickHouseFunctions extends ANSIFunctions {
      * Converts a date or date with time to a UInt32 number containing the year and month
      * number (YYYY * 10000 + MM * 100 + DD).
      */
-    public static SqlFunctionCall toYYYYMMDD(Expression expression) {
+    public static Expression toYYYYMMDD(Expression expression) {
         return new SqlFunctionCall("toYYYYMMDD", expression);
     }
 
@@ -215,7 +215,7 @@ public final class ClickHouseFunctions extends ANSIFunctions {
      * Converts a date or date with time to a UInt64 number containing the year and month number
      * (YYYY * 10000000000 + MM * 100000000 + DD * 1000000 + hh * 10000 + mm * 100 + ss).
      */
-    public static SqlFunctionCall toYYYYMMDDhhmmss(Expression expression) {
+    public static Expression toYYYYMMDDhhmmss(Expression expression) {
         return new SqlFunctionCall("toYYYYMMDDhhmmss", expression);
     }
 
@@ -226,7 +226,7 @@ public final class ClickHouseFunctions extends ANSIFunctions {
      * @param startTime The first time value to compare. Date or DateTime.
      * @param endTime The second time value to compare. Date or DateTime.
      */
-    public static SqlFunctionCall dateDiff(Expression unit, Expression startTime, Expression endTime) {
+    public static Expression dateDiff(Expression unit, Expression startTime, Expression endTime) {
         return new SqlFunctionCall("dateDiff", unit, startTime, endTime);
     }
 
@@ -235,7 +235,7 @@ public final class ClickHouseFunctions extends ANSIFunctions {
      *                 timezones of startdate and enddate are used. If they are not the same, the
      *                 result is unspecified.
      */
-    public static SqlFunctionCall dateDiff(Expression unit, Expression startTime,
+    public static Expression dateDiff(Expression unit, Expression startTime,
                                            Expression endTime, Expression timeZone) {
         return new SqlFunctionCall("dateDiff", unit, startTime, endTime, timeZone);
     }
@@ -244,14 +244,14 @@ public final class ClickHouseFunctions extends ANSIFunctions {
      * Function formats a Time according given Format string. N.B.: Format is a constant expression, e.g.
      * you can not have multiple formats for single result column.
      */
-    public static SqlFunctionCall formatDateTime(Expression time, Expression formatter) {
+    public static Expression formatDateTime(Expression time, Expression formatter) {
         return new SqlFunctionCall("formatDateTime", time, formatter);
     }
 
     /***
      * @param timeZone timeZone like "UTC", "GMT", .etc
      */
-    public static SqlFunctionCall formatDateTime(Expression time, Expression formatter, Expression timeZone) {
+    public static Expression formatDateTime(Expression time, Expression formatter, Expression timeZone) {
         return new SqlFunctionCall("formatDateTime", time, formatter, timeZone);
     }
 
@@ -259,7 +259,7 @@ public final class ClickHouseFunctions extends ANSIFunctions {
      * When there is only single argument of integer type, it act in the same way as toDateTime and return DateTime.
      * @param timeStamp argument of integer type
      */
-    public static SqlFunctionCall fromUnixTime(Expression timeStamp) {
+    public static Expression fromUnixTime(Expression timeStamp) {
         return new SqlFunctionCall("FROM_UNIXTIME", timeStamp);
     }
 
@@ -269,7 +269,7 @@ public final class ClickHouseFunctions extends ANSIFunctions {
      * @param timeStamp argument of integer type
      * @param formatter constant format string
      */
-    public static SqlFunctionCall fromUnixTime(Expression timeStamp, Expression formatter) {
+    public static Expression fromUnixTime(Expression timeStamp, Expression formatter) {
         return new SqlFunctionCall("FROM_UNIXTIME", timeStamp, formatter);
     }
 }
