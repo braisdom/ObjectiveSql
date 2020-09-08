@@ -7,12 +7,19 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * The annotation is used when the field name is not Java compliant only.
+ */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Column {
 
     String name() default "";
 
+    /**
+     * Customize a column transition for the column
+     * @return
+     */
     Class<? extends ColumnTransitional> transition() default ColumnTransitional.class;
 
     boolean insertable() default true;
