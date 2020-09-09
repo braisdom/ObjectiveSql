@@ -30,15 +30,40 @@ import java.util.Objects;
 @Syntax(DatabaseType.All)
 public class ANSIFunctions {
 
+    /**
+     * Returns the number of rows returned by the query. You can use it as an
+     * aggregate or analytic function.
+     *
+     * Example: SELECT count(*)
+     *
+     * @return the number of rows returned by the query
+     */
     public static final Expression count() {
         return new SqlFunctionCall("COUNT", new PlainExpression("*"));
     }
 
+    /**
+     * Returns number of input rows for which the value of expression is not null.
+     *
+     * Example: SELECT count(column_name)
+     *
+     * @param expression
+     * @return the number of rows where expression is not null
+     */
     public static final Expression count(Expression expression) {
         Objects.requireNonNull(expression, "The expression cannot be null");
         return new SqlFunctionCall("COUNT", expression);
     }
 
+    /**
+     * Returns number of input rows for which the value of expression is not null
+     * and column value is distinct.
+     *
+     * Example: SELECT count(distinct column_name)
+     *
+     * @param expression
+     * @return the number of rows where column value is distinct
+     */
     public static final Expression countDistinct(Expression expression) {
         Objects.requireNonNull(expression, "The expression cannot be null");
         return new SqlFunctionCall("COUNT", expression) {
@@ -73,9 +98,29 @@ public class ANSIFunctions {
         return new SqlFunctionCall("ABS", expression);
     }
 
+    public static final Expression abs(Integer literal) {
+        return new SqlFunctionCall("ABS", new LiteralExpression(literal));
+    }
+
+    public static final Expression abs(Float literal) {
+        return new SqlFunctionCall("ABS", new LiteralExpression(literal));
+    }
+
+    public static final Expression abs(Double literal) {
+        return new SqlFunctionCall("ABS", new LiteralExpression(literal));
+    }
+
     public static final Expression ceil(Expression expression) {
         Objects.requireNonNull(expression, "The expression cannot be null");
         return new SqlFunctionCall("CEIL", expression);
+    }
+
+    public static final Expression ceil(Float literal) {
+        return new SqlFunctionCall("ABS", new LiteralExpression(literal));
+    }
+
+    public static final Expression ceil(Double literal) {
+        return new SqlFunctionCall("ABS", new LiteralExpression(literal));
     }
 
     public static final Expression floor(Expression expression) {
@@ -83,9 +128,25 @@ public class ANSIFunctions {
         return new SqlFunctionCall("FLOOR", expression);
     }
 
+    public static final Expression floor(Float literal) {
+        return new SqlFunctionCall("ABS", new LiteralExpression(literal));
+    }
+
+    public static final Expression floor(Double literal) {
+        return new SqlFunctionCall("ABS", new LiteralExpression(literal));
+    }
+
     public static final Expression sin(Expression expression) {
         Objects.requireNonNull(expression, "The expression cannot be null");
         return new SqlFunctionCall("SIN", expression);
+    }
+
+    public static final Expression sin(Float literal) {
+        return new SqlFunctionCall("ABS", new LiteralExpression(literal));
+    }
+
+    public static final Expression sin(Double literal) {
+        return new SqlFunctionCall("ABS", new LiteralExpression(literal));
     }
 
     public static final Expression tan(Expression expression) {
@@ -93,9 +154,25 @@ public class ANSIFunctions {
         return new SqlFunctionCall("TAN", expression);
     }
 
+    public static final Expression tan(Float literal) {
+        return new SqlFunctionCall("ABS", new LiteralExpression(literal));
+    }
+
+    public static final Expression tan(Double literal) {
+        return new SqlFunctionCall("ABS", new LiteralExpression(literal));
+    }
+
     public static final Expression cos(Expression expression) {
         Objects.requireNonNull(expression, "The expression cannot be null");
         return new SqlFunctionCall("COS", expression);
+    }
+
+    public static final Expression cos(Float literal) {
+        return new SqlFunctionCall("ABS", new LiteralExpression(literal));
+    }
+
+    public static final Expression cos(Double literal) {
+        return new SqlFunctionCall("ABS", new LiteralExpression(literal));
     }
 
     @Syntax(except = DatabaseType.SQLite)
@@ -128,6 +205,10 @@ public class ANSIFunctions {
     public static final Expression len(Expression expression) {
         Objects.requireNonNull(expression, "The expression cannot be null");
         return new SqlFunctionCall("LEN", expression);
+    }
+
+    public static final Expression len(String literal) {
+        return new SqlFunctionCall("LEN", new LiteralExpression(literal));
     }
 
     public static final Expression concat(Expression... expressions) throws SQLSyntaxException {
