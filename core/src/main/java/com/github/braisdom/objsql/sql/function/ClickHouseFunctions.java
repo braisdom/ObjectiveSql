@@ -30,12 +30,20 @@ public final class ClickHouseFunctions {
         return new SqlFunctionCall("toInt8", expression);
     }
 
+    public static Expression toInt8(Integer literal) {
+        return new SqlFunctionCall("toInt8", new LiteralExpression(literal));
+    }
+
     public static Expression toInt8(String str) {
         return new SqlFunctionCall("toInt8", new LiteralExpression(str));
     }
 
     public static Expression toInt16(Expression expression) {
         return new SqlFunctionCall("toInt16", expression);
+    }
+
+    public static Expression toInt16(Integer literal) {
+        return new SqlFunctionCall("toInt16", new LiteralExpression(literal));
     }
 
     public static Expression toInt16(String str) {
@@ -46,6 +54,10 @@ public final class ClickHouseFunctions {
         return new SqlFunctionCall("toInt32", expression);
     }
 
+    public static Expression toInt32(Integer literal) {
+        return new SqlFunctionCall("toInt32", new LiteralExpression(literal));
+    }
+
     public static Expression toInt32(String str) {
         return new SqlFunctionCall("toInt32", new LiteralExpression(str));
     }
@@ -54,12 +66,20 @@ public final class ClickHouseFunctions {
         return new SqlFunctionCall("toInt64", expression);
     }
 
+    public static Expression toInt64(Integer literal) {
+        return new SqlFunctionCall("toInt64", new LiteralExpression(literal));
+    }
+
     public static Expression toInt64(String str) {
         return new SqlFunctionCall("toInt64", new LiteralExpression(str));
     }
 
     public static Expression toUInt8(Expression expression) {
         return new SqlFunctionCall("toUInt8", expression);
+    }
+
+    public static Expression toUInt8(Integer literal) {
+        return new SqlFunctionCall("toUInt8", new LiteralExpression(literal));
     }
 
     public static Expression toUInt8(String str) {
