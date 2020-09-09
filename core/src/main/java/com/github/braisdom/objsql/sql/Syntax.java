@@ -31,5 +31,7 @@ public @interface Syntax {
     DatabaseType[] only() default {};
 
     DatabaseType[] except() default {};
+
+    float version() default 0f;
 }
 

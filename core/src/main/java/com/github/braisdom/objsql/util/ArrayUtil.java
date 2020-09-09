@@ -141,10 +141,6 @@ public final class ArrayUtil {
         return total;
     }
 
-    /**
-     * Adds value to given array if not already present, providing set-like
-     * behavior.
-     */
     @SuppressWarnings("unchecked")
     public static  <T> T[] appendElement(Class<T> kind,  T[] array, T element) {
         final T[] result;
@@ -158,6 +154,22 @@ public final class ArrayUtil {
             result = (T[])Array.newInstance(kind, 1);
         }
         result[end] = element;
+        return result;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static  <T> T[] aheadElement(Class<T> kind,  T[] array, T element) {
+        final T[] result;
+        final int pos;
+        if (array != null) {
+            pos = 0;
+            result = (T[])Array.newInstance(kind, array.length + 1);
+            System.arraycopy(array, 0, result, 1, array.length);
+        } else {
+            pos = 0;
+            result = (T[])Array.newInstance(kind, 1);
+        }
+        result[pos] = element;
         return result;
     }
 
@@ -182,96 +194,6 @@ public final class ArrayUtil {
             }
         }
         return array;
-    }
-
-    /**
-     * Adds value to given array if not already present, providing set-like
-     * behavior.
-     */
-    public static  int[] appendInt( int[] cur, int val) {
-        if (cur == null) {
-            return new int[] { val };
-        }
-        final int N = cur.length;
-        for (int i = 0; i < N; i++) {
-            if (cur[i] == val) {
-                return cur;
-            }
-        }
-        int[] ret = new int[N + 1];
-        System.arraycopy(cur, 0, ret, 0, N);
-        ret[N] = val;
-        return ret;
-    }
-
-    /**
-     * Removes value from given array if present, providing set-like behavior.
-     */
-    public static  int[] removeInt( int[] cur, int val) {
-        if (cur == null) {
-            return null;
-        }
-        final int N = cur.length;
-        for (int i = 0; i < N; i++) {
-            if (cur[i] == val) {
-                int[] ret = new int[N - 1];
-                if (i > 0) {
-                    System.arraycopy(cur, 0, ret, 0, i);
-                }
-                if (i < (N - 1)) {
-                    System.arraycopy(cur, i + 1, ret, i, N - i - 1);
-                }
-                return ret;
-            }
-        }
-        return cur;
-    }
-
-    /**
-     * Adds value to given array if not already present, providing set-like
-     * behavior.
-     */
-    public static  long[] appendLong( long[] cur, long val) {
-        if (cur == null) {
-            return new long[] { val };
-        }
-        final int N = cur.length;
-        for (int i = 0; i < N; i++) {
-            if (cur[i] == val) {
-                return cur;
-            }
-        }
-        long[] ret = new long[N + 1];
-        System.arraycopy(cur, 0, ret, 0, N);
-        ret[N] = val;
-        return ret;
-    }
-
-    /**
-     * Removes value from given array if present, providing set-like behavior.
-     */
-    public static  long[] removeLong( long[] cur, long val) {
-        if (cur == null) {
-            return null;
-        }
-        final int N = cur.length;
-        for (int i = 0; i < N; i++) {
-            if (cur[i] == val) {
-                long[] ret = new long[N - 1];
-                if (i > 0) {
-                    System.arraycopy(cur, 0, ret, 0, i);
-                }
-                if (i < (N - 1)) {
-                    System.arraycopy(cur, i + 1, ret, i, N - i - 1);
-                }
-                return ret;
-            }
-        }
-        return cur;
-    }
-
-    public static long[] cloneOrNull(long[] array) {
-        return (array != null) ? array.clone() : null;
     }
 
     public static <T> ArrayList<T> add(ArrayList<T> cur, T val) {

@@ -88,6 +88,10 @@ public class ANSIFunctions {
         };
     }
 
+    public static final Expression now() {
+        return new PlainExpression("NOW()");
+    }
+
     public static final Expression currentTimestamp() {
         return new PlainExpression("CURRENT_TIMESTAMP");
     }
