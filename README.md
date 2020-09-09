@@ -14,9 +14,9 @@ SQL 一直是Java 开发人员比较反感的事物，因为它和传统的逻�
 
 上述问题是我多年Java 经验的感受，不知道其它Java 同行有没有。下面通过一个简单的示例代码展示ObjectiveSql 的部分特性
 
-## Beginning
+## 给一个惊奇的体验
 
-首先，安装ObjectiveSql 插件, 安装方法和插件特性请参考： [ObjectiveSql-IntelliJ-Plugin](https://github.com/braisdom/ObjectiveSql-IntelliJ-Plugin)
+首先，安装ObjectiveSql 插件, 安装方法和插件特性请参考： [ObjectiveSql-IntelliJ-Plugin](https://github.com/braisdom/ObjectiveSql-IntelliJ-Plugin)，不安装插件，程序可以正常编译，但无法体会ObjectiveSql 的魅力。
 
 在maven.xml 中增加
 
@@ -38,7 +38,7 @@ Databases.installConnectionFactory(new SqliteConnectionFactory(file.getPath()));
 
 ```
 
-## 较为简单的一个会员模型
+## 定义较为简单的一个会员模型
 
 ```java
 @DomainModel
@@ -52,21 +52,22 @@ public class Member {
 }
 ```
 
-## You can...
+它不是一个普通的JavaBean，而是一个业务的载体，它将会封装所有与Member 相关的业务逻辑。
+
+## 你可以...
 
 ```java
 // Querying
 Member member = Member.queryByPrimaryKey(10);
-java.util.List<Member> members = Member.queryAll();
+List<Member> members = Member.queryAll();
 int count = Member.count("id > ?", 10);
-java.util.List<Member> members = Member.queryByName("Jone");
-java.util.List<Member> members = Member.queryByGender(1);
 
 // Querying with relation
 List<Member> members = Member.query("id > (?)",
                 new Relationship[]{Member.HAS_MANY_ORDERS}, 1);
 
-// Creating
+// The attrs is a instance of java.util.Map
+Member newMember = Member.newInstanceFrom(attrs);
 Member member = Member.create(newMember, true);
 
 Member[] newMembers = new Member[]{newMember1, newMember2};
@@ -82,7 +83,22 @@ Member.destroy("name = 'Mary'");
 
 ```
 
-## You can also...
+上述示例代码中的各类方法都是由ObjectiveSql 在编译期间动态生成的，例如：queryByPrimaryKey, queryAll, query, count 等。
+
+## 你也可以...
+
+```java
+Member member = new Member();
+
+member.setNo("00001")
+  	.setName("Jone")
+  	.setMobile("18900000000")
+  	.save(false);
+```
+
+上述代码是通过实例的方法进行数据库操作。
+
+## 你还可以...
 
 ```java
 import static com.github.braisdom.objsql.sql.expression.Expressions.$;
@@ -100,5 +116,7 @@ List<Member> members = select.execute(DatabaseType.SQLite, Member.class);
 
 ```
 
-More see: [example](https://github.com/braisdom/ObjectiveSql/tree/master/example/src/main/java/com/github/braisdom/objsql/example)
+上述代码中的Member.Table 字类，是由ObjectiveSql 根据Model 在编译期动态生成，访类中的属性是一个Column 的实例，可以参与后续的关系数据逻辑处理。
+
+更多示例请参见: [example](https://github.com/braisdom/ObjectiveSql/tree/master/example/src/main/java/com/github/braisdom/objsql/example)
 
