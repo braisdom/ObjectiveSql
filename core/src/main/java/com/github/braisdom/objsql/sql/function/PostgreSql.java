@@ -104,7 +104,31 @@ public class PostgreSql {
                 new PlainExpression("timestamp"), expression);
     }
 
-    public static final Expression extract(String unit, Expression expression) {
+    public static final Expression extractYear(Expression expression) {
+        return extract("year", expression);
+    }
+
+    public static final Expression extractQuarter(Expression expression) {
+        return extract("quarter", expression);
+    }
+
+    public static final Expression extractMonth(Expression expression) {
+        return extract("month", expression);
+    }
+
+    public static final Expression extractWeek(Expression expression) {
+        return extract("week", expression);
+    }
+
+    public static final Expression extractDayOfYear(Expression expression) {
+        return extract("doy", expression);
+    }
+
+    public static final Expression extractHour(Expression expression) {
+        return extract("hour", expression);
+    }
+
+    public static final Expression extract(String field, Expression expression) {
         return new SqlFunctionCall("EXTRACT", expression) {
             @Override
             public String toSql(ExpressionContext expressionContext) throws SQLSyntaxException {
@@ -113,11 +137,27 @@ public class PostgreSql {
                                 .castFunctionWithThrowable(expression -> expression.toSql(expressionContext)))
                         .toArray(String[]::new);
                 String alias = getAlias();
-                return String.format("%s(%s FROM TIMESTAMP %s) %s", getName(), unit,
+                return String.format("%s(%s FROM TIMESTAMP %s) %s", getName(), field,
                         String.join(",", expressionStrings),
                         alias == null ? "" : " AS " + expressionContext.quoteColumn(alias));
             }
         };
+    }
+
+    public static final Expression enumFirst(Expression expression) {
+        return new SqlFunctionCall("enum_first", expression);
+    }
+
+    public static final Expression enumLast(Expression expression) {
+        return new SqlFunctionCall("enum_last", expression);
+    }
+
+    public static final Expression enumRange(Expression expression) {
+        return new SqlFunctionCall("enum_range", expression);
+    }
+
+    public static final Expression enumRange(Expression... expressions) {
+        return new SqlFunctionCall("enum_range", expressions);
     }
 
 }
