@@ -17,14 +17,17 @@
 package com.github.braisdom.objsql.sql.function;
 
 import com.github.braisdom.objsql.DatabaseType;
-import com.github.braisdom.objsql.sql.Expression;
-import com.github.braisdom.objsql.sql.SqlFunctionCall;
-import com.github.braisdom.objsql.sql.Syntax;
+import com.github.braisdom.objsql.sql.*;
 import com.github.braisdom.objsql.sql.expression.LiteralExpression;
 import com.github.braisdom.objsql.sql.expression.PlainExpression;
+import com.github.braisdom.objsql.util.ArrayUtil;
+import com.github.braisdom.objsql.util.FunctionWithThrowable;
+
+import java.util.Arrays;
+import java.util.Objects;
 
 @Syntax(only = DatabaseType.MySQL, version = "all")
-public class MySQL5Functions {
+public class MySQLFunctions {
 
     public static final Expression pow(Expression expression) {
         return new SqlFunctionCall("POW", expression);
@@ -78,6 +81,7 @@ public class MySQL5Functions {
 
     /**
      * Return the last day of the month for the argument
+     *
      * @param expression a column or an expression
      * @return the last day of the month
      */
@@ -87,6 +91,7 @@ public class MySQL5Functions {
 
     /**
      * Return the last day of the month for the argument
+     *
      * @param dataString for example, '2020-09-3'
      * @return the last day of the month
      */
@@ -100,6 +105,15 @@ public class MySQL5Functions {
 
     public static final Expression md5(String literal) {
         return new SqlFunctionCall("MD5", new LiteralExpression(literal));
+    }
+
+    public static final Expression concatWs(String delimiter, Expression... expressions) throws SQLSyntaxException {
+        Objects.requireNonNull(expressions, "The expressions cannot be null");
+        if (expressions.length == 0)
+            throw new SQLSyntaxException("The expressions cannot be empty");
+
+        return new SqlFunctionCall("concat_ws", ArrayUtil.aheadElement(Expression.class, expressions,
+                new LiteralExpression(delimiter)));
     }
 
     public static final Expression sha(Expression expression) {
@@ -196,5 +210,71 @@ public class MySQL5Functions {
 
     public static final Expression toDateTime(String str) {
         return new LiteralExpression(str);
+    }
+
+    public static final Expression fromUnixtime(Long unixtime) {
+        return new SqlFunctionCall("FROM_UNIXTIME", new LiteralExpression(unixtime));
+    }
+
+    public static final Expression fromUnixtime(Expression expression) {
+        return new SqlFunctionCall("FROM_UNIXTIME", expression);
+    }
+
+    public static final Expression strToDate(String str, String format) {
+        return new SqlFunctionCall("STR_TO_DATE", new LiteralExpression(str), new LiteralExpression(format));
+    }
+
+    public static final Expression strToDate(Expression expression, String format) {
+        return new SqlFunctionCall("STR_TO_DATE", expression, new LiteralExpression(format));
+    }
+
+    public static final Expression dayOfYear(String str) {
+        return new SqlFunctionCall("DAYOFYEAR", new LiteralExpression(str));
+    }
+
+    public static final Expression dayOfMonth(String str) {
+        return new SqlFunctionCall("DAYOFMONTH", new LiteralExpression(str));
+    }
+
+    public static final Expression dayOfWeek(String str) {
+        return new SqlFunctionCall("DAYOFWEEK", new LiteralExpression(str));
+    }
+
+    public static final Expression dayOfYear(Expression expression) {
+        return new SqlFunctionCall("DAYOFYEAR", expression);
+    }
+
+    public static final Expression dayOfMonth(Expression expression) {
+        return new SqlFunctionCall("DAYOFMONTH", expression);
+    }
+
+    public static final Expression dayOfWeek(Expression expression) {
+        return new SqlFunctionCall("DAYOFWEEK", expression);
+    }
+
+    public static final Expression regexpLike(Expression expression, String regexp) {
+        return new SqlFunctionCall("REGEXP_LIKE", expression, new LiteralExpression(regexp));
+    }
+
+    /**
+     * The unit see: https://dev.mysql.com/doc/refman/8.0/en/expressions.html#temporal-intervals
+     * @param unit
+     * @param expression
+     * @return
+     */
+    public static final Expression extract(String unit, Expression expression) {
+        return new SqlFunctionCall("EXTRACT", expression) {
+            @Override
+            public String toSql(ExpressionContext expressionContext) throws SQLSyntaxException {
+                String[] expressionStrings = Arrays.stream(getExpressions())
+                        .map(FunctionWithThrowable
+                                .castFunctionWithThrowable(expression -> expression.toSql(expressionContext)))
+                        .toArray(String[]::new);
+                String alias = getAlias();
+                return String.format("%s(%s FROM %s) %s", getName(), unit,
+                        String.join(",", expressionStrings),
+                        alias == null ? "" : " AS " + expressionContext.quoteColumn(alias));
+            }
+        };
     }
 }
