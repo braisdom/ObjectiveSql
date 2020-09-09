@@ -54,6 +54,24 @@ public class PostgreSql {
         return new SqlFunctionCall("NOT SIMILAR", expression, new LiteralExpression(pattern));
     }
 
+    public static final Expression toDate(String str) {
+        return new LiteralExpression(str) {
+            @Override
+            public String toSql(ExpressionContext expressionContext) throws SQLSyntaxException {
+                return String.format("date %s", super.toSql(expressionContext));
+            }
+        };
+    }
+
+    public static final Expression toDateTime(String str) {
+        return new LiteralExpression(str) {
+            @Override
+            public String toSql(ExpressionContext expressionContext) throws SQLSyntaxException {
+                return String.format("timestamp %s", super.toSql(expressionContext));
+            }
+        };
+    }
+
     public static final Expression addDate(String dateString, int day) {
         return new PlainExpression(String.format("date %s + integer %s",
                 new LiteralExpression(dateString), new LiteralExpression(String.valueOf(day))));
