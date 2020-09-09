@@ -27,6 +27,9 @@ import com.github.braisdom.objsql.util.SuppressedException;
 import java.util.Arrays;
 import java.util.Objects;
 
+import static com.github.braisdom.objsql.DatabaseType.MsSqlServer;
+import static com.github.braisdom.objsql.DatabaseType.SQLite;
+
 @Syntax(DatabaseType.All)
 public class ANSIFunctions {
 
@@ -142,11 +145,32 @@ public class ANSIFunctions {
     }
 
     public static final Expression sin(Float literal) {
-        return new SqlFunctionCall("ABS", new LiteralExpression(literal));
+        return new SqlFunctionCall("SIN", new LiteralExpression(literal));
     }
 
     public static final Expression sin(Double literal) {
-        return new SqlFunctionCall("ABS", new LiteralExpression(literal));
+        return new SqlFunctionCall("SIN", new LiteralExpression(literal));
+    }
+
+    public static final Expression sin(Integer literal) {
+        return new SqlFunctionCall("SIN", new LiteralExpression(literal));
+    }
+
+    public static final Expression asin(Expression expression) {
+        Objects.requireNonNull(expression, "The expression cannot be null");
+        return new SqlFunctionCall("ASIN", expression);
+    }
+
+    public static final Expression asin(Float literal) {
+        return new SqlFunctionCall("ASIN", new LiteralExpression(literal));
+    }
+
+    public static final Expression asin(Double literal) {
+        return new SqlFunctionCall("ASIN", new LiteralExpression(literal));
+    }
+
+    public static final Expression asin(Integer literal) {
+        return new SqlFunctionCall("ASIN", new LiteralExpression(literal));
     }
 
     public static final Expression tan(Expression expression) {
@@ -155,11 +179,32 @@ public class ANSIFunctions {
     }
 
     public static final Expression tan(Float literal) {
-        return new SqlFunctionCall("ABS", new LiteralExpression(literal));
+        return new SqlFunctionCall("TAN", new LiteralExpression(literal));
     }
 
     public static final Expression tan(Double literal) {
-        return new SqlFunctionCall("ABS", new LiteralExpression(literal));
+        return new SqlFunctionCall("TAN", new LiteralExpression(literal));
+    }
+
+    public static final Expression tan(Integer literal) {
+        return new SqlFunctionCall("TAN", new LiteralExpression(literal));
+    }
+
+    public static final Expression atan(Expression expression) {
+        Objects.requireNonNull(expression, "The expression cannot be null");
+        return new SqlFunctionCall("ATAN", expression);
+    }
+
+    public static final Expression atan(Float literal) {
+        return new SqlFunctionCall("ATAN", new LiteralExpression(literal));
+    }
+
+    public static final Expression atan(Double literal) {
+        return new SqlFunctionCall("ATAN", new LiteralExpression(literal));
+    }
+
+    public static final Expression atan(Integer literal) {
+        return new SqlFunctionCall("ATAN", new LiteralExpression(literal));
     }
 
     public static final Expression cos(Expression expression) {
@@ -168,14 +213,122 @@ public class ANSIFunctions {
     }
 
     public static final Expression cos(Float literal) {
-        return new SqlFunctionCall("ABS", new LiteralExpression(literal));
+        return new SqlFunctionCall("COS", new LiteralExpression(literal));
     }
 
     public static final Expression cos(Double literal) {
-        return new SqlFunctionCall("ABS", new LiteralExpression(literal));
+        return new SqlFunctionCall("COS", new LiteralExpression(literal));
     }
 
-    @Syntax(except = DatabaseType.SQLite)
+    public static final Expression cos(Integer literal) {
+        return new SqlFunctionCall("COS", new LiteralExpression(literal));
+    }
+
+    public static final Expression acos(Expression expression) {
+        Objects.requireNonNull(expression, "The expression cannot be null");
+        return new SqlFunctionCall("ACOS", expression);
+    }
+
+    public static final Expression acos(Float literal) {
+        return new SqlFunctionCall("ACOS", new LiteralExpression(literal));
+    }
+
+    public static final Expression acos(Double literal) {
+        return new SqlFunctionCall("ACOS", new LiteralExpression(literal));
+    }
+
+    public static final Expression acos(Integer literal) {
+        return new SqlFunctionCall("ACOS", new LiteralExpression(literal));
+    }
+
+    public static final Expression exp(Integer literal) {
+        return new SqlFunctionCall("EXP", new LiteralExpression(literal));
+    }
+
+    public static final Expression exp(Float literal) {
+        return new SqlFunctionCall("EXP", new LiteralExpression(literal));
+    }
+
+    public static final Expression exp(Expression expression) {
+        return new SqlFunctionCall("EXP", expression);
+    }
+
+    public static final Expression ln(Integer literal) {
+        return new SqlFunctionCall("LN", new LiteralExpression(literal));
+    }
+
+    public static final Expression ln(Float literal) {
+        return new SqlFunctionCall("LN", new LiteralExpression(literal));
+    }
+
+    public static final Expression ln(Expression expression) {
+        return new SqlFunctionCall("LN", expression);
+    }
+
+    public static final Expression log(Integer literal) {
+        return new SqlFunctionCall("LOG", new LiteralExpression(literal));
+    }
+
+    public static final Expression log(Float literal) {
+        return new SqlFunctionCall("LOG", new LiteralExpression(literal));
+    }
+
+    public static final Expression log(Expression expression) {
+        return new SqlFunctionCall("LOG", expression);
+    }
+
+    @Syntax(except = {SQLite, MsSqlServer})
+    public static final Expression log2(Integer literal) {
+        return new SqlFunctionCall("LOG2", new LiteralExpression(literal));
+    }
+
+    @Syntax(except = {SQLite, MsSqlServer})
+    public static final Expression log2(Float literal) {
+        return new SqlFunctionCall("LOG2", new LiteralExpression(literal));
+    }
+
+    @Syntax(except = {SQLite, MsSqlServer})
+    public static final Expression log2(Expression expression) {
+        return new SqlFunctionCall("LOG2", expression);
+    }
+
+    public static final Expression log10(Integer literal) {
+        return new SqlFunctionCall("LOG10", new LiteralExpression(literal));
+    }
+
+    public static final Expression log10(Float literal) {
+        return new SqlFunctionCall("LOG10", new LiteralExpression(literal));
+    }
+
+    public static final Expression log10(Expression expression) {
+        return new SqlFunctionCall("LOG10", expression);
+    }
+
+    public static final Expression power(Integer literal, Integer power) {
+        return new SqlFunctionCall("POWER", new LiteralExpression(literal), new LiteralExpression(power));
+    }
+
+    public static final Expression power(Float literal, Integer power) {
+        return new SqlFunctionCall("POWER", new LiteralExpression(literal), new LiteralExpression(power));
+    }
+
+    public static final Expression power(Expression expression, Integer power) {
+        return new SqlFunctionCall("POWER", expression, new LiteralExpression(power));
+    }
+
+    public static final Expression radians(Integer literal) {
+        return new SqlFunctionCall("RADIANS", new LiteralExpression(literal));
+    }
+
+    public static final Expression radians(Float literal) {
+        return new SqlFunctionCall("RADIANS", new LiteralExpression(literal));
+    }
+
+    public static final Expression radians(Expression expression) {
+        return new SqlFunctionCall("RADIANS", expression);
+    }
+
+    @Syntax(except = SQLite)
     public static final Expression mod(Expression expression1, Expression expression2) {
         Objects.requireNonNull(expression1, "The expression1 cannot be null");
         Objects.requireNonNull(expression2, "The expression2 cannot be null");

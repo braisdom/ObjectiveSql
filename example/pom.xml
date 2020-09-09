@@ -16,7 +16,7 @@
     <dependencies>
         <dependency>
             <groupId>com.github.braisdom</groupId>
-            <artifactId>object-sql</artifactId>
+            <artifactId>objective-sql</artifactId>
             <version>1.0</version>
         </dependency>
         <dependency>

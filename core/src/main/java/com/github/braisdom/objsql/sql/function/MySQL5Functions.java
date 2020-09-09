@@ -157,4 +157,8 @@ public class MySQL5Functions {
     public static final Expression unhex(String str) {
         return new SqlFunctionCall("UNHEX", new LiteralExpression(str));
     }
+
+    public static final Expression crc32(String str) {
+        return new SqlFunctionCall("CRC32", new LiteralExpression(str));
+    }
 }
