@@ -125,4 +125,36 @@ public class MySQL5Functions {
     public static final Expression format(float floatNum, int num) {
         return new SqlFunctionCall("FORMAT", new LiteralExpression(floatNum), new LiteralExpression(num));
     }
+
+    public static final Expression toBase64(Expression expression) {
+        return new SqlFunctionCall("TO_BASE64", expression);
+    }
+
+    public static final Expression toBase64(String str) {
+        return new SqlFunctionCall("TO_BASE64", new LiteralExpression(str));
+    }
+
+    public static final Expression fromBase64(Expression expression) {
+        return new SqlFunctionCall("FROM_BASE64", expression);
+    }
+
+    public static final Expression fromBase64(String str) {
+        return new SqlFunctionCall("FROM_BASE64", new LiteralExpression(str));
+    }
+
+    public static final Expression hex(Expression expression) {
+        return new SqlFunctionCall("HEX", expression);
+    }
+
+    public static final Expression hex(String str) {
+        return new SqlFunctionCall("HEX", new LiteralExpression(str));
+    }
+
+    public static final Expression unhex(Expression expression) {
+        return new SqlFunctionCall("UNHEX", expression);
+    }
+
+    public static final Expression unhex(String str) {
+        return new SqlFunctionCall("UNHEX", new LiteralExpression(str));
+    }
 }

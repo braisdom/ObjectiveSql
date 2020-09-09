@@ -339,8 +339,4 @@ public final class ClickHouseFunctions {
         return new SqlFunctionCall("round", expression);
     }
 
-    public static Expression length(Expression expression) {
-        return new SqlFunctionCall("length", expression);
-    }
-
 }

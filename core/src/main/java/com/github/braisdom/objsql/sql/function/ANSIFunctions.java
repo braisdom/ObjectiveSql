@@ -211,6 +211,42 @@ public class ANSIFunctions {
         return new SqlFunctionCall("LENGTH", new LiteralExpression(literal));
     }
 
+    public static final Expression left(Expression expression) {
+        Objects.requireNonNull(expression, "The expression cannot be null");
+        return new SqlFunctionCall("LEFT", expression);
+    }
+
+    public static final Expression left(String literal) {
+        return new SqlFunctionCall("LEFT", new LiteralExpression(literal));
+    }
+
+    public static final Expression upper(Expression expression) {
+        Objects.requireNonNull(expression, "The expression cannot be null");
+        return new SqlFunctionCall("UPPER", expression);
+    }
+
+    public static final Expression upper(String literal) {
+        return new SqlFunctionCall("UPPER", new LiteralExpression(literal));
+    }
+
+    public static final Expression lower(Expression expression) {
+        Objects.requireNonNull(expression, "The expression cannot be null");
+        return new SqlFunctionCall("LOWER", expression);
+    }
+
+    public static final Expression lower(String literal) {
+        return new SqlFunctionCall("LOWER", new LiteralExpression(literal));
+    }
+
+    public static final Expression subStr(Expression expression) {
+        Objects.requireNonNull(expression, "The expression cannot be null");
+        return new SqlFunctionCall("SUBSTR", expression);
+    }
+
+    public static final Expression subStr(String literal) {
+        return new SqlFunctionCall("SUBSTR", new LiteralExpression(literal));
+    }
+
     public static final Expression concat(Expression... expressions) throws SQLSyntaxException {
         Objects.requireNonNull(expressions, "The expressions cannot be null");
         if(expressions.length == 0)
