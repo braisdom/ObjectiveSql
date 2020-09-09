@@ -17,10 +17,67 @@
 package com.github.braisdom.objsql.sql.function;
 
 import com.github.braisdom.objsql.DatabaseType;
+import com.github.braisdom.objsql.sql.Expression;
+import com.github.braisdom.objsql.sql.SqlFunctionCall;
 import com.github.braisdom.objsql.sql.Syntax;
+import com.github.braisdom.objsql.sql.expression.LiteralExpression;
+import com.github.braisdom.objsql.sql.expression.PlainExpression;
 
 @Syntax(only = DatabaseType.MySQL5)
 public class MySQL5Functions {
+
+    public static final Expression dateAdd(Expression expression, int day) {
+        return new SqlFunctionCall("DATE_ADD", expression, new PlainExpression(String.format("INTERVAL %d DAY", day)));
+    }
+
+    public static final Expression dateAdd(String dataString, int day) {
+        return new SqlFunctionCall("DATE_ADD", new LiteralExpression(dataString),
+                new PlainExpression(String.format("INTERVAL %d DAY", day)));
+    }
+
+    public static final Expression date(Expression expression) {
+        return new SqlFunctionCall("DATE", expression);
+    }
+
+    public static final Expression date(String dataString) {
+        return new SqlFunctionCall("DATE", new LiteralExpression(dataString));
+    }
+
+    public static final Expression dateDiff(Expression expression, Expression expression1) {
+        return new SqlFunctionCall("DATEDIFF", expression, expression1);
+    }
+
+    public static final Expression dateDiff(String dataString, Expression expression) {
+        return new SqlFunctionCall("DATEDIFF", new LiteralExpression(dataString), expression);
+    }
+
+    public static final Expression dateDiff(Expression expression, String dataString) {
+        return new SqlFunctionCall("DATEDIFF", expression, new LiteralExpression(dataString));
+    }
+
+    public static final Expression md5(Expression expression) {
+        return new SqlFunctionCall("MD5", expression);
+    }
+
+    public static final Expression md5(String literal) {
+        return new SqlFunctionCall("MD5", new LiteralExpression(literal));
+    }
+
+    public static final Expression sha(Expression expression) {
+        return new SqlFunctionCall("SHA", expression);
+    }
+
+    public static final Expression sha(String literal) {
+        return new SqlFunctionCall("SHA", new LiteralExpression(literal));
+    }
+
+    public static final Expression sha1(Expression expression) {
+        return new SqlFunctionCall("SHA1", expression);
+    }
+
+    public static final Expression sha1(String literal) {
+        return new SqlFunctionCall("SHA1", new LiteralExpression(literal));
+    }
 
 
 }
