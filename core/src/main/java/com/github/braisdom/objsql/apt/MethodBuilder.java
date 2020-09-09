@@ -40,6 +40,11 @@ public class MethodBuilder {
         return this;
     }
 
+    public MethodBuilder addThrowsClauses(JCExpression throwExpression) {
+        throwsClauses.append(throwExpression);
+        return this;
+    }
+
     public MethodBuilder setReturnType(Class<?> typeClass, Class<?>... genTypeClass) {
         JCExpression[] genTypes = Arrays.stream(genTypeClass).map(exceptionClass ->
                 treeMaker.Throw(aptBuilder.typeRef(exceptionClass.getName())).getExpression())

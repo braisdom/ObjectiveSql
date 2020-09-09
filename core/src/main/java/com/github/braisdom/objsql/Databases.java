@@ -1,5 +1,22 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.github.braisdom.objsql;
 
+import com.github.braisdom.objsql.jdbc.DbUtils;
 import com.github.braisdom.objsql.transition.DefaultJDBCDataTypeRiser;
 import com.github.braisdom.objsql.transition.JDBCDataTypeRiser;
 import com.github.braisdom.objsql.util.StringUtil;
@@ -10,8 +27,38 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.logging.Level;
 
+/**
+ * This class consists exclusively of static methods that operate of behavior of database.
+ * and the extension point for application.
+ */
 @SuppressWarnings("ALL")
 public final class Databases {
+
+    /**
+     * The LoggerFactory is definied for too many Log frameworks appearing,
+     * the ObjectiveSql can't decide which one to use
+     */
+    private static LoggerFactory loggerFactory = new LoggerFactory() {
+        @Override
+        public Logger create(Class<?> clazz) {
+            return new LoggerImpl(clazz);
+        }
+    };
+
+    /** The default sql executor for Objective, and customized the implementation when meeting the specific database */
+    private static SQLExecutor sqlExecutor = new DefaultSQLExecutor();
+
+    /** The default implementation to rise the column value from database to Java with common way */
+    private static JDBCDataTypeRiser jdbcDataTypeRiser = new DefaultJDBCDataTypeRiser();
+
+    /** The connectionFacotory is required in ObjectiveSql, it will be injected at application beginning */
+    private static ConnectionFactory connectionFactory;
+
+    /**
+     * Holds the database connection in a thread, and destroy the connection when transaction
+     * terminated or exception occoured.
+     * */
+    private static ThreadLocal<Connection> connectionThreadLocal = new ThreadLocal<>();
 
     private static QueryFactory queryFactory = new QueryFactory() {
         @Override
@@ -51,23 +98,25 @@ public final class Databases {
         }
     };
 
-    private static LoggerFactory loggerFactory = new LoggerFactory() {
-        @Override
-        public Logger create(Class<?> clazz) {
-            return new LoggerImpl(clazz);
-        }
-    };
-
-    private static SQLExecutor sqlExecutor = new DefaultSQLExecutor();
-    private static JDBCDataTypeRiser jdbcDataTypeRiser = new DefaultJDBCDataTypeRiser();
-    private static ConnectionFactory connectionFactory;
-    private static ThreadLocal<Connection> connectionThreadLocal = new ThreadLocal<>();
-
+    /**
+     * Represents a logic of data , it will provide the connection and sql
+     * executor of database, and the concrete logic will be ignored the behavior
+     * about connection.
+     *
+     * @param <T>
+     * @param <R>
+     */
     @FunctionalInterface
     public static interface DatabaseInvoke<T, R> {
         R apply(Connection connection, SQLExecutor<T> sqlExecutor) throws SQLException;
     }
 
+    /**
+     * Represents logic will be executed in the transaction(There's only one
+     * connection of database)
+     *
+     * @param <R>
+     */
     @FunctionalInterface
     public static interface TransactionalExecutor<R> {
         R apply() throws Exception;
@@ -76,6 +125,10 @@ public final class Databases {
     @FunctionalInterface
     public static interface Benchmarkable<R> {
         R apply() throws Exception;
+    }
+
+    public static ThreadLocal<Connection> getConnectionThreadLocal() {
+        return connectionThreadLocal;
     }
 
     public static void installConnectionFactory(ConnectionFactory connectionFactory) {
@@ -118,27 +171,24 @@ public final class Databases {
         Databases.jdbcDataTypeRiser = JDBCDataTypeRiser;
     }
 
-    public static <R> R executeTransactionally(TransactionalExecutor<R> executor)
-            throws SQLException, RollbackCauseException {
-        Connection connection = Databases.getConnectionFactory().getConnection();
-        boolean autoCommit = connection.getAutoCommit();
-        connection.setAutoCommit(false);
-        connectionThreadLocal.set(connection);
-
+    public static <R> R executeTransactionally(TransactionalExecutor<R> executor) throws SQLException {
+        Connection connection = null;
         try {
-            return executor.apply();
+            connection = Databases.getConnectionFactory().getConnection();
+            connection.setAutoCommit(false);
+            connectionThreadLocal.set(connection);
+            R result = executor.apply();
+            connection.commit();
+            return result;
         } catch (SQLException ex) {
-            connection.rollback();
+            DbUtils.rollback(connection);
             throw ex;
-        } catch (Exception ex) {
-            connection.rollback();
+        } catch (Throwable ex) {
+            DbUtils.rollback(connection);
             throw new RollbackCauseException(ex.getMessage(), ex);
         } finally {
             connectionThreadLocal.remove();
-            if (connection != null && !connection.isClosed()) {
-                connection.setAutoCommit(autoCommit);
-                connection.close();
-            }
+            DbUtils.closeQuietly(connection);
         }
     }
 
@@ -150,8 +200,7 @@ public final class Databases {
                 connection = Databases.getConnectionFactory().getConnection();
                 return databaseInvoke.apply(connection, sqlExecutor);
             } finally {
-                if (connection != null && !connection.isClosed())
-                    connection.close();
+                DbUtils.closeQuietly(connection);
             }
         } else {
             return databaseInvoke.apply(connection, sqlExecutor);
@@ -163,7 +212,7 @@ public final class Databases {
         try {
             long begin = System.currentTimeMillis();
             R result = benchmarkable.apply();
-//            logger.info(System.currentTimeMillis() - begin, message, params);
+            logger.info(System.currentTimeMillis() - begin, message, params);
             return result;
         } catch (Exception ex) {
             if (ex instanceof SQLException)

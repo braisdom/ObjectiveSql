@@ -10,6 +10,7 @@ import com.github.braisdom.objsql.sql.DefaultColumn;
 import com.github.braisdom.objsql.reflection.ClassUtils;
 import com.github.braisdom.objsql.reflection.PropertyUtils;
 import com.github.braisdom.objsql.relation.Relationship;
+import com.github.braisdom.objsql.sql.Select;
 import com.sun.tools.javac.code.Flags;
 import com.sun.tools.javac.code.TypeTag;
 import com.sun.tools.javac.tree.JCTree;
@@ -33,6 +34,7 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
         handlePrimary(annotationValues, aptBuilder);
         handleTableName(aptBuilder);
         handleCreateQueryMethod(aptBuilder);
+        handleCreateSelectMethod(aptBuilder);
         handleCreatePersistenceMethod(aptBuilder);
         handleSaveMethod(aptBuilder);
         handleCreateMethod(aptBuilder);
@@ -47,6 +49,7 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
         handleQuery3Method(aptBuilder);
         handleQueryFirstMethod(aptBuilder);
         handleQueryFirst2Method(aptBuilder);
+        handleQueryAllMethod(aptBuilder);
         handleCountMethod(aptBuilder);
         handleValidateMethod(aptBuilder);
         handleNewInstanceFromMethod(aptBuilder);
@@ -86,10 +89,31 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
 
         JCVariableDecl primaryField = treeMaker.VarDef(modifiers,
                 aptBuilder.toName(domainModel.primaryFieldName()), aptBuilder.typeRef(domainModel.primaryClass()), null);
+        JCMethodDecl queryByPrimaryKey = createQueryByPrimaryKeyMethod(domainModel, primaryField, aptBuilder);
 
         aptBuilder.inject(primaryField);
+        aptBuilder.inject(queryByPrimaryKey);
         aptBuilder.inject(aptBuilder.newSetter(primaryField, domainModel.fluent()));
         aptBuilder.inject(aptBuilder.newGetter(primaryField));
+    }
+
+    private JCMethodDecl createQueryByPrimaryKeyMethod(DomainModel domainModel, JCVariableDecl primaryField, APTBuilder aptBuilder) {
+        TreeMaker treeMaker = aptBuilder.getTreeMaker();
+        MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
+        StatementBuilder statementBuilder = aptBuilder.createStatementBuilder();
+
+        statementBuilder.append(aptBuilder.newGenericsType(Query.class,
+                aptBuilder.getClassName()), "query", "createQuery");
+        statementBuilder.append("query", "where",
+                List.of(treeMaker.Literal(String.format("%s = ?", domainModel.primaryColumnName())), aptBuilder.varRef("primaryKey")));
+
+        methodBuilder.setReturnStatement("query", "queryFirst");
+        return  methodBuilder
+                .addStatements(statementBuilder.build())
+                .addParameter("primaryKey", primaryField.vartype)
+                .setThrowsClauses(SQLException.class)
+                .setReturnType(aptBuilder.typeRef(aptBuilder.getClassName()))
+                .build("queryByPrimaryKey", Flags.PUBLIC | Flags.STATIC | Flags.FINAL);
     }
 
     private void handleTableName(APTBuilder aptBuilder) {
@@ -119,6 +143,20 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
                 .addStatements(statementBuilder.build())
                 .setReturnType(Query.class, aptBuilder.typeRef(aptBuilder.getClassName()))
                 .build("createQuery", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
+    }
+
+    private void handleCreateSelectMethod(APTBuilder aptBuilder) {
+        TreeMaker treeMaker = aptBuilder.getTreeMaker();
+        MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
+        StatementBuilder statementBuilder = aptBuilder.createStatementBuilder();
+
+        methodBuilder.setReturnStatement(treeMaker.NewClass(null, List.nil(),
+                aptBuilder.typeRef(Select.class), List.of(aptBuilder.methodCall("asTable")), null));
+
+        aptBuilder.inject(methodBuilder
+                .addStatements(statementBuilder.build())
+                .setReturnType(Select.class, aptBuilder.typeRef(aptBuilder.getClassName()))
+                .build("createSelect", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
 
     private void handleCreatePersistenceMethod(APTBuilder aptBuilder) {
@@ -381,6 +419,25 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
                 .setThrowsClauses(SQLException.class)
                 .setReturnType(aptBuilder.typeRef(aptBuilder.getClassName()))
                 .build("queryFirst", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
+    }
+
+    private void handleQueryAllMethod(APTBuilder aptBuilder) {
+        TreeMaker treeMaker = aptBuilder.getTreeMaker();
+        MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
+        StatementBuilder statementBuilder = aptBuilder.createStatementBuilder();
+
+        statementBuilder.append(aptBuilder.newGenericsType(Query.class, aptBuilder.getClassName()), "query",
+                "createQuery");
+        statementBuilder.append("query", "where",
+                List.of(treeMaker.Literal("")));
+
+        methodBuilder.setReturnStatement("query", "execute", aptBuilder.varRef("relations"));
+        aptBuilder.inject(methodBuilder
+                .addStatements(statementBuilder.build())
+                .addVarargsParameter("relations", Relationship.class)
+                .setThrowsClauses(SQLException.class)
+                .setReturnType(java.util.List.class, aptBuilder.typeRef(aptBuilder.getClassName()))
+                .build("queryAll", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
 
     private void handleCountMethod(APTBuilder aptBuilder) {

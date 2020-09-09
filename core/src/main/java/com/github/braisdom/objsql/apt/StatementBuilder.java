@@ -95,6 +95,16 @@ public class StatementBuilder {
         return this;
     }
 
+    public StatementBuilder append(JCTree.JCStatement... statements) {
+        jcStatements.appendList(List.from(statements));
+        return this;
+    }
+
+    public StatementBuilder append(List<JCTree.JCStatement> statements) {
+        jcStatements.appendList(statements);
+        return this;
+    }
+
     public List<JCTree.JCStatement> build() {
         return jcStatements.toList();
     }

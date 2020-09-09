@@ -14,25 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.braisdom.objsql;
+package com.github.braisdom.objsql.sql;
 
-public class DomainModelException extends RuntimeException {
-    public DomainModelException() {
+public class SQLSyntaxException extends Exception {
+    public SQLSyntaxException() {
     }
 
-    public DomainModelException(String message) {
+    public SQLSyntaxException(String message) {
         super(message);
     }
 
-    public DomainModelException(String message, Throwable cause) {
+    public SQLSyntaxException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public DomainModelException(Throwable cause) {
+    public SQLSyntaxException(Throwable cause) {
         super(cause);
     }
 
-    public DomainModelException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public SQLSyntaxException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

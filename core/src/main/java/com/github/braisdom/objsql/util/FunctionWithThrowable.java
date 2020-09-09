@@ -1,3 +1,19 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.github.braisdom.objsql.util;
 
 import java.util.function.Consumer;
@@ -123,45 +139,6 @@ public interface FunctionWithThrowable<T, R, E extends Throwable> extends Functi
             }
         };
     }
-
-
-//    /**
-//     * @param logger The logger to log exceptions on
-//     * @param message A message to use for logging exceptions
-//     * @return An interface that will log all exceptions to given logger
-//     */
-//    @SuppressWarnings("Duplicates")
-//    default FunctionWithThrowable<T, R, E> withLogging(final Logger logger, final String message) {
-//        return (final T v1) -> {
-//            try {
-//                return applyWithThrowable(v1);
-//            } catch (final Throwable throwable) {
-//                logger.error(message, v1, throwable);
-//                throw throwable;
-//            }
-//        };
-//    }
-//
-//
-//    /**
-//     * Will log WARNING level exceptions on logger if they occur within the interface
-//     * @param logger The logger instance to log exceptions on
-//     * @return An interface that will log exceptions on given logger
-//     */
-//    default FunctionWithThrowable<T, R, E> withLogging(final Logger logger) {
-//        return withLogging(logger, "Exception in FunctionWithThrowable with the argument [{}]");
-//    }
-//
-//
-//    /**
-//     * Will log WARNING level exceptions on logger if they occur within the interface
-//     * @return An interface that will log exceptions on global logger
-//     */
-//    default FunctionWithThrowable<T, R, E> withLogging() {
-//        return withLogging(LoggerFactory.getLogger(getClass()));
-//    }
-
-
 
     /**
      * @param consumer An exception consumer.
