@@ -16,11 +16,14 @@
  */
 package com.github.braisdom.objsql.sql.function;
 
+import com.github.braisdom.objsql.DatabaseType;
 import com.github.braisdom.objsql.sql.Expression;
 import com.github.braisdom.objsql.sql.SqlFunctionCall;
+import com.github.braisdom.objsql.sql.Syntax;
 import com.github.braisdom.objsql.sql.expression.LiteralExpression;
 import com.github.braisdom.objsql.sql.expression.PlainExpression;
 
+@Syntax(DatabaseType.Clickhouse)
 public final class ClickHouseFunctions {
 
     public static Expression toInt8(Expression expression) {

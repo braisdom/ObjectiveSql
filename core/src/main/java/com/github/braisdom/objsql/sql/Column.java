@@ -16,6 +16,10 @@
  */
 package com.github.braisdom.objsql.sql;
 
+/**
+ * It describes a column of database, and defines the operators between
+ * column and literal. It is a OOP for the SQL statements.
+ */
 public interface Column extends Expression {
 
     Expression asc();
