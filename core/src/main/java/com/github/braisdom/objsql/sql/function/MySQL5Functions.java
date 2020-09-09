@@ -161,4 +161,40 @@ public class MySQL5Functions {
     public static final Expression crc32(String str) {
         return new SqlFunctionCall("CRC32", new LiteralExpression(str));
     }
+
+    public static final Expression uuid() {
+        return new SqlFunctionCall("UUID");
+    }
+
+    public static final Expression uuidShort() {
+        return new SqlFunctionCall("UUID_SHORT");
+    }
+
+    public static final Expression rand() {
+        return new SqlFunctionCall("RAND");
+    }
+
+    public static final Expression rand(Integer seed) {
+        return new SqlFunctionCall("RAND", new LiteralExpression(seed));
+    }
+
+    public static final Expression truncate(Float number, Integer decimalPlaces) {
+        return new SqlFunctionCall("TRUNCATE", new LiteralExpression(number), new LiteralExpression(decimalPlaces));
+    }
+
+    public static final Expression truncate(Integer number, Integer decimalPlaces) {
+        return new SqlFunctionCall("TRUNCATE", new LiteralExpression(number), new LiteralExpression(decimalPlaces));
+    }
+
+    public static final Expression truncate(Expression expression, Integer decimalPlaces) {
+        return new SqlFunctionCall("TRUNCATE", expression, new LiteralExpression(decimalPlaces));
+    }
+
+    public static final Expression toDate(String str) {
+        return new LiteralExpression(str);
+    }
+
+    public static final Expression toDateTime(String str) {
+        return new LiteralExpression(str);
+    }
 }

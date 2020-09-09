@@ -328,6 +328,18 @@ public class ANSIFunctions {
         return new SqlFunctionCall("RADIANS", expression);
     }
 
+    public static final Expression sqrt(Integer literal) {
+        return new SqlFunctionCall("SQRT", new LiteralExpression(literal));
+    }
+
+    public static final Expression sqrt(Float literal) {
+        return new SqlFunctionCall("SQRT", new LiteralExpression(literal));
+    }
+
+    public static final Expression sqrt(Expression expression) {
+        return new SqlFunctionCall("SQRT", expression);
+    }
+
     @Syntax(except = SQLite)
     public static final Expression mod(Expression expression1, Expression expression2) {
         Objects.requireNonNull(expression1, "The expression1 cannot be null");
