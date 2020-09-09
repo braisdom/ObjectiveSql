@@ -17,13 +17,13 @@
 package com.github.braisdom.objsql.sql.function;
 
 import com.github.braisdom.objsql.DatabaseType;
-import com.github.braisdom.objsql.sql.Expression;
-import com.github.braisdom.objsql.sql.SQLSyntaxException;
-import com.github.braisdom.objsql.sql.SqlFunctionCall;
-import com.github.braisdom.objsql.sql.Syntax;
+import com.github.braisdom.objsql.sql.*;
 import com.github.braisdom.objsql.sql.expression.LiteralExpression;
+import com.github.braisdom.objsql.sql.expression.PlainExpression;
 import com.github.braisdom.objsql.util.ArrayUtil;
+import com.github.braisdom.objsql.util.FunctionWithThrowable;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 @Syntax(only = DatabaseType.PostgreSQL, version = "all")
@@ -45,4 +45,79 @@ public class PostgreSql {
     public static final Expression md5(String literal) {
         return new SqlFunctionCall("MD5", new LiteralExpression(literal));
     }
+
+    public static final Expression similar(Expression expression, String pattern) {
+        return new SqlFunctionCall("SIMILAR", expression, new LiteralExpression(pattern));
+    }
+
+    public static final Expression notSimilar(Expression expression, String pattern) {
+        return new SqlFunctionCall("NOT SIMILAR", expression, new LiteralExpression(pattern));
+    }
+
+    public static final Expression addDate(String dateString, int day) {
+        return new PlainExpression(String.format("date %s + integer %s",
+                new LiteralExpression(dateString), new LiteralExpression(String.valueOf(day))));
+    }
+
+    public static final Expression addHour(String dateString, int hour) {
+        return new PlainExpression(String.format("date %s + interval %s",
+                new LiteralExpression(dateString), new LiteralExpression(String.valueOf(hour))));
+    }
+
+    public static final Expression addDate(Expression expression, int day) {
+        return new PlainExpression(String.format("date %s + integer %s",
+                expression, new LiteralExpression(String.valueOf(day))));
+    }
+
+    public static final Expression addHour(Expression expression, int hour) {
+        return new PlainExpression(String.format("date %s + interval %s",
+                expression, new LiteralExpression(String.valueOf(hour))));
+    }
+
+    public static final Expression minusDate(String dateString, int day) {
+        return new PlainExpression(String.format("date %s - integer %s",
+                new LiteralExpression(dateString), new LiteralExpression(String.valueOf(day))));
+    }
+
+    public static final Expression minusHour(String dateString, int hour) {
+        return new PlainExpression(String.format("date %s - interval %s",
+                new LiteralExpression(dateString), new LiteralExpression(String.valueOf(hour))));
+    }
+
+    public static final Expression minusDate(Expression expression, int day) {
+        return new PlainExpression(String.format("date %s - integer %s",
+                expression, new LiteralExpression(String.valueOf(day))));
+    }
+
+    public static final Expression minusHour(Expression expression, int hour) {
+        return new PlainExpression(String.format("date %s - interval %s",
+                expression, new LiteralExpression(String.valueOf(hour))));
+    }
+
+    public static final Expression truncateDay(Expression expression) {
+        return new SqlFunctionCall("date_trunc", new LiteralExpression("day"),
+                new PlainExpression("timestamp"), expression);
+    }
+
+    public static final Expression truncateHour(Expression expression) {
+        return new SqlFunctionCall("date_trunc", new LiteralExpression("hour"),
+                new PlainExpression("timestamp"), expression);
+    }
+
+    public static final Expression extract(String unit, Expression expression) {
+        return new SqlFunctionCall("EXTRACT", expression) {
+            @Override
+            public String toSql(ExpressionContext expressionContext) throws SQLSyntaxException {
+                String[] expressionStrings = Arrays.stream(getExpressions())
+                        .map(FunctionWithThrowable
+                                .castFunctionWithThrowable(expression -> expression.toSql(expressionContext)))
+                        .toArray(String[]::new);
+                String alias = getAlias();
+                return String.format("%s(%s FROM TIMESTAMP %s) %s", getName(), unit,
+                        String.join(",", expressionStrings),
+                        alias == null ? "" : " AS " + expressionContext.quoteColumn(alias));
+            }
+        };
+    }
+
 }

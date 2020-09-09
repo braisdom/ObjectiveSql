@@ -34,4 +34,3 @@ public @interface Syntax {
 
     String version() default "";
 }
-
