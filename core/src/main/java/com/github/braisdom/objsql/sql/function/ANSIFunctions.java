@@ -202,13 +202,13 @@ public class ANSIFunctions {
         return new SqlFunctionCall("MIN", expression);
     }
 
-    public static final Expression len(Expression expression) {
+    public static final Expression length(Expression expression) {
         Objects.requireNonNull(expression, "The expression cannot be null");
-        return new SqlFunctionCall("LEN", expression);
+        return new SqlFunctionCall("LENGTH", expression);
     }
 
-    public static final Expression len(String literal) {
-        return new SqlFunctionCall("LEN", new LiteralExpression(literal));
+    public static final Expression length(String literal) {
+        return new SqlFunctionCall("LENGTH", new LiteralExpression(literal));
     }
 
     public static final Expression concat(Expression... expressions) throws SQLSyntaxException {

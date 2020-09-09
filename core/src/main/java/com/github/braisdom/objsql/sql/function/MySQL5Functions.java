@@ -26,6 +26,10 @@ import com.github.braisdom.objsql.sql.expression.PlainExpression;
 @Syntax(only = DatabaseType.MySQL5)
 public class MySQL5Functions {
 
+    public static final Expression pow(Expression expression) {
+        return new SqlFunctionCall("POW", expression);
+    }
+
     public static final Expression dateAdd(Expression expression, int day) {
         return new SqlFunctionCall("DATE_ADD", expression, new PlainExpression(String.format("INTERVAL %d DAY", day)));
     }
@@ -33,6 +37,23 @@ public class MySQL5Functions {
     public static final Expression dateAdd(String dataString, int day) {
         return new SqlFunctionCall("DATE_ADD", new LiteralExpression(dataString),
                 new PlainExpression(String.format("INTERVAL %d DAY", day)));
+    }
+
+    public static final Expression dateSub(Expression expression, int day) {
+        return new SqlFunctionCall("DATE_SUB", expression, new PlainExpression(String.format("INTERVAL %d DAY", day)));
+    }
+
+    public static final Expression dateSub(String dataString, int day) {
+        return new SqlFunctionCall("DATE_SUB", new LiteralExpression(dataString),
+                new PlainExpression(String.format("INTERVAL %d DAY", day)));
+    }
+
+    public static final Expression subDate(Expression expression, int day) {
+        return new SqlFunctionCall("SUBDATE", expression, new LiteralExpression(day));
+    }
+
+    public static final Expression subDate(String dataString, int day) {
+        return new SqlFunctionCall("SUBDATE", new LiteralExpression(dataString), new LiteralExpression(day));
     }
 
     public static final Expression date(Expression expression) {
@@ -53,6 +74,24 @@ public class MySQL5Functions {
 
     public static final Expression dateDiff(Expression expression, String dataString) {
         return new SqlFunctionCall("DATEDIFF", expression, new LiteralExpression(dataString));
+    }
+
+    /**
+     * Return the last day of the month for the argument
+     * @param expression a column or an expression
+     * @return the last day of the month
+     */
+    public static final Expression lastDay(Expression expression) {
+        return new SqlFunctionCall("LAST_DAY", expression);
+    }
+
+    /**
+     * Return the last day of the month for the argument
+     * @param dataString for example, '2020-09-3'
+     * @return the last day of the month
+     */
+    public static final Expression lastDay(String dataString) {
+        return new SqlFunctionCall("LAST_DAY", new LiteralExpression(dataString));
     }
 
     public static final Expression md5(Expression expression) {
@@ -79,5 +118,11 @@ public class MySQL5Functions {
         return new SqlFunctionCall("SHA1", new LiteralExpression(literal));
     }
 
+    public static final Expression format(Expression expression, int num) {
+        return new SqlFunctionCall("FORMAT", expression, new LiteralExpression(num));
+    }
 
+    public static final Expression format(float floatNum, int num) {
+        return new SqlFunctionCall("FORMAT", new LiteralExpression(floatNum), new LiteralExpression(num));
+    }
 }
