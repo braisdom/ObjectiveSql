@@ -23,7 +23,7 @@ import com.github.braisdom.objsql.sql.Syntax;
 import com.github.braisdom.objsql.sql.expression.LiteralExpression;
 import com.github.braisdom.objsql.sql.expression.PlainExpression;
 
-@Syntax(DatabaseType.Clickhouse)
+@Syntax(value = DatabaseType.Clickhouse, version = "all")
 public final class ClickHouseFunctions {
 
     public static Expression toInt8(Expression expression) {

@@ -23,7 +23,7 @@ import com.github.braisdom.objsql.sql.Syntax;
 import com.github.braisdom.objsql.sql.expression.LiteralExpression;
 import com.github.braisdom.objsql.sql.expression.PlainExpression;
 
-@Syntax(only = DatabaseType.MySQL5)
+@Syntax(only = DatabaseType.MySQL, version = "all")
 public class MySQL5Functions {
 
     public static final Expression pow(Expression expression) {
