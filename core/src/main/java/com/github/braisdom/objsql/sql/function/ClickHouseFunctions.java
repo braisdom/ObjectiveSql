@@ -134,6 +134,14 @@ public final class ClickHouseFunctions {
         return new SqlFunctionCall("toDateTime", new LiteralExpression(datetimeString));
     }
 
+    public static Expression toStartOfMonth(Expression expression) {
+        return new SqlFunctionCall("toStartOfMonth", expression);
+    }
+
+    public static Expression toStartOfMonth(String datetimeString) {
+        return new SqlFunctionCall("toStartOfMonth", new LiteralExpression(datetimeString));
+    }
+
     public static Expression toDecimal32(Expression value, String scale) {
         return new SqlFunctionCall("toDecimal32", value, new LiteralExpression(scale));
     }
@@ -247,76 +255,76 @@ public final class ClickHouseFunctions {
         return new SqlFunctionCall("FROM_UNIXTIME", timeStamp, formatter);
     }
 
-    public static Expression addYears(Expression timeStamp, int delta) {
-        return new SqlFunctionCall("addYears", timeStamp, new LiteralExpression(delta));
+    public static Expression addYears(Expression expression, int delta) {
+        return new SqlFunctionCall("addYears", expression, new LiteralExpression(delta));
     }
 
-    public static Expression addYears(String timeColumn, int delta) {
-        return new SqlFunctionCall("addYears", new LiteralExpression(timeColumn), new LiteralExpression(delta));
+    public static Expression addYears(String timeString, int delta) {
+        return new SqlFunctionCall("addYears", new LiteralExpression(timeString), new LiteralExpression(delta));
     }
 
-    public static Expression addMonths(Expression timeStamp, int delta) {
-        return new SqlFunctionCall("addYears", timeStamp, new LiteralExpression(delta));
+    public static Expression addMonths(Expression expression, int delta) {
+        return new SqlFunctionCall("addYears", expression, new LiteralExpression(delta));
     }
 
-    public static Expression addMonths(String timeColumn, int delta) {
-        return new SqlFunctionCall("addMonths", new LiteralExpression(timeColumn), new LiteralExpression(delta));
+    public static Expression addMonths(String timeString, int delta) {
+        return new SqlFunctionCall("addMonths", new LiteralExpression(timeString), new LiteralExpression(delta));
     }
 
-    public static Expression addWeeks(Expression timeStamp, int delta) {
-        return new SqlFunctionCall("addWeeks", timeStamp, new LiteralExpression(delta));
+    public static Expression addWeeks(Expression expression, int delta) {
+        return new SqlFunctionCall("addWeeks", expression, new LiteralExpression(delta));
     }
 
-    public static Expression addWeeks(String timeColumn, int delta) {
-        return new SqlFunctionCall("addWeeks", new LiteralExpression(timeColumn), new LiteralExpression(delta));
+    public static Expression addWeeks(String timeString, int delta) {
+        return new SqlFunctionCall("addWeeks", new LiteralExpression(timeString), new LiteralExpression(delta));
     }
 
-    public static Expression addDays(Expression timeStamp, int delta) {
-        return new SqlFunctionCall("addDays", timeStamp, new LiteralExpression(delta));
+    public static Expression addDays(Expression expression, int delta) {
+        return new SqlFunctionCall("addDays", expression, new LiteralExpression(delta));
     }
 
-    public static Expression addDays(String timeColumn, int delta) {
-        return new SqlFunctionCall("addDays", new LiteralExpression(timeColumn), new LiteralExpression(delta));
+    public static Expression addDays(String timeString, int delta) {
+        return new SqlFunctionCall("addDays", new LiteralExpression(timeString), new LiteralExpression(delta));
     }
 
-    public static Expression addHours(Expression timeStamp, int delta) {
-        return new SqlFunctionCall("addHours", timeStamp, new LiteralExpression(delta));
+    public static Expression addHours(Expression expression, int delta) {
+        return new SqlFunctionCall("addHours", expression, new LiteralExpression(delta));
     }
 
-    public static Expression addHours(String timeColumn, int delta) {
-        return new SqlFunctionCall("addHours", new LiteralExpression(timeColumn), new LiteralExpression(delta));
+    public static Expression addHours(String timeString, int delta) {
+        return new SqlFunctionCall("addHours", new LiteralExpression(timeString), new LiteralExpression(delta));
     }
 
-    public static Expression subtractYears(Expression timeStamp, int delta) {
-        return new SqlFunctionCall("subtractYears", timeStamp, new LiteralExpression(delta));
+    public static Expression subtractYears(Expression expression, int delta) {
+        return new SqlFunctionCall("subtractYears", expression, new LiteralExpression(delta));
     }
 
-    public static Expression subtractYears(String timeColumn, int delta) {
-        return new SqlFunctionCall("subtractYears", new LiteralExpression(timeColumn), new LiteralExpression(delta));
+    public static Expression subtractYears(String timeString, int delta) {
+        return new SqlFunctionCall("subtractYears", new LiteralExpression(timeString), new LiteralExpression(delta));
     }
 
-    public static Expression subtractMonths(Expression timeStamp, int delta) {
-        return new SqlFunctionCall("subtractYears", timeStamp, new LiteralExpression(delta));
+    public static Expression subtractMonths(Expression expression, int delta) {
+        return new SqlFunctionCall("subtractYears", expression, new LiteralExpression(delta));
     }
 
-    public static Expression subtractMonths(String timeColumn, int delta) {
-        return new SqlFunctionCall("subtractYears", new LiteralExpression(timeColumn), new LiteralExpression(delta));
+    public static Expression subtractMonths(String timeString, int delta) {
+        return new SqlFunctionCall("subtractYears", new LiteralExpression(timeString), new LiteralExpression(delta));
     }
 
-    public static Expression subtractDays(Expression timeStamp, int delta) {
-        return new SqlFunctionCall("subtractDays", timeStamp, new LiteralExpression(delta));
+    public static Expression subtractDays(Expression timeString, int delta) {
+        return new SqlFunctionCall("subtractDays", timeString, new LiteralExpression(delta));
     }
 
-    public static Expression subtractDays(String timeColumn, int delta) {
-        return new SqlFunctionCall("subtractDays", new LiteralExpression(timeColumn), new LiteralExpression(delta));
+    public static Expression subtractDays(String timeString, int delta) {
+        return new SqlFunctionCall("subtractDays", new LiteralExpression(timeString), new LiteralExpression(delta));
     }
 
-    public static Expression subtractHours(Expression timeStamp, int delta) {
-        return new SqlFunctionCall("subtractHours", timeStamp, new LiteralExpression(delta));
+    public static Expression subtractHours(Expression expression, int delta) {
+        return new SqlFunctionCall("subtractHours", expression, new LiteralExpression(delta));
     }
 
-    public static Expression subtractHours(String timeColumn, int delta) {
-        return new SqlFunctionCall("subtractHours", new LiteralExpression(timeColumn), new LiteralExpression(delta));
+    public static Expression subtractHours(String timeString, int delta) {
+        return new SqlFunctionCall("subtractHours", new LiteralExpression(timeString), new LiteralExpression(delta));
     }
 
     public static Expression empty(Expression expression) {
@@ -337,6 +345,50 @@ public final class ClickHouseFunctions {
 
     public static Expression round(Expression expression) {
         return new SqlFunctionCall("round", expression);
+    }
+
+    public static final Expression md5(Expression expression) {
+        return new SqlFunctionCall("md5", expression);
+    }
+
+    public static final Expression md5(String literal) {
+        return new SqlFunctionCall("md5", new LiteralExpression(literal));
+    }
+
+    public static final Expression farmHash64(Expression expression) {
+        return new SqlFunctionCall("farmHash64", expression);
+    }
+
+    public static final Expression farmHash64(String literal) {
+        return new SqlFunctionCall("farmHash64", new LiteralExpression(literal));
+    }
+
+    public static final Expression javaHash(Expression expression) {
+        return new SqlFunctionCall("javaHash", expression);
+    }
+
+    public static final Expression javaHash(String literal) {
+        return new SqlFunctionCall("javaHash", new LiteralExpression(literal));
+    }
+
+    public static final Expression hiveHash(Expression expression) {
+        return new SqlFunctionCall("hiveHash", expression);
+    }
+
+    public static final Expression hiveHash(String literal) {
+        return new SqlFunctionCall("hiveHash", new LiteralExpression(literal));
+    }
+
+    public static final Expression generateUUIDv4() {
+        return new SqlFunctionCall("generateUUIDv4");
+    }
+
+    public static final Expression toUUID(String literal) {
+        return new SqlFunctionCall("toUUID", new LiteralExpression(literal));
+    }
+
+    public static final Expression toUUID(Expression expression) {
+        return new SqlFunctionCall("toUUID", expression);
     }
 
 }
