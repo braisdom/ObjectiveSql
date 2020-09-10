@@ -391,4 +391,20 @@ public final class ClickHouseFunctions {
         return new SqlFunctionCall("toUUID", expression);
     }
 
+    public static final Expression hex(Expression expression) {
+        return new SqlFunctionCall("hex", expression);
+    }
+
+    public static final Expression hex(String str) {
+        return new SqlFunctionCall("hex", new LiteralExpression(str));
+    }
+
+    public static final Expression unhex(Expression expression) {
+        return new SqlFunctionCall("unhex", expression);
+    }
+
+    public static final Expression unhex(String str) {
+        return new SqlFunctionCall("unhex", new LiteralExpression(str));
+    }
+
 }
