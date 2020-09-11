@@ -3,6 +3,8 @@ package com.github.braisdom.objsql.example;
 import com.github.braisdom.objsql.DatabaseType;
 import com.github.braisdom.objsql.Databases;
 import com.github.braisdom.objsql.example.Domains.Member;
+import com.github.braisdom.objsql.example.Domains.Order;
+import com.github.braisdom.objsql.sql.Expression;
 import com.github.braisdom.objsql.sql.Select;
 import org.junit.Assert;
 
@@ -32,10 +34,16 @@ public class IsoExpressionalExample {
 
     public static void filterQuery() throws SQLException {
         Member.Table member = Member.asTable();
+        Order.Table order = Order.asTable();
 
         Select select = new Select(member);
+
+        Expression memberNameFilter = member.name.eq($("Jack"));
+        Expression memberGenderFilter = member.gender.eq($(0));
+
         select.project(member.id, member.name)
-                .where(and(member.name.eq($("Jack")), member.gender.eq($(0))));
+                .leftOuterJoin(order, order.memberId.eq(member.id))
+                .where(and(memberNameFilter, memberGenderFilter));
 
         List<Member> members = select.execute(DatabaseType.SQLite, Member.class);
 

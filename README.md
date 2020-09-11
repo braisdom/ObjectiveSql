@@ -14,7 +14,7 @@ SQL 一直是Java 开发人员比较反感的事物，因为它和传统的逻�
 
 上述问题是我多年Java 经验的感受，不知道其它Java 同行有没有。下面通过一个简单的示例代码展示ObjectiveSql 的部分特性
 
-## 来一个惊奇的体验
+## 来一次惊奇的体验
 
 首先，安装ObjectiveSql 插件, 安装方法和插件特性请参考： [ObjectiveSql-IntelliJ-Plugin](https://github.com/braisdom/ObjectiveSql-IntelliJ-Plugin)，不安装插件，程序可以正常编译，但无法体会ObjectiveSql 的魅力。
 
