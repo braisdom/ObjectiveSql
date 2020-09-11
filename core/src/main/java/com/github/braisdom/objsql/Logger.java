@@ -18,6 +18,8 @@ package com.github.braisdom.objsql;
 
 public interface Logger {
 
+    void debug(long elapsedTime, String sql, Object[] params);
+
     void info(long elapsedTime, String sql, Object[] params);
 
     void error(String message, Throwable throwable);

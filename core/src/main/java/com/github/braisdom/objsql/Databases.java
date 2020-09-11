@@ -268,6 +268,15 @@ class LoggerImpl implements Logger {
     }
 
     @Override
+    public void debug(long elapsedTime, String sql, Object[] params) {
+        String[] paramStrings = Arrays.stream(params).map(param -> String.valueOf(param)).toArray(String[]::new);
+        String paramString = String.join(",", paramStrings);
+        String log = String.format("[%dms] %s, with: [%s]", elapsedTime, sql, String.join(",",
+                paramString.length() > 100 ? StringUtil.truncate(paramString, 99) : paramString));
+        logger.logp(Level.CONFIG, clazz.getName(), "", log);
+    }
+
+    @Override
     public void info(long elapsedTime, String sql, Object[] params) {
         String[] paramStrings = Arrays.stream(params).map(param -> String.valueOf(param)).toArray(String[]::new);
         String paramString = String.join(",", paramStrings);
