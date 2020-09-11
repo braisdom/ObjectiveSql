@@ -9,8 +9,8 @@ import com.github.braisdom.objsql.sql.function.ANSIFunctions;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static com.github.braisdom.objsql.sql.expression.Expressions.$;
-import static com.github.braisdom.objsql.sql.expression.Expressions.literal;
+import static com.github.braisdom.objsql.sql.Expressions.$;
+import static com.github.braisdom.objsql.sql.Expressions.literal;
 import static com.github.braisdom.objsql.sql.function.ANSIFunctions.sqlCase;
 
 public class ANSIExpressionsTest {
