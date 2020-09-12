@@ -22,7 +22,8 @@ import java.sql.SQLException;
 
 /**
  * A factory for creating the <code>Connection</code> of database, it is necessary
- * for ObjectiveSql in runtime. It will be extended with <code>Databases.installConnectionFactory</code> method.
+ * for ObjectiveSql in runtime. It will be used in <code>Databases.installConnectionFactory</code> method,
+ * for a application customizes various connections.
  * <b>Notice:</b> The ConnectionFactory will be inject at the application beginning.
  *
  * @see Databases#installConnectionFactory(ConnectionFactory)

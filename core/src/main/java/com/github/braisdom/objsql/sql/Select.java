@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@Syntax(DatabaseType.All)
 public class Select<T> extends AbstractExpression implements Dataset {
 
     protected List<Expression> projections = new ArrayList<>();

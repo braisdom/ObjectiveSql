@@ -5,6 +5,7 @@ import com.github.braisdom.objsql.Databases;
 import com.github.braisdom.objsql.example.Domains.Member;
 import com.github.braisdom.objsql.example.Domains.Order;
 import com.github.braisdom.objsql.sql.Expression;
+import com.github.braisdom.objsql.sql.SQLSyntaxException;
 import com.github.braisdom.objsql.sql.Select;
 import org.junit.Assert;
 
@@ -14,14 +15,14 @@ import java.sql.SQLException;
 import java.util.List;
 
 import static com.github.braisdom.objsql.example.Domains.createTables;
-import static com.github.braisdom.objsql.sql.expression.Expressions.$;
-import static com.github.braisdom.objsql.sql.expression.Expressions.and;
-import static com.github.braisdom.objsql.sql.function.IsoFunctions.count;
-import static com.github.braisdom.objsql.sql.function.IsoFunctions.countDistinct;
+import static com.github.braisdom.objsql.sql.Expressions.$;
+import static com.github.braisdom.objsql.sql.Expressions.and;
+import static com.github.braisdom.objsql.sql.function.ANSIFunctions.count;
+import static com.github.braisdom.objsql.sql.function.ANSIFunctions.countDistinct;
 
 public class IsoExpressionalExample {
 
-    public static void simpleQuery() throws SQLException {
+    public static void simpleQuery() throws SQLException, SQLSyntaxException {
         Member.Table member = Member.asTable();
 
         Select select = new Select();
@@ -32,7 +33,7 @@ public class IsoExpressionalExample {
         Assert.assertTrue(members.size() == 100);
     }
 
-    public static void filterQuery() throws SQLException {
+    public static void filterQuery() throws SQLException, SQLSyntaxException {
         Member.Table member = Member.asTable();
         Order.Table order = Order.asTable();
 
@@ -50,7 +51,7 @@ public class IsoExpressionalExample {
         Assert.assertTrue(members.size() == 1);
     }
 
-    public static void countFunctionQuery() throws SQLException {
+    public static void countFunctionQuery() throws SQLException, SQLSyntaxException {
         Member.Table member = Member.asTable();
         Select select = new Select(member);
 
@@ -61,7 +62,7 @@ public class IsoExpressionalExample {
         Assert.assertTrue(members.size() == 1);
     }
 
-    public static void countDistinctFunctionQuery() throws SQLException {
+    public static void countDistinctFunctionQuery() throws SQLException, SQLSyntaxException {
         Member.Table member = Member.asTable();
         Select select = new Select(member);
 
@@ -72,7 +73,7 @@ public class IsoExpressionalExample {
         Assert.assertTrue(members.size() == 1);
     }
 
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) throws SQLException, SQLSyntaxException {
         File file = new File("query_example.db");
 
         if (file.exists())
