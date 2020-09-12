@@ -60,6 +60,8 @@ public final class Databases {
      * */
     private static ThreadLocal<Connection> connectionThreadLocal = new ThreadLocal<>();
 
+    private static ThreadLocal<String> dataSourceNamehreadLocal = new ThreadLocal<>();
+
     private static QueryFactory queryFactory = new QueryFactory() {
         @Override
         public <T> Query<T> createQuery(Class<T> clazz) {
@@ -129,6 +131,30 @@ public final class Databases {
 
     public static ThreadLocal<Connection> getConnectionThreadLocal() {
         return connectionThreadLocal;
+    }
+
+    /**
+     * Set a name of DataSource for current thread
+     * @param name
+     */
+    public static void setCurrentDataSourceName(String name) {
+        dataSourceNamehreadLocal.set(name);
+    }
+
+    /**
+     * Clear the name of DataSource in current thread
+     * @param name
+     */
+    public static void clearCurrentDataSourceName() {
+        dataSourceNamehreadLocal.remove();
+    }
+
+    /**
+     * Get the name of DataSource from current thread
+     * @param name
+     */
+    public static void getCurrentDataSourceName() {
+        dataSourceNamehreadLocal.remove();
     }
 
     public static void installConnectionFactory(ConnectionFactory connectionFactory) {
