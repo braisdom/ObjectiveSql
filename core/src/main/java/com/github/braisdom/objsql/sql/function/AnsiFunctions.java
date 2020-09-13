@@ -407,12 +407,12 @@ public class AnsiFunctions {
         return new SqlFunctionCall("LOWER", new LiteralExpression(literal));
     }
 
-    public static final Expression subStr(Expression expression) {
+    public static final Expression substr(Expression expression) {
         Objects.requireNonNull(expression, "The expression cannot be null");
         return new SqlFunctionCall("SUBSTR", expression);
     }
 
-    public static final Expression subStr(String literal) {
+    public static final Expression substr(String literal) {
         return new SqlFunctionCall("SUBSTR", new LiteralExpression(literal));
     }
 

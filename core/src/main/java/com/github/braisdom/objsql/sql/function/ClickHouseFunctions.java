@@ -16,8 +16,7 @@
  */
 package com.github.braisdom.objsql.sql.function;
 
-import com.github.braisdom.objsql.sql.Expression;
-import com.github.braisdom.objsql.sql.SqlFunctionCall;
+import com.github.braisdom.objsql.sql.*;
 import com.github.braisdom.objsql.sql.expression.LiteralExpression;
 import com.github.braisdom.objsql.sql.expression.PlainExpression;
 
@@ -458,7 +457,40 @@ public final class ClickHouseFunctions {
     }
 
     public static final Expression quantile(float level, Expression expression) {
-        return new SqlFunctionCall("quantile", literal(level));
+        return new QuantileFunction("quantile", level, expression);
     }
 
+    public static final Expression quantileExact(float level, Expression expression) {
+        return new QuantileFunction("quantileExact", level, expression);
+    }
+
+    public static final Expression quantileExactWeighted(float level, Expression expression) {
+        return new QuantileFunction("quantileExactWeighted", level, expression);
+    }
+
+    public static final Expression isNull(Expression expression) {
+        return new SqlFunctionCall("isNull", expression);
+    }
+
+    public static final Expression isNotNull(Expression expression) {
+        return new SqlFunctionCall("isNotNull", expression);
+    }
+
+    private static class QuantileFunction extends AbstractExpression {
+
+        private final String name;
+        private final float level;
+        private final Expression expression;
+
+        public QuantileFunction(String name, float level, Expression expression) {
+            this.name = name;
+            this.level = level;
+            this.expression = expression;
+        }
+
+        @Override
+        public String toSql(ExpressionContext expressionContext) throws SQLSyntaxException {
+            return String.format("%s(%f)(%s)", name, level, expression.toSql(expressionContext));
+        }
+    }
 }
