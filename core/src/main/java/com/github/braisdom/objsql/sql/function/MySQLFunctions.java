@@ -26,7 +26,6 @@ import com.github.braisdom.objsql.util.FunctionWithThrowable;
 import java.util.Arrays;
 import java.util.Objects;
 
-@Syntax(only = DatabaseType.MySQL, version = "all")
 public class MySQLFunctions {
 
     public static final Expression pow(Expression expression) {

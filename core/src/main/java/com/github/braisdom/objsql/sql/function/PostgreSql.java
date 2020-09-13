@@ -26,7 +26,6 @@ import com.github.braisdom.objsql.util.FunctionWithThrowable;
 import java.util.Arrays;
 import java.util.Objects;
 
-@Syntax(only = DatabaseType.PostgreSQL, version = "all")
 public class PostgreSql {
 
     public static final Expression concatWs(String delimiter, Expression... expressions) throws SQLSyntaxException {

@@ -229,13 +229,20 @@ public final class ClickHouseFunctions {
         return new SqlFunctionCall("toYYYYMMDDhhmmss", expression);
     }
 
-    public static Expression dateDiff(Expression unit, Expression startTime, Expression endTime) {
-        return new SqlFunctionCall("dateDiff", unit, startTime, endTime);
+    public static Expression dateDiff(String unit, Expression startTime, Expression endTime) {
+        return new SqlFunctionCall("dateDiff", literal(unit), startTime, endTime);
     }
 
-    public static Expression dateDiff(Expression unit, Expression startTime,
-                                           Expression endTime, Expression timeZone) {
-        return new SqlFunctionCall("dateDiff", unit, startTime, endTime, timeZone);
+    public static Expression dayDiff(Expression startTime, Expression endTime) {
+        return dateDiff("day", startTime, endTime);
+    }
+
+    public static Expression hourDiff(Expression startTime, Expression endTime) {
+        return dateDiff("hour", startTime, endTime);
+    }
+
+    public static Expression monthDiff(Expression startTime, Expression endTime) {
+        return dateDiff("month", startTime, endTime);
     }
 
     public static Expression formatDateTime(Expression time, Expression formatter) {
@@ -412,6 +419,30 @@ public final class ClickHouseFunctions {
 
     public static final Expression startsWith(String str) {
         return new SqlFunctionCall("startsWith", new LiteralExpression(str));
+    }
+
+    public static final Expression endsWith(Expression expression) {
+        return new SqlFunctionCall("endsWith", expression);
+    }
+
+    public static final Expression endsWith(String str) {
+        return new SqlFunctionCall("endsWith", new LiteralExpression(str));
+    }
+
+    public static final Expression base64Encode(Expression expression) {
+        return new SqlFunctionCall("base64Encode", expression);
+    }
+
+    public static final Expression base64Encode(String str) {
+        return new SqlFunctionCall("base64Encode", new LiteralExpression(str));
+    }
+
+    public static final Expression base64Decode(Expression expression) {
+        return new SqlFunctionCall("base64Encode", expression);
+    }
+
+    public static final Expression base64Decode(String str) {
+        return new SqlFunctionCall("base64Encode", new LiteralExpression(str));
     }
 
     public static final Expression crc32(Expression expression) {
