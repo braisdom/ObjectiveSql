@@ -149,7 +149,7 @@ public class Select<T> extends AbstractExpression implements Dataset {
         return sql.toString();
     }
 
-    private void processProjections(ExpressionContext expressionContext, StringBuilder sql) throws SQLSyntaxException {
+    protected void processProjections(ExpressionContext expressionContext, StringBuilder sql) throws SQLSyntaxException {
         if (projections.size() == 0)
             sql.append(" * ");
         else {
@@ -166,7 +166,7 @@ public class Select<T> extends AbstractExpression implements Dataset {
         }
     }
 
-    private void processFrom(ExpressionContext expressionContext, StringBuilder sql) throws SQLSyntaxException {
+    protected void processFrom(ExpressionContext expressionContext, StringBuilder sql) throws SQLSyntaxException {
         if (fromDatasets != null && fromDatasets.length == 0)
             throw new SQLSyntaxException("The from cause is required for select statement");
 
@@ -183,14 +183,14 @@ public class Select<T> extends AbstractExpression implements Dataset {
         }
     }
 
-    private void processWhere(ExpressionContext expressionContext, StringBuilder sql) throws SQLSyntaxException {
+    protected void processWhere(ExpressionContext expressionContext, StringBuilder sql) throws SQLSyntaxException {
         if (whereExpression != null) {
             sql.append(" WHERE ");
             sql.append(whereExpression.toSql(expressionContext));
         }
     }
 
-    private void processJoins(ExpressionContext expressionContext, StringBuilder sql) throws SQLSyntaxException {
+    protected void processJoins(ExpressionContext expressionContext, StringBuilder sql) throws SQLSyntaxException {
         try {
             if (joinExpressions != null && joinExpressions.size() > 0) {
                 String[] joinStrings = joinExpressions.stream()
@@ -205,7 +205,7 @@ public class Select<T> extends AbstractExpression implements Dataset {
         }
     }
 
-    private void processGroupBy(ExpressionContext expressionContext, StringBuilder sql) throws SQLSyntaxException {
+    protected void processGroupBy(ExpressionContext expressionContext, StringBuilder sql) throws SQLSyntaxException {
         if (groupByExpressions != null && groupByExpressions.length > 0) {
             try {
                 sql.append(" GROUP BY ");
@@ -226,7 +226,7 @@ public class Select<T> extends AbstractExpression implements Dataset {
         }
     }
 
-    private void processOrderBy(ExpressionContext expressionContext, StringBuilder sql) throws SQLSyntaxException {
+    protected void processOrderBy(ExpressionContext expressionContext, StringBuilder sql) throws SQLSyntaxException {
         if (orderByExpressions != null && orderByExpressions.length > 0) {
             try {
                 sql.append(" ORDER BY ");
@@ -242,7 +242,7 @@ public class Select<T> extends AbstractExpression implements Dataset {
         }
     }
 
-    private void processUnion(ExpressionContext expressionContext, StringBuilder sql) throws SQLSyntaxException {
+    protected void processUnion(ExpressionContext expressionContext, StringBuilder sql) throws SQLSyntaxException {
         if (unionDatasets != null) {
             for(Dataset dataset:unionDatasets)
                 sql.append(" UNION ").append(dataset.toSql(expressionContext)).append(" ");

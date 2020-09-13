@@ -5,13 +5,12 @@ import com.github.braisdom.objsql.sql.DefaultExpressionContext;
 import com.github.braisdom.objsql.sql.Expression;
 import com.github.braisdom.objsql.sql.SQLSyntaxException;
 import com.github.braisdom.objsql.sql.expression.CaseExpression;
-import com.github.braisdom.objsql.sql.function.ANSIFunctions;
-import org.junit.jupiter.api.Assertions;
+import com.github.braisdom.objsql.sql.function.AnsiFunctions;
 import org.junit.jupiter.api.Test;
 
 import static com.github.braisdom.objsql.sql.Expressions.$;
 import static com.github.braisdom.objsql.sql.Expressions.literal;
-import static com.github.braisdom.objsql.sql.function.ANSIFunctions.sqlCase;
+import static com.github.braisdom.objsql.sql.function.AnsiFunctions.sqlCase;
 
 public class ANSIExpressionsTest {
 
@@ -27,10 +26,10 @@ public class ANSIExpressionsTest {
     public void testCountFunction() throws SQLSyntaxException {
         TestModel.Table testTable = TestModel.asTable();
 
-        Expression countExpr = ANSIFunctions.count();
-        Expression aliasedCountExpr = ANSIFunctions.count().as("count_num");
-        Expression columnCountExpr = ANSIFunctions.count(testTable.name);
-        Expression columnCountDistinctExpr = ANSIFunctions.countDistinct(testTable.name);
+        Expression countExpr = AnsiFunctions.count();
+        Expression aliasedCountExpr = AnsiFunctions.count().as("count_num");
+        Expression columnCountExpr = AnsiFunctions.count(testTable.name);
+        Expression columnCountDistinctExpr = AnsiFunctions.countDistinct(testTable.name);
 
 //        Assertions.assertEquals("COUNT(*)", countExpr.toSql(exprContext).trim());
 //        Assertions.assertEquals("COUNT(*)  AS \"count_num\"", aliasedCountExpr.toSql(exprContext).trim());
@@ -42,10 +41,10 @@ public class ANSIExpressionsTest {
     public void testAggFunction() throws SQLSyntaxException {
         TestModel.Table testTable = TestModel.asTable();
 
-        Expression sumExpr = ANSIFunctions.sum(testTable.id);
-        Expression avgExpr = ANSIFunctions.avg(testTable.id);
-        Expression maxExpr = ANSIFunctions.max(testTable.id);
-        Expression minExpr = ANSIFunctions.min(testTable.id);
+        Expression sumExpr = AnsiFunctions.sum(testTable.id);
+        Expression avgExpr = AnsiFunctions.avg(testTable.id);
+        Expression maxExpr = AnsiFunctions.max(testTable.id);
+        Expression minExpr = AnsiFunctions.min(testTable.id);
 
 //        Assertions.assertEquals("SUM(\"T0\".\"id\" )", sumExpr.toSql(exprContext).trim());
 //        Assertions.assertEquals("AVG(\"T0\".\"id\" )", avgExpr.toSql(exprContext).trim());
@@ -57,8 +56,8 @@ public class ANSIExpressionsTest {
     public void testMathFunction() throws SQLSyntaxException {
         TestModel.Table testTable = TestModel.asTable();
 
-        Expression absExpr = ANSIFunctions.abs(testTable.id);
-        Expression abs2Expr = ANSIFunctions.abs($(12));
+        Expression absExpr = AnsiFunctions.abs(testTable.id);
+        Expression abs2Expr = AnsiFunctions.abs($(12));
 
 //        Assertions.assertEquals("ABS(\"T0\".\"id\" )", absExpr.toSql(exprContext).trim());
 //        Assertions.assertEquals("ABS(12)", abs2Expr.toSql(exprContext).trim());
@@ -68,7 +67,7 @@ public class ANSIExpressionsTest {
     public void testIfFunction() throws SQLSyntaxException {
         TestModel.Table testTable = TestModel.asTable();
 
-        Expression ifExpr = ANSIFunctions.sqlIf(testTable.id.eq($(12)), $("test"), $("none")).as("name");
+        Expression ifExpr = AnsiFunctions.sqlIf(testTable.id.eq($(12)), $("test"), $("none")).as("name");
 
 //        Assertions.assertEquals("IF(\"T0\".\"id\"  = 12,'test','none')  AS \"name\"", ifExpr.toSql(exprContext).trim());
     }

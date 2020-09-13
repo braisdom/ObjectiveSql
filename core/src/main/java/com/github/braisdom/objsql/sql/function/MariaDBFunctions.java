@@ -16,5 +16,5 @@
  */
 package com.github.braisdom.objsql.sql.function;
 
-public class MariaDBFunctions extends ANSIFunctions {
+public class MariaDBFunctions extends AnsiFunctions {
 }

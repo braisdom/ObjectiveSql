@@ -16,12 +16,12 @@
  */
 package com.github.braisdom.objsql.sql.function;
 
-import com.github.braisdom.objsql.DatabaseType;
 import com.github.braisdom.objsql.sql.Expression;
 import com.github.braisdom.objsql.sql.SqlFunctionCall;
-import com.github.braisdom.objsql.sql.Syntax;
 import com.github.braisdom.objsql.sql.expression.LiteralExpression;
 import com.github.braisdom.objsql.sql.expression.PlainExpression;
+
+import static com.github.braisdom.objsql.sql.Expressions.literal;
 
 public final class ClickHouseFunctions {
 
@@ -424,6 +424,10 @@ public final class ClickHouseFunctions {
 
     public static final Expression any(Expression expression) {
         return new SqlFunctionCall("any", expression);
+    }
+
+    public static final Expression quantile(float level, Expression expression) {
+        return new SqlFunctionCall("quantile", literal(level));
     }
 
 }

@@ -1,6 +1,5 @@
 package com.github.braisdom.objsql.example;
 
-import com.github.braisdom.objsql.ConnectionFactory;
 import com.github.braisdom.objsql.DatabaseType;
 import com.github.braisdom.objsql.Databases;
 import com.github.braisdom.objsql.example.Domains.Member;
@@ -19,10 +18,10 @@ import static com.github.braisdom.objsql.ConnectionFactory.DEFAULT_DATA_SOURCE_N
 import static com.github.braisdom.objsql.example.Domains.createTables;
 import static com.github.braisdom.objsql.sql.Expressions.$;
 import static com.github.braisdom.objsql.sql.Expressions.and;
-import static com.github.braisdom.objsql.sql.function.ANSIFunctions.count;
-import static com.github.braisdom.objsql.sql.function.ANSIFunctions.countDistinct;
+import static com.github.braisdom.objsql.sql.function.AnsiFunctions.count;
+import static com.github.braisdom.objsql.sql.function.AnsiFunctions.countDistinct;
 
-public class IsoExpressionalExample {
+public class AnsiExpressionalExample {
 
     public static void simpleQuery() throws SQLException, SQLSyntaxException {
         Member.Table member = Member.asTable();

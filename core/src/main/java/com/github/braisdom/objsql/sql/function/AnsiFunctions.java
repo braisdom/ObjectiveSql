@@ -31,7 +31,7 @@ import static com.github.braisdom.objsql.DatabaseType.MsSqlServer;
 import static com.github.braisdom.objsql.DatabaseType.SQLite;
 
 @Syntax(DatabaseType.All)
-public class ANSIFunctions {
+public class AnsiFunctions {
 
     /**
      * Returns the number of rows returned by the query. You can use it as an
