@@ -23,7 +23,6 @@ import com.github.braisdom.objsql.sql.Syntax;
 import com.github.braisdom.objsql.sql.expression.LiteralExpression;
 import com.github.braisdom.objsql.sql.expression.PlainExpression;
 
-@Syntax(value = DatabaseType.Clickhouse, version = "all")
 public final class ClickHouseFunctions {
 
     public static Expression toInt8(Expression expression) {
@@ -331,16 +330,16 @@ public final class ClickHouseFunctions {
         return new SqlFunctionCall("empty", expression);
     }
 
-    public static Expression empty(String dateString) {
-        return new SqlFunctionCall("empty", new LiteralExpression(dateString));
+    public static Expression empty(String string) {
+        return new SqlFunctionCall("empty", new LiteralExpression(string));
     }
 
     public static Expression notEmpty(Expression expression) {
         return new SqlFunctionCall("notEmpty", expression);
     }
 
-    public static Expression notEmpty(String dateString) {
-        return new SqlFunctionCall("notEmpty", new LiteralExpression(dateString));
+    public static Expression notEmpty(String string) {
+        return new SqlFunctionCall("notEmpty", new LiteralExpression(string));
     }
 
     public static Expression round(Expression expression) {
@@ -405,6 +404,26 @@ public final class ClickHouseFunctions {
 
     public static final Expression unhex(String str) {
         return new SqlFunctionCall("unhex", new LiteralExpression(str));
+    }
+
+    public static final Expression startsWith(Expression expression) {
+        return new SqlFunctionCall("startsWith", expression);
+    }
+
+    public static final Expression startsWith(String str) {
+        return new SqlFunctionCall("startsWith", new LiteralExpression(str));
+    }
+
+    public static final Expression crc32(Expression expression) {
+        return new SqlFunctionCall("CRC32", expression);
+    }
+
+    public static final Expression crc32(String str) {
+        return new SqlFunctionCall("CRC32", new LiteralExpression(str));
+    }
+
+    public static final Expression any(Expression expression) {
+        return new SqlFunctionCall("any", expression);
     }
 
 }
