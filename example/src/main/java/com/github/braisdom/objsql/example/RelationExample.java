@@ -13,6 +13,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.github.braisdom.objsql.ConnectionFactory.DEFAULT_DATA_SOURCE_NAME;
 import static com.github.braisdom.objsql.example.Domains.*;
 
 public class RelationExample {
@@ -69,7 +70,7 @@ public class RelationExample {
             file.delete();
 
         Databases.installConnectionFactory(new SqliteConnectionFactory(file.getPath()));
-        Connection connection = Databases.getConnectionFactory().getConnection();
+        Connection connection = Databases.getConnectionFactory().getConnection(DEFAULT_DATA_SOURCE_NAME);
         createTables(connection);
 
         prepareRelationData();

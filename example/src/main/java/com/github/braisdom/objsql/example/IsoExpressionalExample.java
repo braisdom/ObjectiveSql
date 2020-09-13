@@ -1,5 +1,6 @@
 package com.github.braisdom.objsql.example;
 
+import com.github.braisdom.objsql.ConnectionFactory;
 import com.github.braisdom.objsql.DatabaseType;
 import com.github.braisdom.objsql.Databases;
 import com.github.braisdom.objsql.example.Domains.Member;
@@ -14,6 +15,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
+import static com.github.braisdom.objsql.ConnectionFactory.DEFAULT_DATA_SOURCE_NAME;
 import static com.github.braisdom.objsql.example.Domains.createTables;
 import static com.github.braisdom.objsql.sql.Expressions.$;
 import static com.github.braisdom.objsql.sql.Expressions.and;
@@ -80,7 +82,7 @@ public class IsoExpressionalExample {
             file.delete();
 
         Databases.installConnectionFactory(new SqliteConnectionFactory(file.getPath()));
-        Connection connection = Databases.getConnectionFactory().getConnection();
+        Connection connection = Databases.getConnectionFactory().getConnection(DEFAULT_DATA_SOURCE_NAME);
         createTables(connection);
         QueryExample.prepareQueryData();
 

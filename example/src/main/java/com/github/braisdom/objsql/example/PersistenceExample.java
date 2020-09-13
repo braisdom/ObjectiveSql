@@ -12,6 +12,8 @@ import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.github.braisdom.objsql.ConnectionFactory.DEFAULT_DATA_SOURCE_NAME;
+
 public class PersistenceExample {
 
     private static void createSimpleMember() throws SQLException {
@@ -173,7 +175,7 @@ public class PersistenceExample {
             file.delete();
 
         Databases.installConnectionFactory(new SqliteConnectionFactory(file.getPath()));
-        Domains.createTables(Databases.getConnectionFactory().getConnection());
+        Domains.createTables(Databases.getConnectionFactory().getConnection(DEFAULT_DATA_SOURCE_NAME));
 
         createSimpleMember();
         createSimpleMemberCopyFromMap();

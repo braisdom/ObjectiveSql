@@ -153,8 +153,8 @@ public final class Databases {
      * Get the name of DataSource from current thread
      * @param name
      */
-    public static void getCurrentDataSourceName() {
-        dataSourceNamehreadLocal.remove();
+    public static String getCurrentDataSourceName() {
+        return dataSourceNamehreadLocal.get();
     }
 
     public static void installConnectionFactory(ConnectionFactory connectionFactory) {
@@ -200,7 +200,8 @@ public final class Databases {
     public static <R> R executeTransactionally(TransactionalExecutor<R> executor) throws SQLException {
         Connection connection = null;
         try {
-            connection = Databases.getConnectionFactory().getConnection();
+            connection = Databases.getConnectionFactory()
+                    .getConnection(getCurrentDataSourceName());
             connection.setAutoCommit(false);
             connectionThreadLocal.set(connection);
             R result = executor.apply();
@@ -223,7 +224,8 @@ public final class Databases {
         SQLExecutor<T> sqlExecutor = Databases.getSqlExecutor();
         if (connection == null) {
             try {
-                connection = Databases.getConnectionFactory().getConnection();
+                connection = Databases.getConnectionFactory()
+                        .getConnection(getCurrentDataSourceName());
                 return databaseInvoke.apply(connection, sqlExecutor);
             } finally {
                 DbUtils.closeQuietly(connection);

@@ -30,12 +30,20 @@ import java.sql.SQLException;
  */
 public interface ConnectionFactory {
 
+    String DEFAULT_DATA_SOURCE_NAME = "default";
+
     /**
      * Return a new connection of database, certainly, the connection can be retrieved
      * from a connection pool also.
+     * The implementors should create different database connections by different data
+     * source name.
      *
+     * @param dataSource the name is acquired from ThreadLocal
      * @return a connection of database
      * @throws SQLException
+     *
+     * @see Databases#setCurrentDataSourceName(String)
+     * @see Databases#getCurrentDataSourceName()
      */
-    Connection getConnection() throws SQLException;
+    Connection getConnection(String dataSource) throws SQLException;
 }
