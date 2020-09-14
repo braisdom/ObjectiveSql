@@ -344,7 +344,6 @@ public class AnsiFunctions {
         return new SqlFunctionCall("SQRT", expression);
     }
 
-    @Syntax(except = SQLite)
     public static final Expression mod(Expression expression1, Expression expression2) {
         Objects.requireNonNull(expression1, "The expression1 cannot be null");
         Objects.requireNonNull(expression2, "The expression2 cannot be null");

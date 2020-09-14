@@ -16,7 +16,6 @@
  */
 package com.github.braisdom.objsql;
 
-
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -45,6 +44,7 @@ public interface ConnectionFactory {
      * @see com.github.braisdom.objsql.annotations.DataSourceName
      * @see Databases#setCurrentDataSourceName(String)
      * @see Databases#getCurrentDataSourceName()
+     * @see Databases#clearCurrentDataSourceName()
      */
     Connection getConnection(String dataSource) throws SQLException;
 }

@@ -16,5 +16,35 @@
  */
 package com.github.braisdom.objsql.sql.function;
 
+import com.github.braisdom.objsql.sql.Expression;
+import com.github.braisdom.objsql.sql.SqlFunctionCall;
+
+import static com.github.braisdom.objsql.sql.Expressions.literal;
+
 public class OracleFunctions {
+
+    public static final Expression cosh(Integer literal) {
+        return new SqlFunctionCall("COSH", literal(literal));
+    }
+
+    public static final Expression cosh(Expression expression) {
+        return new SqlFunctionCall("COSH", expression);
+    }
+
+    public static final Expression addMonth(Expression expression, Integer delta) {
+        return new SqlFunctionCall("ADD_MONTHS", expression, literal(delta));
+    }
+
+    public static final Expression toDate(Expression expression, String format) {
+        return new SqlFunctionCall("to_char", expression, literal(format));
+    }
+
+    public static final Expression toYYYY_MM_DD(Expression expression, String format) {
+        return toDate(expression, "yyyy-MM-dd");
+    }
+
+    public static final Expression toYYYY_MM_DD_hh_mi_ss(Expression expression, String format) {
+        return toDate(expression, "yyyy-mm-dd hh24:mi:ss");
+    }
+
 }
