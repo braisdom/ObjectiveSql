@@ -17,8 +17,8 @@ import static com.github.braisdom.objsql.ConnectionFactory.DEFAULT_DATA_SOURCE_N
 public class PersistenceExample {
 
     private static void createSimpleMember() throws SQLException {
-        Member newMember = new Member()
-                .setId(100)
+        Member newMember = new Member();
+        newMember.setId(100)
                 .setNo("100000")
                 .setName("Pamela")
                 .setGender(1)
