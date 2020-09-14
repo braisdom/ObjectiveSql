@@ -18,6 +18,7 @@ package com.github.braisdom.objsql.sql.function;
 
 import com.github.braisdom.objsql.sql.Expression;
 import com.github.braisdom.objsql.sql.SqlFunctionCall;
+import com.github.braisdom.objsql.sql.expression.PlainExpression;
 
 import static com.github.braisdom.objsql.sql.Expressions.literal;
 
@@ -39,12 +40,28 @@ public class OracleFunctions {
         return new SqlFunctionCall("to_char", expression, literal(format));
     }
 
-    public static final Expression toYYYY_MM_DD(Expression expression, String format) {
+    public static final Expression toDateYYYY_MM_DD(Expression expression, String format) {
         return toDate(expression, "yyyy-MM-dd");
     }
 
-    public static final Expression toYYYY_MM_DD_hh_mi_ss(Expression expression, String format) {
+    public static final Expression toDateYYYY_MM_DD_hh_mi_ss(Expression expression, String format) {
         return toDate(expression, "yyyy-mm-dd hh24:mi:ss");
+    }
+
+    public static final Expression toTimestamp(Expression expression, String format) {
+        return new SqlFunctionCall("to_timestamp", expression, literal(format));
+    }
+
+    public static final Expression toTimestampYYYY_MM_DD(Expression expression, String format) {
+        return toDate(expression, "yyyy-MM-dd");
+    }
+
+    public static final Expression toTimestampYYYY_MM_DD_hh_mi_ss(Expression expression, String format) {
+        return toDate(expression, "yyyy-mm-dd hh24:mi:ss");
+    }
+
+    public static final Expression timestamp(String string) {
+        return new PlainExpression(String.format("TIMESTAMP '%s'", string));
     }
 
 }
