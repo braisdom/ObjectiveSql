@@ -215,7 +215,7 @@ public final class Databases {
             throw new RollbackCauseException(ex.getMessage(), ex);
         } finally {
             connectionThreadLocal.remove();
-            DbUtils.closeQuietly(connection);
+            DbUtils.close(connection);
         }
     }
 
@@ -228,7 +228,7 @@ public final class Databases {
                         .getConnection(getCurrentDataSourceName());
                 return databaseInvoke.apply(connection, sqlExecutor);
             } finally {
-                DbUtils.closeQuietly(connection);
+                DbUtils.close(connection);
             }
         } else {
             return databaseInvoke.apply(connection, sqlExecutor);
@@ -249,7 +249,7 @@ public final class Databases {
                 throw (IllegalArgumentException) ex;
             else {
                 logger.error(ex.getMessage(), ex);
-                throw new IllegalStateException(ex.getMessage(), ex);
+                throw new RollbackCauseException(ex.getMessage(), ex);
             }
         }
     }

@@ -36,7 +36,7 @@ public interface ConnectionFactory {
      * Return a new connection of database, certainly, the connection can be retrieved
      * from a connection pool also.
      * The implementors should create different database connections by different
-     * datasource name, and the datasource name is defined with <code>DataSourceName</code>
+     * datasource name which is defined with <code>DataSourceName</code> annotation
      *
      * @param dataSource the name is acquired from ThreadLocal
      * @return a connection of database
