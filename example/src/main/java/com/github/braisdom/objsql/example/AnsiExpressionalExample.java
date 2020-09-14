@@ -3,7 +3,6 @@ package com.github.braisdom.objsql.example;
 import com.github.braisdom.objsql.DatabaseType;
 import com.github.braisdom.objsql.Databases;
 import com.github.braisdom.objsql.example.Domains.Member;
-import com.github.braisdom.objsql.example.Domains.Order;
 import com.github.braisdom.objsql.sql.Expression;
 import com.github.braisdom.objsql.sql.SQLSyntaxException;
 import com.github.braisdom.objsql.sql.Select;
