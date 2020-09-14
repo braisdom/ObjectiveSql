@@ -2,6 +2,7 @@ package com.github.braisdom.objsql.apt;
 
 import com.github.braisdom.objsql.Databases;
 import com.github.braisdom.objsql.annotations.DataSourceName;
+import com.github.braisdom.objsql.annotations.Transactional;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.List;
@@ -26,6 +27,10 @@ public class DataSourceNameCodeGenerator extends DomainModelProcessor {
 
         if(ast == null || methodDecl == null)
             return;
+
+        if(hasTransactional(methodDecl))
+            return;
+
         String dataSourceName = annotationValues.getAnnotationValue(DataSourceName.class).value();
         List<JCTree.JCStatement> originalStatement = methodDecl.body.stats;
 
@@ -42,5 +47,14 @@ public class DataSourceNameCodeGenerator extends DomainModelProcessor {
         statements.append(jcTry);
 
         methodDecl.body.stats = statements.toList();
+    }
+
+    public boolean hasTransactional(JCTree.JCMethodDecl methodDecl) {
+        List<JCTree.JCAnnotation> annotations = methodDecl.getModifiers().annotations;
+        for(JCTree.JCAnnotation annotation : annotations) {
+            if(Transactional.class.getName().equals(annotation.type.toString()))
+                return true;
+        }
+        return false;
     }
 }

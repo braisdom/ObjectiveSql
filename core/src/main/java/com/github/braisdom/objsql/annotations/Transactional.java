@@ -27,6 +27,6 @@ import java.lang.annotation.Target;
  * defined at the domain logic method
  */
 @Target({ElementType.METHOD})
-@Retention(RetentionPolicy.SOURCE)
+@Retention(RetentionPolicy.RUNTIME)
 public @interface Transactional {
 }

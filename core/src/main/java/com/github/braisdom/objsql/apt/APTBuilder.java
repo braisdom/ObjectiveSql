@@ -223,6 +223,7 @@ public final class APTBuilder {
         return (modifiers.flags & Flags.STATIC) != 0;
     }
 
+
     public JCVariableDecl[] getFields() {
         java.util.List<JCVariableDecl> fields = new ArrayList();
         List<JCTree> members = classDecl.defs;
