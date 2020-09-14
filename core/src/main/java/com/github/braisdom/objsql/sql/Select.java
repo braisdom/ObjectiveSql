@@ -121,6 +121,11 @@ public class Select<T> extends AbstractExpression implements Dataset {
         return this;
     }
 
+    public String prettyFormat(DatabaseType databaseType) throws SQLSyntaxException {
+        String sql = toSql(new DefaultExpressionContext(databaseType));
+        return SQLFormatter.format(sql);
+    }
+
     public List<T> execute(DatabaseType databaseType, Class<T> domainClass) throws SQLException, SQLSyntaxException {
         String sql = toSql(new DefaultExpressionContext(databaseType));
         return Tables.query(domainClass, sql);
