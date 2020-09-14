@@ -31,5 +31,6 @@ public @interface Syntax {
     DatabaseType[] only() default {};
 
     DatabaseType[] except() default {};
-}
 
+    String version() default "";
+}

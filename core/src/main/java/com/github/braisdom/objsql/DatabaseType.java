@@ -20,7 +20,7 @@ package com.github.braisdom.objsql;
  * The definition for ObjectiveSql supporting
  */
 public enum DatabaseType {
-    MySQL5("MySQL"),
+    MySQL("MySQL"),
     MySQL8("MySQL"),
     PostgreSQL("PostgreSQL"),
     Oracle("Oracle"),

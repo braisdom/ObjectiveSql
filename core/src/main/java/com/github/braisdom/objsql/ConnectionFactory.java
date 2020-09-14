@@ -16,24 +16,35 @@
  */
 package com.github.braisdom.objsql;
 
+
 import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
  * A factory for creating the <code>Connection</code> of database, it is necessary
- * for ObjectiveSql in runtime. It will be extended with <code>Databases.installConnectionFactory</code> method.
+ * for ObjectiveSql in runtime. It will be used in <code>Databases.installConnectionFactory</code> method,
+ * for a application customizes various connections.
  * <b>Notice:</b> The ConnectionFactory will be inject at the application beginning.
  *
  * @see Databases#installConnectionFactory(ConnectionFactory)
  */
 public interface ConnectionFactory {
 
+    String DEFAULT_DATA_SOURCE_NAME = "default";
+
     /**
      * Return a new connection of database, certainly, the connection can be retrieved
      * from a connection pool also.
+     * The implementors should create different database connections by different
+     * datasource name, and the datasource name is defined with <code>DataSourceName</code>
      *
+     * @param dataSource the name is acquired from ThreadLocal
      * @return a connection of database
      * @throws SQLException
+     *
+     * @see com.github.braisdom.objsql.annotations.DataSourceName
+     * @see Databases#setCurrentDataSourceName(String)
+     * @see Databases#getCurrentDataSourceName()
      */
-    Connection getConnection() throws SQLException;
+    Connection getConnection(String dataSource) throws SQLException;
 }

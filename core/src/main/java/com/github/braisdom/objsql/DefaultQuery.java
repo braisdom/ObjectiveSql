@@ -39,23 +39,17 @@ public class DefaultQuery<T> extends AbstractQuery<T> {
 
     @Override
     public List<T> execute(Relationship... relationships) throws SQLException {
-        ConnectionFactory connectionFactory = Databases.getConnectionFactory();
-        Connection connection = connectionFactory.getConnection();
-
-        try {
+        return Databases.execute((connection, sqlExecutor) -> {
             String tableName = domainModelDescriptor.getTableName();
             String sql = createQuerySQL(tableName, projection, filter, groupBy,
                     having, orderBy, offset, limit);
-            List<T> rows = executeInternally(connection, sql);
+            List rows = sqlExecutor.query(connection, sql, domainModelDescriptor, params);
 
             if (relationships.length > 0)
                 new RelationshipNetwork(connection, domainModelDescriptor).process(rows, relationships);
 
             return rows;
-        } finally {
-            if (connection != null)
-                connection.close();
-        }
+        });
     }
 
     @Override
@@ -63,14 +57,6 @@ public class DefaultQuery<T> extends AbstractQuery<T> {
         List<T> results = execute(relationships);
         if (results.size() > 0)
             return results.get(0);
-        return null;
-    }
-
-    @Override
-    public <C extends Class> List<C> execute(C relevantDomainClass, Relationship... relationships) throws SQLException {
-        String sql = createQuerySQL(getTableName(relevantDomainClass), projection, filter, groupBy,
-                having, orderBy, offset, limit);
-
         return null;
     }
 

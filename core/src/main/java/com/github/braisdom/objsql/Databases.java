@@ -60,6 +60,8 @@ public final class Databases {
      * */
     private static ThreadLocal<Connection> connectionThreadLocal = new ThreadLocal<>();
 
+    private static ThreadLocal<String> dataSourceNamehreadLocal = new ThreadLocal<>();
+
     private static QueryFactory queryFactory = new QueryFactory() {
         @Override
         public <T> Query<T> createQuery(Class<T> clazz) {
@@ -131,6 +133,30 @@ public final class Databases {
         return connectionThreadLocal;
     }
 
+    /**
+     * Set a name of DataSource for current thread
+     * @param name
+     */
+    public static void setCurrentDataSourceName(String name) {
+        dataSourceNamehreadLocal.set(name);
+    }
+
+    /**
+     * Clear the name of DataSource in current thread
+     * @param name
+     */
+    public static void clearCurrentDataSourceName() {
+        dataSourceNamehreadLocal.remove();
+    }
+
+    /**
+     * Get the name of DataSource from current thread
+     * @param name
+     */
+    public static String getCurrentDataSourceName() {
+        return dataSourceNamehreadLocal.get();
+    }
+
     public static void installConnectionFactory(ConnectionFactory connectionFactory) {
         Objects.requireNonNull(connectionFactory, "The connectionFactory cannot be null");
 
@@ -174,7 +200,8 @@ public final class Databases {
     public static <R> R executeTransactionally(TransactionalExecutor<R> executor) throws SQLException {
         Connection connection = null;
         try {
-            connection = Databases.getConnectionFactory().getConnection();
+            connection = Databases.getConnectionFactory()
+                    .getConnection(getCurrentDataSourceName());
             connection.setAutoCommit(false);
             connectionThreadLocal.set(connection);
             R result = executor.apply();
@@ -197,7 +224,8 @@ public final class Databases {
         SQLExecutor<T> sqlExecutor = Databases.getSqlExecutor();
         if (connection == null) {
             try {
-                connection = Databases.getConnectionFactory().getConnection();
+                connection = Databases.getConnectionFactory()
+                        .getConnection(getCurrentDataSourceName());
                 return databaseInvoke.apply(connection, sqlExecutor);
             } finally {
                 DbUtils.closeQuietly(connection);
@@ -265,6 +293,15 @@ class LoggerImpl implements Logger {
     public LoggerImpl(Class<?> clazz) {
         this.clazz = clazz;
         logger = java.util.logging.Logger.getLogger(clazz.getName());
+    }
+
+    @Override
+    public void debug(long elapsedTime, String sql, Object[] params) {
+        String[] paramStrings = Arrays.stream(params).map(param -> String.valueOf(param)).toArray(String[]::new);
+        String paramString = String.join(",", paramStrings);
+        String log = String.format("[%dms] %s, with: [%s]", elapsedTime, sql, String.join(",",
+                paramString.length() > 100 ? StringUtil.truncate(paramString, 99) : paramString));
+        logger.logp(Level.CONFIG, clazz.getName(), "", log);
     }
 
     @Override

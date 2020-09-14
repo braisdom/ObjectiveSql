@@ -114,6 +114,8 @@ public class AnnotationValues {
             annotations = (List<JCAnnotation>) ((ClassTree) tree).getModifiers().getAnnotations();
         else if (tree instanceof VariableTree)
             annotations = (List<JCAnnotation>) ((VariableTree) tree).getModifiers().getAnnotations();
+        else if(tree instanceof JCTree.JCMethodDecl)
+            annotations = ((JCTree.JCMethodDecl) tree).getModifiers().getAnnotations();
 
         for (JCAnnotation annotation : annotations) {
             values.put(annotation.getAnnotationType().type.toString(), new AnnotationValue(annotation));

@@ -14,9 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.braisdom.objsql.sql.expression;
+package com.github.braisdom.objsql.sql;
 
 import com.github.braisdom.objsql.sql.Expression;
+import com.github.braisdom.objsql.sql.expression.LiteralExpression;
+import com.github.braisdom.objsql.sql.expression.ParenExpression;
+import com.github.braisdom.objsql.sql.expression.PolynaryExpression;
 
 import java.sql.Timestamp;
 
