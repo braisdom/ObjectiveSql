@@ -45,19 +45,25 @@ public final class Databases {
         }
     };
 
-    /** The default sql executor for Objective, and customized the implementation when meeting the specific database */
+    /**
+     * The default sql executor for Objective, and customized the implementation when meeting the specific database
+     */
     private static SQLExecutor sqlExecutor = new DefaultSQLExecutor();
 
-    /** The default implementation to rise the column value from database to Java with common way */
+    /**
+     * The default implementation to rise the column value from database to Java with common way
+     */
     private static JDBCDataTypeRiser jdbcDataTypeRiser = new DefaultJDBCDataTypeRiser();
 
-    /** The connectionFacotory is required in ObjectiveSql, it will be injected at application beginning */
+    /**
+     * The connectionFacotory is required in ObjectiveSql, it will be injected at application beginning
+     */
     private static ConnectionFactory connectionFactory;
 
     /**
      * Holds the database connection in a thread, and destroy the connection when transaction
      * terminated or exception occoured.
-     * */
+     */
     private static ThreadLocal<Connection> connectionThreadLocal = new ThreadLocal<>();
 
     private static ThreadLocal<String> dataSourceNamehreadLocal = new ThreadLocal<>();
@@ -135,6 +141,7 @@ public final class Databases {
 
     /**
      * Set a name of DataSource for current thread
+     *
      * @param name
      */
     public static void setCurrentDataSourceName(String name) {
@@ -143,6 +150,7 @@ public final class Databases {
 
     /**
      * Clear the name of DataSource in current thread
+     *
      * @param name
      */
     public static void clearCurrentDataSourceName() {
@@ -151,10 +159,12 @@ public final class Databases {
 
     /**
      * Get the name of DataSource from current thread
+     *
      * @param name
      */
     public static String getCurrentDataSourceName() {
-        return dataSourceNamehreadLocal.get();
+        String dataSourceName = dataSourceNamehreadLocal.get();
+        return dataSourceName == null ? ConnectionFactory.DEFAULT_DATA_SOURCE_NAME : dataSourceName;
     }
 
     public static void installConnectionFactory(ConnectionFactory connectionFactory) {

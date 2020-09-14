@@ -17,6 +17,7 @@ public class SqliteConnectionFactory implements ConnectionFactory {
     @Override
     public Connection getConnection(String dataSourceName) throws SQLException {
         try {
+            System.out.println(dataSourceName);
             Class.forName("org.sqlite.JDBC");
             return DriverManager.getConnection("jdbc:sqlite:./" + fileName);
         } catch (SQLException e) {

@@ -6,6 +6,7 @@ import com.github.braisdom.objsql.ValidationException;
 import com.github.braisdom.objsql.annotations.Transactional;
 import com.github.braisdom.objsql.jdbc.DbUtils;
 import com.github.braisdom.objsql.util.ArrayUtil;
+import com.sun.tools.javac.code.Flags;
 import com.sun.tools.javac.code.TypeTag;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
@@ -61,11 +62,17 @@ public class TransactionalCodeGenerator extends DomainModelProcessor {
         JCTree.JCExpression invokeMethodRef = treeMaker.Ident(methodDecl.name);
         JCTree.JCMethodInvocation originalMethodInvocation = treeMaker.Apply(List.nil(), invokeMethodRef, List.from(originalParams));
 
+        JCTree.JCExpression getDataSourceNameCall = aptBuilder.staticMethodCall(Databases.class, "getCurrentDataSourceName");
+        JCTree.JCVariableDecl dataSourceNameVar = aptBuilder.newVar(Flags.FINAL,
+                String.class, "dataSourceName", getDataSourceNameCall);
+        tryStatement.append(dataSourceNameVar);
+
         // connection = com.github.braisdom.objsql.Databases.getConnectionFactory.getConnection();
         JCTree.JCExpression getConnectionCall = treeMaker.Select(treeMaker.Apply(List.nil(), treeMaker.Select(aptBuilder.typeRef(Databases.class),
-                aptBuilder.toName("getConnectionFactory")), List.nil()), aptBuilder.toName("getConnection"));
+                aptBuilder.toName("getConnectionFactory")), List.nil()),
+                aptBuilder.toName("getConnection"));
         tryStatement.append(treeMaker.Exec(treeMaker.Assign(aptBuilder.varRef("connection"),
-                treeMaker.Apply(List.nil(), getConnectionCall, List.nil()))));
+                treeMaker.Apply(List.nil(), getConnectionCall, List.of(aptBuilder.varRef("dataSourceName"))))));
 
         // connection.setAutoCommit(false);
         tryStatement.append(treeMaker.Exec(treeMaker.Apply(List.nil(),
