@@ -17,8 +17,8 @@
 package com.github.braisdom.objsql;
 
 import com.github.braisdom.objsql.jdbc.DbUtils;
-import com.github.braisdom.objsql.transition.DefaultJDBCDataTypeRiser;
-import com.github.braisdom.objsql.transition.JDBCDataTypeRiser;
+import com.github.braisdom.objsql.transition.DefaultJDBCDataTypeRising;
+import com.github.braisdom.objsql.transition.JDBCDataTypeRising;
 import com.github.braisdom.objsql.util.StringUtil;
 
 import java.sql.Connection;
@@ -53,7 +53,7 @@ public final class Databases {
     /**
      * The default implementation to rise the column value from database to Java with common way
      */
-    private static JDBCDataTypeRiser jdbcDataTypeRiser = new DefaultJDBCDataTypeRiser();
+    private static JDBCDataTypeRising jdbcDataTypeRising = new DefaultJDBCDataTypeRising();
 
     /**
      * The connectionFacotory is required in ObjectiveSql, it will be injected at application beginning
@@ -203,8 +203,8 @@ public final class Databases {
         Databases.quoter = quoter;
     }
 
-    public static void installStandardDataTypeRiser(JDBCDataTypeRiser JDBCDataTypeRiser) {
-        Databases.jdbcDataTypeRiser = JDBCDataTypeRiser;
+    public static void installStandardDataTypeRising(JDBCDataTypeRising JDBCDataTypeRising) {
+        Databases.jdbcDataTypeRising = JDBCDataTypeRising;
     }
 
     public static <R> R executeTransactionally(TransactionalExecutor<R> executor) throws SQLException {
@@ -284,8 +284,8 @@ public final class Databases {
         return loggerFactory;
     }
 
-    public static JDBCDataTypeRiser getJdbcDataTypeRiser() {
-        return jdbcDataTypeRiser;
+    public static JDBCDataTypeRising getJdbcDataTypeRising() {
+        return jdbcDataTypeRising;
     }
 
     public static ConnectionFactory getConnectionFactory() {

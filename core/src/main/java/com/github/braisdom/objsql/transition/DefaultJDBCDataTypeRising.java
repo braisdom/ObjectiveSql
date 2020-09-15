@@ -18,7 +18,7 @@ package com.github.braisdom.objsql.transition;
 
 import java.math.BigInteger;
 
-public class DefaultJDBCDataTypeRiser implements JDBCDataTypeRiser {
+public class DefaultJDBCDataTypeRising implements JDBCDataTypeRising {
 
     @Override
     public Float risingFloat(Object lower) {

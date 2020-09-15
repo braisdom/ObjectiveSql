@@ -21,7 +21,7 @@ import com.github.braisdom.objsql.jdbc.QueryRunner;
 import com.github.braisdom.objsql.jdbc.ResultSetHandler;
 import com.github.braisdom.objsql.reflection.PropertyUtils;
 import com.github.braisdom.objsql.transition.ColumnTransitional;
-import com.github.braisdom.objsql.transition.JDBCDataTypeRiser;
+import com.github.braisdom.objsql.transition.JDBCDataTypeRising;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -70,7 +70,7 @@ public class DefaultSQLExecutor<T> implements SQLExecutor<T> {
 abstract class AbstractResultSetHandler<T> implements ResultSetHandler<T> {
 
     protected Object getValue(Class fieldType, Object value) {
-        JDBCDataTypeRiser dataTypeRiser = Databases.getJdbcDataTypeRiser();
+        JDBCDataTypeRising dataTypeRiser = Databases.getJdbcDataTypeRising();
         if(Float.class.isAssignableFrom(fieldType))
             return dataTypeRiser.risingFloat(value);
         else if(Double.class.isAssignableFrom(fieldType))
