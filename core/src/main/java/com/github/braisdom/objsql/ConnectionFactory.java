@@ -29,7 +29,7 @@ import java.sql.SQLException;
  */
 public interface ConnectionFactory {
 
-    String DEFAULT_DATA_SOURCE_NAME = "default-datasource";
+    String DEFAULT_DATA_SOURCE_NAME = "objsql-default-datasource";
 
     /**
      * Return a new connection of database, certainly, the connection can be retrieved
