@@ -6,6 +6,6 @@ spring:
   datasource:
     objsql-default-datasource:
       driver-class-name: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql://192.168.10.50:3306/
+      url: jdbc:mysql://192.168.10.50:3306/leyayaDW
       username: root
       password: 123456

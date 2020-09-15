@@ -16,6 +16,8 @@
  */
 package com.github.braisdom.objsql.transition;
 
+import java.math.BigInteger;
+
 public class DefaultJDBCDataTypeRiser implements JDBCDataTypeRiser {
 
     @Override
@@ -58,6 +60,8 @@ public class DefaultJDBCDataTypeRiser implements JDBCDataTypeRiser {
             return (Integer) lower;
         if(lower instanceof Long)
             return Integer.valueOf(String.valueOf(lower));
+        if(lower instanceof BigInteger)
+            return ((BigInteger)lower).intValue();
         else
             throw new TransitionException(String.format("'%s' cannot convert to Integer", String.valueOf(lower)));
     }

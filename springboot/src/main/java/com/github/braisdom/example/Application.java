@@ -50,7 +50,7 @@ public class Application {
     public DataSource initializeDataSource() {
         DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create();
         dataSourceBuilder.driverClassName("com.mysql.cj.jdbc.Driver");
-        dataSourceBuilder.url("jdbc:mysql://192.168.10.50:3306/");
+        dataSourceBuilder.url("jdbc:mysql://192.168.10.50:3306/leyayaDW");
         dataSourceBuilder.username("root");
         dataSourceBuilder.password("123456");
         return dataSourceBuilder.build();
