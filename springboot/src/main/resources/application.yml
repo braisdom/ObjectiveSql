@@ -3,9 +3,9 @@ spring:
     name: objective-sql-example
     active: development
 
-  datasource:
+  objsql-datasource:
     objsql-default-datasource:
       driver-class-name: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql://localhost:4406/objective_sql
+      jdbc-url: jdbc:mysql://localhost:4406/objective_sql
       username: root
       password: 123456

@@ -6,6 +6,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -34,6 +35,7 @@ public class Application {
         }
     }
 
+/*
     @Bean(ConnectionFactory.DEFAULT_DATA_SOURCE_NAME)
     public DataSource getDataSource() {
         DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create();
@@ -43,6 +45,14 @@ public class Application {
         dataSourceBuilder.password("123456");
         return dataSourceBuilder.build();
     }
+*/
+
+    @Bean(name = ConnectionFactory.DEFAULT_DATA_SOURCE_NAME)
+    @ConfigurationProperties("spring.objsql-datasource.objsql-default-datasource")
+    public DataSource defaultDataSource(){
+        return DataSourceBuilder.create().build();
+    }
+
 
     @EventListener
     public void onApplicationEvent(ApplicationStartedEvent event) {
