@@ -5,9 +5,12 @@ import com.github.braisdom.objsql.annotations.Queryable;
 
 @DomainModel
 public class Member {
+    @Queryable
     private String no;
+
     @Queryable
     private String name;
+
     private Integer gender;
     private String mobile;
     private String otherInfo;

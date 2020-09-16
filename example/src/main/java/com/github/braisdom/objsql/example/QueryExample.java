@@ -60,9 +60,9 @@ public class QueryExample {
     }
 
     private static void queryByName() throws SQLException {
-        List<Member> member = Member.queryByName("Ralph");
-        Assert.assertEquals(member.get(0).getName(), "Ralph");
-        Assert.assertEquals(member.get(0).getId(), Integer.valueOf(12));
+        Member member = Member.queryByName("Ralph");
+        Assert.assertEquals(member.getName(), "Ralph");
+        Assert.assertEquals(member.getId(), Integer.valueOf(12));
     }
 
     private static void rawQuery() throws SQLException {

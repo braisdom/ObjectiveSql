@@ -3,6 +3,7 @@ package com.github.braisdom.objsql.apt;
 import com.github.braisdom.objsql.Query;
 import com.github.braisdom.objsql.Tables;
 import com.github.braisdom.objsql.annotations.Queryable;
+import com.github.braisdom.objsql.relation.Relationship;
 import com.github.braisdom.objsql.util.WordUtil;
 import com.sun.tools.javac.code.Flags;
 import com.sun.tools.javac.tree.JCTree;
@@ -24,12 +25,11 @@ public class QueryMethodCodeGenerator extends DomainModelProcessor {
             return;
 
         TreeMaker treeMaker = aptBuilder.getTreeMaker();
+        boolean returnsMany = annotationValues.getAnnotationValue(Queryable.class).many();
         String methodName = WordUtil.camelize("queryBy_" + field.getName(), true);
 
         MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
         StatementBuilder statementBuilder = aptBuilder.createStatementBuilder();
-
-        methodBuilder.addParameter("value", field.vartype);
 
         statementBuilder.append(aptBuilder.newGenericsType(Query.class, aptBuilder.getClassName()),
                 "query", aptBuilder.getClassName(), "createQuery");
@@ -40,11 +40,19 @@ public class QueryMethodCodeGenerator extends DomainModelProcessor {
         statementBuilder.append("query", "where",
                         List.of(stringFormatExpression, aptBuilder.varRef("value")));
 
-        methodBuilder.setReturnStatement("query", "execute");
+        if(returnsMany) {
+            methodBuilder.setReturnType(java.util.List.class, aptBuilder.typeRef(aptBuilder.getClassName()));
+            methodBuilder.setReturnStatement("query", "execute");
+        } else {
+            methodBuilder.setReturnType(aptBuilder.typeRef(aptBuilder.getClassName()));
+            methodBuilder.setReturnStatement("query", "queryFirst");
+        }
+
         aptBuilder.inject(methodBuilder
+                .addParameter("value", field.vartype)
+                .addVarargsParameter("relations", Relationship.class)
                 .addStatements(statementBuilder.build())
                 .setThrowsClauses(SQLException.class)
-                .setReturnType(java.util.List.class, aptBuilder.typeRef(aptBuilder.getClassName()))
                 .build(methodName, Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
 
