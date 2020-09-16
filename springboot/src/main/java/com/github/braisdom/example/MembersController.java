@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 public class MembersController {
@@ -19,7 +18,7 @@ public class MembersController {
      * @throws SQLException
      */
     @PostMapping("/members")
-    public Member create(@RequestBody Map<String, Object> rawMember) throws SQLException {
+    public Member create(@RequestBody RawObject rawMember) throws SQLException {
         Member dirtyMember = Member.newInstanceFrom(rawMember, false);
         return Member.create(dirtyMember, true);
     }
@@ -45,5 +44,16 @@ public class MembersController {
     @GetMapping("/members")
     public List<Member> getMembers() throws SQLException {
         return Member.queryAll();
+    }
+
+    /**
+     * URL: GET http://localhost:8080/members/00001
+     *
+     * @return
+     * @throws SQLException
+     */
+    @GetMapping("/members/{no}/orders")
+    public Member getMemberOrders(@PathVariable("no") String no) throws SQLException {
+        return Member.queryByNo(no, Member.HAS_MANY_ORDERS);
     }
 }
