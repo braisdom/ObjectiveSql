@@ -1,4 +1,6 @@
-CREATE TABLE IF NOT EXISTS `members`(
+CREATE DATABASE IF NOT EXISTS `objective_sql` CHARACTER SET utf8 COLLATE utf8_general_ci;
+
+CREATE TABLE IF NOT EXISTS `objective_sql`.`members`(
    `id` INT UNSIGNED AUTO_INCREMENT,
    `no` VARCHAR(100),
    `name` VARCHAR(100),

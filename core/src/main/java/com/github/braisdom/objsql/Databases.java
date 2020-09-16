@@ -66,8 +66,6 @@ public final class Databases {
      */
     private static ThreadLocal<Connection> connectionThreadLocal = new ThreadLocal<>();
 
-    private static ThreadLocal<String> dataSourceNamehreadLocal = new ThreadLocal<>();
-
     private static QueryFactory queryFactory = new QueryFactory() {
         @Override
         public <T> Query<T> createQuery(Class<T> clazz) {
@@ -135,36 +133,12 @@ public final class Databases {
         R apply() throws Exception;
     }
 
-    public static ThreadLocal<Connection> getConnectionThreadLocal() {
-        return connectionThreadLocal;
+    public static void setCurrentThreadConnection(Connection connection) {
+        connectionThreadLocal.set(connection);
     }
 
-    /**
-     * Set a name of DataSource for current thread
-     *
-     * @param name
-     */
-    public static void setCurrentDataSourceName(String name) {
-        dataSourceNamehreadLocal.set(name);
-    }
-
-    /**
-     * Clear the name of DataSource in current thread
-     *
-     * @param name
-     */
-    public static void clearCurrentDataSourceName() {
-        dataSourceNamehreadLocal.remove();
-    }
-
-    /**
-     * Get the name of DataSource from current thread
-     *
-     * @param name
-     */
-    public static String getCurrentDataSourceName() {
-        String dataSourceName = dataSourceNamehreadLocal.get();
-        return dataSourceName == null ? ConnectionFactory.DEFAULT_DATA_SOURCE_NAME : dataSourceName;
+    public static void clearCurrentThreadConnection() {
+        connectionThreadLocal.remove();
     }
 
     public static void installConnectionFactory(ConnectionFactory connectionFactory) {
@@ -207,11 +181,10 @@ public final class Databases {
         Databases.jdbcDataTypeRising = JDBCDataTypeRising;
     }
 
-    public static <R> R executeTransactionally(TransactionalExecutor<R> executor) throws SQLException {
+    public static <R> R executeTransactionally(String dataSourceName, TransactionalExecutor<R> executor) throws SQLException {
         Connection connection = null;
         try {
-            connection = Databases.getConnectionFactory()
-                    .getConnection(getCurrentDataSourceName());
+            connection = Databases.getConnectionFactory().getConnection(dataSourceName);
             connection.setAutoCommit(false);
             connectionThreadLocal.set(connection);
             R result = executor.apply();
@@ -230,12 +203,15 @@ public final class Databases {
     }
 
     public static <T, R> R execute(String dataSourceName, DatabaseInvoke<T, R> databaseInvoke) throws SQLException {
+        Objects.requireNonNull(databaseInvoke, "The datasourceName cannot be null");
+        Objects.requireNonNull(databaseInvoke, "The databaseInvoke cannot be null");
+
         Connection connection = connectionThreadLocal.get();
         SQLExecutor<T> sqlExecutor = getSqlExecutor();
 
         if (connection == null) {
             try {
-                connection = getConnectionFactory().getConnection(getCurrentDataSourceName());
+                connection = getConnectionFactory().getConnection(dataSourceName);
                 return databaseInvoke.apply(connection, sqlExecutor);
             } finally {
                 DbUtils.close(connection);

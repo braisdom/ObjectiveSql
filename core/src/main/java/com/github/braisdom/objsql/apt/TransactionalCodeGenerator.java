@@ -51,6 +51,8 @@ public class TransactionalCodeGenerator extends DomainModelProcessor {
     private List<JCTree.JCStatement> createBody(AnnotationValues annotationValues, JCTree.JCMethodDecl methodDecl, APTBuilder aptBuilder) {
         TreeMaker treeMaker = aptBuilder.getTreeMaker();
         List<JCTree.JCExpression> exceptions = methodDecl.getThrows();
+        String dataSourceName = annotationValues.getAnnotationValue(Transactional.class).dataSource();
+
         ListBuffer<JCTree.JCCatch> catchStatement = new ListBuffer<>();
         StatementBuilder bodyStatement = aptBuilder.createStatementBuilder();
         StatementBuilder tryStatement = aptBuilder.createStatementBuilder();
@@ -62,28 +64,21 @@ public class TransactionalCodeGenerator extends DomainModelProcessor {
         JCTree.JCExpression invokeMethodRef = treeMaker.Ident(methodDecl.name);
         JCTree.JCMethodInvocation originalMethodInvocation = treeMaker.Apply(List.nil(), invokeMethodRef, List.from(originalParams));
 
-        JCTree.JCExpression getDataSourceNameCall = aptBuilder.staticMethodCall(Databases.class, "getCurrentDataSourceName");
-        JCTree.JCVariableDecl dataSourceNameVar = aptBuilder.newVar(Flags.FINAL,
-                String.class, "dataSourceName", getDataSourceNameCall);
-        tryStatement.append(dataSourceNameVar);
-
         // connection = com.github.braisdom.objsql.Databases.getConnectionFactory.getConnection();
         JCTree.JCExpression getConnectionCall = treeMaker.Select(treeMaker.Apply(List.nil(), treeMaker.Select(aptBuilder.typeRef(Databases.class),
                 aptBuilder.toName("getConnectionFactory")), List.nil()),
                 aptBuilder.toName("getConnection"));
         tryStatement.append(treeMaker.Exec(treeMaker.Assign(aptBuilder.varRef("connection"),
-                treeMaker.Apply(List.nil(), getConnectionCall, List.of(aptBuilder.varRef("dataSourceName"))))));
+                treeMaker.Apply(List.nil(), getConnectionCall, List.of(treeMaker.Literal(dataSourceName))))));
 
         // connection.setAutoCommit(false);
         tryStatement.append(treeMaker.Exec(treeMaker.Apply(List.nil(),
                 treeMaker.Select(aptBuilder.varRef("connection"), aptBuilder.toName("setAutoCommit")),
                 List.of(treeMaker.Literal(false)))));
 
-        // Databases.getConnectionThreadLocal().set(connection);
-        JCTree.JCExpression threadLocalSetCall = treeMaker.Select(treeMaker.Apply(List.nil(), treeMaker.Select(aptBuilder.typeRef(Databases.class),
-                aptBuilder.toName("getConnectionThreadLocal")), List.nil()), aptBuilder.toName("set"));
-        tryStatement.append(treeMaker.Exec(treeMaker.Apply(List.nil(), threadLocalSetCall,
-                List.of(aptBuilder.varRef("connection")))));
+        // Databases.setCurrentThreadConnection(connection);
+        tryStatement.append(treeMaker.Exec(aptBuilder.staticMethodCall(Databases.class,
+                "setCurrentThreadConnection", aptBuilder.varRef("connection"))));
 
         if(methodDecl.restype.type.getTag().equals(TypeTag.VOID)) {
             tryStatement.append(treeMaker.Exec(originalMethodInvocation));
@@ -110,10 +105,9 @@ public class TransactionalCodeGenerator extends DomainModelProcessor {
                     treeMaker.Block(0, catchBodyStatement.toList())));
         }
 
-        JCTree.JCExpression threadLocalRemoveCall = treeMaker.Select(treeMaker.Apply(List.nil(),
-                treeMaker.Select(aptBuilder.typeRef(Databases.class),
-                aptBuilder.toName("getConnectionThreadLocal")), List.nil()), aptBuilder.toName("remove"));
-        JCTree.JCStatement finallyStatement = treeMaker.Exec(treeMaker.Apply(List.nil(), threadLocalRemoveCall, List.nil()));
+        // Databases.clearCurrentThreadConnection();
+        JCTree.JCStatement finallyStatement = treeMaker.Exec(aptBuilder.staticMethodCall(Databases.class,
+                "clearCurrentThreadConnection"));
 
         JCTree.JCStatement closeQuietlyStatement = treeMaker.Exec(treeMaker.Apply(List.nil(),
                 treeMaker.Select(aptBuilder.typeRef(DbUtils.class),

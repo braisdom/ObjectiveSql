@@ -39,9 +39,6 @@ public interface ConnectionFactory {
      * @return a connection of database
      * @throws SQLException
      *
-     * @see Databases#setCurrentDataSourceName(String)
-     * @see Databases#getCurrentDataSourceName()
-     * @see Databases#clearCurrentDataSourceName()
      */
     Connection getConnection(String dataSource) throws SQLException;
 
@@ -49,7 +46,7 @@ public interface ConnectionFactory {
      * Returns true if current name of data source is <code>DEFAULT_DATA_SOURCE_NAME</code>
      * @return
      */
-    default boolean isDefaultDataSource() {
-        return DEFAULT_DATA_SOURCE_NAME.equals(Databases.getCurrentDataSourceName());
+    default boolean isDefaultDataSource(String dataSourceName) {
+        return DEFAULT_DATA_SOURCE_NAME.equals(dataSourceName);
     }
 }
