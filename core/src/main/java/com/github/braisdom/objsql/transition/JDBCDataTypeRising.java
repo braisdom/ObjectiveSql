@@ -16,7 +16,7 @@
  */
 package com.github.braisdom.objsql.transition;
 
-public interface JDBCDataTypeRiser {
+public interface JDBCDataTypeRising {
 
     Float risingFloat(Object lower);
 

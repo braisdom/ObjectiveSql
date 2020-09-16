@@ -2,6 +2,7 @@ package com.github.braisdom.objsql.example;
 
 import com.github.braisdom.objsql.Databases;
 import com.github.braisdom.objsql.RollbackCauseException;
+import com.github.braisdom.objsql.jdbc.DbUtils;
 import org.apache.commons.lang3.RandomUtils;
 
 import java.io.File;
@@ -26,7 +27,7 @@ public class TransactionalExample {
 
         ExecutorService executorService = Executors.newFixedThreadPool(4);
 
-        for(int i = 0; i< 10; i++) {
+        for(int i = 0; i< 1; i++) {
             executorService.execute(() -> {
                 try {
                     Domains.Order.makeOrder(order, null);
@@ -44,8 +45,14 @@ public class TransactionalExample {
             file.delete();
 
         Databases.installConnectionFactory(new SqliteConnectionFactory(file.getPath()));
-        Connection connection = Databases.getConnectionFactory().getConnection(DEFAULT_DATA_SOURCE_NAME);
-        createTables(connection);
+        Connection connection = null;
+
+        try {
+            connection = Databases.getConnectionFactory().getConnection(DEFAULT_DATA_SOURCE_NAME);
+            createTables(connection);
+        } finally {
+            DbUtils.close(connection);
+        }
 
         createNormally();
     }

@@ -65,6 +65,21 @@ public final class Tables {
         return tableName;
     }
 
+    public static final String getDataSourceName(Class baseClass) {
+        Objects.requireNonNull(baseClass, "The baseClass cannot be null");
+        DomainModel domainModel = (DomainModel) baseClass.getAnnotation(DomainModel.class);
+
+        Objects.requireNonNull(domainModel, "The baseClass must have the DomainModel annotation");
+
+        String dataSourceName;
+        if (!StringUtil.isBlank(domainModel.tableName()))
+            dataSourceName = domainModel.dataSource();
+        else
+            dataSourceName = ConnectionFactory.DEFAULT_DATA_SOURCE_NAME;
+
+        return dataSourceName;
+    }
+
     public static final PrimaryKey getPrimaryKey(Class tableClass) {
         Field[] fields = tableClass.getDeclaredFields();
         for (Field field : fields) {
@@ -158,12 +173,22 @@ public final class Tables {
     }
 
     public static final <T> List<T> query(DomainModelDescriptor<T> domainModelDescriptor, String sql, Object... params) throws SQLException {
-        return (List<T>) Databases.execute((connection, sqlExecutor) ->
+        String dataSourceName = Tables.getDataSourceName(domainModelDescriptor.getDomainModelClass());
+        return (List<T>) Databases.execute(dataSourceName, (connection, sqlExecutor) ->
                 sqlExecutor.query(connection, sql, domainModelDescriptor, params));
     }
 
-    public static final int execute(String sql, Object... params) throws SQLException {
-        return Databases.execute((connection, sqlExecutor) ->
+    /**
+     * It will be invoked in DomainModel class for execute arbitrary SQL
+     *
+     * @param sql
+     * @param params
+     * @return
+     * @throws SQLException
+     */
+    public static final int execute(Class<?> domainModelClass, String sql, Object... params) throws SQLException {
+        String dataSourceName = Tables.getDataSourceName(domainModelClass);
+        return Databases.execute(dataSourceName, (connection, sqlExecutor) ->
                 sqlExecutor.execute(connection, sql, params));
     }
 

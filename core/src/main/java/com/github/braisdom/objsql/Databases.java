@@ -17,8 +17,8 @@
 package com.github.braisdom.objsql;
 
 import com.github.braisdom.objsql.jdbc.DbUtils;
-import com.github.braisdom.objsql.transition.DefaultJDBCDataTypeRiser;
-import com.github.braisdom.objsql.transition.JDBCDataTypeRiser;
+import com.github.braisdom.objsql.transition.DefaultJDBCDataTypeRising;
+import com.github.braisdom.objsql.transition.JDBCDataTypeRising;
 import com.github.braisdom.objsql.util.StringUtil;
 
 import java.sql.Connection;
@@ -45,22 +45,26 @@ public final class Databases {
         }
     };
 
-    /** The default sql executor for Objective, and customized the implementation when meeting the specific database */
+    /**
+     * The default sql executor for Objective, and customized the implementation when meeting the specific database
+     */
     private static SQLExecutor sqlExecutor = new DefaultSQLExecutor();
 
-    /** The default implementation to rise the column value from database to Java with common way */
-    private static JDBCDataTypeRiser jdbcDataTypeRiser = new DefaultJDBCDataTypeRiser();
+    /**
+     * The default implementation to rise the column value from database to Java with common way
+     */
+    private static JDBCDataTypeRising jdbcDataTypeRising = new DefaultJDBCDataTypeRising();
 
-    /** The connectionFacotory is required in ObjectiveSql, it will be injected at application beginning */
+    /**
+     * The connectionFacotory is required in ObjectiveSql, it will be injected at application beginning
+     */
     private static ConnectionFactory connectionFactory;
 
     /**
      * Holds the database connection in a thread, and destroy the connection when transaction
      * terminated or exception occoured.
-     * */
+     */
     private static ThreadLocal<Connection> connectionThreadLocal = new ThreadLocal<>();
-
-    private static ThreadLocal<String> dataSourceNamehreadLocal = new ThreadLocal<>();
 
     private static QueryFactory queryFactory = new QueryFactory() {
         @Override
@@ -129,32 +133,12 @@ public final class Databases {
         R apply() throws Exception;
     }
 
-    public static ThreadLocal<Connection> getConnectionThreadLocal() {
-        return connectionThreadLocal;
+    public static void setCurrentThreadConnection(Connection connection) {
+        connectionThreadLocal.set(connection);
     }
 
-    /**
-     * Set a name of DataSource for current thread
-     * @param name
-     */
-    public static void setCurrentDataSourceName(String name) {
-        dataSourceNamehreadLocal.set(name);
-    }
-
-    /**
-     * Clear the name of DataSource in current thread
-     * @param name
-     */
-    public static void clearCurrentDataSourceName() {
-        dataSourceNamehreadLocal.remove();
-    }
-
-    /**
-     * Get the name of DataSource from current thread
-     * @param name
-     */
-    public static String getCurrentDataSourceName() {
-        return dataSourceNamehreadLocal.get();
+    public static void clearCurrentThreadConnection() {
+        connectionThreadLocal.remove();
     }
 
     public static void installConnectionFactory(ConnectionFactory connectionFactory) {
@@ -193,15 +177,14 @@ public final class Databases {
         Databases.quoter = quoter;
     }
 
-    public static void installStandardDataTypeRiser(JDBCDataTypeRiser JDBCDataTypeRiser) {
-        Databases.jdbcDataTypeRiser = JDBCDataTypeRiser;
+    public static void installStandardDataTypeRising(JDBCDataTypeRising JDBCDataTypeRising) {
+        Databases.jdbcDataTypeRising = JDBCDataTypeRising;
     }
 
-    public static <R> R executeTransactionally(TransactionalExecutor<R> executor) throws SQLException {
+    public static <R> R executeTransactionally(String dataSourceName, TransactionalExecutor<R> executor) throws SQLException {
         Connection connection = null;
         try {
-            connection = Databases.getConnectionFactory()
-                    .getConnection(getCurrentDataSourceName());
+            connection = Databases.getConnectionFactory().getConnection(dataSourceName);
             connection.setAutoCommit(false);
             connectionThreadLocal.set(connection);
             R result = executor.apply();
@@ -215,20 +198,23 @@ public final class Databases {
             throw new RollbackCauseException(ex.getMessage(), ex);
         } finally {
             connectionThreadLocal.remove();
-            DbUtils.closeQuietly(connection);
+            DbUtils.close(connection);
         }
     }
 
-    public static <T, R> R execute(DatabaseInvoke<T, R> databaseInvoke) throws SQLException {
+    public static <T, R> R execute(String dataSourceName, DatabaseInvoke<T, R> databaseInvoke) throws SQLException {
+        Objects.requireNonNull(databaseInvoke, "The datasourceName cannot be null");
+        Objects.requireNonNull(databaseInvoke, "The databaseInvoke cannot be null");
+
         Connection connection = connectionThreadLocal.get();
-        SQLExecutor<T> sqlExecutor = Databases.getSqlExecutor();
+        SQLExecutor<T> sqlExecutor = getSqlExecutor();
+
         if (connection == null) {
             try {
-                connection = Databases.getConnectionFactory()
-                        .getConnection(getCurrentDataSourceName());
+                connection = getConnectionFactory().getConnection(dataSourceName);
                 return databaseInvoke.apply(connection, sqlExecutor);
             } finally {
-                DbUtils.closeQuietly(connection);
+                DbUtils.close(connection);
             }
         } else {
             return databaseInvoke.apply(connection, sqlExecutor);
@@ -249,7 +235,7 @@ public final class Databases {
                 throw (IllegalArgumentException) ex;
             else {
                 logger.error(ex.getMessage(), ex);
-                throw new IllegalStateException(ex.getMessage(), ex);
+                throw new RollbackCauseException(ex.getMessage(), ex);
             }
         }
     }
@@ -274,8 +260,8 @@ public final class Databases {
         return loggerFactory;
     }
 
-    public static JDBCDataTypeRiser getJdbcDataTypeRiser() {
-        return jdbcDataTypeRiser;
+    public static JDBCDataTypeRising getJdbcDataTypeRising() {
+        return jdbcDataTypeRising;
     }
 
     public static ConnectionFactory getConnectionFactory() {

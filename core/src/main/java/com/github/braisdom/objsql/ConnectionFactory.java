@@ -16,7 +16,6 @@
  */
 package com.github.braisdom.objsql;
 
-
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -30,21 +29,24 @@ import java.sql.SQLException;
  */
 public interface ConnectionFactory {
 
-    String DEFAULT_DATA_SOURCE_NAME = "default";
+    String DEFAULT_DATA_SOURCE_NAME = "objsql-default-datasource";
 
     /**
      * Return a new connection of database, certainly, the connection can be retrieved
      * from a connection pool also.
-     * The implementors should create different database connections by different
-     * datasource name, and the datasource name is defined with <code>DataSourceName</code>
      *
      * @param dataSource the name is acquired from ThreadLocal
      * @return a connection of database
      * @throws SQLException
      *
-     * @see com.github.braisdom.objsql.annotations.DataSourceName
-     * @see Databases#setCurrentDataSourceName(String)
-     * @see Databases#getCurrentDataSourceName()
      */
     Connection getConnection(String dataSource) throws SQLException;
+
+    /**
+     * Returns true if current name of data source is <code>DEFAULT_DATA_SOURCE_NAME</code>
+     * @return
+     */
+    default boolean isDefaultDataSource(String dataSourceName) {
+        return DEFAULT_DATA_SOURCE_NAME.equals(dataSourceName);
+    }
 }

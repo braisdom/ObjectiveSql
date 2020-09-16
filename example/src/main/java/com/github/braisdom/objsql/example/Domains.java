@@ -60,10 +60,9 @@ public final class Domains {
         private List<OrderLine> orderLines;
 
         @Transactional
-        @DataSourceName("test")
         public static void makeOrder(Order order, OrderLine... orderLines) throws SQLException {
             Order.create(order, false);
-            OrderLine.create(orderLines, false);
+//            OrderLine.create(orderLines, false);
         }
     }
 

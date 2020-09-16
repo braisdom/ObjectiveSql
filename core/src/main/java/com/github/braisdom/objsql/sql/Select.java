@@ -121,6 +121,11 @@ public class Select<T> extends AbstractExpression implements Dataset {
         return this;
     }
 
+    public String prettyFormat(DatabaseType databaseType) throws SQLSyntaxException {
+        String sql = toSql(new DefaultExpressionContext(databaseType));
+        return SQLFormatter.format(sql);
+    }
+
     public List<T> execute(DatabaseType databaseType, Class<T> domainClass) throws SQLException, SQLSyntaxException {
         String sql = toSql(new DefaultExpressionContext(databaseType));
         return Tables.query(domainClass, sql);
@@ -167,19 +172,18 @@ public class Select<T> extends AbstractExpression implements Dataset {
     }
 
     protected void processFrom(ExpressionContext expressionContext, StringBuilder sql) throws SQLSyntaxException {
-        if (fromDatasets != null && fromDatasets.length == 0)
-            throw new SQLSyntaxException("The from cause is required for select statement");
-
-        try {
-            sql.append(" FROM ");
-            String[] fromStrings = Arrays.stream(fromDatasets)
-                    .map(FunctionWithThrowable
-                            .castFunctionWithThrowable(dataset -> dataset.toSql(expressionContext))).toArray(String[]::new);
-            sql.append(String.join(", ", fromStrings));
-        } catch (SuppressedException ex) {
-            if (ex.getCause() instanceof SQLSyntaxException)
-                throw (SQLSyntaxException) ex.getCause();
-            else throw ex;
+        if(fromDatasets != null && fromDatasets.length > 0) {
+            try {
+                sql.append(" FROM ");
+                String[] fromStrings = Arrays.stream(fromDatasets)
+                        .map(FunctionWithThrowable
+                                .castFunctionWithThrowable(dataset -> dataset.toSql(expressionContext))).toArray(String[]::new);
+                sql.append(String.join(", ", fromStrings));
+            } catch (SuppressedException ex) {
+                if (ex.getCause() instanceof SQLSyntaxException)
+                    throw (SQLSyntaxException) ex.getCause();
+                else throw ex;
+            }
         }
     }
 

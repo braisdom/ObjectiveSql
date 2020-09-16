@@ -1,0 +1,11 @@
+spring:
+  profiles:
+    name: objective-sql-example
+    active: development
+
+  datasource:
+    objsql-default-datasource:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://192.168.10.50:4406/objective_sql
+      username: root
+      password: 123456

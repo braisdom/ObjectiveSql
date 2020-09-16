@@ -80,6 +80,10 @@ public class MySQLFunctions {
         return new SqlFunctionCall("DATEDIFF", expression, new LiteralExpression(dataString));
     }
 
+    public static final Expression dateDiff(String dateString1, String dateString2) {
+        return new SqlFunctionCall("DATEDIFF", new LiteralExpression(dateString1), new LiteralExpression(dateString2));
+    }
+
     /**
      * Return the last day of the month for the argument
      *
@@ -255,6 +259,30 @@ public class MySQLFunctions {
 
     public static final Expression regexpLike(Expression expression, String regexp) {
         return new SqlFunctionCall("REGEXP_LIKE", expression, new LiteralExpression(regexp));
+    }
+
+    public static final Expression extractDay(Expression expression) {
+        return extract("DAY", expression);
+    }
+
+    public static final Expression extractDayHour(Expression expression) {
+        return extract("DAY_HOUR", expression);
+    }
+
+    public static final Expression extractHour(Expression expression) {
+        return extract("HOUR", expression);
+    }
+
+    public static final Expression extractWeek(Expression expression) {
+        return extract("WEEK", expression);
+    }
+
+    public static final Expression extractYearMonth(Expression expression) {
+        return extract("YEAR_MONTH", expression);
+    }
+
+    public static final Expression extractYear(Expression expression) {
+        return extract("YEAR", expression);
     }
 
     /**

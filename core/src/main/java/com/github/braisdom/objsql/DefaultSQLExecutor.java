@@ -21,10 +21,11 @@ import com.github.braisdom.objsql.jdbc.QueryRunner;
 import com.github.braisdom.objsql.jdbc.ResultSetHandler;
 import com.github.braisdom.objsql.reflection.PropertyUtils;
 import com.github.braisdom.objsql.transition.ColumnTransitional;
-import com.github.braisdom.objsql.transition.JDBCDataTypeRiser;
+import com.github.braisdom.objsql.transition.JDBCDataTypeRising;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class DefaultSQLExecutor<T> implements SQLExecutor<T> {
@@ -69,8 +70,8 @@ public class DefaultSQLExecutor<T> implements SQLExecutor<T> {
 abstract class AbstractResultSetHandler<T> implements ResultSetHandler<T> {
 
     protected Object getValue(Class fieldType, Object value) {
-        JDBCDataTypeRiser dataTypeRiser = Databases.getJdbcDataTypeRiser();
-        if(Float.class.isAssignableFrom(fieldType) )
+        JDBCDataTypeRising dataTypeRiser = Databases.getJdbcDataTypeRising();
+        if(Float.class.isAssignableFrom(fieldType))
             return dataTypeRiser.risingFloat(value);
         else if(Double.class.isAssignableFrom(fieldType))
             return dataTypeRiser.risingDouble(value);
@@ -138,6 +139,9 @@ class DomainModelListHandler extends AbstractResultSetHandler<List> {
 
 class DomainModelHandler extends AbstractResultSetHandler<Object> {
 
+    private static final List<String> AUTO_ROW_NAME = Arrays
+            .asList(new String[]{"last_insert_rowid()", "GENERATED_KEY"});
+
     private final DomainModelDescriptor domainModelDescriptor;
     private final DatabaseMetaData databaseMetaData;
 
@@ -153,11 +157,20 @@ class DomainModelHandler extends AbstractResultSetHandler<Object> {
         int columnCount = metaData.getColumnCount();
 
         for (int i = 1; i <= columnCount; i++) {
+            if(!rs.next())
+                break;
             String columnName = metaData.getColumnName(i);
-            if(columnName.equalsIgnoreCase("last_insert_rowid()")) {
+            if(AUTO_ROW_NAME.contains(columnName)) {
                 PrimaryKey primaryKey = domainModelDescriptor.getPrimaryKey();
                 String primaryFieldName = domainModelDescriptor.getFieldName(primaryKey.name());
-                domainModelDescriptor.setValue(bean, primaryFieldName, rs.getObject(columnName));
+                Class fieldType = domainModelDescriptor.getFieldType(primaryFieldName);
+
+                ColumnTransitional columnTransitional = domainModelDescriptor.getColumnTransition(primaryFieldName);
+                Object rawValue = getValue(fieldType, rs.getObject(columnName));
+                Object value = columnTransitional == null ? rawValue : columnTransitional
+                        .rising(databaseMetaData, metaData, bean, domainModelDescriptor, primaryFieldName, rawValue);
+
+                domainModelDescriptor.setValue(bean, primaryFieldName, value);
             }else {
                 String fieldName = domainModelDescriptor.getFieldName(columnName);
                 Class fieldType = domainModelDescriptor.getFieldType(fieldName);

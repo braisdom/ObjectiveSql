@@ -1,0 +1,2 @@
+# Create mysql-5.37.31 docker container
+docker run --name mysql5.7.31 -e MYSQL_ROOT_PASSWORD=123456 -p 4406:3306 -d mysql:5.7.31

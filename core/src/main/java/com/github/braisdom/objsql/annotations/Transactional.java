@@ -16,6 +16,8 @@
  */
 package com.github.braisdom.objsql.annotations;
 
+import com.github.braisdom.objsql.ConnectionFactory;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -27,6 +29,8 @@ import java.lang.annotation.Target;
  * defined at the domain logic method
  */
 @Target({ElementType.METHOD})
-@Retention(RetentionPolicy.SOURCE)
+@Retention(RetentionPolicy.RUNTIME)
 public @interface Transactional {
+
+    String dataSource() default ConnectionFactory.DEFAULT_DATA_SOURCE_NAME;
 }

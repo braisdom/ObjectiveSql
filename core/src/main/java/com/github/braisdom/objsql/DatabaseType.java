@@ -21,7 +21,6 @@ package com.github.braisdom.objsql;
  */
 public enum DatabaseType {
     MySQL("MySQL"),
-    MySQL8("MySQL"),
     PostgreSQL("PostgreSQL"),
     Oracle("Oracle"),
     MsSqlServer("MsSqlServer"),

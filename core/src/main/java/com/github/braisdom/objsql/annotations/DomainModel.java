@@ -16,6 +16,8 @@
  */
 package com.github.braisdom.objsql.annotations;
 
+import com.github.braisdom.objsql.ConnectionFactory;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -39,6 +41,8 @@ import java.lang.annotation.Target;
 public @interface DomainModel {
 
     String tableName() default "";
+
+    String dataSource() default ConnectionFactory.DEFAULT_DATA_SOURCE_NAME;
 
     boolean fluent() default true;
 

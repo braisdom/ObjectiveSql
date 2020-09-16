@@ -3,7 +3,6 @@ package com.github.braisdom.objsql.example;
 import com.github.braisdom.objsql.DatabaseType;
 import com.github.braisdom.objsql.Databases;
 import com.github.braisdom.objsql.example.Domains.Member;
-import com.github.braisdom.objsql.example.Domains.Order;
 import com.github.braisdom.objsql.sql.Expression;
 import com.github.braisdom.objsql.sql.SQLSyntaxException;
 import com.github.braisdom.objsql.sql.Select;
@@ -36,17 +35,13 @@ public class AnsiExpressionalExample {
 
     public static void filterQuery() throws SQLException, SQLSyntaxException {
         Member.Table member = Member.asTable();
-        Order.Table order = Order.asTable();
-
         Select select = new Select(member);
 
         Expression memberNameFilter = member.name.eq($("Jack"));
         Expression memberGenderFilter = member.gender.eq($(0));
 
         select.project(member.id, member.name)
-                .leftOuterJoin(order, order.memberId.eq(member.id))
                 .where(and(memberNameFilter, memberGenderFilter));
-
         List<Member> members = select.execute(DatabaseType.SQLite, Member.class);
 
         Assert.assertTrue(members.size() == 1);
@@ -57,7 +52,6 @@ public class AnsiExpressionalExample {
         Select select = new Select(member);
 
         select.project(count()).where(member.name.eq($("Jack")));
-
         List<Member> members = select.execute(DatabaseType.SQLite, Member.class);
 
         Assert.assertTrue(members.size() == 1);
@@ -68,7 +62,6 @@ public class AnsiExpressionalExample {
         Select select = new Select(member);
 
         select.project(countDistinct(member.name).as("name_count"));
-
         List<Member> members = select.execute(DatabaseType.SQLite, Member.class);
 
         Assert.assertTrue(members.size() == 1);
