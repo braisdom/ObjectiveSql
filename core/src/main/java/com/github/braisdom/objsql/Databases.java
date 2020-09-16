@@ -229,13 +229,13 @@ public final class Databases {
         }
     }
 
-    public static <T, R> R execute(DatabaseInvoke<T, R> databaseInvoke) throws SQLException {
+    public static <T, R> R execute(String dataSourceName, DatabaseInvoke<T, R> databaseInvoke) throws SQLException {
         Connection connection = connectionThreadLocal.get();
-        SQLExecutor<T> sqlExecutor = Databases.getSqlExecutor();
+        SQLExecutor<T> sqlExecutor = getSqlExecutor();
+
         if (connection == null) {
             try {
-                connection = Databases.getConnectionFactory()
-                        .getConnection(getCurrentDataSourceName());
+                connection = getConnectionFactory().getConnection(getCurrentDataSourceName());
                 return databaseInvoke.apply(connection, sqlExecutor);
             } finally {
                 DbUtils.close(connection);
