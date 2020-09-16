@@ -3,7 +3,6 @@ package com.github.braisdom.objsql.apt;
 import com.github.braisdom.objsql.Databases;
 import com.github.braisdom.objsql.RollbackCauseException;
 import com.github.braisdom.objsql.ValidationException;
-import com.github.braisdom.objsql.annotations.DataSourceName;
 import com.github.braisdom.objsql.annotations.Transactional;
 import com.github.braisdom.objsql.jdbc.DbUtils;
 import com.github.braisdom.objsql.util.ArrayUtil;
@@ -55,13 +54,6 @@ public class TransactionalCodeGenerator extends DomainModelProcessor {
         ListBuffer<JCTree.JCCatch> catchStatement = new ListBuffer<>();
         StatementBuilder bodyStatement = aptBuilder.createStatementBuilder();
         StatementBuilder tryStatement = aptBuilder.createStatementBuilder();
-
-        if(hasDataSourceName(methodDecl)) {
-            String dataSourceName = annotationValues.getAnnotationValue(DataSourceName.class).value();
-            JCTree.JCStatement setDataSourceName = treeMaker.Exec(aptBuilder.staticMethodCall(Databases.class,
-                    "setCurrentDataSourceName", treeMaker.Literal(dataSourceName)));
-            bodyStatement.append(setDataSourceName);
-        }
 
         bodyStatement.append(aptBuilder.typeRef(Connection.class), "connection", treeMaker.Literal(TypeTag.BOT, null));
 
@@ -128,11 +120,7 @@ public class TransactionalCodeGenerator extends DomainModelProcessor {
                         aptBuilder.toName("closeQuietly")), List.of(aptBuilder.varRef("connection"))));
 
         ListBuffer<JCTree.JCStatement> finallyStatements = new ListBuffer<>();
-        if(hasDataSourceName(methodDecl)) {
-            JCTree.JCStatement clearDataSourceName = treeMaker.Exec(aptBuilder.staticMethodCall(Databases.class,
-                    "clearCurrentDataSourceName"));
-            finallyStatements.add(clearDataSourceName);
-        }
+
         finallyStatements.add(finallyStatement);
         finallyStatements.add(closeQuietlyStatement);
 
@@ -142,14 +130,5 @@ public class TransactionalCodeGenerator extends DomainModelProcessor {
         bodyStatement.append(jcTry);
 
         return bodyStatement.build();
-    }
-
-    public boolean hasDataSourceName(JCTree.JCMethodDecl methodDecl) {
-        List<JCTree.JCAnnotation> annotations = methodDecl.getModifiers().annotations;
-        for(JCTree.JCAnnotation annotation : annotations) {
-            if(DataSourceName.class.getName().equals(annotation.type.toString()))
-                return true;
-        }
-        return false;
     }
 }
