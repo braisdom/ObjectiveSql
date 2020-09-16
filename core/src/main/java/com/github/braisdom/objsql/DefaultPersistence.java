@@ -42,7 +42,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
     }
 
     @Override
-    public void save(T dirtyObject, boolean skipValidation) throws SQLException {
+    public void save(final T dirtyObject, boolean skipValidation) throws SQLException {
         Objects.requireNonNull(dirtyObject, "The dirtyObject cannot be null");
 
         Object primaryValue = domainModelDescriptor.getPrimaryValue(dirtyObject);
@@ -78,7 +78,12 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
                         } else return PropertyUtils.readDirectly(dirtyObject, fieldName);
                     })).toArray(Object[]::new);
 
-            return (T) sqlExecutor.insert(connection, sql, domainModelDescriptor, values);
+            T domainObject = (T) sqlExecutor.insert(connection, sql, domainModelDescriptor, values);
+            Object primaryValue = Tables.getPrimaryValue(domainObject);
+            if(primaryValue != null)
+                Tables.writePrimaryValue(dirtyObject, primaryValue);
+
+            return dirtyObject;
         });
     }
 
