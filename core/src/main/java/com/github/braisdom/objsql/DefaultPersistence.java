@@ -80,6 +80,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
 
             T domainObject = (T) sqlExecutor.insert(connection, sql, domainModelDescriptor, values);
             Object primaryValue = Tables.getPrimaryValue(domainObject);
+
             if(primaryValue != null)
                 Tables.writePrimaryValue(dirtyObject, primaryValue);
 
