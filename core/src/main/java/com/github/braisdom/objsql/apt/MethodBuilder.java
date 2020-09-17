@@ -100,6 +100,7 @@ public class MethodBuilder {
     }
 
     public MethodBuilder addParameter(JCVariableDecl... parameters) {
+        treeMaker.at(aptBuilder.get().pos);
         this.parameters.appendList(List.from(parameters));
         return this;
     }
