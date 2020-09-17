@@ -18,7 +18,7 @@ public class MembersController {
      * @throws SQLException
      */
     @PostMapping("/members")
-    public Member create(@RequestBody RawObject rawMember) throws SQLException {
+    public Member create(@RequestBody RequestObject rawMember) throws SQLException {
         Member dirtyMember = Member.newInstanceFrom(rawMember, false);
         return Member.create(dirtyMember, true);
     }

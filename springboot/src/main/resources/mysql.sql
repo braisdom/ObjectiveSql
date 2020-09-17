@@ -7,6 +7,8 @@ CREATE TABLE IF NOT EXISTS `objective_sql`.`members`(
    `gender` INT(2),
    `mobile` VARCHAR(11),
    `other_info` VARCHAR(512),
+   `registered_at` DATETIME,
+   `updated_at` DATETIME,
    PRIMARY KEY ( `id` )
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -16,12 +18,16 @@ CREATE TABLE IF NOT EXISTS `objective_sql`.`orders`(
    `member_id` VARCHAR(100),
    `amount` FLOAT,
    `quantity` FLOAT,
+   `sales_at` DATETIME,
    PRIMARY KEY ( `id` )
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `objective_sql`.`order_lines`(
    `id` INT UNSIGNED AUTO_INCREMENT,
    `order_no` VARCHAR(100),
+   `barcode` VARCHAR(100),
+   `product_id` INT(10),
+   `member_id` VARCHAR(100),
    `amount` FLOAT,
    `quantity` FLOAT,
    PRIMARY KEY ( `id` )
