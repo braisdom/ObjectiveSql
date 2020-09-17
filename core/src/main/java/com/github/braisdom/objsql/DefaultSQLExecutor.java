@@ -71,6 +71,7 @@ abstract class AbstractResultSetHandler<T> implements ResultSetHandler<T> {
 
     protected Object getValue(Class fieldType, Object value) {
         JDBCDataTypeRising dataTypeRiser = Databases.getJdbcDataTypeRising();
+
         if(Float.class.isAssignableFrom(fieldType))
             return dataTypeRiser.risingFloat(value);
         else if(Double.class.isAssignableFrom(fieldType))

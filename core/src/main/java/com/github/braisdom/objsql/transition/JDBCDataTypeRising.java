@@ -30,5 +30,5 @@ public interface JDBCDataTypeRising {
 
     Boolean risingBoolean(Object lower);
 
-    public <T extends Enum<T>> T risingEnum(Class<T> clazz,  Object lower);
+    <T extends Enum<T>> T risingEnum(Class<T> clazz,  Object lower);
 }

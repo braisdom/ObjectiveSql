@@ -8,14 +8,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.sql.SQLException;
-import java.util.Map;
 
 @RestController
 public class OrdersController {
 
     @PostMapping("/orders/{memberNo}")
     public Order makeOrder(@PathVariable("memberNo") String memberNo,
-                           @RequestBody RawObject rawOrder) throws SQLException {
+                           @RequestBody RequestObject rawOrder) throws SQLException {
         Member owner = Member.queryByNo(memberNo);
         return Order.makeOrder(owner, rawOrder);
     }
