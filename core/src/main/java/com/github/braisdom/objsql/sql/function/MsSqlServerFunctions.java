@@ -17,9 +17,13 @@
 package com.github.braisdom.objsql.sql.function;
 
 import com.github.braisdom.objsql.sql.Expression;
+import com.github.braisdom.objsql.sql.ExpressionContext;
+import com.github.braisdom.objsql.sql.SQLSyntaxException;
 import com.github.braisdom.objsql.sql.SqlFunctionCall;
 import com.github.braisdom.objsql.sql.expression.LiteralExpression;
+import com.github.braisdom.objsql.util.FunctionWithThrowable;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 public class MsSqlServerFunctions {
@@ -52,21 +56,94 @@ public class MsSqlServerFunctions {
         return new SqlFunctionCall("varp", expression);
     }
 
-    public static Expression parse(Expression expression, Expression expression1) {
-        return new SqlFunctionCall("PARSE", expression, expression1);
+    public static Expression parse(Expression expression, String type) {
+        return parse(expression, type, null);
     }
 
-    public static Expression parse(Expression expression, Expression expression1, Expression expression2) {
-        return new SqlFunctionCall("PARSE", expression, expression1,
-                                    new LiteralExpression("USING"), expression2);
+    public static Expression parse(String str, String type) {
+        return parse(new LiteralExpression(str), type, null);
     }
 
-    public static Expression convert(Expression expression, Expression expression1) {
-        return new SqlFunctionCall("CONVERT", expression, expression1);
+    public static Expression parse(String str, String type, String using) {
+        return parse(new LiteralExpression(str), type, using);
+    }
+
+    public static Expression parse(int num, String type) {
+        return parse(new LiteralExpression(num), type, null);
+    }
+
+    public static Expression parse(float floatNum, String type) {
+        return parse(new LiteralExpression(floatNum), type, null);
+    }
+
+    private static Expression parse(Expression expression, String type, String using) {
+        return new SqlFunctionCall("PARSE", expression) {
+            @Override
+            public String toSql(ExpressionContext expressionContext) throws SQLSyntaxException {
+                String[] expressionStrings = Arrays.stream(getExpressions())
+                        .map(FunctionWithThrowable
+                                .castFunctionWithThrowable(expression -> expression.toSql(expressionContext)))
+                        .toArray(String[]::new);
+                String alias = getAlias();
+                String sql;
+                if (using == null)
+                    sql = String.format("%s(%s AS %s) %s", getName(), expressionStrings[0], type,
+                            alias == null ? "" : "AS " + expressionContext.quoteColumn(alias));
+                else
+                    sql = String.format("%s(%s AS %s USING %s) %s", getName(), expressionStrings[0], type,
+                            using, alias == null ? "" : "AS " + expressionContext.quoteColumn(alias));
+                return sql;
+            }
+        };
+
+    }
+
+    public static Expression convert(String str, String type) {
+        return new SqlFunctionCall("CONVERT", new LiteralExpression(str), new LiteralExpression(type));
+    }
+
+    public static Expression convert(int num, String type) {
+        return new SqlFunctionCall("CONVERT", new LiteralExpression(num), new LiteralExpression(type));
+    }
+
+    public static Expression convert(float floatNum, String type) {
+        return new SqlFunctionCall("CONVERT", new LiteralExpression(floatNum), new LiteralExpression(type));
+    }
+
+    public static Expression cast(String str, String type) {
+        return cast(new LiteralExpression(str), type);
+    }
+
+    public static Expression cast(int num, String type) {
+        return cast(new LiteralExpression(num), type);
+    }
+
+    public static Expression cast(float floatNum, String type) {
+        return cast(new LiteralExpression(floatNum), type);
+    }
+
+    private static Expression cast(Expression expression, String type) {
+        return new SqlFunctionCall("CAST", expression) {
+            @Override
+            public String toSql(ExpressionContext expressionContext) throws SQLSyntaxException {
+                String[] expressionStrings = Arrays.stream(getExpressions())
+                        .map(FunctionWithThrowable
+                                .castFunctionWithThrowable(expression -> expression.toSql(expressionContext)))
+                        .toArray(String[]::new);
+                String alias = getAlias();
+                return String.format("%s(%s AS %s) %s", getName(), expressionStrings[0], type,
+                        alias == null ? "" : "AS " + expressionContext.quoteColumn(alias));
+            }
+        };
+
     }
 
     public static Expression dataLength(Expression expression) {
         return new SqlFunctionCall("DATALENGTH", expression);
+    }
+
+    public static Expression dataLength(String str) {
+        return new SqlFunctionCall("DATALENGTH", new LiteralExpression(str));
     }
 
     public static Expression getDate() {
@@ -81,8 +158,16 @@ public class MsSqlServerFunctions {
         return new SqlFunctionCall("ISDATE", expression);
     }
 
+    public static Expression isDate(String str) {
+        return new SqlFunctionCall("ISDATE", new LiteralExpression(str));
+    }
+
     public static Expression isJson(Expression expression) {
         return new SqlFunctionCall("ISJSON", expression);
+    }
+
+    public static Expression isJson(String str) {
+        return new SqlFunctionCall("ISJSON", new LiteralExpression(str));
     }
 
     public static Expression jsonValue(Expression expression, String path) {
@@ -101,16 +186,29 @@ public class MsSqlServerFunctions {
         return new SqlFunctionCall("JSON_MODIFY", expression, new LiteralExpression(path), newValue);
     }
 
-    public static Expression round(Expression expression, Expression expression1) {
-        return new SqlFunctionCall("ROUND", expression, expression1);
+    public static Expression jsonModify(Expression expression, String path, String newValue) {
+        return new SqlFunctionCall("JSON_MODIFY", expression,
+                new LiteralExpression(path), new LiteralExpression(newValue));
+    }
+
+    public static Expression round(Expression expression, int num) {
+        return new SqlFunctionCall("ROUND", expression, new LiteralExpression(num));
     }
 
     public static Expression len(Expression expression) {
         return new SqlFunctionCall("LEN", expression);
     }
 
+    public static Expression len(String str) {
+        return new SqlFunctionCall("LEN", new LiteralExpression(str));
+    }
+
     public static Expression format(Expression expression, String format) {
         return new SqlFunctionCall("FORMAT", expression, new LiteralExpression(format));
+    }
+
+    public static Expression format(String str, String format) {
+        return new SqlFunctionCall("FORMAT", new LiteralExpression(str), new LiteralExpression(format));
     }
 
     public static Expression replace(Expression expression, String pattern, String replacement) {
@@ -118,8 +216,17 @@ public class MsSqlServerFunctions {
                 new LiteralExpression(replacement));
     }
 
+    public static Expression replace(String str, String pattern, String replacement) {
+        return new SqlFunctionCall("REPLACE", new LiteralExpression(str), new LiteralExpression(pattern),
+                new LiteralExpression(replacement));
+    }
+
     public static Expression stringSplit(Expression expression, String separator) {
         return new SqlFunctionCall("STRING_SPLIT", expression, new LiteralExpression(separator));
+    }
+
+    public static Expression stringSplit(String str, String separator) {
+        return new SqlFunctionCall("STRING_SPLIT", new LiteralExpression(str), new LiteralExpression(separator));
     }
 
     public static Expression isNull(Expression expression, Expression expression1) {
