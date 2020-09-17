@@ -9,8 +9,8 @@ public class OrderLine {
     private String barcode;
     private String orderNo;
     private Integer orderId;
-    private Float amount;
-    private Float quantity;
+    private Double amount;
+    private Double quantity;
 
     @Relation(relationType = RelationType.BELONGS_TO)
     private Order order;

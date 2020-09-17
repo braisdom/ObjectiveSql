@@ -12,7 +12,6 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @DomainModel
 public class Order {
@@ -21,8 +20,8 @@ public class Order {
 
     private String no;
     private Integer memberId;
-    private Float amount;
-    private Float quantity;
+    private Double amount;
+    private Double quantity;
 
     @Column(transition = SqlDateTimeTransitional.class)
     private Timestamp salesAt;
