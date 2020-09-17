@@ -183,12 +183,12 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
         statementBuilder.append(aptBuilder.newGenericsType(Persistence.class, aptBuilder.getClassName()), "persistence",
                 "createPersistence");
 
-        statementBuilder.append("persistence", "save",
+        methodBuilder.setReturnStatement("persistence", "save",
                 aptBuilder.varRef("this"), aptBuilder.varRef("skipValidation"));
-
         aptBuilder.inject(methodBuilder
                 .addStatements(statementBuilder.build())
                 .addParameter("skipValidation", treeMaker.TypeIdent(TypeTag.BOOLEAN))
+                .setReturnType(aptBuilder.typeRef(aptBuilder.getClassName()))
                 .setThrowsClauses(SQLException.class)
                 .build("save", Flags.PUBLIC | Flags.FINAL));
     }
@@ -246,7 +246,7 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
                 aptBuilder.varRef("id"), aptBuilder.varRef("dirtyObject"), aptBuilder.varRef("skipValidation"));
 
         aptBuilder.inject(methodBuilder
-                .setReturnType(treeMaker.TypeIdent(TypeTag.INT))
+                .setReturnType(aptBuilder.typeRef(aptBuilder.getClassName()))
                 .addStatements(statementBuilder.build())
                 .addParameter("id", aptBuilder.typeRef(domainModel.primaryClass()))
                 .addParameter("dirtyObject", aptBuilder.typeRef(aptBuilder.getClassName()))

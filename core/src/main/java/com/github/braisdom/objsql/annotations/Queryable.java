@@ -27,4 +27,10 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.SOURCE)
 public @interface Queryable {
+
+    /**
+     * Indicate the query method generated returns List<DomainModel>
+     * @return
+     */
+    boolean many() default false;
 }

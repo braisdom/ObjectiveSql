@@ -9,3 +9,20 @@ CREATE TABLE IF NOT EXISTS `objective_sql`.`members`(
    `other_info` VARCHAR(512),
    PRIMARY KEY ( `id` )
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `objective_sql`.`orders`(
+   `id` INT UNSIGNED AUTO_INCREMENT,
+   `no` VARCHAR(100),
+   `member_id` VARCHAR(100),
+   `amount` FLOAT,
+   `quantity` FLOAT,
+   PRIMARY KEY ( `id` )
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `objective_sql`.`order_lines`(
+   `id` INT UNSIGNED AUTO_INCREMENT,
+   `order_no` VARCHAR(100),
+   `amount` FLOAT,
+   `quantity` FLOAT,
+   PRIMARY KEY ( `id` )
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;

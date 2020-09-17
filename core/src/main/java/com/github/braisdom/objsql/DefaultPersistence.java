@@ -42,13 +42,14 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
     }
 
     @Override
-    public void save(T dirtyObject, boolean skipValidation) throws SQLException {
+    public T save(final T dirtyObject, boolean skipValidation) throws SQLException {
         Objects.requireNonNull(dirtyObject, "The dirtyObject cannot be null");
 
         Object primaryValue = domainModelDescriptor.getPrimaryValue(dirtyObject);
         if (primaryValue == null)
-            insert(dirtyObject, skipValidation);
-        else update(primaryValue, dirtyObject, skipValidation);
+            return insert(dirtyObject, skipValidation);
+        else
+            return update(primaryValue, dirtyObject, skipValidation);
     }
 
     @Override
@@ -78,7 +79,13 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
                         } else return PropertyUtils.readDirectly(dirtyObject, fieldName);
                     })).toArray(Object[]::new);
 
-            return (T) sqlExecutor.insert(connection, sql, domainModelDescriptor, values);
+            T domainObject = (T) sqlExecutor.insert(connection, sql, domainModelDescriptor, values);
+            Object primaryValue = Tables.getPrimaryValue(domainObject);
+
+            if(primaryValue != null)
+                Tables.writePrimaryValue(dirtyObject, primaryValue);
+
+            return dirtyObject;
         });
     }
 
@@ -115,7 +122,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
     }
 
     @Override
-    public int update(Object id, T dirtyObject, boolean skipValidation) throws SQLException {
+    public T update(Object id, T dirtyObject, boolean skipValidation) throws SQLException {
         Objects.requireNonNull(id, "The id cannot be null");
         Objects.requireNonNull(dirtyObject, "The dirtyObject cannot be null");
 
@@ -157,7 +164,9 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
             String sql = formatUpdateSql(domainModelDescriptor.getTableName(),
                     updatesSql.toString(), String.format("%s = ?", primaryKey.name()));
 
-            return sqlExecutor.execute(connection, sql, ArrayUtil.appendElement(Object.class, values, id));
+            sqlExecutor.execute(connection, sql, ArrayUtil.appendElement(Object.class, values, id));
+
+            return dirtyObject;
         });
     }
 

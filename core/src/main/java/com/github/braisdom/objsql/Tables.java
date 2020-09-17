@@ -98,6 +98,19 @@ public final class Tables {
         else return DEFAULT_PRIMARY_KEY.equals(field.getName());
     }
 
+    public static Object getPrimaryValue(Object domainObject) {
+        PrimaryKey primaryKey = getPrimaryKey(domainObject.getClass());
+        if (primaryKey != null) {
+            return PropertyUtils.readDirectly(domainObject, primaryKey.name());
+        } else return null;
+    }
+
+    public static void writePrimaryValue(Object domainObject, Object primaryValue) {
+        PrimaryKey primaryKey = getPrimaryKey(domainObject.getClass());
+        if (primaryKey != null)
+            PropertyUtils.writeDirectly(domainObject, primaryKey.name(), primaryValue);
+    }
+
     public static final Field getPrimaryField(Class tableClass) {
         Field[] fields = tableClass.getDeclaredFields();
 
@@ -120,7 +133,7 @@ public final class Tables {
         try {
             Field field = tableClass.getDeclaredField(fieldName);
             Column column = field.getDeclaredAnnotation(Column.class);
-            if(column != null)
+            if (column != null)
                 return column.name();
 
             return WordUtil.underscore(field.getName());

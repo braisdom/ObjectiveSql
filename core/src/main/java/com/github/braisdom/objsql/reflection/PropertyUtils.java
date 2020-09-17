@@ -16,6 +16,7 @@
  */
 package com.github.braisdom.objsql.reflection;
 
+import com.github.braisdom.objsql.relation.RelationalException;
 import com.github.braisdom.objsql.util.WordUtil;
 
 
@@ -147,7 +148,7 @@ public final class PropertyUtils {
                 if (force) {
                     writeDirectly(destination, propertyDescriptor, value);
                 } else {
-                    throw new IllegalArgumentException(propertyDescriptor.getName() + " is not writable");
+                    throw new RelationalException(propertyDescriptor.getName() + " is not writable");
                 }
             } else {
                 Object[] args = new Object[]{value};

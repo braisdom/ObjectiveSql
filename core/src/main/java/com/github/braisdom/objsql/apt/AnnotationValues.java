@@ -84,8 +84,11 @@ public class AnnotationValues {
                             }
                         }
                     } else if (assign.rhs instanceof JCTree.JCLiteral) {
-                        annotationValueMap.put(attributeName,
-                                ((JCTree.JCLiteral) assign.rhs).value);
+                        if ("boolean".equalsIgnoreCase(assign.rhs.type.toString())) {
+                            annotationValueMap.put(attributeName, Boolean.valueOf(assign.rhs.toString()));
+                        } else
+                            annotationValueMap.put(attributeName,
+                                    ((JCTree.JCLiteral) assign.rhs).value);
                     }
                 }
             }
@@ -114,7 +117,7 @@ public class AnnotationValues {
             annotations = (List<JCAnnotation>) ((ClassTree) tree).getModifiers().getAnnotations();
         else if (tree instanceof VariableTree)
             annotations = (List<JCAnnotation>) ((VariableTree) tree).getModifiers().getAnnotations();
-        else if(tree instanceof JCTree.JCMethodDecl)
+        else if (tree instanceof JCTree.JCMethodDecl)
             annotations = ((JCTree.JCMethodDecl) tree).getModifiers().getAnnotations();
 
         for (JCAnnotation annotation : annotations) {
