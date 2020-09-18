@@ -84,8 +84,7 @@ abstract class AbstractResultSetHandler<T> implements ResultSetHandler<T> {
             return dataTypeRiser.risingLong(value);
         else if(Boolean.class.isAssignableFrom(fieldType))
             return dataTypeRiser.risingBoolean(value);
-        else if(Enum.class.isAssignableFrom(fieldType))
-            return dataTypeRiser.risingEnum(fieldType, value);
+
         return value;
     }
 }

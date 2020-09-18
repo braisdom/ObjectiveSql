@@ -16,6 +16,7 @@
  */
 package com.github.braisdom.objsql.reflection;
 
+import com.github.braisdom.objsql.ForcedFieldValueConverter;
 import com.github.braisdom.objsql.relation.RelationalException;
 import com.github.braisdom.objsql.util.WordUtil;
 
@@ -164,6 +165,16 @@ public final class PropertyUtils {
         writeDirectly(destination, propertyDescriptor.getName(), value);
     }
 
+    public static void writeDirectly(Object destination, String propertyName, Object value,
+                                     ForcedFieldValueConverter valueConverter) {
+        try {
+            Field field = findField(destination.getClass(), propertyName);
+            writeDirectly(destination, field, value);
+        } catch (NoSuchFieldException e) {
+            throw new ReflectionException("Failed to write " + getQualifiedPropertyName(destination, propertyName), e);
+        }
+    }
+
     public static void writeDirectly(Object destination, String propertyName, Object value) {
         try {
             Field field = findField(destination.getClass(), propertyName);
@@ -248,7 +259,24 @@ public final class PropertyUtils {
         populate(bean, properties, true);
     }
 
-    public static void populate(final Object bean, final Map<String, ? extends Object> properties, final boolean underline)
+    public static void populate(final Object bean, final Map<String, ? extends Object> properties,
+                                final boolean underline)
+            throws ReflectionException {
+        Objects.requireNonNull(bean, "The bean cannot be null");
+
+        if (properties == null)
+            return;
+
+        for (final Map.Entry<String, ? extends Object> entry : properties.entrySet()) {
+            final String name = underline ? WordUtil.camelize(entry.getKey(), true) : entry.getKey();
+            if (name == null)
+                continue;
+            write(bean, name, entry.getValue());
+        }
+    }
+
+    public static void populate(final Object bean, final Map<String, ? extends Object> properties,
+                                final boolean underline, ForcedFieldValueConverter valueConverter)
             throws ReflectionException {
         Objects.requireNonNull(bean, "The bean cannot be null");
 

@@ -144,7 +144,7 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
 
     @Override
     public void setValue(T modelObject, String fieldName, Object fieldValue) {
-        PropertyUtils.writeDirectly(modelObject, fieldName, fieldValue);
+        PropertyUtils.write(modelObject, fieldName, fieldValue);
     }
 
     @Override

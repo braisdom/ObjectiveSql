@@ -1,6 +1,7 @@
 package com.github.braisdom.objsql;
 
 import java.math.BigInteger;
+import java.sql.Date;
 import java.sql.Timestamp;
 
 public class DefaultForcedFieldValueConverter implements ForcedFieldValueConverter {
@@ -13,7 +14,7 @@ public class DefaultForcedFieldValueConverter implements ForcedFieldValueConvert
             return Float.valueOf(String.valueOf(raw));
         else if (raw instanceof Integer)
             return Float.valueOf(String.valueOf(raw));
-        else if(raw instanceof String)
+        else if (raw instanceof String)
             return Float.valueOf((String) raw);
         else
             throw new IllegalArgumentException(String.format("'%s' cannot convert to Float", String.valueOf(raw)));
@@ -63,6 +64,8 @@ public class DefaultForcedFieldValueConverter implements ForcedFieldValueConvert
             return (Long) raw;
         else if (raw instanceof Integer)
             return Long.valueOf(String.valueOf(raw));
+        else if (raw instanceof String)
+            return Long.valueOf((String) raw);
         else
             throw new IllegalArgumentException(String.format("'%s' cannot convert to Long", String.valueOf(raw)));
     }
@@ -71,14 +74,24 @@ public class DefaultForcedFieldValueConverter implements ForcedFieldValueConvert
     public Boolean toBoolean(Object raw) {
         if (raw instanceof Integer)
             return ((Integer) raw) == 1;
-        if (raw instanceof Short)
+        else if (raw instanceof Short)
             return ((Short) raw) == 1;
+        else if (raw instanceof String)
+            return Boolean.valueOf((String) raw);
         else
             throw new IllegalArgumentException(String.format("'%s' cannot convert to Boolean", String.valueOf(raw)));
     }
 
     @Override
     public Timestamp toTimestamp(Object raw) {
-        return null;
+        if (raw instanceof String)
+            return Timestamp.valueOf((String) raw);
+        else if (raw instanceof Long)
+            return new Timestamp((Long) raw);
+        else if (raw instanceof Date)
+            return new Timestamp(((Date) raw).getTime());
+        throw new IllegalArgumentException(String.format("'%s' cannot convert to Timestamp", String.valueOf(raw)));
     }
+
+
 }

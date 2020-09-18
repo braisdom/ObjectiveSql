@@ -108,7 +108,7 @@ public final class Tables {
     public static void writePrimaryValue(Object domainObject, Object primaryValue) {
         PrimaryKey primaryKey = getPrimaryKey(domainObject.getClass());
         if (primaryKey != null)
-            PropertyUtils.writeDirectly(domainObject, primaryKey.name(), primaryValue);
+            PropertyUtils.write(domainObject, primaryKey.name(), primaryValue);
     }
 
     public static final Field getPrimaryField(Class tableClass) {
@@ -191,14 +191,6 @@ public final class Tables {
                 sqlExecutor.query(connection, sql, domainModelDescriptor, params));
     }
 
-    /**
-     * It will be invoked in DomainModel class for execute arbitrary SQL
-     *
-     * @param sql
-     * @param params
-     * @return
-     * @throws SQLException
-     */
     public static final int execute(Class<?> domainModelClass, String sql, Object... params) throws SQLException {
         String dataSourceName = Tables.getDataSourceName(domainModelClass);
         return Databases.execute(dataSourceName, (connection, sqlExecutor) ->

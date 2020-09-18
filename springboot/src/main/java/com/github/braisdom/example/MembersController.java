@@ -11,7 +11,7 @@ public class MembersController {
 
     /**
      * URL: POST http://localhost:8080/members
-     * Request JSON payload: {"no": "00001", "name": "Braisdom", "gender": 1, "mobile": "18900000000", "otherInfo": "none" }
+     * Request JSON payload: {"no": "00001", "name": "Braisdom", "gender": 0, "mobile": "18900000000", "otherInfo": "none" }
      *
      * @param rawMember
      * @return
