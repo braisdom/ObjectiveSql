@@ -4,17 +4,17 @@ import java.sql.Timestamp;
 
 public interface ForcedFieldValueConverter {
 
-    Float risingFloat(Object raw);
+    Float toFloat(Object raw);
 
-    Double risingDouble(Object raw);
+    Double toDouble(Object raw);
 
-    Short risingShort(Object raw);
+    Short toShort(Object raw);
 
-    Integer risingInteger(Object raw);
+    Integer toInteger(Object raw);
 
-    Long risingLong(Object raw);
+    Long toLong(Object raw);
 
-    Boolean risingBoolean(Object raw);
+    Boolean toBoolean(Object raw);
 
-    Timestamp risingTimestamp(Object raw);
+    Timestamp toTimestamp(Object raw);
 }
