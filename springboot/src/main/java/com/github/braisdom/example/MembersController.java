@@ -11,23 +11,27 @@ import java.util.List;
 public class MembersController {
 
     @PostMapping("/members")
-    public Member create(@RequestBody RequestObject rawMember) throws SQLException {
+    public ResponseObject create(@RequestBody RequestObject rawMember) throws SQLException {
         Member dirtyMember = Member.newInstanceFrom(rawMember, false);
-        return Member.create(dirtyMember, true);
+        Member member = Member.create(dirtyMember, true);
+        return ResponseObject.createSuccessResponse(member);
     }
 
     @GetMapping("/members/{no}")
-    public Member getMember(@PathVariable("no") String memberNo) throws SQLException {
-        return Member.queryByNo(memberNo);
+    public ResponseObject getMember(@PathVariable("no") String memberNo) throws SQLException {
+        Member member = Member.queryByNo(memberNo);
+        return ResponseObject.createSuccessResponse(member);
     }
 
     @GetMapping("/members")
-    public List<Member> getMembers() throws SQLException {
-        return Member.queryAll();
+    public ResponseObject getMembers() throws SQLException {
+        List<Member> members = Member.queryAll();
+        return ResponseObject.createSuccessResponse(members);
     }
 
     @GetMapping("/members/{no}/orders")
-    public Member getMemberOrders(@PathVariable("no") String no) throws SQLException {
-        return Member.queryByNo(no, Member.HAS_MANY_ORDERS, Order.HAS_MANY_ORDER_LINES);
+    public ResponseObject getMemberOrders(@PathVariable("no") String no) throws SQLException {
+        Member member = Member.queryByNo(no, Member.HAS_MANY_ORDERS, Order.HAS_MANY_ORDER_LINES);
+        return ResponseObject.createSuccessResponse(member);
     }
 }

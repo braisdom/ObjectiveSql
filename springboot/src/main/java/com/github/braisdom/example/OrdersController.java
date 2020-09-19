@@ -10,9 +10,10 @@ import java.sql.SQLException;
 public class OrdersController {
 
     @PostMapping("/orders/{memberNo}")
-    public Order makeOrder(@PathVariable("memberNo") String memberNo,
+    public ResponseObject makeOrder(@PathVariable("memberNo") String memberNo,
                            @RequestBody RequestObject rawOrder) throws SQLException {
         Member owner = Member.queryByNo(memberNo);
-        return Order.makeOrder(owner, rawOrder);
+        Order.makeOrder(owner, rawOrder);
+        return ResponseObject.createSuccessResponse();
     }
 }
