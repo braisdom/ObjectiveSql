@@ -21,7 +21,6 @@ import com.github.braisdom.objsql.jdbc.QueryRunner;
 import com.github.braisdom.objsql.jdbc.ResultSetHandler;
 import com.github.braisdom.objsql.reflection.PropertyUtils;
 import com.github.braisdom.objsql.transition.ColumnTransitional;
-import com.github.braisdom.objsql.transition.JDBCDataTypeRising;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -67,29 +66,7 @@ public class DefaultSQLExecutor<T> implements SQLExecutor<T> {
     }
 }
 
-abstract class AbstractResultSetHandler<T> implements ResultSetHandler<T> {
-
-    protected Object getValue(Class fieldType, Object value) {
-        JDBCDataTypeRising dataTypeRiser = Databases.getJdbcDataTypeRising();
-
-        if(Float.class.isAssignableFrom(fieldType))
-            return dataTypeRiser.risingFloat(value);
-        else if(Double.class.isAssignableFrom(fieldType))
-            return dataTypeRiser.risingDouble(value);
-        else if(Integer.class.isAssignableFrom(fieldType))
-            return dataTypeRiser.risingInteger(value);
-        else if(Short.class.isAssignableFrom(fieldType))
-            return dataTypeRiser.risingShort(value);
-        else if(Long.class.isAssignableFrom(fieldType))
-            return dataTypeRiser.risingLong(value);
-        else if(Boolean.class.isAssignableFrom(fieldType))
-            return dataTypeRiser.risingBoolean(value);
-
-        return value;
-    }
-}
-
-class DomainModelListHandler extends AbstractResultSetHandler<List> {
+class DomainModelListHandler implements ResultSetHandler<List> {
 
     private final DomainModelDescriptor domainModelDescriptor;
     private final DatabaseMetaData databaseMetaData;
@@ -125,7 +102,8 @@ class DomainModelListHandler extends AbstractResultSetHandler<List> {
             if (fieldName != null) {
                 Class fieldType = domainModelDescriptor.getFieldType(fieldName);
                 ColumnTransitional columnTransitional = domainModelDescriptor.getColumnTransition(fieldName);
-                Object rawValue = getValue(fieldType, rs.getObject(columnName));
+                ForcedFieldValueConverter valueConverter = Databases.getValueConverter();
+                Object rawValue = valueConverter.convert(fieldType, rs.getObject(columnName));
                 Object value = columnTransitional == null ? rawValue : columnTransitional
                         .rising(databaseMetaData, metaData, bean, domainModelDescriptor, fieldName, rawValue);
                 domainModelDescriptor.setValue(bean, fieldName, value);
@@ -137,7 +115,7 @@ class DomainModelListHandler extends AbstractResultSetHandler<List> {
     }
 }
 
-class DomainModelHandler extends AbstractResultSetHandler<Object> {
+class DomainModelHandler implements ResultSetHandler<Object> {
 
     private static final List<String> AUTO_ROW_NAME = Arrays
             .asList(new String[]{"last_insert_rowid()", "GENERATED_KEY"});
@@ -166,18 +144,22 @@ class DomainModelHandler extends AbstractResultSetHandler<Object> {
                 Class fieldType = domainModelDescriptor.getFieldType(primaryFieldName);
 
                 ColumnTransitional columnTransitional = domainModelDescriptor.getColumnTransition(primaryFieldName);
-                Object rawValue = getValue(fieldType, rs.getObject(columnName));
+                ForcedFieldValueConverter valueConverter = Databases.getValueConverter();
+
+                Object rawValue = valueConverter.convert(fieldType, rs.getObject(columnName));
                 Object value = columnTransitional == null ? rawValue : columnTransitional
                         .rising(databaseMetaData, metaData, bean, domainModelDescriptor, primaryFieldName, rawValue);
 
                 domainModelDescriptor.setValue(bean, primaryFieldName, value);
             }else {
                 String fieldName = domainModelDescriptor.getFieldName(columnName);
-                Class fieldType = domainModelDescriptor.getFieldType(fieldName);
-                ColumnTransitional columnTransitional = domainModelDescriptor.getColumnTransition(fieldName);
 
                 if (fieldName != null) {
-                    Object rawValue = getValue(fieldType, rs.getObject(columnName));
+                    Class fieldType = domainModelDescriptor.getFieldType(fieldName);
+                    ColumnTransitional columnTransitional = domainModelDescriptor.getColumnTransition(fieldName);
+                    ForcedFieldValueConverter valueConverter = Databases.getValueConverter();
+
+                    Object rawValue = valueConverter.convert(fieldType, rs.getObject(columnName));
                     Object value = columnTransitional == null ? rawValue : columnTransitional
                             .rising(databaseMetaData, metaData, bean, domainModelDescriptor, fieldName, rawValue);
                     domainModelDescriptor.setValue(bean, fieldName, value);
