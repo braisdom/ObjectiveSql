@@ -131,6 +131,11 @@ public final class PropertyUtils {
         write(destination, propertyDescriptor, value);
     }
 
+    public static void write(Object destination, String propertyName, Object value, ForcedFieldValueConverter valueConverter) {
+        PropertyDescriptor propertyDescriptor = getPropertyDescriptorByNameOrThrow(destination, propertyName);
+        write(destination, propertyDescriptor, valueConverter.convert(propertyDescriptor.getPropertyType(), value));
+    }
+
     public static <T> void writeIfPropertyExists(Object destination, String propertyName, Supplier<T> valueSupplier) {
         PropertyDescriptor property = getPropertyDescriptorByName(destination, propertyName);
         if (property != null) {
@@ -228,7 +233,7 @@ public final class PropertyUtils {
             final String name = underline ? WordUtil.camelize(entry.getKey(), true) : entry.getKey();
             if (name == null)
                 continue;
-            write(bean, name, entry.getValue());
+            write(bean, name, entry.getValue(), valueConverter);
         }
     }
 

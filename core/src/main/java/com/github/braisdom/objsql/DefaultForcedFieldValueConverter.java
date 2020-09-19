@@ -107,6 +107,8 @@ public class DefaultForcedFieldValueConverter implements ForcedFieldValueConvert
             return toLong(originalValue);
         else if(Boolean.class.isAssignableFrom(fieldType))
             return toBoolean(originalValue);
+        else if(Timestamp.class.isAssignableFrom(fieldType))
+            return toTimestamp(originalValue);
 
         return originalValue;
     }
