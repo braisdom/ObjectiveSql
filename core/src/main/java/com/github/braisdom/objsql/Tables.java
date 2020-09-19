@@ -101,7 +101,7 @@ public final class Tables {
     public static Object getPrimaryValue(Object domainObject) {
         PrimaryKey primaryKey = getPrimaryKey(domainObject.getClass());
         if (primaryKey != null) {
-            return PropertyUtils.readDirectly(domainObject, primaryKey.name());
+            return PropertyUtils.read(domainObject, primaryKey.name());
         } else return null;
     }
 

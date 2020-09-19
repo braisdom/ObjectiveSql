@@ -1,5 +1,6 @@
 package com.github.braisdom.objsql;
 
+import java.lang.reflect.Field;
 import java.sql.Timestamp;
 
 /**
@@ -11,17 +12,7 @@ import java.sql.Timestamp;
  */
 public interface ForcedFieldValueConverter {
 
-    Float toFloat(Object raw);
+    Object convert(Field field, Object originalValue);
 
-    Double toDouble(Object raw);
-
-    Short toShort(Object raw);
-
-    Integer toInteger(Object raw);
-
-    Long toLong(Object raw);
-
-    Boolean toBoolean(Object raw);
-
-    Timestamp toTimestamp(Object raw);
+    Object convert(Class<?> fieldType, Object originalValue);
 }

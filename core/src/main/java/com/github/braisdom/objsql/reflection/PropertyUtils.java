@@ -146,11 +146,7 @@ public final class PropertyUtils {
     public static void write(Object destination, PropertyDescriptor propertyDescriptor, Object value, boolean force) {
         try {
             if (!isWritable(propertyDescriptor)) {
-                if (force) {
-                    writeDirectly(destination, propertyDescriptor, value);
-                } else {
-                    throw new RelationalException(propertyDescriptor.getName() + " is not writable");
-                }
+                throw new RelationalException(propertyDescriptor.getName() + " is not writable");
             } else {
                 Object[] args = new Object[]{value};
                 Method writeMethod = propertyDescriptor.getWriteMethod();
@@ -158,37 +154,6 @@ public final class PropertyUtils {
             }
         } catch (ReflectiveOperationException | RuntimeException e) {
             throw new ReflectionException("Failed to write " + getQualifiedPropertyName(destination, propertyDescriptor), e);
-        }
-    }
-
-    public static void writeDirectly(Object destination, PropertyDescriptor propertyDescriptor, Object value) {
-        writeDirectly(destination, propertyDescriptor.getName(), value);
-    }
-
-    public static void writeDirectly(Object destination, String propertyName, Object value,
-                                     ForcedFieldValueConverter valueConverter) {
-        try {
-            Field field = findField(destination.getClass(), propertyName);
-            writeDirectly(destination, field, value);
-        } catch (NoSuchFieldException e) {
-            throw new ReflectionException("Failed to write " + getQualifiedPropertyName(destination, propertyName), e);
-        }
-    }
-
-    public static void writeDirectly(Object destination, String propertyName, Object value) {
-        try {
-            Field field = findField(destination.getClass(), propertyName);
-            writeDirectly(destination, field, value);
-        } catch (NoSuchFieldException e) {
-            throw new ReflectionException("Failed to write " + getQualifiedPropertyName(destination, propertyName), e);
-        }
-    }
-
-    public static void writeDirectly(Object destination, Field field, Object value) {
-        try {
-            withAccessibleObject(field, f -> f.set(destination, value));
-        } catch (ReflectiveOperationException e) {
-            throw new ReflectionException("Failed to write " + getQualifiedPropertyName(destination, field), e);
         }
     }
 
@@ -204,29 +169,9 @@ public final class PropertyUtils {
         }
     }
 
-    public static <T> T readDirectly(Object object, PropertyDescriptor propertyDescriptor) {
-        return readDirectly(object, propertyDescriptor.getName());
-    }
-
-    public static <T> T readDirectly(Object object, String propertyName) {
-        try {
-            Field field = findField(object.getClass(), propertyName);
-            return readDirectly(object, field);
-        } catch (NoSuchFieldException e) {
-            throw new ReflectionException("Failed to read " + getQualifiedPropertyName(object, propertyName), e);
-        }
-    }
-
-    public static <T> T readDirectly(Object object, Field field) {
-        try {
-            return withAccessibleObject(field, f -> {
-                @SuppressWarnings("unchecked")
-                T value = (T) field.get(object);
-                return value;
-            }, true);
-        } catch (ReflectiveOperationException e) {
-            throw new ReflectionException("Failed to read " + getQualifiedPropertyName(object, field), e);
-        }
+    public static <T> T read(Object source, String propertyName) {
+        PropertyDescriptor propertyDescriptor = getPropertyDescriptorByNameOrThrow(source, propertyName);
+        return read(source, propertyDescriptor);
     }
 
     public static <T> T read(Object source, PropertyDescriptor propertyDescriptor) {
@@ -237,11 +182,7 @@ public final class PropertyUtils {
         final Object result;
         try {
             if (!isReadable(propertyDescriptor)) {
-                if (force) {
-                    return readDirectly(source, propertyDescriptor);
-                } else {
-                    throw new IllegalArgumentException(String.format("%s must be readable", propertyDescriptor.getName()));
-                }
+                throw new IllegalArgumentException(String.format("%s must be readable", propertyDescriptor.getName()));
             } else {
                 Method readMethod = propertyDescriptor.getReadMethod();
                 result = withAccessibleObject(readMethod, method -> readMethod.invoke(source), force);
@@ -287,7 +228,7 @@ public final class PropertyUtils {
             final String name = underline ? WordUtil.camelize(entry.getKey(), true) : entry.getKey();
             if (name == null)
                 continue;
-            writeDirectly(bean, name, entry.getValue());
+            write(bean, name, entry.getValue());
         }
     }
 

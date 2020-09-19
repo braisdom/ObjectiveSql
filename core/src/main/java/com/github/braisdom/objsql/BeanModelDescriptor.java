@@ -96,7 +96,7 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
 
     @Override
     public Object getPrimaryValue(Object domainObject) {
-        return PropertyUtils.readDirectly(domainObject, getPrimaryKey().name());
+        return PropertyUtils.read(domainObject, getPrimaryKey().name());
     }
 
     @Override
@@ -139,7 +139,7 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
 
     @Override
     public Object getValue(T modelObject, String fieldName) {
-        return PropertyUtils.readDirectly(modelObject, fieldName);
+        return PropertyUtils.read(modelObject, fieldName);
     }
 
     @Override
