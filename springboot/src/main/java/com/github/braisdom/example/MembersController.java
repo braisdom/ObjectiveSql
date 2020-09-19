@@ -39,8 +39,7 @@ public class MembersController {
     public ResponseObject updateMember(@PathVariable("no") String memberNo,
                                        @RequestBody RequestObject rawMember) throws SQLException {
         Member member = Member.queryByNo(memberNo);
-        Member dirtyMember = Member.newInstanceFrom(rawMember);
-        Member.update(member.getId(), dirtyMember, true);
+        Member.update(member.getId(), Member.newInstanceFrom(rawMember), true);
         return ResponseObject.createSuccessResponse();
     }
 }
