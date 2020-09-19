@@ -136,14 +136,6 @@ public final class PropertyUtils {
         write(destination, propertyDescriptor, valueConverter.convert(propertyDescriptor.getPropertyType(), value));
     }
 
-    public static <T> void writeIfPropertyExists(Object destination, String propertyName, Supplier<T> valueSupplier) {
-        PropertyDescriptor property = getPropertyDescriptorByName(destination, propertyName);
-        if (property != null) {
-            T value = valueSupplier.get();
-            write(destination, property, value);
-        }
-    }
-
     public static void write(Object destination, PropertyDescriptor propertyDescriptor, Object value) {
         write(destination, propertyDescriptor, value, false);
     }
@@ -159,18 +151,6 @@ public final class PropertyUtils {
             }
         } catch (ReflectiveOperationException | RuntimeException e) {
             throw new ReflectionException("Failed to write " + getQualifiedPropertyName(destination, propertyDescriptor), e);
-        }
-    }
-
-    private static Field findField(Class<?> objectClass, String propertyName) throws NoSuchFieldException {
-        try {
-            return objectClass.getDeclaredField(propertyName);
-        } catch (NoSuchFieldException e) {
-            Class<?> superclass = objectClass.getSuperclass();
-            if (!superclass.equals(Object.class)) {
-                return findField(superclass, propertyName);
-            }
-            throw e;
         }
     }
 
@@ -263,51 +243,6 @@ public final class PropertyUtils {
         }
     }
 
-    public static <T> T readIfPropertyExists(Object source, String propertyName) {
-        PropertyDescriptor property = getPropertyDescriptorByName(source, propertyName);
-        if (property != null) {
-            return read(source, property);
-        } else {
-            return null;
-        }
-    }
-
-    public static <T> T readProperty(Object entity, PropertyDescriptor propertyDescriptor, Class<T> expectedType) {
-        Class<?> clazz = ClassUtils.getRealClass(entity);
-        String propertyName = propertyDescriptor.getName();
-        Class<?> propertyType = propertyDescriptor.getPropertyType();
-        if (!expectedType.isAssignableFrom(propertyType)) {
-            throw new IllegalArgumentException(String.format("%s.%s is of type %s but %s is expected", clazz, propertyName, propertyType, expectedType));
-        }
-        return PropertyUtils.read(entity, propertyDescriptor);
-    }
-
-    public static <T> PropertyDescriptor getPropertyDescriptorByMethod(Class<T> beanClass, Method method) {
-        PropertyDescriptorCache<?> propertyDescriptorCache = getCache(beanClass);
-        return propertyDescriptorCache.getDescriptorByMethod(method);
-    }
-
-    public static <T> PropertyDescriptor getPropertyDescriptorByField(Class<T> beanClass, Field field) {
-        PropertyDescriptorCache<?> propertyDescriptorCache = getCache(beanClass);
-        return propertyDescriptorCache.getDescriptorByField(field);
-    }
-
-    public static boolean hasAnnotationOfProperty(Class<?> entityType, PropertyDescriptor descriptor, Class<? extends Annotation> annotationClass) {
-        return getAnnotationOfProperty(entityType, descriptor, annotationClass) != null;
-    }
-
-
-    public static <A extends Annotation> A getAnnotationOfProperty(Object object, PropertyDescriptor descriptor, Class<A> annotationClass) {
-        Class<Object> objectClass = ClassUtils.getRealClass(object);
-        return getAnnotationOfProperty(objectClass, descriptor, annotationClass);
-    }
-
-    public static <A extends Annotation> A getAnnotationOfProperty(Class<?> entityType, PropertyDescriptor descriptor, Class<A> annotationClass) {
-        PropertyDescriptorCache<?> cache = getCache(entityType);
-        Map<PropertyDescriptor, A> descriptorsForAnnotation = cache.getDescriptorsForAnnotation(annotationClass);
-        return descriptorsForAnnotation.get(descriptor);
-    }
-
     public static boolean isFullyAccessible(PropertyDescriptor descriptor) {
         return isReadable(descriptor) && isWritable(descriptor);
     }
@@ -318,19 +253,6 @@ public final class PropertyUtils {
 
     public static boolean isReadable(PropertyDescriptor descriptor) {
         return descriptor.getReadMethod() != null;
-    }
-
-    public static boolean isDeclaredInClass(PropertyDescriptor propertyDescriptor, Class<?> entityClass) {
-        Method readMethod = propertyDescriptor.getReadMethod();
-        return readMethod != null && Objects.equals(readMethod.getDeclaringClass(), entityClass);
-    }
-
-    public static boolean hasProperty(Object bean, String propertyName) {
-        return getPropertyDescriptorByName(bean, propertyName) != null;
-    }
-
-    public static boolean hasProperty(Class<?> beanClass, String propertyName) {
-        return getPropertyDescriptorByName(beanClass, propertyName) != null;
     }
 
     public static Object getDefaultValueObject(Class<?> type) {
