@@ -64,17 +64,6 @@ public final class PropertyUtils {
         return getPropertyDescriptors(ClassUtils.getRealClass(object));
     }
 
-    public static <A extends Annotation> Map<PropertyDescriptor, A> getPropertyDescriptorsWithAnnotation(Object object, Class<A> annotationClass) {
-        Class<Object> objectClass = ClassUtils.getRealClass(object);
-        return getPropertyDescriptorsWithAnnotation(objectClass, annotationClass);
-    }
-
-    public static <A extends Annotation> Map<PropertyDescriptor, A> getPropertyDescriptorsWithAnnotation(Class<?> type,
-                                                                                                         Class<A> annotationClass) {
-        PropertyDescriptorCache<?> propertyDescriptorCache = getCache(type);
-        return propertyDescriptorCache.getDescriptorsForAnnotation(annotationClass);
-    }
-
     @SuppressWarnings("unchecked")
     static <T> PropertyDescriptorCache<T> getCache(Class<T> type) {
         return (PropertyDescriptorCache<T>) cache.computeIfAbsent(type, PropertyDescriptorCache::compute);

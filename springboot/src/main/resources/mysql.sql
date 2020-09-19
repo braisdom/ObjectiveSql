@@ -24,6 +24,7 @@ CREATE TABLE IF NOT EXISTS `objective_sql`.`orders`(
 
 CREATE TABLE IF NOT EXISTS `objective_sql`.`order_lines`(
    `id` INT UNSIGNED AUTO_INCREMENT,
+   `order_id` INT(10),
    `order_no` VARCHAR(100),
    `barcode` VARCHAR(100),
    `product_id` INT(10),

@@ -103,7 +103,7 @@ public final class Databases {
     };
 
     /**
-     * Represents a logic of data , it will provide the connection and sql
+     * Represents a logic of data process, it will provide the connection and sql
      * executor of database, and the concrete logic will be ignored the behavior
      * about connection.
      *

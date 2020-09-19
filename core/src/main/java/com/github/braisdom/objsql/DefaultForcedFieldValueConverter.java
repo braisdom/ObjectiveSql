@@ -8,7 +8,9 @@ import java.sql.Timestamp;
 public class DefaultForcedFieldValueConverter implements ForcedFieldValueConverter {
 
     private Float toFloat(Object raw) {
-        if (raw instanceof Float)
+        if(raw == null)
+            return null;
+        else if (raw instanceof Float)
             return (Float) raw;
         else if (raw instanceof Double)
             return Float.valueOf(String.valueOf(raw));
@@ -21,7 +23,9 @@ public class DefaultForcedFieldValueConverter implements ForcedFieldValueConvert
     }
 
     private Double toDouble(Object raw) {
-        if (raw instanceof Double)
+        if(raw == null)
+            return null;
+        else if (raw instanceof Double)
             return (Double) raw;
         else if (raw instanceof Float)
             return Double.valueOf(String.valueOf(raw));
@@ -34,7 +38,9 @@ public class DefaultForcedFieldValueConverter implements ForcedFieldValueConvert
     }
 
     private Short toShort(Object raw) {
-        if (raw instanceof Short)
+        if(raw == null)
+            return null;
+        else if (raw instanceof Short)
             return (Short) raw;
         else if (raw instanceof Integer)
             return Short.valueOf(String.valueOf(raw));
@@ -43,7 +49,9 @@ public class DefaultForcedFieldValueConverter implements ForcedFieldValueConvert
     }
 
     private Integer toInteger(Object raw) {
-        if (raw instanceof Integer)
+        if(raw == null)
+            return null;
+        else if (raw instanceof Integer)
             return (Integer) raw;
         else if (raw instanceof Long)
             return Integer.valueOf(String.valueOf(raw));
@@ -56,7 +64,9 @@ public class DefaultForcedFieldValueConverter implements ForcedFieldValueConvert
     }
 
     private Long toLong(Object raw) {
-        if (raw instanceof Long)
+        if(raw == null)
+            return null;
+        else if (raw instanceof Long)
             return (Long) raw;
         else if (raw instanceof Integer)
             return Long.valueOf(String.valueOf(raw));
@@ -67,7 +77,11 @@ public class DefaultForcedFieldValueConverter implements ForcedFieldValueConvert
     }
 
     private Boolean toBoolean(Object raw) {
-        if (raw instanceof Integer)
+        if(raw == null)
+            return null;
+        else if(raw instanceof Boolean)
+            return (Boolean) raw;
+        else if (raw instanceof Integer)
             return ((Integer) raw) == 1;
         else if (raw instanceof Short)
             return ((Short) raw) == 1;
@@ -78,7 +92,11 @@ public class DefaultForcedFieldValueConverter implements ForcedFieldValueConvert
     }
 
     private Timestamp toTimestamp(Object raw) {
-        if (raw instanceof String)
+        if(raw == null)
+            return null;
+        else if(raw instanceof Timestamp)
+            return (Timestamp) raw;
+        else if (raw instanceof String)
             return Timestamp.valueOf((String) raw);
         else if (raw instanceof Long)
             return new Timestamp((Long) raw);
