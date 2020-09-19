@@ -42,10 +42,12 @@ public class QueryMethodCodeGenerator extends DomainModelProcessor {
 
         if(returnsMany) {
             methodBuilder.setReturnType(java.util.List.class, aptBuilder.typeRef(aptBuilder.getClassName()));
-            methodBuilder.setReturnStatement("query", "execute");
+            methodBuilder.setReturnStatement("query", "execute",
+                    aptBuilder.varRef("relations"));
         } else {
             methodBuilder.setReturnType(aptBuilder.typeRef(aptBuilder.getClassName()));
-            methodBuilder.setReturnStatement("query", "queryFirst");
+            methodBuilder.setReturnStatement("query", "queryFirst",
+                    aptBuilder.varRef("relations"));
         }
 
         aptBuilder.inject(methodBuilder
