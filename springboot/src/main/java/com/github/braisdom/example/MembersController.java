@@ -34,4 +34,9 @@ public class MembersController {
         Member member = Member.queryByNo(no, Member.HAS_MANY_ORDERS, Order.HAS_MANY_ORDER_LINES);
         return ResponseObject.createSuccessResponse(member);
     }
+
+    @PutMapping("/members")
+    public ResponseObject updateMember(@RequestBody RequestObject rawMember) {
+        return ResponseObject.createSuccessResponse();
+    }
 }
