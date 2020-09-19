@@ -33,3 +33,14 @@ CREATE TABLE IF NOT EXISTS `objective_sql`.`order_lines`(
    `quantity` FLOAT,
    PRIMARY KEY ( `id` )
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `objective_sql`.`products`(
+   `id` INT UNSIGNED AUTO_INCREMENT,
+   `barcode` VARCHAR(100),
+   `name` INT(10),
+   `category_id` VARCHAR(100),
+   `sales_price` FLOAT,
+   `cost` FLOAT,
+   PRIMARY KEY ( `id` )
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
