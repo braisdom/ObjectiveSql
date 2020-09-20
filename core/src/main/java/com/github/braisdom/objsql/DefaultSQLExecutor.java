@@ -37,24 +37,24 @@ public class DefaultSQLExecutor<T> implements SQLExecutor<T> {
     }
 
     @Override
-    public List<T> query(Connection connection, String sql, DomainModelDescriptor domainModelDescriptor,
+    public List<T> query(Connection connection, String sql, TableRowDescriptor tableRowDescriptor,
                          Object... params) throws SQLException {
         return Databases.sqlBenchmarking(() ->
                 queryRunner.query(connection, sql,
-                        new DomainModelListHandler(domainModelDescriptor, connection.getMetaData()), params), logger, sql, params);
+                        new DomainModelListHandler(tableRowDescriptor, connection.getMetaData()), params), logger, sql, params);
     }
 
     @Override
-    public T insert(Connection connection, String sql,
-                    DomainModelDescriptor domainModelDescriptor, Object... params) throws SQLException {
+    public T insert(Connection connection, String sql, TableRowDescriptor tableRowDescriptor,
+                    Object... params) throws SQLException {
         return (T) Databases.sqlBenchmarking(() ->
                 queryRunner.insert(connection, sql,
-                        new DomainModelHandler(domainModelDescriptor, connection.getMetaData()), params), logger, sql, params);
+                        new DomainModelHandler(tableRowDescriptor, connection.getMetaData()), params), logger, sql, params);
     }
 
     @Override
-    public int[] insert(Connection connection, String sql,
-                        DomainModelDescriptor domainModelDescriptor, Object[][] params) throws SQLException {
+    public int[] insert(Connection connection, String sql, TableRowDescriptor tableRowDescriptor,
+                        Object[][] params) throws SQLException {
         return Databases.sqlBenchmarking(() ->
                 queryRunner.insertBatch(connection, sql, params), logger, sql, params);
     }

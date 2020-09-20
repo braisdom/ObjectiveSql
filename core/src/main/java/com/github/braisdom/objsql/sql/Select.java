@@ -45,7 +45,7 @@ public class Select<T> extends AbstractExpression implements Dataset {
         // Do nothing
     }
 
-    public Select(Dataset dataset) throws SQLSyntaxException {
+    public Select(Dataset dataset) {
         from(dataset);
     }
 
@@ -56,9 +56,7 @@ public class Select<T> extends AbstractExpression implements Dataset {
         return this;
     }
 
-    public Select from(Dataset... datasets) throws SQLSyntaxException {
-        if(this.fromDatasets != null)
-            throw new SQLSyntaxException("The from dataset has be given");
+    public Select from(Dataset... datasets) {
         this.fromDatasets = datasets;
         return this;
     }
