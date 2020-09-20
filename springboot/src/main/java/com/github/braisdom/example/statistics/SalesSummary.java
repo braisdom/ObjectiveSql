@@ -21,7 +21,7 @@ public class SalesSummary {
     private Product.Table productTable = Product.asTable();
     private OrderLine.Table orderLineTable = OrderLine.asTable();
     private Member.Table memberTable = Member.asTable();
-    
+
     public SalesSummary() {
         select = new Select();
     }

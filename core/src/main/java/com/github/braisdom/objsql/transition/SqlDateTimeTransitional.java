@@ -18,6 +18,7 @@ package com.github.braisdom.objsql.transition;
 
 import com.github.braisdom.objsql.DatabaseType;
 import com.github.braisdom.objsql.DomainModelDescriptor;
+import com.github.braisdom.objsql.TableRowDescriptor;
 
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSetMetaData;
@@ -28,7 +29,7 @@ public class SqlDateTimeTransitional<T> implements ColumnTransitional<T> {
 
     @Override
     public Object sinking(DatabaseMetaData databaseMetaData, T object,
-                          DomainModelDescriptor domainModelDescriptor, String fieldName, Object fieldValue) throws SQLException {
+                          TableRowDescriptor tableRowDescriptor, String fieldName, Object fieldValue) throws SQLException {
         if (fieldValue != null) {
             if (DatabaseType.SQLite.nameEquals(databaseMetaData.getDatabaseProductName())) {
                 return fieldValue.toString();
@@ -39,7 +40,7 @@ public class SqlDateTimeTransitional<T> implements ColumnTransitional<T> {
 
     @Override
     public Object rising(DatabaseMetaData databaseMetaData, ResultSetMetaData resultSetMetaData,
-                         T object, DomainModelDescriptor domainModelDescriptor, String columnName, Object columnValue) throws SQLException {
+                         T object, TableRowDescriptor tableRowDescriptor, String columnName, Object columnValue) throws SQLException {
         if (columnValue != null) {
             if (DatabaseType.SQLite.nameEquals(databaseMetaData.getDatabaseProductName())) {
                 return Timestamp.valueOf(String.valueOf(columnValue));

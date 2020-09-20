@@ -219,6 +219,15 @@ public final class PropertyUtils {
         }
     }
 
+    public static boolean supportRawAttribute(Object bean) {
+        try {
+            Method method = bean.getClass().getMethod("setRawAttribute", String.class, Object.class);
+            return method != null;
+        } catch (NoSuchMethodException ex) {
+            return false;
+        }
+    }
+
     public static void writeRawAttribute(Object bean, String name, Object value) {
         try {
             Method method = bean.getClass().getMethod("setRawAttribute", String.class, Object.class);

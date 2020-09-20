@@ -32,6 +32,7 @@ import java.util.*;
 
 /**
  * The default implementation for <code>DomainModelDescriptor</code> with JavaBean
+ *
  * @param <T>
  */
 public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
@@ -52,7 +53,7 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
     public BeanModelDescriptor(Class<T> domainModelClass) {
         Objects.requireNonNull(domainModelClass, "The domainModelClass cannot be null");
 
-        if(Tables.getPrimaryKey(domainModelClass) == null)
+        if (Tables.getPrimaryKey(domainModelClass) == null)
             throw new DomainModelException(String.format("The %s has no primary key", domainModelClass.getSimpleName()));
 
         this.domainModelClass = domainModelClass;
@@ -132,7 +133,7 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
     public Class getFieldType(String fieldName) {
         try {
             return domainModelClass.getDeclaredField(fieldName).getType();
-        }catch (NoSuchFieldException ex) {
+        } catch (NoSuchFieldException ex) {
             throw new IllegalStateException(ex.getMessage(), ex);
         }
     }

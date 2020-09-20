@@ -39,7 +39,7 @@ public class DefaultSQLExecutor<T> implements SQLExecutor<T> {
     @Override
     public List<T> query(Connection connection, String sql, DomainModelDescriptor domainModelDescriptor,
                          Object... params) throws SQLException {
-        return Databases.sqlBenchmarking(()->
+        return Databases.sqlBenchmarking(() ->
                 queryRunner.query(connection, sql,
                         new DomainModelListHandler(domainModelDescriptor, connection.getMetaData()), params), logger, sql, params);
     }
@@ -54,7 +54,7 @@ public class DefaultSQLExecutor<T> implements SQLExecutor<T> {
 
     @Override
     public int[] insert(Connection connection, String sql,
-                      DomainModelDescriptor domainModelDescriptor, Object[][] params) throws SQLException {
+                        DomainModelDescriptor domainModelDescriptor, Object[][] params) throws SQLException {
         return Databases.sqlBenchmarking(() ->
                 queryRunner.insertBatch(connection, sql, params), logger, sql, params);
     }
@@ -68,12 +68,12 @@ public class DefaultSQLExecutor<T> implements SQLExecutor<T> {
 
 class DomainModelListHandler implements ResultSetHandler<List> {
 
-    private final DomainModelDescriptor domainModelDescriptor;
+    private final TableRowDescriptor tableRowDescriptor;
     private final DatabaseMetaData databaseMetaData;
 
-    public DomainModelListHandler(DomainModelDescriptor domainModelDescriptor,
+    public DomainModelListHandler(TableRowDescriptor tableRowDescriptor,
                                   DatabaseMetaData databaseMetaData) {
-        this.domainModelDescriptor = domainModelDescriptor;
+        this.tableRowDescriptor = tableRowDescriptor;
         this.databaseMetaData = databaseMetaData;
     }
 
@@ -91,24 +91,27 @@ class DomainModelListHandler implements ResultSetHandler<List> {
     }
 
     private Object createBean(ResultSet rs) throws SQLException {
-        Object bean = domainModelDescriptor.newInstance();
+        Object bean = tableRowDescriptor.newInstance();
         ResultSetMetaData metaData = rs.getMetaData();
         int columnCount = metaData.getColumnCount();
 
         for (int i = 1; i <= columnCount; i++) {
             String columnName = metaData.getColumnName(i);
-            String fieldName = domainModelDescriptor.getFieldName(columnName);
+            String fieldName = tableRowDescriptor.getFieldName(columnName);
 
             if (fieldName != null) {
-                Class fieldType = domainModelDescriptor.getFieldType(fieldName);
-                ColumnTransitional columnTransitional = domainModelDescriptor.getColumnTransition(fieldName);
+                Class fieldType = tableRowDescriptor.getFieldType(fieldName);
+                ColumnTransitional columnTransitional = tableRowDescriptor.getColumnTransition(fieldName);
                 ForcedFieldValueConverter valueConverter = Databases.getValueConverter();
+
                 Object rawValue = valueConverter.convert(fieldType, rs.getObject(columnName));
                 Object value = columnTransitional == null ? rawValue : columnTransitional
-                        .rising(databaseMetaData, metaData, bean, domainModelDescriptor, fieldName, rawValue);
-                domainModelDescriptor.setValue(bean, fieldName, value);
-            } else
-                PropertyUtils.writeRawAttribute(bean, columnName, rs.getObject(columnName));
+                        .rising(databaseMetaData, metaData, bean, tableRowDescriptor, fieldName, rawValue);
+                tableRowDescriptor.setValue(bean, fieldName, value);
+            } else {
+                if (PropertyUtils.supportRawAttribute(bean))
+                    PropertyUtils.writeRawAttribute(bean, columnName, rs.getObject(columnName));
+            }
         }
 
         return bean;
@@ -117,54 +120,55 @@ class DomainModelListHandler implements ResultSetHandler<List> {
 
 class DomainModelHandler implements ResultSetHandler<Object> {
 
-    private static final List<String> AUTO_ROW_NAME = Arrays
+    private static final List<String> AUTO_GENERATE_COLUMN_NAMES = Arrays
             .asList(new String[]{"last_insert_rowid()", "GENERATED_KEY"});
 
-    private final DomainModelDescriptor domainModelDescriptor;
+    private final TableRowDescriptor tableRowDescriptor;
     private final DatabaseMetaData databaseMetaData;
 
-    public DomainModelHandler(DomainModelDescriptor domainModelDescriptor, DatabaseMetaData databaseMetaData) {
-        this.domainModelDescriptor = domainModelDescriptor;
+    public DomainModelHandler(TableRowDescriptor tableRowDescriptor, DatabaseMetaData databaseMetaData) {
+        this.tableRowDescriptor = tableRowDescriptor;
         this.databaseMetaData = databaseMetaData;
     }
 
     @Override
     public Object handle(ResultSet rs) throws SQLException {
-        Object bean = domainModelDescriptor.newInstance();
+        Object bean = tableRowDescriptor.newInstance();
         ResultSetMetaData metaData = rs.getMetaData();
         int columnCount = metaData.getColumnCount();
 
         for (int i = 1; i <= columnCount; i++) {
-            if(!rs.next())
-                break;
-            String columnName = metaData.getColumnName(i);
-            if(AUTO_ROW_NAME.contains(columnName)) {
-                PrimaryKey primaryKey = domainModelDescriptor.getPrimaryKey();
-                String primaryFieldName = domainModelDescriptor.getFieldName(primaryKey.name());
-                Class fieldType = domainModelDescriptor.getFieldType(primaryFieldName);
+            if (!rs.next()) break;
 
-                ColumnTransitional columnTransitional = domainModelDescriptor.getColumnTransition(primaryFieldName);
+            String columnName = metaData.getColumnName(i);
+            if (AUTO_GENERATE_COLUMN_NAMES.contains(columnName)) {
+                PrimaryKey primaryKey = tableRowDescriptor.getPrimaryKey();
+                String primaryFieldName = tableRowDescriptor.getFieldName(primaryKey.name());
+                ColumnTransitional columnTransitional = tableRowDescriptor.getColumnTransition(primaryFieldName);
                 ForcedFieldValueConverter valueConverter = Databases.getValueConverter();
 
+                Class fieldType = tableRowDescriptor.getFieldType(primaryFieldName);
                 Object rawValue = valueConverter.convert(fieldType, rs.getObject(columnName));
                 Object value = columnTransitional == null ? rawValue : columnTransitional
-                        .rising(databaseMetaData, metaData, bean, domainModelDescriptor, primaryFieldName, rawValue);
+                        .rising(databaseMetaData, metaData, bean, tableRowDescriptor, primaryFieldName, rawValue);
 
-                domainModelDescriptor.setValue(bean, primaryFieldName, value);
-            }else {
-                String fieldName = domainModelDescriptor.getFieldName(columnName);
+                tableRowDescriptor.setValue(bean, primaryFieldName, value);
+            } else {
+                String fieldName = tableRowDescriptor.getFieldName(columnName);
 
                 if (fieldName != null) {
-                    Class fieldType = domainModelDescriptor.getFieldType(fieldName);
-                    ColumnTransitional columnTransitional = domainModelDescriptor.getColumnTransition(fieldName);
+                    Class fieldType = tableRowDescriptor.getFieldType(fieldName);
+                    ColumnTransitional columnTransitional = tableRowDescriptor.getColumnTransition(fieldName);
                     ForcedFieldValueConverter valueConverter = Databases.getValueConverter();
 
                     Object rawValue = valueConverter.convert(fieldType, rs.getObject(columnName));
                     Object value = columnTransitional == null ? rawValue : columnTransitional
-                            .rising(databaseMetaData, metaData, bean, domainModelDescriptor, fieldName, rawValue);
-                    domainModelDescriptor.setValue(bean, fieldName, value);
-                } else
-                    PropertyUtils.writeRawAttribute(bean, columnName, rs.getObject(columnName));
+                            .rising(databaseMetaData, metaData, bean, tableRowDescriptor, fieldName, rawValue);
+                    tableRowDescriptor.setValue(bean, fieldName, value);
+                } else {
+                    if (PropertyUtils.supportRawAttribute(bean))
+                        PropertyUtils.writeRawAttribute(bean, columnName, rs.getObject(columnName));
+                }
             }
         }
 

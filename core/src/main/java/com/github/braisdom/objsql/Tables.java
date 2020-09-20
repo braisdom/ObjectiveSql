@@ -56,13 +56,10 @@ public final class Tables {
 
         Objects.requireNonNull(domainModel, "The baseClass must have the DomainModel annotation");
 
-        String tableName;
         if (!StringUtil.isBlank(domainModel.tableName()))
-            tableName = domainModel.tableName();
+            return domainModel.tableName();
         else
-            tableName = WordUtil.tableize(baseClass.getSimpleName());
-
-        return tableName;
+            return WordUtil.tableize(baseClass.getSimpleName());
     }
 
     public static final String getDataSourceName(Class baseClass) {
@@ -71,13 +68,10 @@ public final class Tables {
 
         Objects.requireNonNull(domainModel, "The baseClass must have the DomainModel annotation");
 
-        String dataSourceName;
-        if (!StringUtil.isBlank(domainModel.tableName()))
-            dataSourceName = domainModel.dataSource();
+        if (!StringUtil.isBlank(domainModel.dataSource()))
+            return domainModel.dataSource();
         else
-            dataSourceName = ConnectionFactory.DEFAULT_DATA_SOURCE_NAME;
-
-        return dataSourceName;
+            return ConnectionFactory.DEFAULT_DATA_SOURCE_NAME;
     }
 
     public static final PrimaryKey getPrimaryKey(Class tableClass) {
