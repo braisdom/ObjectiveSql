@@ -4,11 +4,16 @@ import com.github.braisdom.example.model.Member;
 import com.github.braisdom.example.model.Order;
 import com.github.braisdom.example.model.OrderLine;
 import com.github.braisdom.example.model.Product;
+import com.github.braisdom.objsql.DatabaseType;
+import com.github.braisdom.objsql.DynamicQuery;
+import com.github.braisdom.objsql.sql.SQLSyntaxException;
 import com.github.braisdom.objsql.sql.Select;
 
+import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.List;
 
-public class SalesSummary {
+public class SalesSummary extends DynamicQuery<StatisticsObject> {
 
     private Timestamp begin;
     private Timestamp end;
@@ -23,7 +28,12 @@ public class SalesSummary {
     private Member.Table memberTable = Member.asTable();
 
     public SalesSummary() {
+        super(DatabaseType.MySQL);
         select = new Select();
+    }
+
+    public List<StatisticsObject> execute(String dataSourceName) throws SQLException, SQLSyntaxException {
+        return super.execute(StatisticsObject.class, dataSourceName, select);
     }
 
     public SalesSummary salesBetween(Timestamp begin, Timestamp end) {
