@@ -30,8 +30,6 @@ public interface DomainModelDescriptor<T> extends TableRowDescriptor<T> {
 
     String getTableName();
 
-    Object getPrimaryValue(T domainObject);
-
     boolean skipNullOnUpdate();
 
     Class getDomainModelClass();

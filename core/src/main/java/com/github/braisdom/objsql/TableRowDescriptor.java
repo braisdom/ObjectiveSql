@@ -9,6 +9,8 @@ public interface TableRowDescriptor<T> {
 
     PrimaryKey getPrimaryKey();
 
+    Object getPrimaryValue(T domainObject);
+
     String getFieldName(String columnName);
 
     Class getFieldType(String fieldName);

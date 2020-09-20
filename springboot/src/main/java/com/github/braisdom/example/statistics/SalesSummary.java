@@ -47,5 +47,4 @@ public class SalesSummary {
         this.members = members;
         return this;
     }
-
 }
