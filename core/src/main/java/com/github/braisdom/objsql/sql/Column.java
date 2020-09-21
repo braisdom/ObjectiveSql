@@ -18,7 +18,7 @@ package com.github.braisdom.objsql.sql;
 
 /**
  * It describes a column of database, and defines the operators between
- * column and literal. It is a OOP for the SQL statements.
+ * column and expressions. It is a object-oriented programming for the SQL statements.
  */
 public interface Column extends Expression {
 
@@ -94,15 +94,35 @@ public interface Column extends Expression {
 
     Expression in(Expression expr, Expression... others);
 
+    Expression in(String strLiteral, String... strLiterals);
+
+    Expression in(Integer intLiteral, Integer... intLiterals);
+
+    Expression in(Long longLiteral, Long... longLiterals);
+
     Expression in(Dataset dataset);
 
     Expression notIn(Expression expr, Expression... others);
+
+    Expression notIn(String strLiteral, String... strLiterals);
+
+    Expression notIn(Integer intLiteral, Integer... intLiterals);
+
+    Expression notIn(Long longLiteral, Long... longLiterals);
 
     Expression notIn(Dataset dataset);
 
     Expression between(Expression left, Expression right);
 
     Expression notBetween(Expression left, Expression right);
+
+    Expression between(Integer left, Integer right);
+
+    Expression notBetween(Integer left, Integer right);
+
+    Expression between(Long left, Long right);
+
+    Expression notBetween(Long left, Long right);
 
     Expression like(String str);
 }

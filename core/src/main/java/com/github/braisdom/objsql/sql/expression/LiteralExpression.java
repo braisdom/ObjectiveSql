@@ -20,6 +20,8 @@ import com.github.braisdom.objsql.sql.AbstractExpression;
 import com.github.braisdom.objsql.sql.ExpressionContext;
 import com.github.braisdom.objsql.sql.SQLSyntaxException;
 
+import java.sql.Timestamp;
+
 public class LiteralExpression extends AbstractExpression {
 
     private final Object rawLiteral;
@@ -33,7 +35,10 @@ public class LiteralExpression extends AbstractExpression {
         if(rawLiteral == null)
             return " NULL ";
         if(String.class.isAssignableFrom(rawLiteral.getClass()))
-            return String.format("'%s'", String.valueOf(rawLiteral));
+            return String.format("'%s'", rawLiteral);
+        if(Timestamp.class.isAssignableFrom(rawLiteral.getClass())) {
+
+        }
         return String.valueOf(rawLiteral);
     }
 }

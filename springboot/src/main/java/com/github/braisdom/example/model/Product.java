@@ -8,7 +8,6 @@ public class Product {
     @Queryable
     private String barcode;
     private String name;
-    private Integer categoryId;
     private Double salesPrice;
     private Double cost;
 }

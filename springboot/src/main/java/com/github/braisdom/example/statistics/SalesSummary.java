@@ -6,6 +6,7 @@ import com.github.braisdom.example.model.OrderLine;
 import com.github.braisdom.example.model.Product;
 import com.github.braisdom.objsql.DatabaseType;
 import com.github.braisdom.objsql.DynamicQuery;
+import com.github.braisdom.objsql.sql.Expression;
 import com.github.braisdom.objsql.sql.SQLSyntaxException;
 import com.github.braisdom.objsql.sql.Select;
 
@@ -13,13 +14,17 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
 
+import static com.github.braisdom.objsql.sql.function.MySQLFunctions.strToDate;
+
 public class SalesSummary extends DynamicQuery<StatisticsObject> {
+    private static final String MYSQL_DATE_TIME_FORMAT = "%Y-%m-%dT%H:%i:%s";
 
     private Timestamp begin;
     private Timestamp end;
     private String[] barcodes;
     private String[] members;
 
+    private Expression whereExpression;
     private Select select;
 
     private Order.Table orderTable = Order.asTable();
@@ -37,19 +42,22 @@ public class SalesSummary extends DynamicQuery<StatisticsObject> {
     }
 
     public SalesSummary salesBetween(Timestamp begin, Timestamp end) {
-        this.begin = begin;
-        this.end = end;
+        whereExpression = appendAndExpression(whereExpression,
+                orderTable.salesAt.between(strToDate(begin.toString(), MYSQL_DATE_TIME_FORMAT),
+                        strToDate(end.toString(), MYSQL_DATE_TIME_FORMAT)));
         return this;
     }
 
     public SalesSummary salesBetween(String begin, String end) {
-        this.begin = Timestamp.valueOf(begin);
-        this.end = Timestamp.valueOf(end);
+        whereExpression = appendAndExpression(whereExpression,
+                orderTable.salesAt.between(strToDate(begin, MYSQL_DATE_TIME_FORMAT),
+                        strToDate(end, MYSQL_DATE_TIME_FORMAT)));
         return this;
     }
 
     public SalesSummary productIn(String... barcodes) {
-        this.barcodes = barcodes;
+//        whereExpression = appendAndExpression(productTable
+//                .barcode.in());
         return this;
     }
 

@@ -19,6 +19,8 @@ package com.github.braisdom.objsql.sql;
 import com.github.braisdom.objsql.Tables;
 import com.github.braisdom.objsql.sql.expression.*;
 
+import java.util.Arrays;
+
 public class DefaultColumn extends AbstractExpression implements Column {
 
     private final Class domainModelClass;
@@ -236,8 +238,76 @@ public class DefaultColumn extends AbstractExpression implements Column {
     }
 
     @Override
+    public Expression in(String strLiteral, String... strLiterals) {
+        Expression[] others = Arrays.stream(strLiterals)
+                .map(literal -> new LiteralExpression(literal)).toArray(Expression[]::new);
+        return new ColumnExpression(this, new InExpression(false,
+                new LiteralExpression(strLiteral), others));
+    }
+
+    @Override
+    public Expression in(Integer intLiteral, Integer... intLiterals) {
+        Expression[] others = Arrays.stream(intLiterals)
+                .map(literal -> new LiteralExpression(literal)).toArray(Expression[]::new);
+        return new ColumnExpression(this, new InExpression(false,
+                new LiteralExpression(intLiteral), others));
+    }
+
+    @Override
+    public Expression in(Long longLiteral, Long... longLiterals) {
+        Expression[] others = Arrays.stream(longLiterals)
+                .map(literal -> new LiteralExpression(literal)).toArray(Expression[]::new);
+        return new ColumnExpression(this, new InExpression(false,
+                new LiteralExpression(longLiteral), others));
+    }
+
+    @Override
+    public Expression notIn(String strLiteral, String... strLiterals) {
+        Expression[] others = Arrays.stream(strLiterals)
+                .map(literal -> new LiteralExpression(literal)).toArray(Expression[]::new);
+        return new ColumnExpression(this, new InExpression(true,
+                new LiteralExpression(strLiteral), others));
+    }
+
+    @Override
+    public Expression notIn(Integer intLiteral, Integer... intLiterals) {
+        Expression[] others = Arrays.stream(intLiterals)
+                .map(literal -> new LiteralExpression(literal)).toArray(Expression[]::new);
+        return new ColumnExpression(this, new InExpression(true,
+                new LiteralExpression(intLiteral), others));
+    }
+
+    @Override
+    public Expression notIn(Long longLiteral, Long... longLiterals) {
+        Expression[] others = Arrays.stream(longLiterals)
+                .map(literal -> new LiteralExpression(literal)).toArray(Expression[]::new);
+        return new ColumnExpression(this, new InExpression(true,
+                new LiteralExpression(longLiteral), others));
+    }
+
+    @Override
     public Expression notBetween(Expression left, Expression right) {
         return new ColumnExpression(this, new BetweenExpression(true, left, right));
+    }
+
+    @Override
+    public Expression between(Integer left, Integer right) {
+        return between(new LiteralExpression(left), new LiteralExpression(right));
+    }
+
+    @Override
+    public Expression notBetween(Integer left, Integer right) {
+        return notBetween(new LiteralExpression(left), new LiteralExpression(right));
+    }
+
+    @Override
+    public Expression between(Long left, Long right) {
+        return between(new LiteralExpression(left), new LiteralExpression(right));
+    }
+
+    @Override
+    public Expression notBetween(Long left, Long right) {
+        return notBetween(new LiteralExpression(left), new LiteralExpression(right));
     }
 
     @Override
