@@ -29,6 +29,7 @@ CREATE TABLE IF NOT EXISTS `objective_sql`.`order_lines`(
    `barcode` VARCHAR(100),
    `product_id` INT(10),
    `member_id` VARCHAR(100),
+   `sales_price` FLOAT,
    `amount` FLOAT,
    `quantity` FLOAT,
    PRIMARY KEY ( `id` )

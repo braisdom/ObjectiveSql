@@ -9,6 +9,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
+import static com.github.braisdom.objsql.sql.Expressions.and;
+
 public abstract class DynamicQuery<T> {
 
     private final DatabaseType databaseType;
@@ -27,8 +29,8 @@ public abstract class DynamicQuery<T> {
     }
 
     protected Expression appendAndExpression(Expression originalExpr, Expression newExpr) {
-        if(originalExpr == null)
+        if(newExpr == null)
             return originalExpr;
-        return appendAndExpression(originalExpr, newExpr);
+        return and(originalExpr, newExpr);
     }
 }
