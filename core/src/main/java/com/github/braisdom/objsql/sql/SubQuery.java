@@ -11,4 +11,9 @@ public class SubQuery extends Select {
     public Expression getAssociationExpr() {
         return associationExpr;
     }
+
+    @Override
+    public String toSql(ExpressionContext expressionContext) throws SQLSyntaxException {
+        return String.format("(%s)", super.toSql(expressionContext));
+    }
 }

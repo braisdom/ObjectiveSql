@@ -57,13 +57,13 @@ public class JoinExpression implements Expression {
                 joinTypeString = "RIGHT OUTER JOIN";
                 break;
             case INNER_JOIN:
-                joinTypeString = "FULL JOIN";
+                joinTypeString = "INNER JOIN";
                 break;
             case FULL_JOIN:
                 joinTypeString = "FULL JOIN";
                 break;
         }
-        return String.format(" %s %s %s ", joinTypeString, dataset.toSql(expressionContext),
+        return String.format(" %s %s ON %s ", joinTypeString, dataset.toSql(expressionContext),
                 onExpression.toSql(expressionContext));
     }
 }
