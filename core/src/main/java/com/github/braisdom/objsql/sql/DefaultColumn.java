@@ -18,8 +18,11 @@ package com.github.braisdom.objsql.sql;
 
 import com.github.braisdom.objsql.Tables;
 import com.github.braisdom.objsql.sql.expression.*;
+import com.github.braisdom.objsql.util.StringUtil;
 
+import javax.validation.constraints.NotNull;
 import java.util.Arrays;
+import java.util.Objects;
 
 public class DefaultColumn extends AbstractExpression implements Column {
 
@@ -27,11 +30,13 @@ public class DefaultColumn extends AbstractExpression implements Column {
     private final Dataset dataset;
     private final String columnName;
 
-    public static Column create(Class domainModelClass, Dataset dataset, String name) {
-        return new DefaultColumn(domainModelClass, dataset, name);
+    public static Column create(Class domainModelClass, Dataset dataset, String columnName) {
+        return new DefaultColumn(domainModelClass, dataset, columnName);
     }
 
-    public DefaultColumn(Class domainModelClass, Dataset dataset, String columnName) {
+    public DefaultColumn(@NotNull Class domainModelClass, @NotNull Dataset dataset, String columnName) {
+        if (StringUtil.isBlank(columnName))
+            throw new IllegalArgumentException("The column cannot be empty");
         this.domainModelClass = domainModelClass;
         this.dataset = dataset;
         this.columnName = Tables.getColumnName(domainModelClass, columnName);

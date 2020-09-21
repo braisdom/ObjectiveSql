@@ -16,11 +16,8 @@ public class Member {
 
     @Queryable
     private String name;
-
     private Integer gender;
-
     private String mobile;
-
     private String otherInfo;
 
     @Relation(relationType = RelationType.HAS_MANY)

@@ -127,8 +127,11 @@ public final class Tables {
         try {
             Field field = tableClass.getDeclaredField(fieldName);
             Column column = field.getDeclaredAnnotation(Column.class);
-            if (column != null)
-                return column.name();
+
+            if (column != null) {
+                if(!WordUtil.isEmpty(column.name()))
+                    return column.name();
+            }
 
             return WordUtil.underscore(field.getName());
         } catch (NoSuchFieldException ex) {
