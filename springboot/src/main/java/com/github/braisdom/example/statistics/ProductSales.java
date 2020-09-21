@@ -42,7 +42,7 @@ public class ProductSales extends DynamicQuery<StatisticsObject> {
 
         select.from(orderSummaryQuery)
                 .where(globalFilterExpression)
-                .leftOuterJoin(productTable, productTable.id.eq(orderSummaryQuery.getAssociationExpr()));
+                .leftOuterJoin(memberTable, memberTable.no.eq(orderSummaryQuery.getAssociationExpr()));
         String sql = select.toSql(new DefaultExpressionContext(DatabaseType.MySQL));
         return super.execute(StatisticsObject.class, dataSourceName, select);
     }
@@ -50,8 +50,7 @@ public class ProductSales extends DynamicQuery<StatisticsObject> {
     private SubQuery createOrderSummary() {
         SubQuery orderSummary = new SubQuery();
         orderSummary
-                .project(
-                        orderLineTable.productId,
+                .project(orderLineTable.productId,
                         countDistinct(orderTable.memberId),
                         sum(orderTable.amount),
                         sum(orderTable.quantity),
