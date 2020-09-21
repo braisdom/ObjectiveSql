@@ -96,6 +96,7 @@ public class Mock {
                 orderLine.setOrderId(order.getId())
                         .setOrderNo(orderNo)
                         .setBarcode(product.getBarcode())
+                        .setSalesPrice(product.getSalesPrice())
                         .setAmount(product.getSalesPrice() * quantity)
                         .setQuantity(quantity)
                         .setMemberId(memberId)
