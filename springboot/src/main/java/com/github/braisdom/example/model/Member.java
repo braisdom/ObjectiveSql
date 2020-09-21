@@ -18,7 +18,9 @@ public class Member {
     private String name;
 
     private Integer gender;
+
     private String mobile;
+
     private String otherInfo;
 
     @Relation(relationType = RelationType.HAS_MANY)
