@@ -8,6 +8,7 @@ import com.github.braisdom.objsql.relation.RelationType;
 public class OrderLine {
     private String barcode;
     private String orderNo;
+    private Integer memberId;
     private Integer orderId;
     private Double amount;
     private Double quantity;

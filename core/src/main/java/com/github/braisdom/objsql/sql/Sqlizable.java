@@ -16,6 +16,9 @@
  */
 package com.github.braisdom.objsql.sql;
 
+/**
+ * Indicates a node can become to SQL expression.
+ */
 public interface Sqlizable {
 
     String toSql(ExpressionContext expressionContext) throws SQLSyntaxException;

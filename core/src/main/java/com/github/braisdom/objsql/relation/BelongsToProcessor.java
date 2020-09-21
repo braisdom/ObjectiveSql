@@ -36,16 +36,16 @@ public class BelongsToProcessor implements RelationProcessor {
         List baseObjects = context.getObjects(relationship.getBaseClass());
 
         List associatedKeys = (List) baseObjects.stream()
-                .map(o -> PropertyUtils.readDirectly(o, foreignFieldName))
+                .map(o -> PropertyUtils.read(o, foreignFieldName))
                 .distinct()
                 .collect(Collectors.toList());
         List rawRelatedObjects = context.queryRelatedObjects(relatedClass,
                 primaryKey, associatedKeys.toArray(), relationship.getRelationCondition());
         Map<Object, List> groupedRelatedObjects = (Map<Object, List>) rawRelatedObjects
-                .stream().collect(Collectors.groupingBy(o -> PropertyUtils.readDirectly(o, primaryFieldName)));
+                .stream().collect(Collectors.groupingBy(o -> PropertyUtils.read(o, primaryFieldName)));
 
         baseObjects.stream().forEach(o -> {
-            Object primaryValue = PropertyUtils.readDirectly(o, foreignFieldName);
+            Object primaryValue = PropertyUtils.read(o, foreignFieldName);
             List relatedObjects = groupedRelatedObjects.get(primaryValue);
             Relationship.setRelationalObjects(relationship, o, associatedFieldName, relatedObjects);
         });

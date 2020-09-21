@@ -16,6 +16,7 @@
  */
 package com.github.braisdom.objsql.reflection;
 
+import com.github.braisdom.objsql.ForcedFieldValueConverter;
 import com.github.braisdom.objsql.relation.RelationalException;
 import com.github.braisdom.objsql.util.WordUtil;
 
@@ -61,17 +62,6 @@ public final class PropertyUtils {
 
     public static Collection<PropertyDescriptor> getPropertyDescriptors(Object object) {
         return getPropertyDescriptors(ClassUtils.getRealClass(object));
-    }
-
-    public static <A extends Annotation> Map<PropertyDescriptor, A> getPropertyDescriptorsWithAnnotation(Object object, Class<A> annotationClass) {
-        Class<Object> objectClass = ClassUtils.getRealClass(object);
-        return getPropertyDescriptorsWithAnnotation(objectClass, annotationClass);
-    }
-
-    public static <A extends Annotation> Map<PropertyDescriptor, A> getPropertyDescriptorsWithAnnotation(Class<?> type,
-                                                                                                         Class<A> annotationClass) {
-        PropertyDescriptorCache<?> propertyDescriptorCache = getCache(type);
-        return propertyDescriptorCache.getDescriptorsForAnnotation(annotationClass);
     }
 
     @SuppressWarnings("unchecked")
@@ -130,12 +120,9 @@ public final class PropertyUtils {
         write(destination, propertyDescriptor, value);
     }
 
-    public static <T> void writeIfPropertyExists(Object destination, String propertyName, Supplier<T> valueSupplier) {
-        PropertyDescriptor property = getPropertyDescriptorByName(destination, propertyName);
-        if (property != null) {
-            T value = valueSupplier.get();
-            write(destination, property, value);
-        }
+    public static void write(Object destination, String propertyName, Object value, ForcedFieldValueConverter valueConverter) {
+        PropertyDescriptor propertyDescriptor = getPropertyDescriptorByNameOrThrow(destination, propertyName);
+        write(destination, propertyDescriptor, valueConverter.convert(propertyDescriptor.getPropertyType(), value));
     }
 
     public static void write(Object destination, PropertyDescriptor propertyDescriptor, Object value) {
@@ -145,11 +132,7 @@ public final class PropertyUtils {
     public static void write(Object destination, PropertyDescriptor propertyDescriptor, Object value, boolean force) {
         try {
             if (!isWritable(propertyDescriptor)) {
-                if (force) {
-                    writeDirectly(destination, propertyDescriptor, value);
-                } else {
-                    throw new RelationalException(propertyDescriptor.getName() + " is not writable");
-                }
+                throw new RelationalException(propertyDescriptor.getName() + " is not writable");
             } else {
                 Object[] args = new Object[]{value};
                 Method writeMethod = propertyDescriptor.getWriteMethod();
@@ -160,62 +143,9 @@ public final class PropertyUtils {
         }
     }
 
-    public static void writeDirectly(Object destination, PropertyDescriptor propertyDescriptor, Object value) {
-        writeDirectly(destination, propertyDescriptor.getName(), value);
-    }
-
-    public static void writeDirectly(Object destination, String propertyName, Object value) {
-        try {
-            Field field = findField(destination.getClass(), propertyName);
-            writeDirectly(destination, field, value);
-        } catch (NoSuchFieldException e) {
-            throw new ReflectionException("Failed to write " + getQualifiedPropertyName(destination, propertyName), e);
-        }
-    }
-
-    public static void writeDirectly(Object destination, Field field, Object value) {
-        try {
-            withAccessibleObject(field, f -> f.set(destination, value));
-        } catch (ReflectiveOperationException e) {
-            throw new ReflectionException("Failed to write " + getQualifiedPropertyName(destination, field), e);
-        }
-    }
-
-    private static Field findField(Class<?> objectClass, String propertyName) throws NoSuchFieldException {
-        try {
-            return objectClass.getDeclaredField(propertyName);
-        } catch (NoSuchFieldException e) {
-            Class<?> superclass = objectClass.getSuperclass();
-            if (!superclass.equals(Object.class)) {
-                return findField(superclass, propertyName);
-            }
-            throw e;
-        }
-    }
-
-    public static <T> T readDirectly(Object object, PropertyDescriptor propertyDescriptor) {
-        return readDirectly(object, propertyDescriptor.getName());
-    }
-
-    public static <T> T readDirectly(Object object, String propertyName) {
-        try {
-            Field field = findField(object.getClass(), propertyName);
-            return readDirectly(object, field);
-        } catch (NoSuchFieldException e) {
-            throw new ReflectionException("Failed to read " + getQualifiedPropertyName(object, propertyName), e);
-        }
-    }
-
-    public static <T> T readDirectly(Object object, Field field) {
-        try {
-            return withAccessibleObject(field, f -> {
-                @SuppressWarnings("unchecked")
-                T value = (T) field.get(object);
-                return value;
-            }, true);
-        } catch (ReflectiveOperationException e) {
-            throw new ReflectionException("Failed to read " + getQualifiedPropertyName(object, field), e);
-        }
+    public static <T> T read(Object source, String propertyName) {
+        PropertyDescriptor propertyDescriptor = getPropertyDescriptorByNameOrThrow(source, propertyName);
+        return read(source, propertyDescriptor);
     }
 
     public static <T> T read(Object source, PropertyDescriptor propertyDescriptor) {
@@ -226,11 +156,7 @@ public final class PropertyUtils {
         final Object result;
         try {
             if (!isReadable(propertyDescriptor)) {
-                if (force) {
-                    return readDirectly(source, propertyDescriptor);
-                } else {
-                    throw new IllegalArgumentException(String.format("%s must be readable", propertyDescriptor.getName()));
-                }
+                throw new IllegalArgumentException(String.format("%s must be readable", propertyDescriptor.getName()));
             } else {
                 Method readMethod = propertyDescriptor.getReadMethod();
                 result = withAccessibleObject(readMethod, method -> readMethod.invoke(source), force);
@@ -248,7 +174,8 @@ public final class PropertyUtils {
         populate(bean, properties, true);
     }
 
-    public static void populate(final Object bean, final Map<String, ? extends Object> properties, final boolean underline)
+    public static void populate(final Object bean, final Map<String, ? extends Object> properties,
+                                final boolean underline)
             throws ReflectionException {
         Objects.requireNonNull(bean, "The bean cannot be null");
 
@@ -259,7 +186,23 @@ public final class PropertyUtils {
             final String name = underline ? WordUtil.camelize(entry.getKey(), true) : entry.getKey();
             if (name == null)
                 continue;
-            writeDirectly(bean, name, entry.getValue());
+            write(bean, name, entry.getValue());
+        }
+    }
+
+    public static void populate(final Object bean, final Map<String, ? extends Object> properties,
+                                final boolean underline, ForcedFieldValueConverter valueConverter)
+            throws ReflectionException {
+        Objects.requireNonNull(bean, "The bean cannot be null");
+
+        if (properties == null)
+            return;
+
+        for (final Map.Entry<String, ? extends Object> entry : properties.entrySet()) {
+            final String name = underline ? WordUtil.camelize(entry.getKey(), true) : entry.getKey();
+            if (name == null)
+                continue;
+            write(bean, name, entry.getValue(), valueConverter);
         }
     }
 
@@ -276,6 +219,15 @@ public final class PropertyUtils {
         }
     }
 
+    public static boolean supportRawAttribute(Object bean) {
+        try {
+            Method method = bean.getClass().getMethod("setRawAttribute", String.class, Object.class);
+            return method != null;
+        } catch (NoSuchMethodException ex) {
+            return false;
+        }
+    }
+
     public static void writeRawAttribute(Object bean, String name, Object value) {
         try {
             Method method = bean.getClass().getMethod("setRawAttribute", String.class, Object.class);
@@ -289,51 +241,6 @@ public final class PropertyUtils {
         }
     }
 
-    public static <T> T readIfPropertyExists(Object source, String propertyName) {
-        PropertyDescriptor property = getPropertyDescriptorByName(source, propertyName);
-        if (property != null) {
-            return read(source, property);
-        } else {
-            return null;
-        }
-    }
-
-    public static <T> T readProperty(Object entity, PropertyDescriptor propertyDescriptor, Class<T> expectedType) {
-        Class<?> clazz = ClassUtils.getRealClass(entity);
-        String propertyName = propertyDescriptor.getName();
-        Class<?> propertyType = propertyDescriptor.getPropertyType();
-        if (!expectedType.isAssignableFrom(propertyType)) {
-            throw new IllegalArgumentException(String.format("%s.%s is of type %s but %s is expected", clazz, propertyName, propertyType, expectedType));
-        }
-        return PropertyUtils.read(entity, propertyDescriptor);
-    }
-
-    public static <T> PropertyDescriptor getPropertyDescriptorByMethod(Class<T> beanClass, Method method) {
-        PropertyDescriptorCache<?> propertyDescriptorCache = getCache(beanClass);
-        return propertyDescriptorCache.getDescriptorByMethod(method);
-    }
-
-    public static <T> PropertyDescriptor getPropertyDescriptorByField(Class<T> beanClass, Field field) {
-        PropertyDescriptorCache<?> propertyDescriptorCache = getCache(beanClass);
-        return propertyDescriptorCache.getDescriptorByField(field);
-    }
-
-    public static boolean hasAnnotationOfProperty(Class<?> entityType, PropertyDescriptor descriptor, Class<? extends Annotation> annotationClass) {
-        return getAnnotationOfProperty(entityType, descriptor, annotationClass) != null;
-    }
-
-
-    public static <A extends Annotation> A getAnnotationOfProperty(Object object, PropertyDescriptor descriptor, Class<A> annotationClass) {
-        Class<Object> objectClass = ClassUtils.getRealClass(object);
-        return getAnnotationOfProperty(objectClass, descriptor, annotationClass);
-    }
-
-    public static <A extends Annotation> A getAnnotationOfProperty(Class<?> entityType, PropertyDescriptor descriptor, Class<A> annotationClass) {
-        PropertyDescriptorCache<?> cache = getCache(entityType);
-        Map<PropertyDescriptor, A> descriptorsForAnnotation = cache.getDescriptorsForAnnotation(annotationClass);
-        return descriptorsForAnnotation.get(descriptor);
-    }
-
     public static boolean isFullyAccessible(PropertyDescriptor descriptor) {
         return isReadable(descriptor) && isWritable(descriptor);
     }
@@ -344,19 +251,6 @@ public final class PropertyUtils {
 
     public static boolean isReadable(PropertyDescriptor descriptor) {
         return descriptor.getReadMethod() != null;
-    }
-
-    public static boolean isDeclaredInClass(PropertyDescriptor propertyDescriptor, Class<?> entityClass) {
-        Method readMethod = propertyDescriptor.getReadMethod();
-        return readMethod != null && Objects.equals(readMethod.getDeclaringClass(), entityClass);
-    }
-
-    public static boolean hasProperty(Object bean, String propertyName) {
-        return getPropertyDescriptorByName(bean, propertyName) != null;
-    }
-
-    public static boolean hasProperty(Class<?> beanClass, String propertyName) {
-        return getPropertyDescriptorByName(beanClass, propertyName) != null;
     }
 
     public static Object getDefaultValueObject(Class<?> type) {

@@ -56,13 +56,10 @@ public final class Tables {
 
         Objects.requireNonNull(domainModel, "The baseClass must have the DomainModel annotation");
 
-        String tableName;
         if (!StringUtil.isBlank(domainModel.tableName()))
-            tableName = domainModel.tableName();
+            return domainModel.tableName();
         else
-            tableName = WordUtil.tableize(baseClass.getSimpleName());
-
-        return tableName;
+            return WordUtil.tableize(baseClass.getSimpleName());
     }
 
     public static final String getDataSourceName(Class baseClass) {
@@ -71,13 +68,10 @@ public final class Tables {
 
         Objects.requireNonNull(domainModel, "The baseClass must have the DomainModel annotation");
 
-        String dataSourceName;
-        if (!StringUtil.isBlank(domainModel.tableName()))
-            dataSourceName = domainModel.dataSource();
+        if (!StringUtil.isBlank(domainModel.dataSource()))
+            return domainModel.dataSource();
         else
-            dataSourceName = ConnectionFactory.DEFAULT_DATA_SOURCE_NAME;
-
-        return dataSourceName;
+            return ConnectionFactory.DEFAULT_DATA_SOURCE_NAME;
     }
 
     public static final PrimaryKey getPrimaryKey(Class tableClass) {
@@ -101,14 +95,14 @@ public final class Tables {
     public static Object getPrimaryValue(Object domainObject) {
         PrimaryKey primaryKey = getPrimaryKey(domainObject.getClass());
         if (primaryKey != null) {
-            return PropertyUtils.readDirectly(domainObject, primaryKey.name());
+            return PropertyUtils.read(domainObject, primaryKey.name());
         } else return null;
     }
 
     public static void writePrimaryValue(Object domainObject, Object primaryValue) {
         PrimaryKey primaryKey = getPrimaryKey(domainObject.getClass());
         if (primaryKey != null)
-            PropertyUtils.writeDirectly(domainObject, primaryKey.name(), primaryValue);
+            PropertyUtils.write(domainObject, primaryKey.name(), primaryValue);
     }
 
     public static final Field getPrimaryField(Class tableClass) {
@@ -191,14 +185,6 @@ public final class Tables {
                 sqlExecutor.query(connection, sql, domainModelDescriptor, params));
     }
 
-    /**
-     * It will be invoked in DomainModel class for execute arbitrary SQL
-     *
-     * @param sql
-     * @param params
-     * @return
-     * @throws SQLException
-     */
     public static final int execute(Class<?> domainModelClass, String sql, Object... params) throws SQLException {
         String dataSourceName = Tables.getDataSourceName(domainModelClass);
         return Databases.execute(dataSourceName, (connection, sqlExecutor) ->

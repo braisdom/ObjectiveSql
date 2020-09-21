@@ -1,6 +1,7 @@
 package com.github.braisdom.example;
 
 import com.github.braisdom.example.model.Member;
+import com.github.braisdom.example.model.Order;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
@@ -9,51 +10,36 @@ import java.util.List;
 @RestController
 public class MembersController {
 
-    /**
-     * URL: POST http://localhost:8080/members
-     * Request JSON payload: {"no": "00001", "name": "Braisdom", "gender": 1, "mobile": "18900000000", "otherInfo": "none" }
-     *
-     * @param rawMember
-     * @return
-     * @throws SQLException
-     */
     @PostMapping("/members")
-    public Member create(@RequestBody RequestObject rawMember) throws SQLException {
+    public ResponseObject create(@RequestBody RequestObject rawMember) throws SQLException {
         Member dirtyMember = Member.newInstanceFrom(rawMember, false);
-        return Member.create(dirtyMember, true);
+        Member member = Member.create(dirtyMember, true);
+        return ResponseObject.createSuccessResponse(member);
     }
 
-    /**
-     * URL: GET http://localhost:8080/members/00001
-     *
-     * @param memberNo
-     * @return
-     * @throws SQLException
-     */
     @GetMapping("/members/{no}")
-    public Member getMember(@PathVariable("no") String memberNo) throws SQLException {
-        return Member.queryByNo(memberNo);
+    public ResponseObject getMember(@PathVariable("no") String memberNo) throws SQLException {
+        Member member = Member.queryByNo(memberNo);
+        return ResponseObject.createSuccessResponse(member);
     }
 
-    /**
-     * URL: GET http://localhost:8080/members/00001
-     *
-     * @return
-     * @throws SQLException
-     */
     @GetMapping("/members")
-    public List<Member> getMembers() throws SQLException {
-        return Member.queryAll();
+    public ResponseObject getMembers() throws SQLException {
+        List<Member> members = Member.queryAll();
+        return ResponseObject.createSuccessResponse(members);
     }
 
-    /**
-     * URL: GET http://localhost:8080/members/00001
-     *
-     * @return
-     * @throws SQLException
-     */
     @GetMapping("/members/{no}/orders")
-    public Member getMemberOrders(@PathVariable("no") String no) throws SQLException {
-        return Member.queryByNo(no, Member.HAS_MANY_ORDERS);
+    public ResponseObject getMemberOrders(@PathVariable("no") String no) throws SQLException {
+        Member member = Member.queryByNo(no, Member.HAS_MANY_ORDERS, Order.HAS_MANY_ORDER_LINES);
+        return ResponseObject.createSuccessResponse(member);
+    }
+
+    @PutMapping("/members/{no}")
+    public ResponseObject updateMember(@PathVariable("no") String memberNo,
+                                       @RequestBody RequestObject rawMember) throws SQLException {
+        Member member = Member.queryByNo(memberNo);
+        Member.update(member.getId(), Member.newInstanceFrom(rawMember), true);
+        return ResponseObject.createSuccessResponse();
     }
 }

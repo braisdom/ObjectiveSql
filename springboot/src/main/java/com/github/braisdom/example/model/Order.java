@@ -36,14 +36,19 @@ public class Order {
     public static Order makeOrder(Member member, RequestObject rawOrder) throws SQLException {
         RequestObject[] rawOrderLines = rawOrder.getArray(KEY_ORDER_LINES);
 
-        Order dirtyOrder = Order.newInstanceFrom(rawOrder, false);
+        Order dirtyOrder = Order.newInstanceFrom(rawOrder);
         dirtyOrder.setMemberId(member.getId());
 
         Order order = dirtyOrder.save(true);
+
         List<OrderLine> orderLines = new ArrayList();
         for (RequestObject rawOrderLine : rawOrderLines) {
-            OrderLine orderLine = OrderLine.newInstanceFrom(rawOrderLine, false);
+            OrderLine orderLine = OrderLine.newInstanceFrom(rawOrderLine);
+
             orderLine.setOrder(order);
+            orderLine.setMemberId(member.getId());
+
+            orderLines.add(orderLine);
         }
 
         OrderLine.create(orderLines.toArray(new OrderLine[]{}), false);

@@ -17,6 +17,7 @@
 package com.github.braisdom.objsql.transition;
 
 import com.github.braisdom.objsql.DomainModelDescriptor;
+import com.github.braisdom.objsql.TableRowDescriptor;
 
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSetMetaData;
@@ -27,16 +28,10 @@ public interface ColumnTransitional<T> {
     /**
      * Puts the Java field value into the database.
      *
-     * @param databaseMetaData
-     * @param object
-     * @param domainModelDescriptor
-     * @param fieldName
-     * @param fieldValue
-     * @return
      * @throws SQLException
      */
     default Object sinking(DatabaseMetaData databaseMetaData,
-                           T object, DomainModelDescriptor domainModelDescriptor,
+                           T object, TableRowDescriptor tableRowDescriptor,
                            String fieldName, Object fieldValue) throws SQLException {
         return fieldValue;
     }
@@ -44,17 +39,10 @@ public interface ColumnTransitional<T> {
     /**
      * Pulls the database column value to Java field
      *
-     * @param databaseMetaData
-     * @param resultSetMetaData
-     * @param object
-     * @param domainModelDescriptor
-     * @param fieldName
-     * @param columnValue
-     * @return
      * @throws SQLException
      */
     default Object rising(DatabaseMetaData databaseMetaData, ResultSetMetaData resultSetMetaData,
-                          T object, DomainModelDescriptor domainModelDescriptor,
+                          T object, TableRowDescriptor tableRowDescriptor,
                           String fieldName, Object columnValue) throws SQLException {
         return columnValue;
     }

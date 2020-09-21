@@ -1,6 +1,7 @@
 package com.github.braisdom.objsql.example;
 
 import com.github.braisdom.objsql.annotations.*;
+import com.github.braisdom.objsql.reflection.PropertyUtils;
 import com.github.braisdom.objsql.relation.RelationType;
 import com.github.braisdom.objsql.transition.SqlDateTimeTransitional;
 
@@ -87,5 +88,11 @@ public final class Domains {
                 "amount REAL, quantity REAL, sales_at TEXT)");
         connection.createStatement().execute("create table order_lines (id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "order_no TEXT, amount REAL, quantity REAL)");
+    }
+
+    public static void main(String[] args) {
+        Member member = new Member();
+
+        PropertyUtils.write(member, "no", "aa");
     }
 }

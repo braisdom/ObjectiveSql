@@ -49,7 +49,7 @@ public class Application {
 
     @Bean(name = ConnectionFactory.DEFAULT_DATA_SOURCE_NAME)
     @ConfigurationProperties("spring.objsql-datasource.objsql-default-datasource")
-    public DataSource defaultDataSource(){
+    public DataSource getDataSource(){
         return DataSourceBuilder.create().build();
     }
 
