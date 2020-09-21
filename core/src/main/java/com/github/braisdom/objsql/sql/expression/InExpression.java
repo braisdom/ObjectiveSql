@@ -33,9 +33,8 @@ public class InExpression extends AbstractExpression {
 
     private final boolean negated;
 
-    public InExpression(boolean negated, Expression expression, Expression... others) {
+    public InExpression(boolean negated, Expression... others) {
         this.negated = negated;
-        expressions.add(expression);
         expressions.addAll(Arrays.asList(others));
     }
 

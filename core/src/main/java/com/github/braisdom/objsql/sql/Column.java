@@ -92,23 +92,23 @@ public interface Column extends Expression {
 
     Expression ne2(String literal);
 
-    Expression in(Expression expr, Expression... others);
+    Expression in(Expression... expressions);
 
-    Expression in(String strLiteral, String... strLiterals);
+    Expression in(String... strLiterals);
 
-    Expression in(Integer intLiteral, Integer... intLiterals);
+    Expression in(Integer... intLiterals);
 
-    Expression in(Long longLiteral, Long... longLiterals);
+    Expression in(Long... longLiterals);
 
     Expression in(Dataset dataset);
 
-    Expression notIn(Expression expr, Expression... others);
+    Expression notIn(Expression... expressions);
 
-    Expression notIn(String strLiteral, String... strLiterals);
+    Expression notIn(String... strLiterals);
 
-    Expression notIn(Integer intLiteral, Integer... intLiterals);
+    Expression notIn(Integer... intLiterals);
 
-    Expression notIn(Long longLiteral, Long... longLiterals);
+    Expression notIn(Long... longLiterals);
 
     Expression notIn(Dataset dataset);
 

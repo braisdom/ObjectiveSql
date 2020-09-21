@@ -213,8 +213,8 @@ public class DefaultColumn extends AbstractExpression implements Column {
     }
 
     @Override
-    public Expression in(Expression expr, Expression... others) {
-        return new ColumnExpression(this, new InExpression(false, expr, others));
+    public Expression in(Expression... expressions) {
+        return new ColumnExpression(this, new InExpression(false, expressions));
     }
 
     @Override
@@ -223,8 +223,8 @@ public class DefaultColumn extends AbstractExpression implements Column {
     }
 
     @Override
-    public Expression notIn(Expression expr, Expression... others) {
-        return new ColumnExpression(this, new InExpression(true, expr, others));
+    public Expression notIn(Expression... expressions) {
+        return new ColumnExpression(this, new InExpression(true, expressions));
     }
 
     @Override
@@ -238,51 +238,45 @@ public class DefaultColumn extends AbstractExpression implements Column {
     }
 
     @Override
-    public Expression in(String strLiteral, String... strLiterals) {
-        Expression[] others = Arrays.stream(strLiterals)
+    public Expression in(String... strLiterals) {
+        Expression[] expressions = Arrays.stream(strLiterals)
                 .map(literal -> new LiteralExpression(literal)).toArray(Expression[]::new);
-        return new ColumnExpression(this, new InExpression(false,
-                new LiteralExpression(strLiteral), others));
+        return new ColumnExpression(this, new InExpression(false, expressions));
     }
 
     @Override
-    public Expression in(Integer intLiteral, Integer... intLiterals) {
-        Expression[] others = Arrays.stream(intLiterals)
+    public Expression in(Integer... intLiterals) {
+        Expression[] expressions = Arrays.stream(intLiterals)
                 .map(literal -> new LiteralExpression(literal)).toArray(Expression[]::new);
-        return new ColumnExpression(this, new InExpression(false,
-                new LiteralExpression(intLiteral), others));
+        return new ColumnExpression(this, new InExpression(false, expressions));
     }
 
     @Override
-    public Expression in(Long longLiteral, Long... longLiterals) {
-        Expression[] others = Arrays.stream(longLiterals)
+    public Expression in(Long... longLiterals) {
+        Expression[] expressions = Arrays.stream(longLiterals)
                 .map(literal -> new LiteralExpression(literal)).toArray(Expression[]::new);
-        return new ColumnExpression(this, new InExpression(false,
-                new LiteralExpression(longLiteral), others));
+        return new ColumnExpression(this, new InExpression(false, expressions));
     }
 
     @Override
-    public Expression notIn(String strLiteral, String... strLiterals) {
-        Expression[] others = Arrays.stream(strLiterals)
+    public Expression notIn(String... strLiterals) {
+        Expression[] expressions = Arrays.stream(strLiterals)
                 .map(literal -> new LiteralExpression(literal)).toArray(Expression[]::new);
-        return new ColumnExpression(this, new InExpression(true,
-                new LiteralExpression(strLiteral), others));
+        return new ColumnExpression(this, new InExpression(true, expressions));
     }
 
     @Override
-    public Expression notIn(Integer intLiteral, Integer... intLiterals) {
-        Expression[] others = Arrays.stream(intLiterals)
+    public Expression notIn(Integer... intLiterals) {
+        Expression[] expressions = Arrays.stream(intLiterals)
                 .map(literal -> new LiteralExpression(literal)).toArray(Expression[]::new);
-        return new ColumnExpression(this, new InExpression(true,
-                new LiteralExpression(intLiteral), others));
+        return new ColumnExpression(this, new InExpression(true, expressions));
     }
 
     @Override
-    public Expression notIn(Long longLiteral, Long... longLiterals) {
-        Expression[] others = Arrays.stream(longLiterals)
+    public Expression notIn(Long... longLiterals) {
+        Expression[] expressions = Arrays.stream(longLiterals)
                 .map(literal -> new LiteralExpression(literal)).toArray(Expression[]::new);
-        return new ColumnExpression(this, new InExpression(true,
-                new LiteralExpression(longLiteral), others));
+        return new ColumnExpression(this, new InExpression(true, expressions));
     }
 
     @Override

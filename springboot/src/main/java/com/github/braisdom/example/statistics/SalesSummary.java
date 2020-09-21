@@ -56,13 +56,14 @@ public class SalesSummary extends DynamicQuery<StatisticsObject> {
     }
 
     public SalesSummary productIn(String... barcodes) {
-//        whereExpression = appendAndExpression(productTable
-//                .barcode.in());
+        whereExpression = appendAndExpression(whereExpression,
+                productTable.barcode.in(barcodes));
         return this;
     }
 
     public SalesSummary memberIn(String... members) {
-        this.members = members;
+        whereExpression = appendAndExpression(whereExpression,
+                productTable.barcode.in(members));
         return this;
     }
 }
