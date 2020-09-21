@@ -19,8 +19,11 @@ public class Order {
     private static final String KEY_ORDER_LINES = "orderLines";
 
     private String no;
+
     private Integer memberId;
+
     private Double amount;
+
     private Double quantity;
 
     @Column(transition = SqlDateTimeTransitional.class)

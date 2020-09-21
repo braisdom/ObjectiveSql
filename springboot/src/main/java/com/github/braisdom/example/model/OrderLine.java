@@ -6,13 +6,21 @@ import com.github.braisdom.objsql.relation.RelationType;
 
 @DomainModel
 public class OrderLine {
-    private String barcode;
+  
     private Integer productId;
+
+    private String barcode;
+
     private String orderNo;
+
     private Integer memberId;
+
     private Integer orderId;
+  
     private Double salesPrice;
+
     private Double amount;
+
     private Double quantity;
 
     @Relation(relationType = RelationType.BELONGS_TO)
