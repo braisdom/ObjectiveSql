@@ -33,9 +33,8 @@ public class InExpression extends AbstractExpression {
 
     private final boolean negated;
 
-    public InExpression(boolean negated, Expression expression, Expression... others) {
+    public InExpression(boolean negated, Expression... others) {
         this.negated = negated;
-        expressions.add(expression);
         expressions.addAll(Arrays.asList(others));
     }
 
@@ -47,6 +46,8 @@ public class InExpression extends AbstractExpression {
     @Override
     public String toSql(ExpressionContext expressionContext) throws SQLSyntaxException {
         try {
+            if(expressions.size() == 0)
+                throw new SQLSyntaxException("The expressions contained cannot be empty");
             String[] expressionStrings = expressions.stream()
                     .map(FunctionWithThrowable
                             .castFunctionWithThrowable(expression -> expression.toSql(expressionContext))).toArray(String[]::new);

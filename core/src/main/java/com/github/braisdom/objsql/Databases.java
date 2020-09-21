@@ -238,6 +238,10 @@ public final class Databases {
         }
     }
 
+    public static String getDefaultDataSourceName() {
+        return ConnectionFactory.DEFAULT_DATA_SOURCE_NAME;
+    }
+
     public static QueryFactory getQueryFactory() {
         return queryFactory;
     }

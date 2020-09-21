@@ -32,7 +32,7 @@ public class Select<T> extends AbstractExpression implements Dataset {
     protected List<Expression> projections = new ArrayList<>();
     protected Dataset[] fromDatasets;
     protected Expression whereExpression;
-    protected List<JoinExpression> joinExpressions;
+    protected List<JoinExpression> joinExpressions = new ArrayList<>();
     protected Expression[] groupByExpressions;
     protected Expression havingExpression;
     protected Expression[] orderByExpressions;

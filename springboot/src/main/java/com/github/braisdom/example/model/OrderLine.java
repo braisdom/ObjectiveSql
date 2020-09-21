@@ -6,6 +6,7 @@ import com.github.braisdom.objsql.relation.RelationType;
 
 @DomainModel
 public class OrderLine {
+  
     private Integer productId;
 
     private String barcode;
@@ -15,6 +16,8 @@ public class OrderLine {
     private Integer memberId;
 
     private Integer orderId;
+  
+    private Double salesPrice;
 
     private Double amount;
 

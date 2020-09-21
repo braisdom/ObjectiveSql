@@ -18,7 +18,8 @@ package com.github.braisdom.objsql.sql;
 
 /**
  * The expression describes a column, a literal, a logic expression
- * or a function call of SQL.
+ * or a function call of SQL, and it will generate a SQL expression in
+ * the statement.
  */
 public interface Expression extends Sqlizable {
 
