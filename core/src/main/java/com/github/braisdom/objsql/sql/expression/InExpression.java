@@ -46,6 +46,8 @@ public class InExpression extends AbstractExpression {
     @Override
     public String toSql(ExpressionContext expressionContext) throws SQLSyntaxException {
         try {
+            if(expressions.size() == 0)
+                throw new SQLSyntaxException("The expressions contained cannot be empty");
             String[] expressionStrings = expressions.stream()
                     .map(FunctionWithThrowable
                             .castFunctionWithThrowable(expression -> expression.toSql(expressionContext))).toArray(String[]::new);

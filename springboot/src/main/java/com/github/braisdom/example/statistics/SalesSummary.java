@@ -6,6 +6,7 @@ import com.github.braisdom.example.model.OrderLine;
 import com.github.braisdom.example.model.Product;
 import com.github.braisdom.objsql.DatabaseType;
 import com.github.braisdom.objsql.DynamicQuery;
+import com.github.braisdom.objsql.sql.Dataset;
 import com.github.braisdom.objsql.sql.Expression;
 import com.github.braisdom.objsql.sql.SQLSyntaxException;
 import com.github.braisdom.objsql.sql.Select;
@@ -19,11 +20,7 @@ import static com.github.braisdom.objsql.sql.function.MySQLFunctions.strToDate;
 public class SalesSummary extends DynamicQuery<StatisticsObject> {
     private static final String MYSQL_DATE_TIME_FORMAT = "%Y-%m-%dT%H:%i:%s";
 
-    private Timestamp begin;
-    private Timestamp end;
-    private String[] barcodes;
-    private String[] members;
-
+    private Expression orderFilterExpression;
     private Expression whereExpression;
     private Select select;
 
@@ -41,15 +38,24 @@ public class SalesSummary extends DynamicQuery<StatisticsObject> {
         return super.execute(StatisticsObject.class, dataSourceName, select);
     }
 
+    private Select createOrderSummary() {
+        Select orderSummary = new Select();
+        orderSummary
+                .from(orderTable)
+                .leftOuterJoin(orderLineTable, orderLineTable.orderId.eq(orderTable.id));
+
+        return orderSummary;
+    }
+
     public SalesSummary salesBetween(Timestamp begin, Timestamp end) {
-        whereExpression = appendAndExpression(whereExpression,
+        orderFilterExpression = appendAndExpression(orderFilterExpression,
                 orderTable.salesAt.between(strToDate(begin.toString(), MYSQL_DATE_TIME_FORMAT),
                         strToDate(end.toString(), MYSQL_DATE_TIME_FORMAT)));
         return this;
     }
 
     public SalesSummary salesBetween(String begin, String end) {
-        whereExpression = appendAndExpression(whereExpression,
+        orderFilterExpression = appendAndExpression(orderFilterExpression,
                 orderTable.salesAt.between(strToDate(begin, MYSQL_DATE_TIME_FORMAT),
                         strToDate(end, MYSQL_DATE_TIME_FORMAT)));
         return this;
