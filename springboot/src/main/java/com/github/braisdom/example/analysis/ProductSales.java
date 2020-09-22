@@ -1,4 +1,4 @@
-package com.github.braisdom.example.statistics;
+package com.github.braisdom.example.analysis;
 
 import com.github.braisdom.example.model.Member;
 import com.github.braisdom.example.model.Order;
@@ -10,11 +10,9 @@ import com.github.braisdom.objsql.DynamicQuery;
 import com.github.braisdom.objsql.sql.*;
 
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.List;
 
 import static com.github.braisdom.objsql.sql.function.AnsiFunctions.*;
-import static com.github.braisdom.objsql.sql.function.MySQLFunctions.strToDate;
 import static com.github.braisdom.objsql.sql.function.MySQLFunctions.toDateTime;
 
 public class ProductSales extends DynamicQuery<StatisticsObject> {
@@ -46,9 +44,15 @@ public class ProductSales extends DynamicQuery<StatisticsObject> {
                 orderQuery.col("sales_price"))
                 .from(orderQuery.as("order"))
                 .leftOuterJoin(productTable, productTable.id.eq(orderQuery.col("product_id")));
-
-        final String sql = select.toSql(new DefaultExpressionContext(DatabaseType.MySQL));
         return super.execute(StatisticsObject.class, dataSourceName, select);
+    }
+
+    private Expression sumMoneyColumn(Column column) {
+        return round(sum(column), 2);
+    }
+
+    private Expression avgMoneyColumn(Column column) {
+        return round(avg(column), 2);
     }
 
     private SubQuery createOrderSummary() {
@@ -57,9 +61,9 @@ public class ProductSales extends DynamicQuery<StatisticsObject> {
         orderSummary.project(
                     orderLineTable.productId.as("product_id"),
                     countDistinct(orderTable.memberId).as("member_count"),
-                    round(sum(orderTable.amount), 2).as("total_amount"),
-                    round(sum(orderTable.quantity), 2).as("total_quantity"),
-                    round(avg(orderLineTable.salesPrice), 2).as("sales_price")
+                    sumMoneyColumn(orderTable.amount).as("total_amount"),
+                    sumMoneyColumn(orderTable.quantity).as("total_quantity"),
+                    avgMoneyColumn(orderLineTable.salesPrice).as("sales_price")
                  )
                 .from(orderTable)
                 .where(orderFilterExpression)
@@ -67,13 +71,6 @@ public class ProductSales extends DynamicQuery<StatisticsObject> {
                 .groupBy(orderLineTable.productId);
 
         return orderSummary;
-    }
-
-    public ProductSales salesBetween(Timestamp begin, Timestamp end) {
-        orderFilterExpression = appendAndExpression(orderFilterExpression,
-                orderTable.salesAt.between(strToDate(begin.toString(), MYSQL_DATE_TIME_FORMAT),
-                        strToDate(end.toString(), MYSQL_DATE_TIME_FORMAT)));
-        return this;
     }
 
     public ProductSales salesBetween(String begin, String end) {

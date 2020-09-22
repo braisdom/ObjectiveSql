@@ -30,7 +30,7 @@ public class DynamicTableRowDescriptor<T> implements TableRowDescriptor<T> {
 
     @Override
     public String getFieldName(String columnName) {
-        return null;
+        return columnName;
     }
 
     @Override

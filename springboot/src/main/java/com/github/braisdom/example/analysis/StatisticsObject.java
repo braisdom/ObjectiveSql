@@ -1,4 +1,4 @@
-package com.github.braisdom.example.statistics;
+package com.github.braisdom.example.analysis;
 
 import com.github.braisdom.objsql.AbstractTableRow;
 
