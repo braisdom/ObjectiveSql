@@ -6,6 +6,7 @@ import com.github.braisdom.example.model.OrderLine;
 import com.github.braisdom.example.model.Product;
 import com.github.braisdom.objsql.DatabaseType;
 import com.github.braisdom.objsql.Databases;
+import com.github.braisdom.objsql.DynamicModel;
 import com.github.braisdom.objsql.DynamicQuery;
 import com.github.braisdom.objsql.sql.*;
 
@@ -15,7 +16,7 @@ import java.util.List;
 import static com.github.braisdom.objsql.sql.function.AnsiFunctions.*;
 import static com.github.braisdom.objsql.sql.function.MySQLFunctions.toDateTime;
 
-public class ProductSales extends DynamicQuery<StatisticsObject> {
+public class ProductSales extends DynamicQuery<DynamicModel> {
     private static final String MYSQL_DATE_TIME_FORMAT = "%Y-%m-%d %H:%i:%s";
 
     private Expression orderFilterExpression;
@@ -31,7 +32,7 @@ public class ProductSales extends DynamicQuery<StatisticsObject> {
         select = new Select();
     }
 
-    public List<StatisticsObject> execute(String dataSourceName) throws SQLException, SQLSyntaxException {
+    public List<DynamicModel> execute(String dataSourceName) throws SQLException, SQLSyntaxException {
         if (orderFilterExpression == null)
             throw new SQLSyntaxException("The order filter expression must be given");
 
@@ -44,7 +45,7 @@ public class ProductSales extends DynamicQuery<StatisticsObject> {
                 orderQuery.col("sales_price"))
                 .from(orderQuery.as("order"))
                 .leftOuterJoin(productTable, productTable.id.eq(orderQuery.col("product_id")));
-        return super.execute(StatisticsObject.class, dataSourceName, select);
+        return super.execute(DynamicModel.class, dataSourceName, select);
     }
 
     private Expression sumMoneyColumn(Column column) {

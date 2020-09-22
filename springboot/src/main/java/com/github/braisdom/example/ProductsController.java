@@ -3,6 +3,7 @@ package com.github.braisdom.example;
 import com.github.braisdom.example.analysis.ProductSales;
 import com.github.braisdom.example.analysis.StatisticsObject;
 import com.github.braisdom.objsql.Databases;
+import com.github.braisdom.objsql.DynamicModel;
 import com.github.braisdom.objsql.sql.SQLSyntaxException;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +24,7 @@ public class ProductsController {
         ProductSales productSales = new ProductSales()
                 .productIn(productBarcodes)
                 .salesBetween(beginning, end);
-        List<StatisticsObject> result = productSales.execute(Databases.getDefaultDataSourceName());
+        List<DynamicModel> result = productSales.execute(Databases.getDefaultDataSourceName());
 
         return ResponseObject.createSuccessResponse(result);
     }

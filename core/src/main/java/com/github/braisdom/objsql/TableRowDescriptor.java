@@ -13,6 +13,8 @@ public interface TableRowDescriptor<T> {
 
     Class getFieldType(String fieldName);
 
+    boolean isTransitable(String fieldName);
+
     ColumnTransitional getColumnTransition(String fieldName);
 
     void setValue(T modelObject, String fieldName, Object fieldValue);

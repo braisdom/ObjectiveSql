@@ -155,6 +155,11 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
     }
 
     @Override
+    public boolean isTransitable(String fieldName) {
+        return true;
+    }
+
+    @Override
     public ColumnTransitional getColumnTransition(String fieldName) {
         return columnTransitionMap.get(fieldName);
     }
