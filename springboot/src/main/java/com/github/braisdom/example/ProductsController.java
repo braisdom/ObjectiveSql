@@ -15,9 +15,10 @@ import java.util.Map;
 public class ProductsController {
 
     @GetMapping(value = "/product/sales_analysis")
-    public ResponseObject analysisProductSales(@RequestParam Map<String, String> rawRequestObject)
+    public ResponseObject analysisProductSales(@RequestParam Map<String, String> rawRequest)
             throws SQLSyntaxException, SQLException {
-        RequestObject requestObject = RequestObject.create(rawRequestObject);
+        RequestObject requestObject = RequestObject.create(rawRequest);
+
         String beginning = requestObject.getString("beginning");
         String end = requestObject.getString("end");
         String[] productBarcodes = requestObject.getStringArray("productBarcodes");
