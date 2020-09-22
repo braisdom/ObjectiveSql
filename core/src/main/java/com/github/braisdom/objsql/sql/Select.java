@@ -49,8 +49,7 @@ public class Select<T> extends AbstractExpression implements Dataset {
         from(dataset);
     }
 
-    public Select project(Expression projection, Expression... projections) {
-        this.projections.add(projection);
+    public Select project(Expression... projections) {
         if (projections.length > 0)
             this.projections.addAll(Arrays.asList(projections));
         return this;
@@ -138,8 +137,8 @@ public class Select<T> extends AbstractExpression implements Dataset {
 
         processProjections(expressionContext, sql);
         processFrom(expressionContext, sql);
-        processWhere(expressionContext, sql);
         processJoins(expressionContext, sql);
+        processWhere(expressionContext, sql);
         processGroupBy(expressionContext, sql);
         processOrderBy(expressionContext, sql);
 

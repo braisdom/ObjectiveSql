@@ -16,14 +16,11 @@
  */
 package com.github.braisdom.objsql.sql.expression;
 
-import com.github.braisdom.objsql.sql.Dataset;
-import com.github.braisdom.objsql.sql.Expression;
-import com.github.braisdom.objsql.sql.ExpressionContext;
-import com.github.braisdom.objsql.sql.SQLSyntaxException;
+import com.github.braisdom.objsql.sql.*;
 
 import java.util.Objects;
 
-public class JoinExpression implements Expression {
+public class JoinExpression extends AbstractExpression {
     public static final int LEFT_OUTER_JOIN = 1;
     public static final int RIGHT_OUTER_JOIN = 2;
     public static final int INNER_JOIN = 3;
@@ -43,7 +40,7 @@ public class JoinExpression implements Expression {
 
     @Override
     public Expression as(String alias) {
-        throw new UnsupportedOperationException("The join expression cannot be aliased");
+        throw new UnsupportedOperationException("The JOIN expression cannot be aliased");
     }
 
     @Override
@@ -57,13 +54,13 @@ public class JoinExpression implements Expression {
                 joinTypeString = "RIGHT OUTER JOIN";
                 break;
             case INNER_JOIN:
-                joinTypeString = "FULL JOIN";
+                joinTypeString = "INNER JOIN";
                 break;
             case FULL_JOIN:
                 joinTypeString = "FULL JOIN";
                 break;
         }
-        return String.format(" %s %s %s ", joinTypeString, dataset.toSql(expressionContext),
+        return String.format(" %s %s ON %s ", joinTypeString, dataset.toSql(expressionContext),
                 onExpression.toSql(expressionContext));
     }
 }

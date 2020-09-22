@@ -18,23 +18,30 @@ package com.github.braisdom.objsql.sql;
 
 import com.github.braisdom.objsql.Tables;
 import com.github.braisdom.objsql.sql.expression.*;
+import com.github.braisdom.objsql.util.StringUtil;
 
+import javax.validation.constraints.NotNull;
 import java.util.Arrays;
+import java.util.Objects;
 
 public class DefaultColumn extends AbstractExpression implements Column {
 
     private final Class domainModelClass;
     private final Dataset dataset;
+    private final String fieldName;
     private final String columnName;
 
-    public static Column create(Class domainModelClass, Dataset dataset, String name) {
-        return new DefaultColumn(domainModelClass, dataset, name);
+    public static Column create(Class domainModelClass, Dataset dataset, String fieldName) {
+        return new DefaultColumn(domainModelClass, dataset, fieldName);
     }
 
-    public DefaultColumn(Class domainModelClass, Dataset dataset, String columnName) {
+    public DefaultColumn(Class domainModelClass, Dataset dataset, String fieldName) {
+        if (StringUtil.isBlank(fieldName))
+            throw new IllegalArgumentException("The column cannot be empty");
         this.domainModelClass = domainModelClass;
         this.dataset = dataset;
-        this.columnName = Tables.getColumnName(domainModelClass, columnName);
+        this.fieldName = fieldName;
+        this.columnName = Tables.getColumnName(domainModelClass, fieldName);
     }
 
     @Override
@@ -310,11 +317,28 @@ public class DefaultColumn extends AbstractExpression implements Column {
     }
 
     @Override
+    public Expression as(String alias) {
+        // Because the column will be reused in more position of SQL, but the alias
+        // cannot be applied in anywhere, then a new instance of Column will be created
+        // after "AS" operation.
+        return new DefaultColumn(domainModelClass, dataset, fieldName) {
+            public String getAlias() {
+                return alias;
+            }
+        };
+    }
+
+    @Override
     public String toSql(ExpressionContext expressionContext) {
         String tableAlias = expressionContext.getAlias(dataset, true);
         String columnAlias = getAlias();
         return String.format("%s.%s %s",
                 expressionContext.quoteTable(tableAlias), expressionContext.quoteColumn(columnName),
-                columnAlias == null ? "" : " AS " + columnAlias);
+                columnAlias == null ? "" : " AS " + expressionContext.quoteColumn(columnAlias));
+    }
+
+    @Override
+    public String toString() {
+        return columnName;
     }
 }

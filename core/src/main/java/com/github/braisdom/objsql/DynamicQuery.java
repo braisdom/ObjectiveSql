@@ -29,8 +29,8 @@ public abstract class DynamicQuery<T> {
     }
 
     protected Expression appendAndExpression(Expression originalExpr, Expression newExpr) {
-        if(newExpr == null)
-            return originalExpr;
+        if(originalExpr == null)
+            return newExpr;
         return and(originalExpr, newExpr);
     }
 }

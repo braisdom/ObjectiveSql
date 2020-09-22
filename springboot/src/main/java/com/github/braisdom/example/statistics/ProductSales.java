@@ -5,6 +5,7 @@ import com.github.braisdom.example.model.Order;
 import com.github.braisdom.example.model.OrderLine;
 import com.github.braisdom.example.model.Product;
 import com.github.braisdom.objsql.DatabaseType;
+import com.github.braisdom.objsql.Databases;
 import com.github.braisdom.objsql.DynamicQuery;
 import com.github.braisdom.objsql.sql.*;
 
@@ -14,6 +15,7 @@ import java.util.List;
 
 import static com.github.braisdom.objsql.sql.function.AnsiFunctions.*;
 import static com.github.braisdom.objsql.sql.function.MySQLFunctions.strToDate;
+import static com.github.braisdom.objsql.sql.function.MySQLFunctions.toDateTime;
 
 public class ProductSales extends DynamicQuery<StatisticsObject> {
     private static final String MYSQL_DATE_TIME_FORMAT = "%Y-%m-%d %H:%i:%s";
@@ -38,30 +40,28 @@ public class ProductSales extends DynamicQuery<StatisticsObject> {
         if (globalFilterExpression == null)
             throw new SQLSyntaxException("The where filter expression must be given");
 
-        SubQuery orderSummaryQuery = createOrderSummary();
+        final SubQuery orderQuery = createOrderSummary();
 
-        select.from(orderSummaryQuery)
+        select.from(orderQuery.as("order"))
                 .where(globalFilterExpression)
-                .leftOuterJoin(productTable, productTable.id.eq(orderSummaryQuery.getAssociationExpr()));
-        String sql = select.toSql(new DefaultExpressionContext(DatabaseType.MySQL));
+                .leftOuterJoin(productTable, productTable.id.eq(orderQuery.col("product_id")));
+        final String sql = select.toSql(new DefaultExpressionContext(DatabaseType.MySQL));
         return super.execute(StatisticsObject.class, dataSourceName, select);
     }
 
     private SubQuery createOrderSummary() {
-        SubQuery orderSummary = new SubQuery();
+        final SubQuery orderSummary = new SubQuery();
+
         orderSummary
-                .project(
-                        orderLineTable.productId,
-                        countDistinct(orderTable.memberId),
-                        sum(orderTable.amount),
-                        sum(orderTable.quantity),
-                        avg(orderLineTable.salesPrice))
+                .project(orderLineTable.productId.as("product_id"),
+                        countDistinct(orderTable.memberId).as("member_count"),
+                        sum(orderTable.amount).as("total_amount"),
+                        sum(orderTable.quantity).as("total_quantity"),
+                        avg(orderLineTable.salesPrice).as("sales_price"))
                 .from(orderTable)
                 .where(orderFilterExpression)
                 .leftOuterJoin(orderLineTable, orderLineTable.orderId.eq(orderTable.id))
                 .groupBy(orderLineTable.productId);
-
-        orderSummary.setAssociationExpr(orderLineTable.productId);
 
         return orderSummary;
     }
@@ -75,8 +75,7 @@ public class ProductSales extends DynamicQuery<StatisticsObject> {
 
     public ProductSales salesBetween(String begin, String end) {
         orderFilterExpression = appendAndExpression(orderFilterExpression,
-                orderTable.salesAt.between(strToDate(begin, MYSQL_DATE_TIME_FORMAT),
-                        strToDate(end, MYSQL_DATE_TIME_FORMAT)));
+                orderTable.salesAt.between(toDateTime(begin), toDateTime(end)));
         return this;
     }
 
@@ -94,9 +93,11 @@ public class ProductSales extends DynamicQuery<StatisticsObject> {
 
     public static void main(String[] args) throws SQLSyntaxException, SQLException {
         ProductSales productSales = new ProductSales();
+
         productSales.salesBetween("2019-01-01 00:00:00", "2019-02-01 00:00:00")
                 .productIn("11111", "2222")
                 .memberNoIn("001", "001");
-        productSales.execute("");
+
+        productSales.execute(Databases.getDefaultDataSourceName());
     }
 }

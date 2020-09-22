@@ -18,7 +18,6 @@ package com.github.braisdom.objsql.sql;
 
 import com.github.braisdom.objsql.DatabaseType;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -83,10 +82,5 @@ public class DefaultExpressionContext implements ExpressionContext {
     @Override
     public String quoteString(String stringValue) {
         return String.format("'%s'", stringValue);
-    }
-
-    @Override
-    public String toTimestamp(Timestamp timestamp) {
-        return null;
     }
 }

@@ -40,7 +40,7 @@ public class InExpression extends AbstractExpression {
 
     @Override
     public Expression as(String alias) {
-        throw new UnsupportedOperationException("The in expression cannot be aliased");
+        throw new UnsupportedOperationException("The IN expression cannot be aliased");
     }
 
     @Override

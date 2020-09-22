@@ -31,6 +31,4 @@ public interface ExpressionContext {
     String quoteColumn(String columnName);
 
     String quoteString(String stringValue);
-
-    String toTimestamp(Timestamp timestamp);
 }

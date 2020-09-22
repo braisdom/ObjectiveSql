@@ -574,7 +574,6 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
                 "Table", AbstractTable.class);
         TreeMaker treeMaker = aptBuilder.getTreeMaker();
         StatementBuilder constructorStatement = aptBuilder.createStatementBuilder();
-        StatementBuilder asTableStatement = aptBuilder.createStatementBuilder();
         MethodBuilder asTableMethod = aptBuilder.createMethodBuilder();
 
         constructorStatement.append("super", aptBuilder.classRef(aptBuilder.getClassName()));
@@ -589,7 +588,8 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
         for (JCVariableDecl field : fields) {
             if (!aptBuilder.isStatic(field.mods)) {
                 JCExpression init = aptBuilder.staticMethodCall(DefaultColumn.class, "create",
-                        aptBuilder.classRef(aptBuilder.getClassName()), aptBuilder.varRef("this"), treeMaker.Literal(field.name.toString()));
+                        aptBuilder.classRef(aptBuilder.getClassName()),
+                        aptBuilder.varRef("this"), treeMaker.Literal(field.name.toString()));
                 JCVariableDecl var = aptBuilder.newVar(Flags.PUBLIC | Flags.FINAL,
                         Column.class, field.name.toString(), init);
 
