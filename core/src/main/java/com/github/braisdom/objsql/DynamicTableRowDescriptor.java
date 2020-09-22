@@ -24,7 +24,7 @@ public class DynamicTableRowDescriptor<T extends DynamicModel> implements TableR
 
     @Override
     public String getFieldName(String columnName) {
-        return WordUtil.camelize(columnName);
+        return WordUtil.camelize(columnName, true);
     }
 
     @Override

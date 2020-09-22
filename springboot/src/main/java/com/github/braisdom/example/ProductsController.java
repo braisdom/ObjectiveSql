@@ -26,6 +26,6 @@ public class ProductsController {
                 .salesBetween(beginning, end);
         List<DynamicModel> result = productSales.execute(Databases.getDefaultDataSourceName());
 
-        return ResponseObject.createSuccessResponse("productSales", result);
+        return ResponseObject.createSuccessResponse(result);
     }
 }

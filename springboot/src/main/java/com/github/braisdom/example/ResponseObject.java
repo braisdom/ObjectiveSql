@@ -6,15 +6,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ResponseObject {
-    private final boolean status;
+
+    public static final String STATUS_SUCC = "success";
+    public static final String STATUS_FAULT = "fault";
+
+    private final String status;
     private final Object result;
 
-    private ResponseObject(boolean status, Object result) {
+    private ResponseObject(String status, Object result) {
         this.status = status;
         this.result = result;
     }
 
-    public boolean isStatus() {
+    public String getStatus() {
         return status;
     }
 
@@ -23,23 +27,17 @@ public class ResponseObject {
     }
 
     public static ResponseObject createSuccessResponse() {
-        return new ResponseObject(true, null);
+        return new ResponseObject(STATUS_SUCC, null);
     }
+
 
     public static ResponseObject createSuccessResponse(Object result) {
-        return createSuccessResponse(WordUtil
-                .camelize(result.getClass().getSimpleName(), true), result);
-    }
-
-    public static ResponseObject createSuccessResponse(String name, Object result) {
-        Map<String, Object> resultMap = new HashMap<>();
-        resultMap.put(name, result);
-        return new ResponseObject(true, resultMap);
+        return new ResponseObject(STATUS_SUCC, result);
     }
 
     public static ResponseObject createFailureResponse(Object result) {
         Map<String, Object> resultMap = new HashMap<>();
         resultMap.put(WordUtil.camelize(result.getClass().getSimpleName(), true), result);
-        return new ResponseObject(true, resultMap);
+        return new ResponseObject(STATUS_SUCC, resultMap);
     }
 }
