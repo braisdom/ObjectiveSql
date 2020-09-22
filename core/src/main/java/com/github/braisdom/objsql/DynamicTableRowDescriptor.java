@@ -2,6 +2,7 @@ package com.github.braisdom.objsql;
 
 import com.github.braisdom.objsql.reflection.ClassUtils;
 import com.github.braisdom.objsql.transition.ColumnTransitional;
+import com.github.braisdom.objsql.util.WordUtil;
 
 public class DynamicTableRowDescriptor<T extends DynamicModel> implements TableRowDescriptor {
 
@@ -23,7 +24,7 @@ public class DynamicTableRowDescriptor<T extends DynamicModel> implements TableR
 
     @Override
     public String getFieldName(String columnName) {
-        return columnName;
+        return WordUtil.camelize(columnName);
     }
 
     @Override

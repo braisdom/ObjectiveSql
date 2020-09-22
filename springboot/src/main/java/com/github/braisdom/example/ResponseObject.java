@@ -27,8 +27,13 @@ public class ResponseObject {
     }
 
     public static ResponseObject createSuccessResponse(Object result) {
+        return createSuccessResponse(WordUtil
+                .camelize(result.getClass().getSimpleName(), true), result);
+    }
+
+    public static ResponseObject createSuccessResponse(String name, Object result) {
         Map<String, Object> resultMap = new HashMap<>();
-        resultMap.put(WordUtil.camelize(result.getClass().getSimpleName(), true), result);
+        resultMap.put(name, result);
         return new ResponseObject(true, resultMap);
     }
 
