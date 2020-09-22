@@ -15,7 +15,8 @@ import java.util.Map;
 public class ProductsController {
 
     @GetMapping(value = "/product/sales_analysis")
-    public ResponseObject salesStatistics(@RequestParam Map<String, String> rawRequestObject) throws SQLSyntaxException, SQLException {
+    public ResponseObject analysisProductSales(@RequestParam Map<String, String> rawRequestObject)
+            throws SQLSyntaxException, SQLException {
         RequestObject requestObject = RequestObject.create(rawRequestObject);
         String beginning = requestObject.getString("beginning");
         String end = requestObject.getString("end");
@@ -24,8 +25,8 @@ public class ProductsController {
         ProductSales productSales = new ProductSales()
                 .productIn(productBarcodes)
                 .salesBetween(beginning, end);
-        List<DynamicModel> result = productSales.execute(Databases.getDefaultDataSourceName());
 
+        List<DynamicModel> result = productSales.execute(Databases.getDefaultDataSourceName());
         return ResponseObject.createSuccessResponse(result);
     }
 }
