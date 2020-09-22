@@ -29,7 +29,7 @@ public class SubQuery extends Select {
     public Expression getProjection(final String name) {
         Expression expression = projectionMaps.get(name);
         if(expression == null)
-            throw new IllegalArgumentException(String.format("The expression of '%' is not exists", name));
+            throw new IllegalArgumentException(String.format("The expression of '%s' is not exists", name));
         return new AbstractExpression() {
             @Override
             public String toSql(ExpressionContext expressionContext) throws SQLSyntaxException {

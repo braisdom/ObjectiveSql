@@ -57,9 +57,10 @@ public class ProductSales extends DynamicQuery<StatisticsObject> {
         orderSummary.project(
                     orderLineTable.productId.as("product_id"),
                     countDistinct(orderTable.memberId).as("member_count"),
-                    sum(orderTable.amount).as("total_amount"),
-                    sum(orderTable.quantity).as("total_quantity"),
-                    avg(orderLineTable.salesPrice).as("sales_price"))
+                    round(sum(orderTable.amount), 2).as("total_amount"),
+                    round(sum(orderTable.quantity), 2).as("total_quantity"),
+                    round(avg(orderLineTable.salesPrice), 2).as("sales_price")
+                 )
                 .from(orderTable)
                 .where(orderFilterExpression)
                 .leftOuterJoin(orderLineTable, orderLineTable.orderId.eq(orderTable.id))
@@ -90,8 +91,8 @@ public class ProductSales extends DynamicQuery<StatisticsObject> {
     public static void main(String[] args) throws SQLSyntaxException, SQLException {
         ProductSales productSales = new ProductSales();
 
-        productSales.salesBetween("2019-01-01 00:00:00", "2019-02-01 00:00:00")
-                .productIn("11111", "2222");
+        productSales.salesBetween("2020-09-01 00:00:00", "2020-09-10 00:00:00")
+                .productIn("P2020000018", "P202000007", "P2020000011");
 
         productSales.execute(Databases.getDefaultDataSourceName());
     }

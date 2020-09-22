@@ -4,9 +4,14 @@ import com.github.braisdom.example.model.Member;
 import com.github.braisdom.example.model.Order;
 import com.github.braisdom.example.model.OrderLine;
 import com.github.braisdom.example.model.Product;
+import com.github.braisdom.objsql.ConnectionFactory;
+import com.github.braisdom.objsql.Databases;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
+import org.springframework.boot.jdbc.DataSourceBuilder;
 
+import javax.sql.DataSource;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -41,8 +46,8 @@ public class Mock {
     };
 
     public void generateData() throws SQLException {
-        //generateMembers();
-//        generateProducts();
+        generateMembers();
+        generateProducts();
         generateOrdersAndOrderLines();
     }
 
@@ -99,6 +104,7 @@ public class Mock {
                         .setAmount(product.getSalesPrice() * quantity)
                         .setQuantity(quantity)
                         .setMemberId(memberId)
+                        .setSalesPrice(RandomUtils.nextDouble(10.0f, 50.0f))
                         .setProductId(product.getId());
                 orderLines.add(orderLine);
             }
@@ -139,5 +145,22 @@ public class Mock {
         int abs = Math.abs(nextInt);
         String valueOf = String.valueOf(abs);
         return valueOf;
+    }
+
+    public static void main(String[] args) throws SQLException {
+        DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create();
+        dataSourceBuilder.driverClassName("com.mysql.cj.jdbc.Driver");
+        dataSourceBuilder.url("jdbc:mysql://localhost:4406/objective_sql");
+        dataSourceBuilder.username("root");
+        dataSourceBuilder.password("123456");
+        DataSource dataSource = dataSourceBuilder.build();
+
+        Databases.installConnectionFactory(new ConnectionFactory() {
+            @Override
+            public Connection getConnection(String dataSourceName) throws SQLException {
+                return dataSource.getConnection();
+            }
+        });
+        new Mock().generateData();
     }
 }
