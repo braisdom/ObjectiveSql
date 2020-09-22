@@ -1,15 +1,35 @@
 package com.github.braisdom.objsql.sql;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
 public class SubQuery extends Select {
 
-    private Expression associationExpr;
+    private Map<String, Expression> projectionMaps = new HashMap<>();
 
-    public void setAssociationExpr(Expression associationExpr) {
-        this.associationExpr = associationExpr;
+    @Override
+    public SubQuery project(Expression... projections) {
+        Objects.requireNonNull(projections, "The projections cannot be null");
+        super.project(projections);
+        for(Expression expression : projections) {
+            projectionMaps.put(expression.getAlias(), expression);
+        }
+        return this;
     }
 
-    public Expression getAssociationExpr() {
-        return associationExpr;
+    @Override
+    public SubQuery as(String alias) {
+        super.as(alias);
+        return this;
+    }
+
+    public Expression getProjection(String name) {
+        return projectionMaps.get(name);
+    }
+
+    public Expression col(String name) {
+        return projectionMaps.get(name);
     }
 
     @Override

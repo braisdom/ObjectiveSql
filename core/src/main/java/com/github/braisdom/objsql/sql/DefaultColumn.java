@@ -28,18 +28,20 @@ public class DefaultColumn extends AbstractExpression implements Column {
 
     private final Class domainModelClass;
     private final Dataset dataset;
+    private final String fieldName;
     private final String columnName;
 
-    public static Column create(Class domainModelClass, Dataset dataset, String columnName) {
-        return new DefaultColumn(domainModelClass, dataset, columnName);
+    public static Column create(Class domainModelClass, Dataset dataset, String fieldName) {
+        return new DefaultColumn(domainModelClass, dataset, fieldName);
     }
 
-    public DefaultColumn(@NotNull Class domainModelClass, @NotNull Dataset dataset, String columnName) {
-        if (StringUtil.isBlank(columnName))
+    public DefaultColumn(Class domainModelClass, Dataset dataset, String fieldName) {
+        if (StringUtil.isBlank(fieldName))
             throw new IllegalArgumentException("The column cannot be empty");
         this.domainModelClass = domainModelClass;
         this.dataset = dataset;
-        this.columnName = Tables.getColumnName(domainModelClass, columnName);
+        this.fieldName = fieldName;
+        this.columnName = Tables.getColumnName(domainModelClass, fieldName);
     }
 
     @Override
@@ -315,11 +317,25 @@ public class DefaultColumn extends AbstractExpression implements Column {
     }
 
     @Override
+    public Expression as(String alias) {
+        // The column will be reused more position of SQL, then creating
+        // a new instance of Column for per AS operation
+        DefaultColumn newColumn = new DefaultColumn(domainModelClass, dataset, fieldName);
+        newColumn.setAlias(alias);
+        return newColumn;
+    }
+
+    @Override
     public String toSql(ExpressionContext expressionContext) {
         String tableAlias = expressionContext.getAlias(dataset, true);
         String columnAlias = getAlias();
         return String.format("%s.%s %s",
                 expressionContext.quoteTable(tableAlias), expressionContext.quoteColumn(columnName),
                 columnAlias == null ? "" : " AS " + columnAlias);
+    }
+
+    @Override
+    public String toString() {
+        return columnName;
     }
 }
