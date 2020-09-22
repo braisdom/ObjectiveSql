@@ -1,11 +1,12 @@
 package com.github.braisdom.example;
 
 import com.github.braisdom.example.analysis.ProductSales;
-import com.github.braisdom.example.analysis.StatisticsObject;
 import com.github.braisdom.objsql.Databases;
 import com.github.braisdom.objsql.DynamicModel;
 import com.github.braisdom.objsql.sql.SQLSyntaxException;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.sql.SQLException;
 import java.util.List;
