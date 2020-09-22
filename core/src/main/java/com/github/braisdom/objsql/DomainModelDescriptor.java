@@ -28,6 +28,10 @@ import com.github.braisdom.objsql.annotations.PrimaryKey;
  */
 public interface DomainModelDescriptor<T> extends TableRowDescriptor<T> {
 
+    PrimaryKey getPrimaryKey();
+
+    Object getPrimaryValue(T domainObject);
+
     String getTableName();
 
     boolean skipNullOnUpdate();
