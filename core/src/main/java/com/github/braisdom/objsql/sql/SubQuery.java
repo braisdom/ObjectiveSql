@@ -26,18 +26,30 @@ public class SubQuery extends Select {
         return this;
     }
 
-    public Expression getProjection(String name) {
-        return projectionMaps.get(name);
+    public Expression getProjection(final String name) {
+        Expression expression = projectionMaps.get(name);
+        if(expression == null)
+            throw new IllegalArgumentException(String.format("The expression of '%' is not exists", name));
+        return new AbstractExpression() {
+            @Override
+            public String toSql(ExpressionContext expressionContext) throws SQLSyntaxException {
+                String alias = SubQuery.this.getAlias();
+                if(alias == null)
+                    throw new SQLSyntaxException("The sub query must have a alias");
+                return String.format("%s.%s", expressionContext.quoteTable(alias),
+                        expressionContext.quoteColumn(name));
+            }
+        };
     }
 
     public Expression col(String name) {
-        return projectionMaps.get(name);
+        return getProjection(name);
     }
 
     @Override
     public String toSql(ExpressionContext expressionContext) throws SQLSyntaxException {
         String alias = getAlias();
         return String.format("(%s) %s", super.toSql(expressionContext),
-                WordUtil.isEmpty(alias) ? "" : String.format(" AS %s", alias));
+                WordUtil.isEmpty(alias) ? "" : String.format(" AS %s", expressionContext.quoteColumn(alias)));
     }
 }

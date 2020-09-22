@@ -318,8 +318,9 @@ public class DefaultColumn extends AbstractExpression implements Column {
 
     @Override
     public Expression as(String alias) {
-        // The column will be reused more position of SQL, then creating
-        // a new instance of Column for per AS operation
+        // Because the column will be reused in more position of SQL, but the alias
+        // cannot be applied in anywhere, then a new instance of Column will be created
+        // after "AS" operation.
         DefaultColumn newColumn = new DefaultColumn(domainModelClass, dataset, fieldName);
         newColumn.setAlias(alias);
         return newColumn;
@@ -331,7 +332,7 @@ public class DefaultColumn extends AbstractExpression implements Column {
         String columnAlias = getAlias();
         return String.format("%s.%s %s",
                 expressionContext.quoteTable(tableAlias), expressionContext.quoteColumn(columnName),
-                columnAlias == null ? "" : " AS " + columnAlias);
+                columnAlias == null ? "" : " AS " + expressionContext.quoteColumn(columnAlias));
     }
 
     @Override
