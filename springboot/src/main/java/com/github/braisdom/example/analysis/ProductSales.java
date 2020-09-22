@@ -16,6 +16,9 @@ import java.util.List;
 import static com.github.braisdom.objsql.sql.function.AnsiFunctions.*;
 import static com.github.braisdom.objsql.sql.function.MySQLFunctions.toDateTime;
 
+/**
+ * The class is used for calculating
+ */
 public class ProductSales extends DynamicQuery<DynamicModel> {
     private static final String MYSQL_DATE_TIME_FORMAT = "%Y-%m-%d %H:%i:%s";
 
@@ -39,10 +42,10 @@ public class ProductSales extends DynamicQuery<DynamicModel> {
         final SubQuery orderQuery = createOrderSummary();
         select.project(productTable.barcode,
                 productTable.name,
-                orderQuery.col("member_count"),
-                orderQuery.col("total_amount"),
-                orderQuery.col("total_quantity"),
-                orderQuery.col("sales_price"))
+                orderQuery.getProjection("member_count"),
+                orderQuery.getProjection("total_amount"),
+                orderQuery.getProjection("total_quantity"),
+                orderQuery.getProjection("sales_price"))
                 .from(orderQuery.as("order"))
                 .leftOuterJoin(productTable, productTable.id.eq(orderQuery.col("product_id")));
         return super.execute(DynamicModel.class, dataSourceName, select);

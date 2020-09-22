@@ -16,7 +16,7 @@ import java.util.Map;
 public class ProductsController {
 
     @GetMapping(value = "/product/sales_analysis")
-    public ResponseObject analysisProductSales(@RequestParam Map<String, String> rawRequest)
+    public ResponseObject calProductSales(@RequestParam Map<String, String> rawRequest)
             throws SQLSyntaxException, SQLException {
         RequestObject requestObject = RequestObject.create(rawRequest);
 
