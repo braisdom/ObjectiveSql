@@ -321,9 +321,11 @@ public class DefaultColumn extends AbstractExpression implements Column {
         // Because the column will be reused in more position of SQL, but the alias
         // cannot be applied in anywhere, then a new instance of Column will be created
         // after "AS" operation.
-        DefaultColumn newColumn = new DefaultColumn(domainModelClass, dataset, fieldName);
-        newColumn.setAlias(alias);
-        return newColumn;
+        return new DefaultColumn(domainModelClass, dataset, fieldName) {
+            public String getAlias() {
+                return alias;
+            }
+        };
     }
 
     @Override
