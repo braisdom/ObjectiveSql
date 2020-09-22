@@ -1,5 +1,7 @@
 package com.github.braisdom.objsql.sql;
 
+import com.github.braisdom.objsql.util.WordUtil;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -34,6 +36,8 @@ public class SubQuery extends Select {
 
     @Override
     public String toSql(ExpressionContext expressionContext) throws SQLSyntaxException {
-        return String.format("(%s)", super.toSql(expressionContext));
+        String alias = getAlias();
+        return String.format("(%s) %s", super.toSql(expressionContext),
+                WordUtil.isEmpty(alias) ? "" : String.format(" AS %s", alias));
     }
 }

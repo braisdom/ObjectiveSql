@@ -42,7 +42,7 @@ public class ProductSales extends DynamicQuery<StatisticsObject> {
 
         final SubQuery orderQuery = createOrderSummary();
 
-        select.from(orderQuery.as("t"))
+        select.from(orderQuery.as("order"))
                 .where(globalFilterExpression)
                 .leftOuterJoin(productTable, productTable.id.eq(orderQuery.col("product_id")));
         final String sql = select.toSql(new DefaultExpressionContext(DatabaseType.MySQL));
