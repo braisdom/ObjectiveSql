@@ -21,7 +21,6 @@ public class ProductSales extends DynamicQuery<StatisticsObject> {
     private static final String MYSQL_DATE_TIME_FORMAT = "%Y-%m-%d %H:%i:%s";
 
     private Expression orderFilterExpression;
-    private Expression globalFilterExpression;
     private Select select;
 
     private Order.Table orderTable = Order.asTable();
@@ -37,14 +36,17 @@ public class ProductSales extends DynamicQuery<StatisticsObject> {
     public List<StatisticsObject> execute(String dataSourceName) throws SQLException, SQLSyntaxException {
         if (orderFilterExpression == null)
             throw new SQLSyntaxException("The order filter expression must be given");
-        if (globalFilterExpression == null)
-            throw new SQLSyntaxException("The where filter expression must be given");
 
         final SubQuery orderQuery = createOrderSummary();
-
-        select.from(orderQuery.as("order"))
-                .where(globalFilterExpression)
+        select.project(productTable.barcode,
+                productTable.name,
+                orderQuery.col("member_count"),
+                orderQuery.col("total_amount"),
+                orderQuery.col("total_quantity"),
+                orderQuery.col("sales_price"))
+                .from(orderQuery.as("order"))
                 .leftOuterJoin(productTable, productTable.id.eq(orderQuery.col("product_id")));
+
         final String sql = select.toSql(new DefaultExpressionContext(DatabaseType.MySQL));
         return super.execute(StatisticsObject.class, dataSourceName, select);
     }
@@ -52,12 +54,12 @@ public class ProductSales extends DynamicQuery<StatisticsObject> {
     private SubQuery createOrderSummary() {
         final SubQuery orderSummary = new SubQuery();
 
-        orderSummary
-                .project(orderLineTable.productId.as("product_id"),
-                        countDistinct(orderTable.memberId).as("member_count"),
-                        sum(orderTable.amount).as("total_amount"),
-                        sum(orderTable.quantity).as("total_quantity"),
-                        avg(orderLineTable.salesPrice).as("sales_price"))
+        orderSummary.project(
+                    orderLineTable.productId.as("product_id"),
+                    countDistinct(orderTable.memberId).as("member_count"),
+                    sum(orderTable.amount).as("total_amount"),
+                    sum(orderTable.quantity).as("total_quantity"),
+                    avg(orderLineTable.salesPrice).as("sales_price"))
                 .from(orderTable)
                 .where(orderFilterExpression)
                 .leftOuterJoin(orderLineTable, orderLineTable.orderId.eq(orderTable.id))
@@ -85,18 +87,11 @@ public class ProductSales extends DynamicQuery<StatisticsObject> {
         return this;
     }
 
-    public ProductSales memberNoIn(String... memberNos) {
-        globalFilterExpression = appendAndExpression(globalFilterExpression,
-                memberTable.no.in(memberNos));
-        return this;
-    }
-
     public static void main(String[] args) throws SQLSyntaxException, SQLException {
         ProductSales productSales = new ProductSales();
 
         productSales.salesBetween("2019-01-01 00:00:00", "2019-02-01 00:00:00")
-                .productIn("11111", "2222")
-                .memberNoIn("001", "001");
+                .productIn("11111", "2222");
 
         productSales.execute(Databases.getDefaultDataSourceName());
     }
