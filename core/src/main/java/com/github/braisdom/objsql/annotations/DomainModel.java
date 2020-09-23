@@ -93,11 +93,33 @@ public @interface DomainModel {
      */
     Class<?> primaryClass() default Integer.class;
 
+    /**
+     * Customizes the column name mapped for the domain model
+     *
+     * @return
+     */
     String primaryColumnName() default "id";
 
+    /**
+     * Customizes the field name for mapping the column
+     * @return
+     */
     String primaryFieldName() default "id";
 
+    /**
+     * Skips the null value of field when updating a domain model if true
+     * Returns false if the null value can save into the database.
+     *
+     * @return
+     */
     boolean skipNullValueOnUpdating() default true;
 
+    /**
+     * This option indicates the most of field can save into database,
+     * however the domain model can be applied into lots of different scenarios,
+     * sometimes, only few field can save into database, so the option defined.
+     *
+     * @return
+     */
     boolean allFieldsPersistent() default true;
 }
