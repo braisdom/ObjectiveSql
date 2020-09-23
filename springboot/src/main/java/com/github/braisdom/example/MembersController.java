@@ -45,4 +45,10 @@ public class MembersController {
         Member.update(member.getId(), Member.newInstanceFrom(rawMember), true);
         return ResponseObject.createSuccessResponse();
     }
+
+    @DeleteMapping("/members/{no}")
+    public ResponseObject deleteMember(@PathVariable("no") String memberNo) throws SQLException {
+        int deleteCount = Member.destroy("member_no = ?");
+        return ResponseObject.createSuccessResponse(deleteCount);
+    }
 }

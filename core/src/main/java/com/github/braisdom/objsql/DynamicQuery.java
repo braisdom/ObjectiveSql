@@ -1,9 +1,6 @@
 package com.github.braisdom.objsql;
 
-import com.github.braisdom.objsql.sql.DefaultExpressionContext;
-import com.github.braisdom.objsql.sql.Expression;
-import com.github.braisdom.objsql.sql.SQLSyntaxException;
-import com.github.braisdom.objsql.sql.Sqlizable;
+import com.github.braisdom.objsql.sql.*;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -14,9 +11,11 @@ import static com.github.braisdom.objsql.sql.Expressions.and;
 public abstract class DynamicQuery<T extends DynamicModel> {
 
     private final DatabaseType databaseType;
+    private final ExpressionContext expressionContext;
 
     protected DynamicQuery(DatabaseType databaseType) {
         this.databaseType = databaseType;
+        this.expressionContext = new DefaultExpressionContext(databaseType);
     }
 
     protected List<T> execute(Class<T> clazz, String dataSourceName, Sqlizable sql)
@@ -24,8 +23,12 @@ public abstract class DynamicQuery<T extends DynamicModel> {
         Connection connection = Databases.getConnectionFactory().getConnection(dataSourceName);
         SQLExecutor<T> sqlExecutor = Databases.getSqlExecutor();
 
-        return sqlExecutor.query(connection, sql.toSql(new DefaultExpressionContext(databaseType)),
+        return sqlExecutor.query(connection, sql.toSql(expressionContext),
                 new DynamicTableRowDescriptor(clazz));
+    }
+
+    protected ExpressionContext getExpressionContext() {
+        return expressionContext;
     }
 
     protected Expression appendAndExpression(Expression originalExpr, Expression newExpr) {
