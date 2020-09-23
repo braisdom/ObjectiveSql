@@ -24,8 +24,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * The domain model is a core concept, it holds the logic and status in application,
- * describes the data structure of database at the same time.
+ * The domain model is a core concept, it holds the logic and status in the application,
+ * describes the data structure of the database at the same time.<br/>
  * In ObjectiveSql, there are queries, persistence and convenient methods for database,
  *
  * <ul>
@@ -35,17 +35,59 @@ import java.lang.annotation.Target;
  *     <li>The persistence method of model instance</li>
  *     <li>The transactional method of domain logic</li>
  * </ul>
+ *
+ * @author braisdom
+ * @since 1.3.1
  */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface DomainModel {
 
+    /**
+     * Returns the table name customized. <br/>
+     * It will tableize the class name as the table name by default.
+     * Defines a table name by <code>DomainModel</code> annotation while it's out of the rule.
+     *
+     * @return
+     *
+     * @see com.github.braisdom.objsql.util.WordUtil#tableize(String)
+     */
     String tableName() default "";
 
+    /**
+     * Defines a customized name of <code>DataSource</code> in multi-data source time.
+     * By default, a named 'objsql-default-datasource' will be used, the application should
+     * be named that way.
+     *
+     * @return
+     *
+     * @see ConnectionFactory#DEFAULT_DATA_SOURCE_NAME
+     */
     String dataSource() default ConnectionFactory.DEFAULT_DATA_SOURCE_NAME;
 
+    /**
+     * It indicates the <code>DomainModel</code> has fluent method for setting field. <br>
+     * Like this:
+     * <pre>
+     *     Model model = new Model();
+     *     model.setField1(...)
+     *          .setField2(...)
+     *          .setField3(...);
+     * </pre>
+     * You can disable the feature if in special scenes.
+     *
+     * @return
+     */
     boolean fluent() default true;
 
+    /**
+     * Changes the primary type if it is different data type in the database.
+     * By default, the <code>Integer</code> is used for a primary key as the mapping of database.<br/>
+     *
+     * <b>Notice:</b> Only Long, Integer, Short can be as a primary key.
+     *
+     * @return
+     */
     Class<?> primaryClass() default Integer.class;
 
     String primaryColumnName() default "id";
