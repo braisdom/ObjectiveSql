@@ -29,10 +29,8 @@ import java.lang.annotation.Target;
  * querying
  * <pre>
  *     public class Member {
- *
- *          @Relation(relationType = RelationType.HAS_MANY)
+ *         @Relation(relationType = RelationType.HAS_MANY)
  *         private List<Order> orders;
- *
  *         //...
  *     }
  *
