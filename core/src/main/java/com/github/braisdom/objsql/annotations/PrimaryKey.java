@@ -24,7 +24,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * The annotation is used for customizing the primary key
+ * Customizes a java field who maps the column of table.
+ * By default, "id" is
  */
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)

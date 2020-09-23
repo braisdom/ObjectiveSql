@@ -47,7 +47,7 @@ public @interface Column {
 
     /**
      * Indicates Whether the field can be inserted.
-     * The field value will be skipped at inserting if false
+     * The field value will be skipped at inserting when return false
      *
      * @return
      */
@@ -55,7 +55,7 @@ public @interface Column {
 
     /**
      * Indicates Whether the field can be updated.
-     * The field value will be skipped at updating if false
+     * The field value will be skipped at updating when returning false
      *
      * @return
      */
