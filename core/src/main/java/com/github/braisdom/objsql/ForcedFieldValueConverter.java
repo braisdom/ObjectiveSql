@@ -5,7 +5,7 @@ import java.lang.reflect.Field;
 /**
  * The class is used for converting the field value from various raw value.
  * Such as, a string into float, a integer into float, etc. It is an utility tools
- * for converting JSON to Java Class or column value to Java Class.
+ * for converting JSON to Java Bean or column value to Java Bean.
  * For example:
  * <pre>
  *     ForcedFieldValueConverter convert = new DefaultForcedFieldValueConverter();
@@ -18,7 +18,13 @@ import java.lang.reflect.Field;
  */
 public interface ForcedFieldValueConverter {
 
+    /**
+     * Convert the field value with the type of field.
+     */
     Object convert(Field field, Object originalValue);
 
+    /**
+     * Convert the field value with the given field type.
+     */
     Object convert(Class<?> fieldType, Object originalValue);
 }

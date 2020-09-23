@@ -9,9 +9,6 @@ import java.sql.SQLException;
 @RestController
 public class OrdersController {
 
-    /**
-     * The post body is in "resources/json/make_order.json"
-     */
     @PostMapping("/orders/{memberNo}")
     public ResponseObject makeOrder(@PathVariable("memberNo") String memberNo,
                            @RequestBody RequestObject rawOrder) throws SQLException {
