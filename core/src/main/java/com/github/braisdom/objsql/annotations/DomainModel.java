@@ -48,7 +48,7 @@ public @interface DomainModel {
      * It will tableize the class name as the table name by default.
      * Defines a table name by <code>DomainModel</code> annotation while it's out of the rule.
      *
-     * @return
+     * @return a table name customized.
      *
      * @see com.github.braisdom.objsql.util.WordUtil#tableize(String)
      */
@@ -59,7 +59,7 @@ public @interface DomainModel {
      * By default, a named 'objsql-default-datasource' will be used, the application should
      * be named that way.
      *
-     * @return
+     * @return a name of data source related to the domain model who maps a table.
      *
      * @see ConnectionFactory#DEFAULT_DATA_SOURCE_NAME
      */
