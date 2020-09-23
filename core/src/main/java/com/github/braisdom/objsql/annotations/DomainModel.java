@@ -24,16 +24,19 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * The domain model is a core concept, it holds the logic and status in the application,
- * describes the data structure of the database at the same time.<br/>
- * In ObjectiveSql, there are queries, persistence and convenient methods for database,
+ * The domain model is a core concept in ObjectiveSql, it holds the logic
+ * and status in the application, describes the data structure of the database at the same time.<br/>
  *
+ * In ObjectiveSql, The query, persistence and convenient methods for database will be generated
+ * automatically base the JSR269.
+ *
+ * The methods generated:
  * <ul>
  *     <li>The setter and getter methods of fields</li>
  *     <li>The factory method for query and persistence</li>
- *     <li>The query method of queryable field and model instance</li>
- *     <li>The persistence method of model instance</li>
- *     <li>The transactional method of domain logic</li>
+ *     <li>The query methods of queryable field and model instance</li>
+ *     <li>The persistence methods of model instance</li>
+ *     <li>The transactional methods of domain logic</li>
  * </ul>
  *
  * @author braisdom
