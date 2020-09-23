@@ -11,7 +11,7 @@ import java.util.List;
 
 import static com.github.braisdom.objsql.sql.Expressions.and;
 
-public abstract class DynamicQuery<T> {
+public abstract class DynamicQuery<T extends DynamicModel> {
 
     private final DatabaseType databaseType;
 

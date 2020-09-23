@@ -29,6 +29,7 @@ import java.util.Objects;
 
 import static com.github.braisdom.objsql.DatabaseType.MsSqlServer;
 import static com.github.braisdom.objsql.DatabaseType.SQLite;
+import static com.github.braisdom.objsql.sql.Expressions.literal;
 
 @Syntax(DatabaseType.All)
 public class AnsiFunctions {
@@ -123,11 +124,11 @@ public class AnsiFunctions {
     }
 
     public static final Expression ceil(Float literal) {
-        return new SqlFunctionCall("ABS", new LiteralExpression(literal));
+        return new SqlFunctionCall("CEIL", new LiteralExpression(literal));
     }
 
     public static final Expression ceil(Double literal) {
-        return new SqlFunctionCall("ABS", new LiteralExpression(literal));
+        return new SqlFunctionCall("CEIL", new LiteralExpression(literal));
     }
 
     public static final Expression floor(Expression expression) {
@@ -136,11 +137,24 @@ public class AnsiFunctions {
     }
 
     public static final Expression floor(Float literal) {
-        return new SqlFunctionCall("ABS", new LiteralExpression(literal));
+        return new SqlFunctionCall("FLOOR", new LiteralExpression(literal));
     }
 
     public static final Expression floor(Double literal) {
-        return new SqlFunctionCall("ABS", new LiteralExpression(literal));
+        return new SqlFunctionCall("FLOOR", new LiteralExpression(literal));
+    }
+
+    public static final Expression round(Expression expression, Integer decimals) {
+        Objects.requireNonNull(expression, "The expression cannot be null");
+        return new SqlFunctionCall("ROUND", expression, literal(decimals));
+    }
+
+    public static final Expression round(Float literal, Integer decimals) {
+        return new SqlFunctionCall("ROUND", literal(literal), literal(decimals));
+    }
+
+    public static final Expression round(Double literal, Integer decimals) {
+        return new SqlFunctionCall("ROUND", literal(literal), literal(decimals));
     }
 
     public static final Expression sin(Expression expression) {
