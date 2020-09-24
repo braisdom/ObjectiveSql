@@ -15,6 +15,11 @@ import java.util.Map;
 @RestController
 public class ProductsController {
 
+    /**
+     * Get parameters:
+     * http://host:port//product/sales_analysis?&beginning=2020-01-01 00:00:00
+     *      &end=2020-02-01 00:00:00&productBarcodes=p0001,p0002,p0003
+     */
     @GetMapping(value = "/product/sales_analysis")
     public ResponseObject calProductSales(@RequestParam Map<String, String> rawRequest)
             throws SQLSyntaxException, SQLException {
