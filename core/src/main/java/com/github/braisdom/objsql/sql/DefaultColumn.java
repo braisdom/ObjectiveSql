@@ -318,9 +318,9 @@ public class DefaultColumn extends AbstractExpression implements Column {
 
     @Override
     public Expression as(String alias) {
-        // Because the column will be reused in more position of SQL, but the alias
+        // Because the column will be reused in more position of SQL, but the alais
         // cannot be applied in anywhere, then a new instance of Column will be created
-        // after "AS" operation.
+        // after "AS" operation, avoiding to pollute the old instance.
         return new DefaultColumn(domainModelClass, dataset, fieldName) {
             public String getAlias() {
                 return alias;
