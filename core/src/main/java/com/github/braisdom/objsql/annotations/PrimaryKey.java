@@ -25,12 +25,18 @@ import java.lang.annotation.Target;
 
 /**
  * Customizes a java field who maps the column of table.
- * By default, "id" is
+ * By default, the ObjectiveSql maps the column and java
+ * field with 'id', it will be applied in relation calculation,
+ * so it is not be suggested in normal.
  */
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface PrimaryKey {
 
+    /**
+     * A name maps the column of table
+     * @return
+     */
     String name() default Tables.DEFAULT_PRIMARY_KEY;
 
     boolean autoIncrement() default true;
