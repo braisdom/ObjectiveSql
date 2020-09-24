@@ -43,6 +43,15 @@ public class MySQLFunctions {
                 new PlainExpression(String.format("INTERVAL %d DAY", day)));
     }
 
+    public static final Expression dateAdd(Expression expression, String interval) {
+        return new SqlFunctionCall("DATE_ADD", expression, new PlainExpression(interval));
+    }
+
+    public static final Expression dateAdd(String dataString, String interval) {
+        return new SqlFunctionCall("DATE_ADD", new LiteralExpression(dataString),
+                new PlainExpression(interval));
+    }
+
     public static final Expression dateSub(Expression expression, int day) {
         return new SqlFunctionCall("DATE_SUB", expression, new PlainExpression(String.format("INTERVAL %d DAY", day)));
     }
@@ -50,6 +59,15 @@ public class MySQLFunctions {
     public static final Expression dateSub(String dataString, int day) {
         return new SqlFunctionCall("DATE_SUB", new LiteralExpression(dataString),
                 new PlainExpression(String.format("INTERVAL %d DAY", day)));
+    }
+
+    public static final Expression dateSub(Expression expression, String interval) {
+        return new SqlFunctionCall("DATE_SUB", expression, new PlainExpression(interval));
+    }
+
+    public static final Expression dateSub(String dataString, String interval) {
+        return new SqlFunctionCall("DATE_SUB", new LiteralExpression(dataString),
+                new PlainExpression(interval));
     }
 
     public static final Expression subDate(Expression expression, int day) {
@@ -231,6 +249,14 @@ public class MySQLFunctions {
 
     public static final Expression strToDate(Expression expression, String format) {
         return new SqlFunctionCall("STR_TO_DATE", expression, new LiteralExpression(format));
+    }
+
+    public static final Expression dateFormat(String str, String format) {
+        return new SqlFunctionCall("DATE_FORMAT", new LiteralExpression(str), new LiteralExpression(format));
+    }
+
+    public static final Expression dateFormat(Expression expression, String format) {
+        return new SqlFunctionCall("DATE_FORMAT", expression, new LiteralExpression(format));
     }
 
     public static final Expression dayOfYear(String str) {

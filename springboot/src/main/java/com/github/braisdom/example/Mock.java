@@ -42,7 +42,9 @@ public class Mock {
 
     private static final String[] SALES_TIMES = {
             "2020-09-01 13:41:01", "2020-09-01 09:23:34", "2020-09-02 10:15:59", "2020-09-02 15:54:12",
-            "2020-09-03 08:41:03", "2020-09-03 16:33:09", "2020-09-04 09:13:41", "2020-09-04 12:01:23"
+            "2020-09-03 08:41:03", "2020-09-03 16:33:09", "2020-09-04 09:13:41", "2020-09-04 12:01:23",
+            "2019-09-01 13:41:01", "2019-09-01 09:23:34", "2019-09-02 10:15:59", "2019-09-02 15:54:12",
+            "2019-09-03 08:41:03", "2019-09-03 16:33:09", "2019-09-04 09:13:41", "2019-09-04 12:01:23",
     };
 
     public void generateData() throws SQLException {
@@ -101,6 +103,7 @@ public class Mock {
                 orderLine.setOrderId(order.getId())
                         .setOrderNo(orderNo)
                         .setBarcode(product.getBarcode())
+                        .setSalesPrice(product.getSalesPrice())
                         .setAmount(product.getSalesPrice() * quantity)
                         .setQuantity(quantity)
                         .setMemberId(memberId)

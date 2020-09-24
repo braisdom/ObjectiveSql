@@ -49,6 +49,14 @@ public class Expressions {
         return new PolynaryExpression(PolynaryExpression.AND, left, right, others);
     }
 
+    public static Expression eq(Expression left, Expression right) {
+        return new PolynaryExpression(PolynaryExpression.EQ, left, right);
+    }
+
+    public static Expression eq(Expression left, String right) {
+        return new PolynaryExpression(PolynaryExpression.EQ, left, new LiteralExpression(right));
+    }
+
     public static Expression or(Expression left, Expression right, Expression... others) {
         return new PolynaryExpression(PolynaryExpression.OR, left, right, others);
     }
