@@ -24,13 +24,16 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * It indicates that the methods will be executed in database transaction.
- * The transaction will be rollback when a exception occurred, the rollback cause is
- * defined at the domain logic method
+ * It indicates the methods will be executed in a database transaction.
  */
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Transactional {
 
+    /**
+     * The transaction of database has been executed in a connection only.
+     * The name of DataSource will be assigned when the application has multiple database.
+     * @return
+     */
     String dataSource() default ConnectionFactory.DEFAULT_DATA_SOURCE_NAME;
 }

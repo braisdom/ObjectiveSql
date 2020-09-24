@@ -63,7 +63,7 @@ public final class Domains {
         @Transactional
         public static void makeOrder(Order order, OrderLine... orderLines) throws SQLException {
             Order.create(order, false);
-//            OrderLine.create(orderLines, false);
+            OrderLine.create(orderLines, false);
         }
     }
 

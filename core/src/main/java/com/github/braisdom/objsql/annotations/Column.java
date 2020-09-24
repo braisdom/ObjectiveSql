@@ -24,21 +24,40 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * The annotation is used when the field name is not Java compliant only.
+ * The annotation is used for mapping the column and field of Java Bean.
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Column {
 
+    /**
+     * Defines a new column name of database when the field name is out of the order.
+     *
+     * @return
+     */
     String name() default "";
 
     /**
-     * Customize a column transition for the column
+     * Customize a column transition for the column.
+     *
      * @return
+     * @see ColumnTransitional
      */
     Class<? extends ColumnTransitional> transition() default ColumnTransitional.class;
 
+    /**
+     * Indicates Whether the field can be inserted.
+     * The field value will be skipped at inserting when return false
+     *
+     * @return
+     */
     boolean insertable() default true;
 
+    /**
+     * Indicates Whether the field can be updated.
+     * The field value will be skipped at updating when returning false
+     *
+     * @return
+     */
     boolean updatable() default true;
 }

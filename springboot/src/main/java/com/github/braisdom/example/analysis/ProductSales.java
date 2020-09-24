@@ -42,8 +42,8 @@ public class ProductSales extends DynamicQuery<DynamicModel> {
         final SubQuery orderQuery = createOrderSummary();
         select.project(productTable.barcode,
                 productTable.name,
-                orderQuery.getProjection("member_count"),
-                orderQuery.getProjection("total_amount"),
+                orderQuery.getProjection("member_count").as("_mc"),
+                orderQuery.getProjection("total_amount").as("tc"),
                 orderQuery.getProjection("total_quantity"),
                 orderQuery.getProjection("sales_price"))
                 .from(orderQuery.as("order"))
