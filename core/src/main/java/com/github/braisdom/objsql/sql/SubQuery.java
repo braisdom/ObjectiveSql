@@ -30,16 +30,7 @@ public class SubQuery extends Select {
         Expression expression = projectionMaps.get(name);
         if(expression == null)
             throw new IllegalArgumentException(String.format("The expression of '%s' is not exists", name));
-        return new AbstractExpression() {
-            @Override
-            public String toSql(ExpressionContext expressionContext) throws SQLSyntaxException {
-                String alias = SubQuery.this.getAlias();
-                if(alias == null)
-                    throw new SQLSyntaxException("The sub query must have a alias");
-                return String.format("%s.%s", expressionContext.quoteTable(alias),
-                        expressionContext.quoteColumn(name));
-            }
-        };
+        return new Projection(name);
     }
 
     public Expression col(String name) {
@@ -51,5 +42,31 @@ public class SubQuery extends Select {
         String alias = getAlias();
         return String.format("(%s) %s", super.toSql(expressionContext),
                 WordUtil.isEmpty(alias) ? "" : String.format(" AS %s", expressionContext.quoteColumn(alias)));
+    }
+
+    private class Projection extends AbstractExpression {
+
+        private final String name;
+
+        public Projection(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public Expression as(String alias) {
+            return new Projection(name).as(alias);
+        }
+
+        @Override
+        public String toSql(ExpressionContext expressionContext) throws SQLSyntaxException {
+            String tableAlias = SubQuery.this.getAlias();
+
+            if(tableAlias == null)
+                throw new SQLSyntaxException("The sub query must have a alias");
+            String projectionAlias = getAlias() == null ? "" :
+                    String.format(" AS %s", expressionContext.quoteColumn(getAlias()));
+            return String.format("%s.%s %s", expressionContext.quoteTable(tableAlias),
+                    expressionContext.quoteColumn(name), projectionAlias);
+        }
     }
 }
