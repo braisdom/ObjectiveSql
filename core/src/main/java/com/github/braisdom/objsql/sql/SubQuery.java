@@ -54,7 +54,12 @@ public class SubQuery extends Select {
 
         @Override
         public Expression as(String alias) {
-            return new Projection(name).as(alias);
+            return new Projection(name) {
+                @Override
+                public String getAlias() {
+                    return alias;
+                }
+            };
         }
 
         @Override
