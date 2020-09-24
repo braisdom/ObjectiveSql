@@ -17,6 +17,7 @@
 package com.github.braisdom.objsql.annotations;
 
 import com.github.braisdom.objsql.relation.RelationType;
+import com.github.braisdom.objsql.relation.Relationship;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -26,7 +27,7 @@ import java.lang.annotation.Target;
 /**
  * It describes the relation between different domain models and domain models,
  * such as, a member has many orders, and the relation field will be filled when
- * querying
+ * querying.
  * <pre>
  *     public class Member {
  *         @Relation(relationType = RelationType.HAS_MANY)
@@ -44,10 +45,41 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Relation {
+
+    /**
+     * Returns the type of the relation who maps a Java Field.
+     *
+     * @return
+     * @see RelationType#HAS_ONE
+     * @see RelationType#BELONGS_TO
+     * @see RelationType#HAS_MANY
+     */
     RelationType relationType() default RelationType.HAS_MANY;
 
+    /**
+     * Returns column of the base table who associates the sub table.
+     *
+     * The primaryKey has different name mapped in different relation endpoint.
+     * In HAS_MANY and HAS_ONE, the relation applied in the base table, so the
+     * primary key is not to be given, it follows the column assigned with @Column.
+     *
+     * In BELONGS_TO, the relation applied in the sub table, so the primary key
+     *
+     * @return
+     *
+     * @see Relationship#getPrimaryKey()
+     */
     String primaryKey() default "";
 
+    /**
+     * Returns field name of Java Class, it is a formal parameter in the relation calculation,
+     * and out of the calculation, only carries the result of relation calculation.
+     *
+     * It will be applied in BELONGS_TO relation, and associates the field name in the Class who
+     * maps the base table.
+     *
+     * @return
+     */
     String primaryFieldName() default "";
 
     String foreignKey() default "";
