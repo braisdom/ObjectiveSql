@@ -30,5 +30,10 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Transactional {
 
+    /**
+     * The transaction of database has been executed in a connection only.
+     * The name of DataSource will be assigned when the application has multiple database.
+     * @return
+     */
     String dataSource() default ConnectionFactory.DEFAULT_DATA_SOURCE_NAME;
 }
