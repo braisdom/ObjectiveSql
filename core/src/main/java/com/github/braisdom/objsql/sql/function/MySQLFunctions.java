@@ -251,6 +251,14 @@ public class MySQLFunctions {
         return new SqlFunctionCall("STR_TO_DATE", expression, new LiteralExpression(format));
     }
 
+    public static final Expression dateFormat(String str, String format) {
+        return new SqlFunctionCall("DATE_FORMAT", new LiteralExpression(str), new LiteralExpression(format));
+    }
+
+    public static final Expression dateFormat(Expression expression, String format) {
+        return new SqlFunctionCall("DATE_FORMAT", expression, new LiteralExpression(format));
+    }
+
     public static final Expression dayOfYear(String str) {
         return new SqlFunctionCall("DAYOFYEAR", new LiteralExpression(str));
     }

@@ -64,7 +64,7 @@ public class PolynaryExpression extends AbstractExpression {
                     .map(FunctionWithThrowable
                             .castFunctionWithThrowable(
                                     expression -> expression.toSql(expressionContext))).toArray(String[]::new);
-            return String.join(operator, expressionStrings);
+            return String.format("(%s)", String.join(operator, expressionStrings));
         } catch (SuppressedException ex) {
             if (ex.getCause() instanceof SQLSyntaxException)
                 throw (SQLSyntaxException) ex.getCause();

@@ -1,10 +1,12 @@
 package com.github.braisdom.example;
 
 import com.github.braisdom.example.analysis.ProductSales;
+import com.github.braisdom.example.analysis.SalesCompareTimeRelated;
 import com.github.braisdom.objsql.Databases;
 import com.github.braisdom.objsql.DynamicModel;
 import com.github.braisdom.objsql.sql.SQLSyntaxException;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,6 +31,22 @@ public class ProductsController {
                 .salesBetween(beginning, end);
 
         List<DynamicModel> result = productSales.execute(Databases.getDefaultDataSourceName());
+        return ResponseObject.createSuccessResponse(result);
+    }
+
+    @GetMapping(value = "/sales_compare_time_related")
+    public ResponseObject claSalesCompare(@RequestBody Map<String, String> rawRequest) throws SQLSyntaxException, SQLException {
+        RequestObject requestObject = RequestObject.create(rawRequest);
+
+        String beginTime = requestObject.getString("beginTime");
+        String endTime = requestObject.getString("endTime");
+        String timeDimension = requestObject.getString("timeDimension");
+
+        SalesCompareTimeRelated salesCompareTimeRelated =
+                new SalesCompareTimeRelated()
+                        .timeBetween(beginTime, endTime)
+                        .timeDimension(timeDimension);
+        List<DynamicModel> result = salesCompareTimeRelated.execute(Databases.getDefaultDataSourceName());
         return ResponseObject.createSuccessResponse(result);
     }
 }

@@ -32,6 +32,20 @@ public class SubQuery extends Select {
             throw new IllegalArgumentException(String.format("The expression of '%s' is not exists", name));
         return new AbstractExpression() {
             @Override
+            public Expression as(String alias) {
+                return new AbstractExpression() {
+                    @Override
+                    public String toSql(ExpressionContext expressionContext) throws SQLSyntaxException {
+                        String queryAlias = SubQuery.this.getAlias();
+                        if(queryAlias == null)
+                            throw new SQLSyntaxException("The sub query must have a alias");
+                        return String.format("%s.%s AS %s", expressionContext.quoteTable(queryAlias),
+                                expressionContext.quoteColumn(name), expressionContext.quoteColumn(alias));
+                    }
+                };
+            }
+
+            @Override
             public String toSql(ExpressionContext expressionContext) throws SQLSyntaxException {
                 String alias = SubQuery.this.getAlias();
                 if(alias == null)
