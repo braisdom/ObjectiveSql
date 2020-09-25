@@ -16,17 +16,20 @@
  */
 package com.github.braisdom.objsql.transition;
 
-import com.github.braisdom.objsql.DomainModelDescriptor;
 import com.github.braisdom.objsql.TableRowDescriptor;
 
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
+/**
+ * A transition between database and Java bean.
+ * @param <T>
+ */
 public interface ColumnTransitional<T> {
 
     /**
-     * Puts the Java field value into the database.
+     * Transforming the value into database compatible
      *
      * @throws SQLException
      */
@@ -37,7 +40,7 @@ public interface ColumnTransitional<T> {
     }
 
     /**
-     * Pulls the database column value to Java field
+     * Transforming the value into Java field compatible
      *
      * @throws SQLException
      */
