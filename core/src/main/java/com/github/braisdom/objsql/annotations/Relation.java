@@ -26,7 +26,7 @@ import java.lang.annotation.Target;
 
 /**
  * It describes the relation between different domain models and domain models,
- * such as, a member has many orders, and the relation field will be filled when
+ * such as, a member has many orders, and the relation field will be filled after
  * querying.
  * <pre>
  *     public class Member {
@@ -47,7 +47,7 @@ import java.lang.annotation.Target;
 public @interface Relation {
 
     /**
-     * Returns the type of the relation who maps a Java Field.
+     * Returns the type of the relation who annotates a Java Field.
      *
      * @return
      * @see RelationType#HAS_ONE
@@ -59,7 +59,8 @@ public @interface Relation {
     /**
      * Returns column name of the base table who associates the sub table. <br/>
      *
-     * The primaryKey has different name mapped in different relation endpoint.
+     * The primaryKey has different name mapped in different relation endpoint.<br/>
+     *
      * In HAS_MANY and HAS_ONE, the relation applied in the base table, so the
      * primary key need not to be assigned, it will follow the column assigned
      * with @Column or be a default value formatted from field name.<br/>
@@ -74,16 +75,19 @@ public @interface Relation {
     String primaryKey() default "";
 
     /**
-     * Returns field name of Java Class, it is a formal parameter in the relation calculation,
-     * and out of the calculation, only carries the result of relation calculation.
+     * Returns field name of Java Class, which is a formal parameter in the relation
+     * calculation, and carries the result of relation calculation only.<br/>
      *
-     * It will be applied in BELONGS_TO relation, and associates the field name in the Class who
-     * maps the base table.
+     * In BELONGS_TO, it associates the field name which maps the base table.
      *
      * @return
      */
     String primaryFieldName() default "";
 
+    /**
+     * The attribute applies in base table who maps a Java class
+     * @return
+     */
     String foreignKey() default "";
 
     String foreignFieldName() default "";
