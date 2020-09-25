@@ -34,39 +34,81 @@ public class MySQLFunctions {
         return new SqlFunctionCall("POW", expression);
     }
 
-    public static final Expression dateAdd(Expression expression, int day) {
-        return new SqlFunctionCall("DATE_ADD", expression, new PlainExpression(String.format("INTERVAL %d DAY", day)));
+    public static final Expression dateAddDay(Expression expression, int day) {
+        return new SqlFunctionCall("DATE_ADD", expression,
+                new PlainExpression(String.format("INTERVAL %d DAY", day)));
     }
 
-    public static final Expression dateAdd(String dataString, int day) {
-        return new SqlFunctionCall("DATE_ADD", new LiteralExpression(dataString),
+    public static final Expression dateAddDay(String dateString, int day) {
+        return new SqlFunctionCall("DATE_ADD", new LiteralExpression(dateString),
                 new PlainExpression(String.format("INTERVAL %d DAY", day)));
+    }
+
+    public static final Expression dateAddMonth(String dateString, int month) {
+        return new SqlFunctionCall("DATE_ADD", new LiteralExpression(dateString),
+                new PlainExpression(String.format("INTERVAL %d MONTH", month)));
+    }
+
+    public static final Expression dateAddMonth(Expression expression, int month) {
+        return new SqlFunctionCall("DATE_ADD", expression,
+                new PlainExpression(String.format("INTERVAL %d MONTH", month)));
+    }
+
+    public static final Expression dateAddYear(String dateString, int year) {
+        return new SqlFunctionCall("DATE_ADD", new LiteralExpression(dateString),
+                new PlainExpression(String.format("INTERVAL %d YEAR", year)));
+    }
+
+    public static final Expression dateAddYear(Expression expression, int year) {
+        return new SqlFunctionCall("DATE_ADD", expression,
+                new PlainExpression(String.format("INTERVAL %d YEAR", year)));
     }
 
     public static final Expression dateAdd(Expression expression, String interval) {
         return new SqlFunctionCall("DATE_ADD", expression, new PlainExpression(interval));
     }
 
-    public static final Expression dateAdd(String dataString, String interval) {
-        return new SqlFunctionCall("DATE_ADD", new LiteralExpression(dataString),
+    public static final Expression dateAdd(String dateString, String interval) {
+        return new SqlFunctionCall("DATE_ADD", new LiteralExpression(dateString),
                 new PlainExpression(interval));
     }
 
-    public static final Expression dateSub(Expression expression, int day) {
-        return new SqlFunctionCall("DATE_SUB", expression, new PlainExpression(String.format("INTERVAL %d DAY", day)));
+    public static final Expression dateSubDay(Expression expression, int day) {
+        return new SqlFunctionCall("DATE_SUB", expression,
+                new PlainExpression(String.format("INTERVAL %d DAY", day)));
     }
 
-    public static final Expression dateSub(String dataString, int day) {
-        return new SqlFunctionCall("DATE_SUB", new LiteralExpression(dataString),
+    public static final Expression dateSubDay(String dateString, int day) {
+        return new SqlFunctionCall("DATE_SUB", new LiteralExpression(dateString),
                 new PlainExpression(String.format("INTERVAL %d DAY", day)));
+    }
+
+    public static final Expression dateSubMonth(Expression expression, int month) {
+        return new SqlFunctionCall("DATE_SUB", expression,
+                new PlainExpression(String.format("INTERVAL %d MONTH", month)));
+    }
+
+    public static final Expression dateSubMonth(String dateString, int month) {
+        return new SqlFunctionCall("DATE_SUB", new LiteralExpression(dateString),
+                new PlainExpression(String.format("INTERVAL %d MONTH", month)));
+    }
+
+    public static final Expression dateSubYear(Expression expression, int year) {
+        return new SqlFunctionCall("DATE_SUB", expression,
+                new PlainExpression(String.format("INTERVAL %d YEAR", year)));
+    }
+
+    public static final Expression dateSubYear(String dateString, int year) {
+        return new SqlFunctionCall("DATE_SUB", new LiteralExpression(dateString),
+                new PlainExpression(String.format("INTERVAL %d YEAR", year)));
     }
 
     public static final Expression dateSub(Expression expression, String interval) {
         return new SqlFunctionCall("DATE_SUB", expression, new PlainExpression(interval));
     }
 
-    public static final Expression dateSub(String dataString, String interval) {
-        return new SqlFunctionCall("DATE_SUB", new LiteralExpression(dataString),
+    public static final Expression dateSub(String dateString, String interval) {
+        return new SqlFunctionCall("DATE_SUB", new LiteralExpression(dateString),
                 new PlainExpression(interval));
     }
 
@@ -74,24 +116,24 @@ public class MySQLFunctions {
         return new SqlFunctionCall("SUBDATE", expression, new LiteralExpression(day));
     }
 
-    public static final Expression subDate(String dataString, int day) {
-        return new SqlFunctionCall("SUBDATE", new LiteralExpression(dataString), new LiteralExpression(day));
+    public static final Expression subDate(String dateString, int day) {
+        return new SqlFunctionCall("SUBDATE", new LiteralExpression(dateString), new LiteralExpression(day));
     }
 
     public static final Expression date(Expression expression) {
         return new SqlFunctionCall("DATE", expression);
     }
 
-    public static final Expression date(String dataString) {
-        return new SqlFunctionCall("DATE", new LiteralExpression(dataString));
+    public static final Expression date(String dateString) {
+        return new SqlFunctionCall("DATE", new LiteralExpression(dateString));
     }
 
     public static final Expression dateDiff(Expression expression, Expression expression1) {
         return new SqlFunctionCall("DATEDIFF", expression, expression1);
     }
 
-    public static final Expression dateDiff(String dataString, Expression expression) {
-        return new SqlFunctionCall("DATEDIFF", new LiteralExpression(dataString), expression);
+    public static final Expression dateDiff(String dateString, Expression expression) {
+        return new SqlFunctionCall("DATEDIFF", new LiteralExpression(dateString), expression);
     }
 
     public static final Expression dateDiff(Expression expression, String dataString) {
@@ -115,11 +157,11 @@ public class MySQLFunctions {
     /**
      * Return the last day of the month for the argument
      *
-     * @param dataString for example, '2020-09-3'
+     * @param dateString for example, '2020-09-3'
      * @return the last day of the month
      */
-    public static final Expression lastDay(String dataString) {
-        return new SqlFunctionCall("LAST_DAY", new LiteralExpression(dataString));
+    public static final Expression lastDay(String dateString) {
+        return new SqlFunctionCall("LAST_DAY", new LiteralExpression(dateString));
     }
 
     public static final Expression md5(Expression expression) {
