@@ -1,8 +1,12 @@
 package com.github.braisdom.objsql;
 
-import com.github.braisdom.objsql.annotations.PrimaryKey;
 import com.github.braisdom.objsql.transition.ColumnTransitional;
 
+/**
+ * Describes the Java Bean who maps a row in the table.
+ *
+ * @param <T> the bean class
+ */
 public interface TableRowDescriptor<T> {
 
     T newInstance();
