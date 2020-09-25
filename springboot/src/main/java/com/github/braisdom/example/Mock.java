@@ -146,8 +146,7 @@ public class Mock {
         Random random = new Random();
         int nextInt = random.nextInt(900000000) + 100000000;
         int abs = Math.abs(nextInt);
-        String valueOf = String.valueOf(abs);
-        return valueOf;
+        return String.valueOf(abs);
     }
 
     public static void main(String[] args) throws SQLException {

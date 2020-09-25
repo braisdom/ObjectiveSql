@@ -618,7 +618,6 @@ public class QueryRunner extends AbstractQueryRunner {
      * <code>Connection</code> is retrieved from the <code>DataSource</code>
      * set in the constructor.  This <code>Connection</code> must be in
      * auto-commit mode or the insert will not be saved.
-     * @param <T> The type of object that the handler returns
      * @param sql The SQL statement to execute.
      * the <code>ResultSet</code> of auto-generated keys.
      * @param params Initializes the PreparedStatement's IN (i.e. '?')

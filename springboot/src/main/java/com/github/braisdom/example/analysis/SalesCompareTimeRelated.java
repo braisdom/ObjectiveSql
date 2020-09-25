@@ -66,7 +66,7 @@ public class SalesCompareTimeRelated extends DynamicQuery<DynamicModel> {
                 .leftOuterJoin(chainSubQuery, Expressions.eq(subQuery.col("dt"),
                         dateAdd(chainSubQuery.col("dt"), interval)))
                 .leftOuterJoin(yoySubQuery, Expressions.eq(subQuery.col("dt"),
-                        dateAdd(yoySubQuery.col("dt"), "INTERVAL 1 YEAR")));
+                        dateAddYear(yoySubQuery.col("dt"), 1)));
 
         return super.execute(DynamicModel.class, dataSourceName, select);
     }
