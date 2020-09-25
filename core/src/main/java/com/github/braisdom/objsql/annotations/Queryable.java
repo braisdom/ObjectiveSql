@@ -21,8 +21,18 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Indicates a column can be queried. A 'queryBy...' method will be generated
+ * when the annotation assigned for a Java field
+ */
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.SOURCE)
 public @interface Queryable {
+
+    /**
+     * Indicates whether returns a List for querying
+     *
+     * @return
+     */
     boolean many() default false;
 }
