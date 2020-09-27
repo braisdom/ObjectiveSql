@@ -32,7 +32,9 @@ public class MySqlTest {
     @Test
     public void mockDataTest() throws SQLException {
         DataMock dataMock = new DataMock();
-        dataMock.generateData();
+        dataMock.generateMembers();
+        dataMock.generateProducts();
+        dataMock.generateOrdersAndOrderLines();
     }
 
 }

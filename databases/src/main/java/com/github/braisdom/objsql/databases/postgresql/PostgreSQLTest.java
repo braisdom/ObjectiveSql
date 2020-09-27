@@ -2,18 +2,17 @@ package com.github.braisdom.objsql.databases.postgresql;
 
 import com.github.braisdom.objsql.ConnectionFactory;
 import com.github.braisdom.objsql.Databases;
+import com.github.braisdom.objsql.DynamicModel;
 import com.github.braisdom.objsql.databases.DataMock;
 import com.github.braisdom.objsql.databases.TableCreator;
-import com.github.braisdom.objsql.databases.model.Order;
 import com.github.braisdom.objsql.sql.SQLSyntaxException;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.util.List;
 
 public class PostgreSQLTest {
 
@@ -36,7 +35,9 @@ public class PostgreSQLTest {
     @Test
     public void testMockData() throws SQLException {
         DataMock dataMock = new DataMock();
-        dataMock.generateData();
+        dataMock.generateMembers();
+        dataMock.generateProducts();
+        dataMock.generateOrdersAndOrderLines();
     }
 
     @Test
@@ -46,17 +47,8 @@ public class PostgreSQLTest {
         productSales.salesBetween("2020-09-01 00:00:00", "2020-09-10 00:00:00")
                 .productIn("P2020000018", "P202000007", "P2020000011");
 
-        productSales.execute(Databases.getDefaultDataSourceName());
-    }
-
-    @Test
-    public void testJDBCPrepare() throws SQLException {
-        Order order = new Order();
-        order.setNo("O202000001");
-        order.setMemberId(89);
-        order.setSalesAt(Timestamp.valueOf("2019-09-01 13:41:01"));
-
-        Order.create(order, false, true);
+        List<DynamicModel> execute = productSales.execute(Databases.getDefaultDataSourceName());
+        execute.forEach(System.out::println);
     }
 
 }

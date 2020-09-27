@@ -480,4 +480,32 @@ public class AnsiFunctions {
     public static Expression subStr(Expression expression, int length) {
         return new SqlFunctionCall("SUBSTR", expression, new LiteralExpression(length));
     }
+
+    public static final Expression cast(String str, String type) {
+        return cast(new LiteralExpression(str), type);
+    }
+
+    public static final Expression cast(int num, String type) {
+        return cast(new LiteralExpression(num), type);
+    }
+
+    public static final Expression cast(float floatNum, String type) {
+        return cast(new LiteralExpression(floatNum), type);
+    }
+
+    public static final Expression cast(Expression expression, String type) {
+        return new SqlFunctionCall("CAST", expression) {
+            @Override
+            public String toSql(ExpressionContext expressionContext) throws SQLSyntaxException {
+                String[] expressionStrings = Arrays.stream(getExpressions())
+                        .map(FunctionWithThrowable
+                                .castFunctionWithThrowable(expression -> expression.toSql(expressionContext)))
+                        .toArray(String[]::new);
+                String alias = getAlias();
+                return String.format("%s(%s AS %s) %s", getName(), expressionStrings[0], type,
+                        alias == null ? "" : "AS " + expressionContext.quoteColumn(alias));
+            }
+        };
+
+    }
 }
