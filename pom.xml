@@ -19,6 +19,7 @@
         <module>core</module>
         <module>jds</module>
         <module>example</module>
+        <module>databases</module>
         <module>springboot</module>
     </modules>
 
