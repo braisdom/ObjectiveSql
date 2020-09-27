@@ -20,4 +20,6 @@ public interface PersistenceFactory {
 
     <T> Persistence<T> createPersistence(Class<T> clazz);
 
+    <T> Persistence<T> createPersistence(DomainModelDescriptor<T> domainModelDescriptor);
+
 }

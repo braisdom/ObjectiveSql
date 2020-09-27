@@ -96,9 +96,14 @@ public final class Databases {
     };
 
     private static PersistenceFactory persistenceFactory = new PersistenceFactory() {
+
         @Override
         public <T> Persistence<T> createPersistence(Class<T> clazz) {
-            return new DefaultPersistence<>(clazz);
+            return createPersistence(new BeanModelDescriptor<>(clazz));
+        }
+
+        public <T> Persistence<T> createPersistence(DomainModelDescriptor<T> domainModelDescriptor) {
+            return new DefaultPersistence<T>(domainModelDescriptor);
         }
     };
 
