@@ -140,7 +140,8 @@ public final class Relationship {
         return new HasAnyProcessor();
     }
 
-    public static void setRelationalObjects(Relationship relationship, Object row, String fieldName, List associatedObjects) {
+    public static void setRelationalObjects(Relationship relationship, Object row,
+                                            String fieldName, List associatedObjects) {
         if (relationship.isBelongsTo()) {
             if (associatedObjects.size() > 1)
                 throw new RelationalException(String.format("The %s[belongs_to] has too many relations", fieldName));

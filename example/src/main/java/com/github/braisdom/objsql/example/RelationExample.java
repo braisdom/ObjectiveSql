@@ -50,7 +50,8 @@ public class RelationExample {
     }
 
     private static void queryFirstMemberWithOrders() throws SQLException {
-        Member member = Member.queryFirst("id = ?", new Relationship[]{Member.HAS_MANY_ORDERS}, 3);
+        Member member = Member.queryFirst("id = ?",
+                new Relationship[]{Member.HAS_MANY_ORDERS}, 3);
 
         Assert.assertNotNull(member);
         Assert.assertTrue(member.getOrders().size() > 0);
@@ -61,6 +62,14 @@ public class RelationExample {
                 new Relationship[]{Member.HAS_MANY_ORDERS}, 1);
 
         System.out.println();
+    }
+
+    private static void queryOrder() throws SQLException {
+        Order order = Order.queryFirst("id = ?",
+                new Relationship[]{Order.BELONGS_TO_MEMBER}, 10);
+
+        Assert.assertNotNull(order);
+        Assert.assertNotNull(order.getMember());
     }
 
     public static void main(String args[]) throws SQLException {
@@ -76,5 +85,6 @@ public class RelationExample {
         prepareRelationData();
         queryFirstMemberWithOrders();
         queryManyMembersWithOrders();
+        queryOrder();
     }
 }
