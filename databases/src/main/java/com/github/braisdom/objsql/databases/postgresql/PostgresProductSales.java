@@ -1,27 +1,22 @@
-package com.github.braisdom.example.analysis;
+package com.github.braisdom.objsql.databases.postgresql;
 
-import com.github.braisdom.example.model.Member;
-import com.github.braisdom.example.model.Order;
-import com.github.braisdom.example.model.OrderLine;
-import com.github.braisdom.example.model.Product;
 import com.github.braisdom.objsql.DatabaseType;
-import com.github.braisdom.objsql.Databases;
 import com.github.braisdom.objsql.DynamicModel;
 import com.github.braisdom.objsql.DynamicQuery;
+import com.github.braisdom.objsql.databases.model.Member;
+import com.github.braisdom.objsql.databases.model.Order;
+import com.github.braisdom.objsql.databases.model.OrderLine;
+import com.github.braisdom.objsql.databases.model.Product;
 import com.github.braisdom.objsql.sql.*;
 
 import java.sql.SQLException;
 import java.util.List;
 
 import static com.github.braisdom.objsql.sql.function.AnsiFunctions.*;
-import static com.github.braisdom.objsql.sql.function.MySQLFunctions.toDateTime;
+import static com.github.braisdom.objsql.sql.function.AnsiFunctions.countDistinct;
+import static com.github.braisdom.objsql.sql.function.PostgreSql.toDateTime;
 
-/**
- * The class is used for calculating
- */
-public class ProductSales extends DynamicQuery<DynamicModel> {
-    private static final String MYSQL_DATE_TIME_FORMAT = "%Y-%m-%d %H:%i:%s";
-
+public class PostgresProductSales extends DynamicQuery<DynamicModel> {
     private Expression orderFilterExpression;
     private Select select;
 
@@ -30,8 +25,8 @@ public class ProductSales extends DynamicQuery<DynamicModel> {
     private OrderLine.Table orderLineTable = OrderLine.asTable();
     private Member.Table memberTable = Member.asTable();
 
-    public ProductSales() {
-        super(DatabaseType.MySQL);
+    public PostgresProductSales() {
+        super(DatabaseType.PostgreSQL);
         select = new Select();
     }
 
@@ -63,12 +58,12 @@ public class ProductSales extends DynamicQuery<DynamicModel> {
         final SubQuery orderSummary = new SubQuery();
 
         orderSummary.project(
-                    orderLineTable.productId.as("product_id"),
-                    countDistinct(orderTable.memberId).as("member_count"),
-                    sumMoneyColumn(orderTable.amount).as("total_amount"),
-                    sumMoneyColumn(orderTable.quantity).as("total_quantity"),
-                    avgMoneyColumn(orderLineTable.salesPrice).as("sales_price")
-                 )
+                orderLineTable.productId.as("product_id"),
+                countDistinct(orderTable.memberId).as("member_count"),
+                sumMoneyColumn(orderTable.amount).as("total_amount"),
+                sumMoneyColumn(orderTable.quantity).as("total_quantity"),
+                avgMoneyColumn(orderLineTable.salesPrice).as("sales_price")
+        )
                 .from(orderTable)
                 .where(orderFilterExpression)
                 .leftOuterJoin(orderLineTable, orderLineTable.orderId.eq(orderTable.id))
@@ -77,24 +72,15 @@ public class ProductSales extends DynamicQuery<DynamicModel> {
         return orderSummary;
     }
 
-    public ProductSales salesBetween(String begin, String end) {
+    public PostgresProductSales salesBetween(String begin, String end) {
         orderFilterExpression = appendAndExpression(orderFilterExpression,
                 orderTable.salesAt.between(toDateTime(begin), toDateTime(end)));
         return this;
     }
 
-    public ProductSales productIn(String... barcodes) {
+    public PostgresProductSales productIn(String... barcodes) {
         orderFilterExpression = appendAndExpression(orderFilterExpression,
                 orderLineTable.barcode.in(barcodes));
         return this;
-    }
-
-    public static void main(String[] args) throws SQLSyntaxException, SQLException {
-        ProductSales productSales = new ProductSales();
-
-        productSales.salesBetween("2020-09-01 00:00:00", "2020-09-10 00:00:00")
-                .productIn("P2020000018", "P202000007", "P2020000011");
-
-        productSales.execute(Databases.getDefaultDataSourceName());
     }
 }

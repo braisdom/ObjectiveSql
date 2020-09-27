@@ -16,7 +16,6 @@
  */
 package com.github.braisdom.objsql;
 
-import com.github.braisdom.objsql.annotations.PrimaryKey;
 import com.github.braisdom.objsql.jdbc.QueryRunner;
 import com.github.braisdom.objsql.jdbc.ResultSetHandler;
 import com.github.braisdom.objsql.reflection.PropertyUtils;
