@@ -1,17 +1,12 @@
-package com.github.braisdom.example;
+package com.github.braisdom.objsql.databases;
 
-import com.github.braisdom.example.model.Member;
-import com.github.braisdom.example.model.Order;
-import com.github.braisdom.example.model.OrderLine;
-import com.github.braisdom.example.model.Product;
-import com.github.braisdom.objsql.ConnectionFactory;
-import com.github.braisdom.objsql.Databases;
+import com.github.braisdom.objsql.databases.model.Member;
+import com.github.braisdom.objsql.databases.model.Order;
+import com.github.braisdom.objsql.databases.model.OrderLine;
+import com.github.braisdom.objsql.databases.model.Product;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
-import org.springframework.boot.jdbc.DataSourceBuilder;
 
-import javax.sql.DataSource;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -21,7 +16,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Slf4j
-public class Mock {
+public class DataMock {
 
     private static final String[] MEMBER_NAMES = {"Joe", "Juan", "Jack", "Albert", "Jonathan", "Justin", "Terry", "Gerald", "Keith", "Samuel",
             "Willie", "Ralph", "Lawrence", "Nicholas", "Roy", "Benjamin", "Bruce", "Brandon", "Adam", "Harry", "Fred", "Wayne", "Billy", "Steve",
@@ -62,7 +57,7 @@ public class Mock {
                     .setGender(RandomUtils.nextInt(1, 3))
                     .setMobile(getMobile()));
         }
-        int[] createdMembersCount = Member.create(members.toArray(new Member[]{}), false);
+        int[] createdMembersCount = Member.create(members.toArray(new Member[]{}), false, true);
         log.info("{} members has been generated.", createdMembersCount);
     }
 
@@ -76,7 +71,7 @@ public class Mock {
                     .setCost(RandomUtils.nextDouble(5.0f, 40.0f))
                     .setSalesPrice(RandomUtils.nextDouble(10.0f, 50.0f)));
         }
-        int[] createdProductsCount = Product.create(products.toArray(new Product[]{}), false);
+        int[] createdProductsCount = Product.create(products.toArray(new Product[]{}), false, true);
         log.info("{} products has been generated.", createdProductsCount);
     }
 
@@ -90,7 +85,7 @@ public class Mock {
             String orderNo = String.format("O20200000%s", (i + 1));
             Timestamp salesAt = Timestamp.valueOf(SALES_TIMES[RandomUtils.nextInt(0, SALES_TIMES.length)]);
             order.setNo(orderNo).setMemberId(memberId).setSalesAt(salesAt);
-            order = Order.create(order, false);
+            order = Order.create(order, false, true);
 
             double amount = 0f;
             double quantitySum = 0f;
@@ -116,7 +111,8 @@ public class Mock {
             order.setQuantity(quantitySum);
             order.save(false);
         }
-        int[] createOrderLinesCount = OrderLine.create(orderLines.toArray(new OrderLine[]{}), false, false);
+
+        int[] createOrderLinesCount = OrderLine.create(orderLines.toArray(new OrderLine[]{}), false, true);
         log.info("1000 orders has been generated, and {} has been generated.", createOrderLinesCount);
     }
 
@@ -146,22 +142,5 @@ public class Mock {
         int nextInt = random.nextInt(900000000) + 100000000;
         int abs = Math.abs(nextInt);
         return String.valueOf(abs);
-    }
-
-    public static void main(String[] args) throws SQLException {
-        DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create();
-        dataSourceBuilder.driverClassName("com.mysql.cj.jdbc.Driver");
-        dataSourceBuilder.url("jdbc:mysql://localhost:4406/objective_sql");
-        dataSourceBuilder.username("root");
-        dataSourceBuilder.password("123456");
-        DataSource dataSource = dataSourceBuilder.build();
-
-        Databases.installConnectionFactory(new ConnectionFactory() {
-            @Override
-            public Connection getConnection(String dataSourceName) throws SQLException {
-                return dataSource.getConnection();
-            }
-        });
-        new Mock().generateData();
     }
 }
