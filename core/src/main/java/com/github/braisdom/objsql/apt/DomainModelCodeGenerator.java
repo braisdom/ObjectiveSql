@@ -38,7 +38,9 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
         handleCreatePersistenceMethod(aptBuilder);
         handleSaveMethod(aptBuilder);
         handleCreateMethod(aptBuilder);
+        handleCreate2Method(aptBuilder);
         handleCreateArrayMethod(aptBuilder);
+        handleCreateArray2Method(aptBuilder);
         handleUpdateMethod(annotationValues, aptBuilder);
         handleUpdate2Method(aptBuilder);
         handleDestroyMethod(annotationValues, aptBuilder);
@@ -112,7 +114,7 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
 
         methodBuilder.setReturnStatement("query", "queryFirst",
                 aptBuilder.varRef("relationships"));
-        return  methodBuilder
+        return methodBuilder
                 .addStatements(statementBuilder.build())
                 .addParameter("primaryKey", primaryField.vartype)
                 .addVarargsParameter("relationships", aptBuilder.typeRef(Relationship.class))
@@ -203,11 +205,38 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
         TreeMaker treeMaker = aptBuilder.getTreeMaker();
         StatementBuilder statementBuilder = aptBuilder.createStatementBuilder();
 
-        statementBuilder.append(aptBuilder.newGenericsType(Persistence.class, aptBuilder.getClassName()), "persistence",
-                "createPersistence");
+        statementBuilder.append(aptBuilder.typeRef(PersistenceFactory.class),
+                "persistenceFactory", Databases.class,
+                "getPersistenceFactory", List.nil());
+
+        statementBuilder.append(aptBuilder.newGenericsType(Persistence.class, aptBuilder.getClassName()),
+                "persistence", "persistenceFactory", "createPersistence",
+                treeMaker.NewClass(null, List.nil(),
+                        aptBuilder.typeRef(BeanModelDescriptor.class),
+                        List.of(aptBuilder.classRef(aptBuilder.getClassName()),
+                                aptBuilder.varRef("skipPrimaryKeyOnInserting")), null));
 
         methodBuilder.setReturnStatement("persistence", "insert",
                 aptBuilder.varRef("dirtyObject"), aptBuilder.varRef("skipValidation"));
+
+        aptBuilder.inject(methodBuilder
+                .setReturnType(aptBuilder.typeRef(aptBuilder.getClassName()))
+                .addStatements(statementBuilder.build())
+                .addParameter("dirtyObject", aptBuilder.typeRef(aptBuilder.getClassName()))
+                .addParameter("skipValidation", treeMaker.TypeIdent(TypeTag.BOOLEAN))
+                .addParameter("skipPrimaryKeyOnInserting", treeMaker.TypeIdent(TypeTag.BOOLEAN))
+                .setThrowsClauses(SQLException.class)
+                .build("create", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
+    }
+
+    private void handleCreate2Method(APTBuilder aptBuilder) {
+        MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
+        TreeMaker treeMaker = aptBuilder.getTreeMaker();
+        StatementBuilder statementBuilder = aptBuilder.createStatementBuilder();
+
+        methodBuilder.setReturnStatement(aptBuilder.getClassName(), "create",
+                aptBuilder.varRef("dirtyObject"), aptBuilder.varRef("skipValidation"),
+                treeMaker.Literal(false));
 
         aptBuilder.inject(methodBuilder
                 .setReturnType(aptBuilder.typeRef(aptBuilder.getClassName()))
@@ -223,11 +252,38 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
         TreeMaker treeMaker = aptBuilder.getTreeMaker();
         StatementBuilder statementBuilder = aptBuilder.createStatementBuilder();
 
-        statementBuilder.append(aptBuilder.newGenericsType(Persistence.class, aptBuilder.getClassName()), "persistence",
-                "createPersistence");
+        statementBuilder.append(aptBuilder.typeRef(PersistenceFactory.class),
+                "persistenceFactory", Databases.class,
+                "getPersistenceFactory", List.nil());
+
+        statementBuilder.append(aptBuilder.newGenericsType(Persistence.class, aptBuilder.getClassName()),
+                "persistence", "persistenceFactory", "createPersistence",
+                treeMaker.NewClass(null, List.nil(),
+                        aptBuilder.typeRef(BeanModelDescriptor.class),
+                        List.of(aptBuilder.classRef(aptBuilder.getClassName()),
+                                aptBuilder.varRef("skipPrimaryKeyOnInserting")), null));
 
         methodBuilder.setReturnStatement("persistence", "insert",
                 aptBuilder.varRef("dirtyObjects"), aptBuilder.varRef("skipValidation"));
+
+        aptBuilder.inject(methodBuilder
+                .setReturnType(aptBuilder.newArrayType(treeMaker.TypeIdent(TypeTag.INT)))
+                .addStatements(statementBuilder.build())
+                .addParameter("dirtyObjects", aptBuilder.newArrayType(aptBuilder.getClassName()))
+                .addParameter("skipValidation", treeMaker.TypeIdent(TypeTag.BOOLEAN))
+                .addParameter("skipPrimaryKeyOnInserting", treeMaker.TypeIdent(TypeTag.BOOLEAN))
+                .setThrowsClauses(SQLException.class)
+                .build("create", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
+    }
+
+    private void handleCreateArray2Method(APTBuilder aptBuilder) {
+        MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
+        TreeMaker treeMaker = aptBuilder.getTreeMaker();
+        StatementBuilder statementBuilder = aptBuilder.createStatementBuilder();
+
+        methodBuilder.setReturnStatement(aptBuilder.getClassName(), "create",
+                aptBuilder.varRef("dirtyObjects"), aptBuilder.varRef("skipValidation"),
+                treeMaker.Literal(false));
 
         aptBuilder.inject(methodBuilder
                 .setReturnType(aptBuilder.newArrayType(treeMaker.TypeIdent(TypeTag.INT)))
@@ -522,7 +578,7 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
 
         statementBuilder.append(aptBuilder.typeRef(ForcedFieldValueConverter.class), "convert",
                 treeMaker.NewClass(null, List.nil(),
-                aptBuilder.typeRef(DefaultForcedFieldValueConverter.class), List.nil(), null));
+                        aptBuilder.typeRef(DefaultForcedFieldValueConverter.class), List.nil(), null));
 
         methodBuilder.setReturnStatement(aptBuilder.getClassName(), "newInstanceFrom",
                 aptBuilder.varRef("properties"), aptBuilder.varRef("underLine"), aptBuilder.varRef("convert"));

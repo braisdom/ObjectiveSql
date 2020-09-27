@@ -24,7 +24,7 @@ public class PersistenceExample {
                 .setGender(1)
                 .setMobile("15011112222");
 
-        Member member = Member.create(newMember, true);
+        Member member = Member.create(newMember, true, true);
         Assert.assertNotNull(member);
     }
 

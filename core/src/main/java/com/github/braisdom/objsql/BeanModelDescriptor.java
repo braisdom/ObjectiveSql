@@ -49,14 +49,20 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
     private final Class<T> domainModelClass;
     private final Map<String, ColumnTransitional> columnTransitionMap;
     private final Map<String, Field> columnToField;
+    private final boolean skipPrimaryKeyOnInserting;
 
     public BeanModelDescriptor(Class<T> domainModelClass) {
+        this(domainModelClass, false);
+    }
+
+    public BeanModelDescriptor(Class<T> domainModelClass, boolean skipPrimaryKeyOnInserting) {
         Objects.requireNonNull(domainModelClass, "The domainModelClass cannot be null");
 
         if (Tables.getPrimaryKey(domainModelClass) == null)
             throw new DomainModelException(String.format("The %s has no primary key", domainModelClass.getSimpleName()));
 
         this.domainModelClass = domainModelClass;
+        this.skipPrimaryKeyOnInserting = skipPrimaryKeyOnInserting;
         this.columnTransitionMap = new HashMap<>();
         this.columnToField = new HashMap<>();
 
@@ -115,6 +121,7 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
     @Override
     public String[] getInsertableColumns() {
         return Arrays.stream(getColumnizableFields(domainModelClass, true, false))
+                .filter(field -> skipPrimaryKeyOnInserting ? field.getAnnotation(PrimaryKey.class) == null : true)
                 .map(field -> getColumnName(field)).toArray(String[]::new);
     }
 

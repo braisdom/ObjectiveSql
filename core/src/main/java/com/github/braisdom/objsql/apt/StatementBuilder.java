@@ -71,7 +71,8 @@ public class StatementBuilder {
         return this;
     }
 
-    public StatementBuilder append(JCExpression varType, String name, String instanceMethodName, JCExpression... params) {
+    public StatementBuilder append(JCExpression varType, String name, String instanceMethodName,
+                                   JCExpression... params) {
         JCExpression methodInvoke = treeMaker.Apply(List.nil(), aptBuilder.varRef(instanceMethodName), List.from(params));
         jcStatements.append(treeMaker.VarDef(treeMaker.Modifiers(Flags.PARAMETER), aptBuilder.toName(name),
                 varType, methodInvoke));
