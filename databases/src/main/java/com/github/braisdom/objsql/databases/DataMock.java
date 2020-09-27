@@ -42,13 +42,7 @@ public class DataMock {
             "2019-09-03 08:41:03", "2019-09-03 16:33:09", "2019-09-04 09:13:41", "2019-09-04 12:01:23",
     };
 
-    public void generateData() throws SQLException {
-        generateMembers();
-        generateProducts();
-        generateOrdersAndOrderLines();
-    }
-
-    private void generateMembers() throws SQLException {
+    public void generateMembers() throws SQLException {
         List<Member> members = new ArrayList<>();
         for (int i = 0; i < MEMBER_NAMES.length; i++) {
             Member member = new Member();
@@ -61,7 +55,7 @@ public class DataMock {
         log.info("{} members has been generated.", createdMembersCount);
     }
 
-    private void generateProducts() throws SQLException {
+    public void generateProducts() throws SQLException {
         List<Product> products = new ArrayList<>();
         for (int i = 0; i < PRODUCT_NAMES.length; i++) {
             Product product = new Product();
@@ -75,7 +69,7 @@ public class DataMock {
         log.info("{} products has been generated.", createdProductsCount);
     }
 
-    private void generateOrdersAndOrderLines() throws SQLException {
+    public void generateOrdersAndOrderLines() throws SQLException {
         List<OrderLine> orderLines = new ArrayList<>();
         for (int i = 0; i < 1000; i++) {
             Order order = new Order();

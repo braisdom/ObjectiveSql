@@ -47,11 +47,11 @@ public class PostgresProductSales extends DynamicQuery<DynamicModel> {
     }
 
     private Expression sumMoneyColumn(Column column) {
-        return round(sum(column), 2);
+        return round(cast(sum(column), "numeric"), 2);
     }
 
     private Expression avgMoneyColumn(Column column) {
-        return round(avg(column), 2);
+        return round(cast(avg(column), "numeric"), 2);
     }
 
     private SubQuery createOrderSummary() {
