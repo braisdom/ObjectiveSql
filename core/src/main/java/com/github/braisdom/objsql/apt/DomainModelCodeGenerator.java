@@ -51,6 +51,7 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
         handleQueryFirst2Method(aptBuilder);
         handleQueryAllMethod(aptBuilder);
         handleCountMethod(aptBuilder);
+        handleCountAllMethod(aptBuilder);
         handleValidateMethod(aptBuilder);
         handleNewInstanceFromMethod(aptBuilder);
         handleNewInstanceFrom2Method(aptBuilder);
@@ -109,10 +110,12 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
         statementBuilder.append("query", "where",
                 List.of(treeMaker.Literal(String.format("%s = ?", domainModel.primaryColumnName())), aptBuilder.varRef("primaryKey")));
 
-        methodBuilder.setReturnStatement("query", "queryFirst");
+        methodBuilder.setReturnStatement("query", "queryFirst",
+                aptBuilder.varRef("relationships"));
         return  methodBuilder
                 .addStatements(statementBuilder.build())
                 .addParameter("primaryKey", primaryField.vartype)
+                .addVarargsParameter("relationships", aptBuilder.typeRef(Relationship.class))
                 .setThrowsClauses(SQLException.class)
                 .setReturnType(aptBuilder.typeRef(aptBuilder.getClassName()))
                 .build("queryByPrimaryKey", Flags.PUBLIC | Flags.STATIC | Flags.FINAL);
@@ -436,7 +439,7 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
         methodBuilder.setReturnStatement("query", "execute", aptBuilder.varRef("relations"));
         aptBuilder.inject(methodBuilder
                 .addStatements(statementBuilder.build())
-                .addVarargsParameter("relations", Relationship.class)
+                .addVarargsParameter("relations", aptBuilder.typeRef(Relationship.class))
                 .setThrowsClauses(SQLException.class)
                 .setReturnType(java.util.List.class, aptBuilder.typeRef(aptBuilder.getClassName()))
                 .build("queryAll", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
@@ -454,6 +457,19 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
                 .setThrowsClauses(SQLException.class)
                 .setReturnType(aptBuilder.getTreeMaker().TypeIdent(TypeTag.INT))
                 .build("count", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
+    }
+
+    private void handleCountAllMethod(APTBuilder aptBuilder) {
+        TreeMaker treeMaker = aptBuilder.getTreeMaker();
+        MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
+
+        methodBuilder.setReturnStatement(Tables.class, "count", aptBuilder.classRef(aptBuilder.getClassName()),
+                treeMaker.Literal(""));
+
+        aptBuilder.inject(methodBuilder
+                .setThrowsClauses(SQLException.class)
+                .setReturnType(aptBuilder.getTreeMaker().TypeIdent(TypeTag.INT))
+                .build("countAll", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
 
     private void handleValidateMethod(APTBuilder aptBuilder) {
