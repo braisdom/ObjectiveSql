@@ -1,5 +1,7 @@
-package com.github.braisdom.example;
+package com.github.braisdom.example.controllers;
 
+import com.github.braisdom.example.RequestObject;
+import com.github.braisdom.example.ResponseObject;
 import com.github.braisdom.example.analysis.ProductSales;
 import com.github.braisdom.example.analysis.SalesCompareTimeRelated;
 import com.github.braisdom.objsql.Databases;
