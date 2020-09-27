@@ -21,9 +21,10 @@ import java.sql.SQLException;
 
 /**
  * A factory for creating the <code>Connection</code> of database, it is necessary
- * for ObjectiveSql in runtime. It will be used in <code>Databases.installConnectionFactory</code> method,
- * for a application customizes various connections.<br/>
- * <b>Notice:</b> The ConnectionFactory will be inject at the application beginning.
+ * for ObjectiveSql in runtime. Injecting the ConnectionFactory at the application
+ * initializing.</br>
+ * Get the different dataSourceName while in the multiple data source scenario， the
+ * application should return the different data source by the name.
  *
  * @see Databases#installConnectionFactory(ConnectionFactory)
  */
@@ -35,12 +36,12 @@ public interface ConnectionFactory {
      * Return a new connection of database, certainly, the connection can be retrieved
      * from a connection pool also.
      *
-     * @param dataSource the name is acquired from ThreadLocal
+     * @param dataSourceName the name is acquired from ThreadLocal
      * @return a connection of database
      * @throws SQLException
      *
      */
-    Connection getConnection(String dataSource) throws SQLException;
+    Connection getConnection(String dataSourceName) throws SQLException;
 
     /**
      * Returns true if current name of data source is <code>DEFAULT_DATA_SOURCE_NAME</code>

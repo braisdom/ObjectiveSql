@@ -38,6 +38,4 @@ public @interface PrimaryKey {
      * @return
      */
     String name() default Tables.DEFAULT_PRIMARY_KEY;
-
-    boolean autoIncrement() default true;
 }

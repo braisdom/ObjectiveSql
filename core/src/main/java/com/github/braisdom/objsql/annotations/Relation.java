@@ -57,12 +57,12 @@ public @interface Relation {
     RelationType relationType() default RelationType.HAS_MANY;
 
     /**
-     * Returns column of the base table who associates the sub table.
+     * Returns column name of the base table who associates the sub table. <br/>
      *
      * The primaryKey has different name mapped in different relation endpoint.
      * In HAS_MANY and HAS_ONE, the relation applied in the base table, so the
      * primary key need not to be assigned, it will follow the column assigned
-     * with @Column or be a default value formatted from field name.
+     * with @Column or be a default value formatted from field name.<br/>
      *
      * In BELONGS_TO, the relation applied in the sub table, so the primary key
      * gets from Java Class who maps a base table.

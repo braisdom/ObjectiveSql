@@ -53,7 +53,7 @@ public class RequestObject extends HashMap<String, Object> {
         if(value == null)
             return new String[0];
 
-        if(value instanceof Array)
+        if(value instanceof String[])
             return (String[]) value;
 
         if(value instanceof String)

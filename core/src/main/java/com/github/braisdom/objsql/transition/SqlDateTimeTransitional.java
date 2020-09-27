@@ -17,7 +17,6 @@
 package com.github.braisdom.objsql.transition;
 
 import com.github.braisdom.objsql.DatabaseType;
-import com.github.braisdom.objsql.DomainModelDescriptor;
 import com.github.braisdom.objsql.TableRowDescriptor;
 
 import java.sql.DatabaseMetaData;
