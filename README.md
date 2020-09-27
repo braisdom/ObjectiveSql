@@ -1,11 +1,13 @@
-ObjectiveSql 用极简的方式解决了Java 与不同类型数据库之间的交互，封装了常用的数据库访问能力，程序员几乎零编码，就可以满足应用系统对数据库访问的需求，主要特点如下：
+The ObjectiveSql makes it easy to CRUD operations on databases(needs to define an  annotation only) . It is a best ActiveRecord pratice in Java, make the programmer will discard the configuration(XML, YAML, etc) and ORM.
 
-- 在编译期，自动生成数据库访问的相关Java代码，程序员只需关注业务特性的开发
-- 结合IntelliJ 插件提供Code Completion 特性，为开发提供帮助
-- 封装了不同类型数据库（例如：Oracle, MySQL，MSSql等）函数，使SQL 能够好友的和Java 结合，同时也为不同数据库的函数使用方法提供参考
-- 将SQL 中出现的各类表达式封装为Java 函数，不再拼接字符串，能够有效的避免SQL 的语法错误
+### Features
 
-#### 首先定义一个实体模型
+- Generating the code about CRUD operations on databases at compiling
+- Supporting the code completion with IntelliJ IDEA
+- The functions encapsulated for various database, make it easy to program between java and database
+- Making the expression in SQL become Java expression, easier to program and reuse
+
+### Define a DomainModel
 
 ```java
 @DomainModel
@@ -18,7 +20,7 @@ public class Member {
 }
 ```
 
-#### 你可以这样使用…
+### The query methods below
 
 ```java
 Member member1 = Member.queryByPrimaryKey(11);
@@ -29,7 +31,7 @@ List<Member> members3 = Member.queryBySql("SELECT id, name FROM members WHERE id
 int count = Member.count("id > ?", 10);
 ```
 
-#### 你也可以这样使用…
+#### The persistence methods below
 
 ```java
 Member newMember = new Member()
@@ -42,7 +44,7 @@ Member newMember = new Member()
  Member member = Member.create(newMember, true);
 ```
 
-#### 更高级地使用…
+#### The usage for abstracted SQL expression
 
 ```java
 import static com.github.braisdom.objsql.sql.expression.Expressions.$;
@@ -68,18 +70,15 @@ public class Order {
 
 Member.Table member = Member.asTable();
 Order.Table order = Order.asTable();
+
 Select select = new Select(member);
+
 Expression memberNameFilter = member.name.eq($("Jack"));
 Expression memberGenderFilter = member.gender.eq($(0));
+
 select.project(member.id, member.name)
         .leftOuterJoin(order, order.memberId.eq(member.id))
         .where(and(memberNameFilter, memberGenderFilter));
 
 List<Member> members = select.execute();
 ```
-
-上述代码中出现的方法和实例变量均是编译期动态生成([JSR269](https://www.jcp.org/en/jsr/detail?id=269)规范)，主要包括：
-
-- DomainMode 的实例变量的Setter和Getter 方法
-- Query 和Persistence 相关方法
-- SQL 语句结构和表达式封装的相关类，例如：XXModel.Table，Column 等
