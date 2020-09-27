@@ -5,7 +5,7 @@ The ObjectiveSql makes it easy to CRUD operations on databases(needs to define a
 - Generating the code about CRUD operations on databases at compiling
 - Supporting the code completion with IntelliJ IDEA
 - The functions encapsulated for various database, make it easy to program between java and database
-- Making the expression in SQL become Java expression, easier to program and reuse
+- Making the expressions in SQL become Java expressions, easier to program and reuse
 
 ### Define a DomainModel
 
