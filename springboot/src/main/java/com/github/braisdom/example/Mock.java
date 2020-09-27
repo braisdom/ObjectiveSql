@@ -116,8 +116,7 @@ public class Mock {
             order.setQuantity(quantitySum);
             order.save(false);
         }
-
-        int[] createOrderLinesCount = OrderLine.create(orderLines.toArray(new OrderLine[]{}), false);
+        int[] createOrderLinesCount = OrderLine.create(orderLines.toArray(new OrderLine[]{}), false, false);
         log.info("1000 orders has been generated, and {} has been generated.", createOrderLinesCount);
     }
 

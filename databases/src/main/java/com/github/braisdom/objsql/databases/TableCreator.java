@@ -37,17 +37,17 @@ public class TableCreator {
     private String[] getDDLSqls() throws IOException {
         FileReader fileReader = new FileReader(String.format(SQL_FILE_PATH, databaseType));
         BufferedReader bufferedReader = new BufferedReader(fileReader);
-        StringBuffer stringBuffer = new StringBuffer();
+        StringBuilder stringBuilder = new StringBuilder();
         String line;
         while ((line = bufferedReader.readLine()) != null) {
             if (!line.equals("")) {
-                stringBuffer.append(line);
-                stringBuffer.append("\n");
+                stringBuilder.append(line);
+                stringBuilder.append("\n");
             }
         }
         bufferedReader.close();
         fileReader.close();
-        return stringBuffer.toString().split(";");
+        return stringBuilder.toString().split(";");
     }
 
 }

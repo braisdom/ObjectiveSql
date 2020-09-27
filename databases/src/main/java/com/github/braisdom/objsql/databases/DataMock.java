@@ -57,7 +57,7 @@ public class DataMock {
                     .setGender(RandomUtils.nextInt(1, 3))
                     .setMobile(getMobile()));
         }
-        int[] createdMembersCount = Member.create(members.toArray(new Member[]{}), false);
+        int[] createdMembersCount = Member.create(members.toArray(new Member[]{}), false, true);
         log.info("{} members has been generated.", createdMembersCount);
     }
 
@@ -71,7 +71,7 @@ public class DataMock {
                     .setCost(RandomUtils.nextDouble(5.0f, 40.0f))
                     .setSalesPrice(RandomUtils.nextDouble(10.0f, 50.0f)));
         }
-        int[] createdProductsCount = Product.create(products.toArray(new Product[]{}), false);
+        int[] createdProductsCount = Product.create(products.toArray(new Product[]{}), false, true);
         log.info("{} products has been generated.", createdProductsCount);
     }
 
@@ -85,7 +85,7 @@ public class DataMock {
             String orderNo = String.format("O20200000%s", (i + 1));
             Timestamp salesAt = Timestamp.valueOf(SALES_TIMES[RandomUtils.nextInt(0, SALES_TIMES.length)]);
             order.setNo(orderNo).setMemberId(memberId).setSalesAt(salesAt);
-            order = Order.create(order, false);
+            order = Order.create(order, false, true);
 
             double amount = 0f;
             double quantitySum = 0f;
@@ -112,7 +112,7 @@ public class DataMock {
             order.save(false);
         }
 
-        int[] createOrderLinesCount = OrderLine.create(orderLines.toArray(new OrderLine[]{}), false);
+        int[] createOrderLinesCount = OrderLine.create(orderLines.toArray(new OrderLine[]{}), false, true);
         log.info("1000 orders has been generated, and {} has been generated.", createOrderLinesCount);
     }
 
