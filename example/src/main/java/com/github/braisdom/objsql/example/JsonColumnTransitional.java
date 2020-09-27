@@ -3,7 +3,7 @@ package com.github.braisdom.objsql.example;
 import com.github.braisdom.objsql.TableRowDescriptor;
 import com.github.braisdom.objsql.transition.ColumnTransitional;
 import com.github.braisdom.objsql.DomainModelDescriptor;
-import com.google.gson.Gson;
+import com.google.gson.Gson ;
 import com.google.gson.GsonBuilder;
 
 import java.sql.DatabaseMetaData;
