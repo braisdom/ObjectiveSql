@@ -31,7 +31,7 @@ List<Member> members3 = Member.queryBySql("SELECT id, name FROM members WHERE id
 int count = Member.count("id > ?", 10);
 ```
 
-#### The persistence methods below
+### The persistence methods below
 
 ```java
 Member newMember = new Member()
@@ -44,7 +44,7 @@ Member newMember = new Member()
  Member member = Member.create(newMember, true);
 ```
 
-#### The usage for abstracted SQL expression
+### The usage for abstracted SQL expression
 
 ```java
 import static com.github.braisdom.objsql.sql.expression.Expressions.$;
