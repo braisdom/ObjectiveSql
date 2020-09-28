@@ -20,6 +20,12 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
+/**
+ * This class is a extension point for ObjectiveSql, who will be customized
+ * for different JDBC programming.
+ *
+ * @param <T>
+ */
 public interface SQLExecutor<T> {
 
     List<T> query(Connection connection, String sql,

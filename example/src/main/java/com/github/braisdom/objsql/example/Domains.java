@@ -1,5 +1,6 @@
 package com.github.braisdom.objsql.example;
 
+import com.github.braisdom.objsql.ConnectionFactory;
 import com.github.braisdom.objsql.annotations.*;
 import com.github.braisdom.objsql.reflection.PropertyUtils;
 import com.github.braisdom.objsql.relation.RelationType;
