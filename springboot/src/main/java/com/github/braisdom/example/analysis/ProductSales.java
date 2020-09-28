@@ -1,6 +1,5 @@
 package com.github.braisdom.example.analysis;
 
-import com.github.braisdom.example.model.Member;
 import com.github.braisdom.example.model.Order;
 import com.github.braisdom.example.model.OrderLine;
 import com.github.braisdom.example.model.Product;
@@ -9,6 +8,7 @@ import com.github.braisdom.objsql.Databases;
 import com.github.braisdom.objsql.DynamicModel;
 import com.github.braisdom.objsql.DynamicQuery;
 import com.github.braisdom.objsql.sql.*;
+import com.sun.tools.corba.se.idl.constExpr.Or;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -84,6 +84,47 @@ public class ProductSales extends DynamicQuery<DynamicModel> {
         orderFilterExpression = appendAndExpression(orderFilterExpression,
                 orderLineTable.barcode.in(barcodes));
         return this;
+    }
+
+    private class OrderSummary extends SubQuery {
+
+        private final Order.Table orderTable = Order.asTable();
+        private final OrderLine.Table orderLineTable = OrderLine.asTable();
+
+        private Expression orderFilterExpression;
+
+        public OrderSummary(Expression orderFilterExpression) {
+            setupProjection();
+        }
+
+        @Override
+        public String toSql(ExpressionContext expressionContext) throws SQLSyntaxException {
+            where(orderFilterExpression);
+
+            return super.toSql(expressionContext);
+        }
+
+        private void setupProjection() {
+
+        }
+
+        public void salesBetween(String begin, String end) {
+            orderFilterExpression = appendAndExpression(orderFilterExpression,
+                    orderTable.salesAt.between(toDateTime(begin), toDateTime(end)));
+        }
+
+        public void productIn(String... barcodes) {
+            orderFilterExpression = appendAndExpression(orderFilterExpression,
+                    orderLineTable.barcode.in(barcodes));
+        }
+
+        private Expression sumMoneyColumn(Column column) {
+            return round(sum(column), 2);
+        }
+
+        private Expression avgMoneyColumn(Column column) {
+            return round(avg(column), 2);
+        }
     }
 
     public static void main(String[] args) throws SQLSyntaxException, SQLException {

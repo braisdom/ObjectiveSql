@@ -26,9 +26,7 @@ import java.util.Objects;
 
 public class DefaultColumn extends AbstractExpression implements Column {
 
-    private final Class domainModelClass;
     private final Dataset dataset;
-    private final String fieldName;
     private final String columnName;
 
     public static Column create(Class domainModelClass, Dataset dataset, String fieldName) {
@@ -36,12 +34,12 @@ public class DefaultColumn extends AbstractExpression implements Column {
     }
 
     public DefaultColumn(Class domainModelClass, Dataset dataset, String fieldName) {
-        if (StringUtil.isBlank(fieldName))
-            throw new IllegalArgumentException("The column cannot be empty");
-        this.domainModelClass = domainModelClass;
+        this(dataset, Tables.getColumnName(domainModelClass, fieldName));
+    }
+
+    public DefaultColumn(Dataset dataset, String columnName) {
         this.dataset = dataset;
-        this.fieldName = fieldName;
-        this.columnName = Tables.getColumnName(domainModelClass, fieldName);
+        this.columnName = columnName;
     }
 
     @Override
@@ -321,7 +319,7 @@ public class DefaultColumn extends AbstractExpression implements Column {
         // Because the column will be reused in more position of SQL, but the alais
         // cannot be applied in anywhere, then a new instance of Column will be created
         // after "AS" operation, avoiding to pollute the old instance.
-        return new DefaultColumn(domainModelClass, dataset, fieldName) {
+        return new DefaultColumn(dataset, columnName) {
             public String getAlias() {
                 return alias;
             }

@@ -25,6 +25,10 @@ import java.sql.Timestamp;
 
 public class Expressions {
 
+    public static Column column(Dataset dataset, String columnName) {
+        return new DefaultColumn(dataset, columnName);
+    }
+
     public static Expression paren(Expression expression) {
         return new ParenExpression(expression);
     }
