@@ -8,11 +8,11 @@ import com.github.braisdom.objsql.Databases;
 import com.github.braisdom.objsql.DynamicModel;
 import com.github.braisdom.objsql.DynamicQuery;
 import com.github.braisdom.objsql.sql.*;
-import com.sun.tools.corba.se.idl.constExpr.Or;
 
 import java.sql.SQLException;
 import java.util.List;
 
+import static com.github.braisdom.objsql.sql.Expressions.column;
 import static com.github.braisdom.objsql.sql.function.AnsiFunctions.*;
 import static com.github.braisdom.objsql.sql.function.MySQLFunctions.toDateTime;
 
@@ -22,12 +22,10 @@ import static com.github.braisdom.objsql.sql.function.MySQLFunctions.toDateTime;
 public class ProductSales extends DynamicQuery<DynamicModel> {
     private static final String MYSQL_DATE_TIME_FORMAT = "%Y-%m-%d %H:%i:%s";
 
-    private Expression orderFilterExpression;
     private Select select;
 
-    private Order.Table orderTable = Order.asTable();
     private Product.Table productTable = Product.asTable();
-    private OrderLine.Table orderLineTable = OrderLine.asTable();
+    private OrderSummary orderSummary = new OrderSummary();
 
     public ProductSales() {
         super(DatabaseType.MySQL);
@@ -35,54 +33,25 @@ public class ProductSales extends DynamicQuery<DynamicModel> {
     }
 
     public List<DynamicModel> execute(String dataSourceName) throws SQLException, SQLSyntaxException {
-        if (orderFilterExpression == null)
-            throw new SQLSyntaxException("The order filter expression must be given");
-
-        final SubQuery orderQuery = createOrderSummary();
-        select.project(productTable.barcode, productTable.name,
-                orderQuery.getProjection("member_count"),
-                orderQuery.getProjection("total_amount"),
-                orderQuery.getProjection("total_quantity"),
-                orderQuery.getProjection("sales_price"))
-                .from(orderQuery.as("order"))
-                .leftOuterJoin(productTable, productTable.id.eq(orderQuery.col("product_id")));
+        select.project(
+                productTable.barcode,
+                productTable.name,
+                orderSummary.memberCount,
+                orderSummary.totalAmount,
+                orderSummary.totalQuantity,
+                orderSummary.salesPrice)
+                .from(orderSummary.as("order"))
+                .leftOuterJoin(productTable, productTable.id.eq(orderSummary.productId));
         return super.execute(DynamicModel.class, dataSourceName, select);
     }
 
-    private Expression sumMoneyColumn(Column column) {
-        return round(sum(column), 2);
-    }
-
-    private Expression avgMoneyColumn(Column column) {
-        return round(avg(column), 2);
-    }
-
-    private SubQuery createOrderSummary() {
-        final SubQuery orderSummary = new SubQuery();
-
-        orderSummary.project(
-                orderLineTable.productId.as("product_id"),
-                countDistinct(orderTable.memberId).as("member_count"),
-                sumMoneyColumn(orderTable.amount).as("total_amount"),
-                sumMoneyColumn(orderTable.quantity).as("total_quantity"),
-                avgMoneyColumn(orderLineTable.salesPrice).as("sales_price"))
-                .from(orderTable)
-                .where(orderFilterExpression)
-                .leftOuterJoin(orderLineTable, orderLineTable.orderId.eq(orderTable.id))
-                .groupBy(orderLineTable.productId);
-
-        return orderSummary;
-    }
-
     public ProductSales salesBetween(String begin, String end) {
-        orderFilterExpression = appendAndExpression(orderFilterExpression,
-                orderTable.salesAt.between(toDateTime(begin), toDateTime(end)));
+        orderSummary.salesBetween(begin, end);
         return this;
     }
 
     public ProductSales productIn(String... barcodes) {
-        orderFilterExpression = appendAndExpression(orderFilterExpression,
-                orderLineTable.barcode.in(barcodes));
+        orderSummary.productIn(barcodes);
         return this;
     }
 
@@ -93,19 +62,28 @@ public class ProductSales extends DynamicQuery<DynamicModel> {
 
         private Expression orderFilterExpression;
 
-        public OrderSummary(Expression orderFilterExpression) {
-            setupProjection();
+        public final Column productId = column(this, orderLineTable
+                .productId.as("product_id"));
+        public final Column memberCount = column(this,
+                countDistinct(orderTable.memberId).as("member_count"));
+        public final Column totalAmount = column(this,
+                sumMoneyColumn(orderTable.amount).as("total_amount"));
+        public final Column totalQuantity = column(this,
+                sumMoneyColumn(orderTable.quantity).as("total_quantity"));
+        public final Column salesPrice = column(this,
+                avgMoneyColumn(orderLineTable.salesPrice).as("sales_price"));
+
+        public OrderSummary() {
+            project(productId, memberCount, totalAmount, totalQuantity, salesPrice)
+                    .from(orderTable)
+                    .leftOuterJoin(orderLineTable, orderLineTable.orderId.eq(orderTable.id))
+                    .groupBy(orderLineTable.productId);
         }
 
         @Override
         public String toSql(ExpressionContext expressionContext) throws SQLSyntaxException {
             where(orderFilterExpression);
-
             return super.toSql(expressionContext);
-        }
-
-        private void setupProjection() {
-
         }
 
         public void salesBetween(String begin, String end) {

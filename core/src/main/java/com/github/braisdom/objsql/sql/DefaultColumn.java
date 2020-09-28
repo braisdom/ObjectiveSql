@@ -19,6 +19,7 @@ package com.github.braisdom.objsql.sql;
 import com.github.braisdom.objsql.Tables;
 import com.github.braisdom.objsql.sql.expression.*;
 import com.github.braisdom.objsql.util.StringUtil;
+import com.github.braisdom.objsql.util.WordUtil;
 
 import javax.validation.constraints.NotNull;
 import java.util.Arrays;
@@ -27,10 +28,16 @@ import java.util.Objects;
 public class DefaultColumn extends AbstractExpression implements Column {
 
     private final Dataset dataset;
-    private final String columnName;
+
+    private String columnName;
+    private Expression columnExpression;
 
     public static Column create(Class domainModelClass, Dataset dataset, String fieldName) {
         return new DefaultColumn(domainModelClass, dataset, fieldName);
+    }
+
+    public static Column create(Dataset dataset, Expression expression) {
+        return new DefaultColumn(dataset, expression);
     }
 
     public DefaultColumn(Class domainModelClass, Dataset dataset, String fieldName) {
@@ -38,8 +45,19 @@ public class DefaultColumn extends AbstractExpression implements Column {
     }
 
     public DefaultColumn(Dataset dataset, String columnName) {
+        Objects.requireNonNull(dataset, "The dataset cannot be null");
+        if (WordUtil.isEmpty(columnName))
+            throw new IllegalArgumentException("The columnName cannot be empty");
+
         this.dataset = dataset;
         this.columnName = columnName;
+    }
+
+    public DefaultColumn(Dataset dataset, Expression expression) {
+        Objects.requireNonNull(dataset, "The dataset cannot be null");
+
+        this.dataset = dataset;
+        this.columnExpression = expression;
     }
 
     @Override
@@ -319,24 +337,41 @@ public class DefaultColumn extends AbstractExpression implements Column {
         // Because the column will be reused in more position of SQL, but the alais
         // cannot be applied in anywhere, then a new instance of Column will be created
         // after "AS" operation, avoiding to pollute the old instance.
-        return new DefaultColumn(dataset, columnName) {
-            public String getAlias() {
-                return alias;
-            }
-        };
+        if (!WordUtil.isEmpty(columnName)) {
+            return new DefaultColumn(dataset, columnName) {
+                public String getAlias() {
+                    return alias;
+                }
+            };
+        } else if (columnExpression != null) {
+            return new DefaultColumn(dataset, columnExpression) {
+                public String getAlias() {
+                    return alias;
+                }
+            };
+        } else throw new IllegalStateException("Invalid column state");
     }
 
     @Override
-    public String toSql(ExpressionContext expressionContext) {
+    public String toSql(ExpressionContext expressionContext) throws SQLSyntaxException {
         String tableAlias = expressionContext.getAlias(dataset, true);
         String columnAlias = getAlias();
-        return String.format("%s.%s %s",
-                expressionContext.quoteTable(tableAlias), expressionContext.quoteColumn(columnName),
-                columnAlias == null ? "" : " AS " + expressionContext.quoteColumn(columnAlias));
+
+        if (!WordUtil.isEmpty(columnName)) {
+            return String.format("%s.%s %s",
+                    expressionContext.quoteTable(tableAlias), expressionContext.quoteColumn(columnName),
+                    columnAlias == null ? "" : " AS " + expressionContext.quoteColumn(columnAlias));
+        } else if (columnExpression != null) {
+            return String.format("%s %s",
+                    columnExpression.toSql(expressionContext),
+                    columnAlias == null ? "" : " AS " + expressionContext.quoteColumn(columnAlias));
+        } else throw new IllegalStateException("Invalid column state");
     }
 
     @Override
     public String toString() {
-        return columnName;
+        if (!WordUtil.isEmpty(columnName))
+            return columnName;
+        else return columnExpression.toString();
     }
 }

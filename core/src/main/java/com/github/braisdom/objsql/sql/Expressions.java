@@ -29,6 +29,10 @@ public class Expressions {
         return new DefaultColumn(dataset, columnName);
     }
 
+    public static Column column(Dataset dataset, Expression expression) {
+        return DefaultColumn.create(dataset, expression);
+    }
+
     public static Expression paren(Expression expression) {
         return new ParenExpression(expression);
     }
