@@ -1,6 +1,7 @@
 package com.github.braisdom.objsql;
 
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -59,6 +60,8 @@ public class DefaultForcedFieldValueConverter implements ForcedFieldValueConvert
             return ((BigInteger) raw).intValue();
         else if (raw instanceof String)
             return Integer.valueOf((String) raw);
+        else if (raw instanceof BigDecimal)
+            return ((BigDecimal) raw).intValue();
         else
             throw new IllegalArgumentException(String.format("'%s' cannot convert to Integer", String.valueOf(raw)));
     }

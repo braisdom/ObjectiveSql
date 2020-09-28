@@ -124,7 +124,7 @@ class DomainModelListHandler implements ResultSetHandler<List> {
 class DomainModelHandler implements ResultSetHandler<Object> {
 
     private static final List<String> AUTO_GENERATE_COLUMN_NAMES = Arrays
-            .asList(new String[]{"last_insert_rowid()", "GENERATED_KEY"});
+            .asList(new String[]{"last_insert_rowid()", "GENERATED_KEY", "GENERATED_KEYS"});
 
     private final TableRowDescriptor tableRowDescriptor;
     private final DatabaseMetaData databaseMetaData;
