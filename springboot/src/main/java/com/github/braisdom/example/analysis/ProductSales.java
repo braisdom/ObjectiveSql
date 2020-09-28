@@ -28,7 +28,6 @@ public class ProductSales extends DynamicQuery<DynamicModel> {
     private Order.Table orderTable = Order.asTable();
     private Product.Table productTable = Product.asTable();
     private OrderLine.Table orderLineTable = OrderLine.asTable();
-    private Member.Table memberTable = Member.asTable();
 
     public ProductSales() {
         super(DatabaseType.MySQL);
@@ -40,8 +39,7 @@ public class ProductSales extends DynamicQuery<DynamicModel> {
             throw new SQLSyntaxException("The order filter expression must be given");
 
         final SubQuery orderQuery = createOrderSummary();
-        select.project(productTable.barcode,
-                productTable.name,
+        select.project(productTable.barcode, productTable.name,
                 orderQuery.getProjection("member_count"),
                 orderQuery.getProjection("total_amount"),
                 orderQuery.getProjection("total_quantity"),
@@ -63,12 +61,11 @@ public class ProductSales extends DynamicQuery<DynamicModel> {
         final SubQuery orderSummary = new SubQuery();
 
         orderSummary.project(
-                    orderLineTable.productId.as("product_id"),
-                    countDistinct(orderTable.memberId).as("member_count"),
-                    sumMoneyColumn(orderTable.amount).as("total_amount"),
-                    sumMoneyColumn(orderTable.quantity).as("total_quantity"),
-                    avgMoneyColumn(orderLineTable.salesPrice).as("sales_price")
-                 )
+                orderLineTable.productId.as("product_id"),
+                countDistinct(orderTable.memberId).as("member_count"),
+                sumMoneyColumn(orderTable.amount).as("total_amount"),
+                sumMoneyColumn(orderTable.quantity).as("total_quantity"),
+                avgMoneyColumn(orderLineTable.salesPrice).as("sales_price"))
                 .from(orderTable)
                 .where(orderFilterExpression)
                 .leftOuterJoin(orderLineTable, orderLineTable.orderId.eq(orderTable.id))
