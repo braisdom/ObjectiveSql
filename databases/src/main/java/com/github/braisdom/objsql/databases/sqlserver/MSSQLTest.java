@@ -1,4 +1,4 @@
-package com.github.braisdom.objsql.databases.postgresql;
+package com.github.braisdom.objsql.databases.sqlserver;
 
 import com.github.braisdom.objsql.ConnectionFactory;
 import com.github.braisdom.objsql.Databases;
@@ -6,29 +6,31 @@ import com.github.braisdom.objsql.DynamicModel;
 import com.github.braisdom.objsql.databases.DataMock;
 import com.github.braisdom.objsql.databases.TableCreator;
 import com.github.braisdom.objsql.databases.model.Order;
+import com.github.braisdom.objsql.databases.postgresql.PostgreSqlConnectionFactory;
+import com.github.braisdom.objsql.databases.postgresql.PostgresProductSales;
 import com.github.braisdom.objsql.sql.SQLSyntaxException;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.Assert;
 
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
-public class PostgreSQLTest {
+public class MSSQLTest {
 
     @Before
     public void initDatasource() {
-        String url = "jdbc:postgresql://47.100.45.227:5432/postgres?currentSchema=objective_sql";
-        String user = "postgres";
-        String password = "123456";
+        String url = "jdbc:sqlserver://47.100.45.227:1433;databaseName=objective_sql;currentSchema=dbo";
+        String user = "SA";
+        String password = "Ly19960613.";
         Databases.installConnectionFactory(new PostgreSqlConnectionFactory(url, user, password));
     }
 
     @Test
     public void createTables() throws IOException, SQLException {
-        TableCreator tableCreator = new TableCreator(TableCreator.DATABASE_TYPE_POSTGRESQL);
+        TableCreator tableCreator = new TableCreator(TableCreator.DATABASE_TYPE_SQLSERVER);
         Connection connection = Databases.getConnectionFactory().getConnection(ConnectionFactory.DEFAULT_DATA_SOURCE_NAME);
         tableCreator.create(connection);
         connection.close();
@@ -49,7 +51,7 @@ public class PostgreSQLTest {
 
     @Test
     public void testComplexQuery() throws SQLSyntaxException, SQLException {
-        PostgresProductSales productSales = new PostgresProductSales();
+        MSSQLProductSales productSales = new MSSQLProductSales();
 
         productSales.salesBetween("2020-09-01 00:00:00", "2020-09-10 00:00:00")
                 .productIn("P2020000018", "P202000007", "P2020000011");
@@ -57,5 +59,6 @@ public class PostgreSQLTest {
         List<DynamicModel> execute = productSales.execute(Databases.getDefaultDataSourceName());
         execute.forEach(System.out::println);
     }
+
 
 }
