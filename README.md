@@ -1,12 +1,10 @@
-The ObjectiveSql makes it easy to CRUD operations on databases(just define an Annotation). It is a best ActiveRecord pratice in Java, it includes everything about you need to build most SQL for business developing. 
-
-At the same time, the SQL resused is possible in ObjectiveSql and the SQL abstracted in Java is more clear, more programable. 
+The ObjectiveSql makes it easy to CRUD operations on databases(just define an Annotation). It is a best ActiveRecord pratice in Java, it includes everything about you need to build most SQL for business developing. At the same time, the SQL resused is possible in ObjectiveSql and the SQL abstracted in Java is more clear, more programable. 
 
 ### Features
 
-- Generating the code about CRUD operations on databases at compiling
+- No coding to define a "DomainModel", which carries the query and persistence behavior by itself
 - Supporting the code completion with IntelliJ IDEA
-- The functions encapsulated for various database, make it easy to program between java and database
+- The functions encapsulated for various database, who makes it easy to program between java and database
 - Making the expressions in SQL become Java expressions, easier to program and reuse
 
 ### Define a DomainModel
@@ -25,13 +23,26 @@ public class Member {
 ### The query methods below
 
 ```java
-Member member1 = Member.queryByPrimaryKey(11);
-Member member2 = Member.queryFirst("id = ?", 11);
-List<Member> members1 = Member.query("id > ?", 8);
-List<Member> members2 = Member.queryAll();
-List<Member> members3 = Member.queryBySql("SELECT id, name FROM members WHERE id < ?", 10);
+Member member = Member.queryByPrimaryKey(11);
+```
+
+```java
+Member member = Member.queryFirst("id = ?", 11);
+```
+
+```java
+List<Member> members = Member.query("id > ?", 8);
+```
+
+```java
+List<Member> members = Member.queryAll();
+```
+
+```java
 int count = Member.count("id > ?", 10);
 ```
+
+...
 
 ### The persistence methods below
 
