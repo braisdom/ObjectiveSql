@@ -51,8 +51,8 @@ public class DataMock {
                     .setGender(RandomUtils.nextInt(1, 3))
                     .setMobile(getMobile()));
         }
-        int[] createdMembersCount = Member.create(members.toArray(new Member[]{}), false, true);
-        log.info("{} members has been generated.", createdMembersCount);
+        int[] createdMembersCount = Member.create(members.toArray(new Member[]{}),
+                false, true);
     }
 
     public void generateProducts() throws SQLException {
@@ -65,7 +65,8 @@ public class DataMock {
                     .setCost(RandomUtils.nextDouble(5.0f, 40.0f))
                     .setSalesPrice(RandomUtils.nextDouble(10.0f, 50.0f)));
         }
-        int[] createdProductsCount = Product.create(products.toArray(new Product[]{}), false, true);
+        int[] createdProductsCount = Product.create(products.toArray(new Product[]{}),
+                false, true);
         log.info("{} products has been generated.", createdProductsCount);
     }
 
