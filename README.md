@@ -3,7 +3,7 @@ The ObjectiveSql makes it easy to CRUD operations on databases(just define an An
 ### Features
 
 - No coding to define a "DomainModel", which carries the query and persistence behavior by itself
-- Supporting the code completion with IntelliJ IDEA
+- Putting data access logic in the domain object, all people know how to read and write their data to and from the database.
 - The functions encapsulated for various database, who makes it easy to program between java and database
 - Making the expressions in SQL become Java expressions, easier to program and reuse
 
