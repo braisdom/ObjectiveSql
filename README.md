@@ -2,12 +2,12 @@ The ObjectiveSql makes it easy to CRUD operations on databases(just define an An
 
 ### Features
 
-- No coding to define a "DomainModel", which carries the query and persistence behavior by itself
+- Defining a domain model without redundant codes, which carries the query and persistence behavior by itself
 - Putting data access logic in the domain object, all people know how to read and write their data to and from the database.
 - The functions encapsulated for various database, who makes it easy to program between java and database
 - Making the expressions in SQL become Java expressions, easier to program and reuse
 
-### Define a DomainModel
+### Defining a DomainModel
 
 ```java
 @DomainModel
@@ -47,14 +47,9 @@ int count = Member.count("id > ?", 10);
 ### The persistence methods below
 
 ```java
-Member newMember = new Member()
-                .setId(100)
-                .setNo("100000")
-                .setName("Pamela")
-                .setGender(1)
-                .setMobile("15011112222");
-
- Member member = Member.create(newMember, true);
+Member newMember = new Member();
+// To set the field value for "newMember"
+Member member = Member.create(newMember, true);
 ```
 
 ### The usage for abstracted SQL expression
