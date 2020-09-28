@@ -1,4 +1,6 @@
-The ObjectiveSql makes it easy to CRUD operations on databases(just define an Annotation) . It is a best ActiveRecord pratice in Java, make the programmer will discard the configuration(XML, JSOM, etc) and ORM. The SQL resused is possible in ObjectiveSql and the SQL abstracted in Java is more clear, more programable. 
+The ObjectiveSql makes it easy to CRUD operations on databases(just define an Annotation). It is a best ActiveRecord pratice in Java, it includes everything about you need to build most SQL for business developing. 
+
+At the same time, the SQL resused is possible in ObjectiveSql and the SQL abstracted in Java is more clear, more programable. 
 
 ### Features
 
