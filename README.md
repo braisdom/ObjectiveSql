@@ -146,7 +146,7 @@ public class Order {
 
 ### Guides/[中文](http://www.objsql.com/)
 
-- Maven install & IntelliJ Plugin install
+- [Install ObjectiveSql & IntelliJ Plugin install](https://github.com/braisdom/ObjectiveSql/wiki/ObjectionSql-installation)
 - Naming Conventions
 - Getting start
 - DataSource configuration
