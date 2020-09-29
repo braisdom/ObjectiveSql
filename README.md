@@ -2,10 +2,10 @@ The ObjectiveSql makes it easy to CRUD operations on databases(just define an An
 
 ### Features
 
-- Defining a domain model without redundant codes, which carries the query and persistence behavior by itself
-- Putting data access logic in the domain object, all people know how to read and write their data to and from the database.
-- The functions encapsulated for various database, who makes it easy to program for SQL
-- Making the expressions in SQL become Java expressions, easier to program and reuse
+- Defining a domain model with code generating automatically, which carries the query and persistence behavior by itself, no configuration, no empty Interface
+- Validating the Java Bean with Jakarta Bean Validation integrated to ObjectiveSql
+- Database transaction into an Annotation tagged on a method only
+- The relations tagged with Annotation, who will be applied in query as a static field generated automatically
 
 ### Defining a DomainModel
 
@@ -51,43 +51,4 @@ Member newMember = new Member();
 // To set the field value for "newMember"
 newMember.save(false); //Skip the validation
 // newMember.save(true); // Validating the field value before save
-```
-
-### The usage for abstracted SQL expression
-
-```java
-import static com.github.braisdom.objsql.sql.expression.Expressions.$;
-import static com.github.braisdom.objsql.sql.expression.Expressions.and;
-
-@DomainModel
-public class Member {
-     private String no;
-     private String name;
-     private Integer gender;
-     private String mobile;
-     @Relation(relationType = RelationType.HAS_MANY)
-     private List<Order> orders;
-}
-
-@DomainModel
-public class Order {
-    private String no;
-    private Integer memberId;
-    private Float amount;
-    private Float quantity;
-}
-
-Member.Table member = Member.asTable();
-Order.Table order = Order.asTable();
-
-Select select = new Select(member);
-
-Expression memberNameFilter = member.name.eq($("Jack"));
-Expression memberGenderFilter = member.gender.eq($(0));
-
-select.project(member.id, member.name)
-        .leftOuterJoin(order, order.memberId.eq(member.id))
-        .where(and(memberNameFilter, memberGenderFilter));
-
-List<Member> members = select.execute();
 ```
