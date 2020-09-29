@@ -160,14 +160,14 @@ If you are using Maven just add the following dependency to your pom.xml:
 
 - [Naming Conventions](https://github.com/braisdom/ObjectiveSql/wiki/Naming-Conventions)
 - [Generated Methods](https://github.com/braisdom/ObjectiveSql/wiki/Generated-Methods)
-- DataSource configuration
-- Customizing Validation
-- Transaction principle
-- Full example base on SpringBoot
+- [DataSource Configuration](https://github.com/braisdom/ObjectiveSql/wiki/DataSource-Configuration)
+- [Customizing Validation](https://github.com/braisdom/ObjectiveSql/wiki/Customizing-Validation)
+- [Transaction Principle](https://github.com/braisdom/ObjectiveSql/wiki/Transaction-Principle)
 - Extensions
-  - Caching data into Redis
-  - How to save a ProtoBuffer message
-  - How to integrate application  Log framework to ObjectiveSql
-  - Customizing ColumnTransitional
+  - [Caching data into Redis](https://github.com/braisdom/ObjectiveSql/wiki/Caching)
+  - [How to save a ProtoBuffer message](https://github.com/braisdom/ObjectiveSql/wiki/ProtoBuffer)
+  - [How to integrate application  Log framework to ObjectiveSql](https://github.com/braisdom/ObjectiveSql/wiki/Log)
+  - [Customizing ColumnTransitional](https://github.com/braisdom/ObjectiveSql/wiki/ColumnTransitional)
+
 
 
