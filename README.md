@@ -1,4 +1,4 @@
-ObjectiveSql’s mission is to provide  the most obvious approach to access various databases, without configuration,  without coding about JDBC&ORM. ObjectiveSql-based programming is the best practice for ActiveRecord, which incorporates both behavior and data and avoids unmeaningful declaration of Java. Thus, ObjectiveSql-based programming will change the way to build an application base on relation database.
+ObjectiveSql’s mission is to provide  the most obvious approach to access various databases, without configuration,  without coding about JDBC&ORM. ObjectiveSql-based programming is the best practice in ActiveRecord pattern, which incorporates both behavior and data and avoids unmeaningful declaration of Java. Thus, ObjectiveSql-based programming will change the way to build an application base on relation database.
 
 ### Features
 
@@ -158,7 +158,7 @@ If you are using Maven just add the following dependency to your pom.xml:
 
 **Installing IntelliJ Plugin**:  *Preferences/Settings* -> *Plugins* -> *Search with "ObjectiveSql" in market* -> *Install*
 
-- Naming Conventions
+- [Naming Conventions](https://github.com/braisdom/ObjectiveSql/wiki/Naming-Conventions)
 - DataSource configuration
 - Customizing Validation
 - Transaction principle
@@ -168,4 +168,5 @@ If you are using Maven just add the following dependency to your pom.xml:
   - How to save a ProtoBuffer message
   - How to integrate application  Log framework to ObjectiveSql
   - Customizing ColumnTransitional
+
 
