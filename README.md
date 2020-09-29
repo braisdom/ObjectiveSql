@@ -144,3 +144,17 @@ public class Order {
 }
 ```
 
+### Guides/[中文](http://www.objsql.com/)
+
+- Maven install & IntelliJ Plugin install
+- Naming Conventions
+- Getting start
+- DataSource configuration
+- Customizing Validation
+- Transaction principle
+- Extensions
+  - Caching data into Redis
+  - How to save a ProtoBuffer message
+  - How to integrate application  Log framework to ObjectiveSql
+  - Customizing ColumnTransitional
+
