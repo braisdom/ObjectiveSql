@@ -146,12 +146,23 @@ public class Order {
 
 ### Guides/[中文](http://www.objsql.com/)
 
-- [Install ObjectiveSql & IntelliJ Plugin install](https://github.com/braisdom/ObjectiveSql/wiki/ObjectionSql-installation)
+If you are using Maven just add the following dependency to your pom.xml:
+
+```xml
+<dependency>
+    <groupId>com.github.braisdom</groupId>
+    <artifactId>objective-sql</artifactId>
+    <version>1.3.2</version>
+</dependency>
+```
+
+**Installing IntelliJ Plugin**:  *Preferences/Settings* -> *Plugins* -> *Search with "ObjectiveSql" in market* -> *Install*
+
 - Naming Conventions
-- Getting start
 - DataSource configuration
 - Customizing Validation
 - Transaction principle
+- Full example base on SpringBoot
 - Extensions
   - Caching data into Redis
   - How to save a ProtoBuffer message
