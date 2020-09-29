@@ -122,3 +122,25 @@ List<Order> orders = member.getOrders();
 Member member = Member.queryByName("demo", Member.HAS_MANY_ORDERS);
 List<Order> orders = member.getOrders();
 ```
+
+### Transactional
+
+```java
+@DomainModel
+public class Order {
+    private String no;
+    private Integer memberId;
+    private Double amount;
+    private Double quantity;
+
+    @Relation(relationType = RelationType.BELONGS_TO)
+    private Member member;
+
+    @Transactional
+    public static void makeOrder(Order order, OrderLine... orderLines) throws SQLException {
+        Order.create(order, false);
+        OrderLine.create(orderLines, false);
+    }
+}
+```
+
