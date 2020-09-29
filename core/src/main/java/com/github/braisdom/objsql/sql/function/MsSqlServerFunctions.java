@@ -21,6 +21,7 @@ import com.github.braisdom.objsql.sql.ExpressionContext;
 import com.github.braisdom.objsql.sql.SQLSyntaxException;
 import com.github.braisdom.objsql.sql.SqlFunctionCall;
 import com.github.braisdom.objsql.sql.expression.LiteralExpression;
+import com.github.braisdom.objsql.sql.expression.PlainExpression;
 import com.github.braisdom.objsql.util.FunctionWithThrowable;
 
 import java.util.Arrays;
@@ -99,43 +100,28 @@ public class MsSqlServerFunctions {
     }
 
     public static Expression convert(String str, String type) {
-        return new SqlFunctionCall("CONVERT", new LiteralExpression(str), new LiteralExpression(type));
+        return new SqlFunctionCall("CONVERT", new PlainExpression(type), new LiteralExpression(str));
     }
 
     public static Expression convert(int num, String type) {
-        return new SqlFunctionCall("CONVERT", new LiteralExpression(num), new LiteralExpression(type));
+        return new SqlFunctionCall("CONVERT", new PlainExpression(type), new LiteralExpression(num));
     }
 
     public static Expression convert(float floatNum, String type) {
-        return new SqlFunctionCall("CONVERT", new LiteralExpression(floatNum), new LiteralExpression(type));
+        return new SqlFunctionCall("CONVERT", new PlainExpression(type), new LiteralExpression(floatNum));
     }
 
-    public static Expression cast(String str, String type) {
-        return cast(new LiteralExpression(str), type);
+    public static Expression convert(Expression expression, String type) {
+        return new SqlFunctionCall("CONVERT", new PlainExpression(type), expression);
     }
 
-    public static Expression cast(int num, String type) {
-        return cast(new LiteralExpression(num), type);
+    public static Expression convertDate(Expression expression, int style) {
+        return new SqlFunctionCall("CONVERT", new PlainExpression("VARCHAR"), expression, new LiteralExpression(style));
     }
 
-    public static Expression cast(float floatNum, String type) {
-        return cast(new LiteralExpression(floatNum), type);
-    }
-
-    private static Expression cast(Expression expression, String type) {
-        return new SqlFunctionCall("CAST", expression) {
-            @Override
-            public String toSql(ExpressionContext expressionContext) throws SQLSyntaxException {
-                String[] expressionStrings = Arrays.stream(getExpressions())
-                        .map(FunctionWithThrowable
-                                .castFunctionWithThrowable(expression -> expression.toSql(expressionContext)))
-                        .toArray(String[]::new);
-                String alias = getAlias();
-                return String.format("%s(%s AS %s) %s", getName(), expressionStrings[0], type,
-                        alias == null ? "" : "AS " + expressionContext.quoteColumn(alias));
-            }
-        };
-
+    public static Expression convertDate(String str, int style) {
+        return new SqlFunctionCall("CONVERT", new PlainExpression("VARCHAR"), new LiteralExpression(str),
+                new LiteralExpression(style));
     }
 
     public static Expression dataLength(Expression expression) {
