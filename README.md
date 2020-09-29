@@ -36,7 +36,7 @@ public class Order {
 }
 ```
 
-### The query methods
+### Query methods
 
 ```java
 Member member = Member.queryByPrimaryKey(11);
@@ -62,7 +62,7 @@ int count = Member.count("id > ?", 10);
 ...
 ```
 
-### The validation methods
+### Validation methods
 
 ```java
 try {
@@ -74,7 +74,7 @@ try {
 }
 ```
 
-### The persistence methods
+### Persistence methods
 
 ```java
 Member newMember = new Member();
