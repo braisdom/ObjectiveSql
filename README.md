@@ -13,10 +13,26 @@ The ObjectiveSql makes it easy to CRUD operations on databases(just define an An
 @DomainModel
 public class Member {
     private String no;
+    
+    @Queryable
     private String name;
     private Integer gender;
     private String mobile;
     private String otherInfo;
+
+    @Relation(relationType = RelationType.HAS_MANY)
+    private List<Order> orders;
+}
+
+@DomainModel
+public class Order {
+    private String no;
+    private Integer memberId;
+    private Double amount;
+    private Double quantity;
+
+    @Relation(relationType = RelationType.BELONGS_TO)
+    private Member member;
 }
 ```
 
@@ -42,13 +58,34 @@ List<Member> members = Member.queryAll();
 int count = Member.count("id > ?", 10);
 ```
 
+```java
 ...
+```
+
+### The validation methods below
+
+```java
+try {
+    Map<String, String> requestObject = ...; // From the POST request of SpringBoot
+    Member rawMember = Member.newInstanceFrom(requestObject, false);
+    newMember.validate(); //Skip the validation
+} catch(ValidationException ex) {
+    ...
+}
+```
 
 ### The persistence methods below
 
 ```java
 Member newMember = new Member();
 // To set the field value for "newMember"
+newMember.save(false); //Skip the validation
+// newMember.save(true); // Validating the field value before save
+```
+
+```java
+Map<String, String> requestObject = ...; // From the POST request of SpringBoot
+Member rawMember = Member.newInstanceFrom(requestObject, false);
 newMember.save(false); //Skip the validation
 // newMember.save(true); // Validating the field value before save
 ```
