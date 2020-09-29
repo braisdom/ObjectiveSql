@@ -1,4 +1,4 @@
-The ObjectiveSql makes it easy to CRUD operations on databases(just define an Annotation). It is a best ActiveRecord pratice in Java, it includes everything about you need to build most SQL for business developing. At the same time, the SQL resused is possible in ObjectiveSql and the SQL abstracted in Java is more clear, more programable. 
+ObjectiveSql’s mission is to provide  the most obvious approach to access various databases, without configuration,  without coding about JDBC&ORM. ObjectiveSql-based programming is the best practice for ActiveRecord, which incorporates both behavior and data and avoids unmeaningful declaration of Java. Thus, ObjectiveSql-based programming will change the way to build an application base on relation database.
 
 ### Features
 
@@ -109,16 +109,16 @@ Member.destory("id = ?", 1);
 ### The relation query
 
 ```java
-Member newMember = Member.queryPrimary(1, Member.HAS_MANY_ORDERS);
-List<Order> orders = newMember.getOrders();
+Member member = Member.queryPrimary(1, Member.HAS_MANY_ORDERS);
+List<Order> orders = member.getOrders();
 ```
 
 ```java
-Member newMember = Member.queryPrimary(1, Member.HAS_MANY_ORDERS);
-List<Order> orders = newMember.getOrders();
+Member member = Member.queryPrimary(1, Member.HAS_MANY_ORDERS);
+List<Order> orders = member.getOrders();
 ```
 
 ```java
-Member newMember = Member.queryByName("demo", Member.HAS_MANY_ORDERS);
-List<Order> orders = newMember.getOrders();
+Member member = Member.queryByName("demo", Member.HAS_MANY_ORDERS);
+List<Order> orders = member.getOrders();
 ```
