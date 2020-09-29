@@ -159,6 +159,7 @@ If you are using Maven just add the following dependency to your pom.xml:
 **Installing IntelliJ Plugin**:  *Preferences/Settings* -> *Plugins* -> *Search with "ObjectiveSql" in market* -> *Install*
 
 - [Naming Conventions](https://github.com/braisdom/ObjectiveSql/wiki/Naming-Conventions)
+- Generated methods
 - DataSource configuration
 - Customizing Validation
 - Transaction principle
