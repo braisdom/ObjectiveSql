@@ -7,7 +7,7 @@ The ObjectiveSql makes it easy to CRUD operations on databases(just define an An
 - Database transaction into an Annotation tagged on a method only
 - The relations tagged with Annotation, who will be applied in query as a static field generated automatically
 
-### Defining a DomainModel
+### Defining domain models
 
 ```java
 @DomainModel
@@ -36,7 +36,7 @@ public class Order {
 }
 ```
 
-### The query methods below
+### The query methods
 
 ```java
 Member member = Member.queryByPrimaryKey(11);
@@ -62,7 +62,7 @@ int count = Member.count("id > ?", 10);
 ...
 ```
 
-### The validation methods below
+### The validation methods
 
 ```java
 try {
@@ -74,7 +74,7 @@ try {
 }
 ```
 
-### The persistence methods below
+### The persistence methods
 
 ```java
 Member newMember = new Member();
@@ -88,4 +88,37 @@ Map<String, String> requestObject = ...; // From the POST request of SpringBoot
 Member rawMember = Member.newInstanceFrom(requestObject, false);
 newMember.save(false); //Skip the validation
 // newMember.save(true); // Validating the field value before save
+```
+
+```java
+Member.update(1, changedMemberInstance, false);
+```
+
+```java
+Member.destory(1);
+```
+
+```java
+Member.destory("id = ?", 1);
+```
+
+```java
+...
+```
+
+### The relation query
+
+```java
+Member newMember = Member.queryPrimary(1, Member.HAS_MANY_ORDERS);
+List<Order> orders = newMember.getOrders();
+```
+
+```java
+Member newMember = Member.queryPrimary(1, Member.HAS_MANY_ORDERS);
+List<Order> orders = newMember.getOrders();
+```
+
+```java
+Member newMember = Member.queryByName("demo", Member.HAS_MANY_ORDERS);
+List<Order> orders = newMember.getOrders();
 ```
