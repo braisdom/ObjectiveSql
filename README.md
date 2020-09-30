@@ -163,10 +163,11 @@ If you are using Maven just add the following dependency to your pom.xml:
 - [DataSource Configuration](https://github.com/braisdom/ObjectiveSql/wiki/DataSource-Configuration)
 - [Validations](https://github.com/braisdom/ObjectiveSql/wiki/Validations)
 - [Transaction Principle](https://github.com/braisdom/ObjectiveSql/wiki/Transaction-Principle)
+- [Data Types between database and Java](https://github.com/braisdom/ObjectiveSql/wiki/Data-Types-between-database-and-Java)
 - Extensions
-  - [Caching data into Redis](https://github.com/braisdom/ObjectiveSql/wiki/Caching)
-  - [How to save a ProtoBuffer message](https://github.com/braisdom/ObjectiveSql/wiki/ProtoBuffer)
-  - [How to integrate application  Log framework to ObjectiveSql](https://github.com/braisdom/ObjectiveSql/wiki/Log)
+  - [Caching data into Redis](https://github.com/braisdom/ObjectiveSql/wiki/Caching-data-into-Redis)
+  - [How to save a ProtoBuffer message](https://github.com/braisdom/ObjectiveSql/wiki/How-to-save-a-ProtoBuffer-message)
+  - [How to integrate application Log framework to ObjectiveSql](https://github.com/braisdom/ObjectiveSql/wiki/Integrate-application-Log-framework-to-ObjectiveSql)
   - [Customizing ColumnTransitional](https://github.com/braisdom/ObjectiveSql/wiki/ColumnTransitional)
 
 
