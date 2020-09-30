@@ -82,7 +82,7 @@ public class Mock {
             Order order = new Order();
             OrderLine orderLine = new OrderLine();
 
-            int memberId = RandomUtils.nextInt(1, MEMBER_NAMES.length + 1);
+            long memberId = RandomUtils.nextInt(1, MEMBER_NAMES.length + 1);
             String orderNo = String.format("O20200000%s", (i + 1));
             Timestamp salesAt = Timestamp.valueOf(SALES_TIMES[RandomUtils.nextInt(0, SALES_TIMES.length)]);
             order.setNo(orderNo).setMemberId(memberId).setSalesAt(salesAt);

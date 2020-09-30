@@ -91,7 +91,7 @@ public @interface DomainModel {
      *
      * @return
      */
-    Class<?> primaryClass() default Integer.class;
+    Class<?> primaryClass() default Long.class;
 
     /**
      * Customizes the column name mapped for the domain model

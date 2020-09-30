@@ -7,20 +7,13 @@ import com.github.braisdom.objsql.relation.RelationType;
 @DomainModel
 public class OrderLine {
   
-    private Integer productId;
-
+    private Long productId;
     private String barcode;
-
     private String orderNo;
-
-    private Integer memberId;
-
-    private Integer orderId;
-  
+    private Long memberId;
+    private Long orderId;
     private Double salesPrice;
-
     private Double amount;
-
     private Double quantity;
 
     @Relation(relationType = RelationType.BELONGS_TO)

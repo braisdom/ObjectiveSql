@@ -17,10 +17,9 @@
 
     <modules>
         <module>core</module>
-        <module>jds</module>
         <module>example</module>
-        <module>databases</module>
-        <module>springboot</module>
+        <module>databases_test</module>
+        <module>springboot_example</module>
     </modules>
 
     <licenses>

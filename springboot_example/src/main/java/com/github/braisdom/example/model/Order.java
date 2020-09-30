@@ -19,7 +19,7 @@ public class Order {
     private static final String KEY_ORDER_LINES = "orderLines";
 
     private String no;
-    private Integer memberId;
+    private Long memberId;
     private Float amount;
     private Float quantity;
 
