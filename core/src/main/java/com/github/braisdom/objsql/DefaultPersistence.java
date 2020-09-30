@@ -217,7 +217,8 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
         return Databases.execute(dataSourceName, (connection, sqlExecutor) -> {
             Quoter quoter = Databases.getQuoter();
             String sql = formatDeleteSql(domainModelDescriptor.getTableName(),
-                    String.format("%s = %s", quoter.quoteColumn(primaryKey.name()), quoter.quoteValue(id)));
+                    String.format("%s = %s", quoter.quoteColumn(connection.getMetaData(),
+                            primaryKey.name()), quoter.quoteValue(id)));
             return sqlExecutor.execute(connection, sql);
         });
     }
@@ -233,11 +234,13 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
 
     private void ensurePrimaryKeyNotNull(PrimaryKey primaryKey) throws PersistenceException {
         if (primaryKey == null)
-            throw new PersistenceException(String.format("The %s has no primary key", domainModelDescriptor.getTableName()));
+            throw new PersistenceException(String.format("The %s has no primary key",
+                    domainModelDescriptor.getTableName()));
     }
 
     private void ensureNotBlank(String string, String name) throws PersistenceException {
         if (StringUtil.isBlank(string))
-            throw new PersistenceException(String.format("Empty %s for %s ", name, domainModelDescriptor.getTableName()));
+            throw new PersistenceException(String.format("Empty %s for %s ", name,
+                    domainModelDescriptor.getTableName()));
     }
 }

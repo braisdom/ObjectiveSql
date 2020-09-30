@@ -16,9 +16,12 @@
  */
 package com.github.braisdom.objsql;
 
+import java.sql.DatabaseMetaData;
+import java.sql.SQLException;
+
 public interface Quoter {
 
-    String quoteColumn(String columnName);
+    String quoteColumn(DatabaseMetaData databaseMetaData, String columnName) throws SQLException;
 
     String quoteValue(Object... values);
 }

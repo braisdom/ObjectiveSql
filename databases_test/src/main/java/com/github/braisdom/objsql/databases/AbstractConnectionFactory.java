@@ -2,6 +2,9 @@ package com.github.braisdom.objsql.databases;
 
 import com.github.braisdom.objsql.ConnectionFactory;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
 public abstract class AbstractConnectionFactory implements ConnectionFactory {
 
     protected final String url;
@@ -14,4 +17,8 @@ public abstract class AbstractConnectionFactory implements ConnectionFactory {
         this.password = password;
     }
 
+    @Override
+    public Connection getConnection(String dataSourceName) throws SQLException {
+        return null;
+    }
 }

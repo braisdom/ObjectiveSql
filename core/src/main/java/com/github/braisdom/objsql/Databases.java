@@ -20,10 +20,13 @@ import com.github.braisdom.objsql.jdbc.DbUtils;
 import com.github.braisdom.objsql.util.StringUtil;
 
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.logging.Level;
+
+import static com.github.braisdom.objsql.DatabaseType.*;
 
 /**
  * This class consists exclusively of static methods that operate of behavior of database.
@@ -73,8 +76,14 @@ public final class Databases {
 
     private static Quoter quoter = new Quoter() {
         @Override
-        public String quoteColumn(String columnName) {
-            return columnName;
+        public String quoteColumn(DatabaseMetaData databaseMetaData, String columnName) throws SQLException {
+            String databaseName = databaseMetaData.getDatabaseProductName();
+            if (MySQL.nameEquals(databaseName) || MariaDB.nameEquals(databaseName))
+                return String.format("`%s`", columnName);
+            else if (PostgreSQL.nameEquals(databaseName) || Oracle.nameEquals(databaseName)
+                    || SQLite.nameEquals(databaseName))
+                return String.format("\"%s\"", columnName);
+            return String.format("\"%s\"", columnName);
         }
 
         @Override

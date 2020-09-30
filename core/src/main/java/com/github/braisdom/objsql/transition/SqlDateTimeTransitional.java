@@ -35,7 +35,7 @@ public class SqlDateTimeTransitional<T> implements ColumnTransitional<T> {
             } else if (DatabaseType.PostgreSQL.nameEquals(databaseMetaData.getDatabaseProductName())) {
                 return fieldValue;
             } else {
-                return fieldValue.toString();
+                return fieldValue;
             }
         }
         return null;
