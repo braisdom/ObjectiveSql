@@ -161,7 +161,7 @@ If you are using Maven just add the following dependency to your pom.xml:
 - [Naming Conventions](https://github.com/braisdom/ObjectiveSql/wiki/Naming-Conventions)
 - [Generated Methods](https://github.com/braisdom/ObjectiveSql/wiki/Generated-Methods)
 - [DataSource Configuration](https://github.com/braisdom/ObjectiveSql/wiki/DataSource-Configuration)
-- [Customizing Validation](https://github.com/braisdom/ObjectiveSql/wiki/Customizing-Validation)
+- [Validation](https://github.com/braisdom/ObjectiveSql/wiki/Validation)
 - [Transaction Principle](https://github.com/braisdom/ObjectiveSql/wiki/Transaction-Principle)
 - Extensions
   - [Caching data into Redis](https://github.com/braisdom/ObjectiveSql/wiki/Caching)
