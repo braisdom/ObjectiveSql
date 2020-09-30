@@ -20,8 +20,8 @@ public class Order {
 
     private String no;
     private Integer memberId;
-    private Double amount;
-    private Double quantity;
+    private Float amount;
+    private Float quantity;
 
     @Column(transition = SqlDateTimeTransitional.class)
     private Timestamp salesAt;

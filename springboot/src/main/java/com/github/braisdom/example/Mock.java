@@ -6,7 +6,6 @@ import com.github.braisdom.example.model.OrderLine;
 import com.github.braisdom.example.model.Product;
 import com.github.braisdom.objsql.ConnectionFactory;
 import com.github.braisdom.objsql.Databases;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 
@@ -20,7 +19,6 @@ import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Slf4j
 public class Mock {
 
     private static final String[] MEMBER_NAMES = {"Joe", "Juan", "Jack", "Albert", "Jonathan", "Justin", "Terry", "Gerald", "Keith", "Samuel",
@@ -63,7 +61,6 @@ public class Mock {
                     .setMobile(getMobile()));
         }
         int[] createdMembersCount = Member.create(members.toArray(new Member[]{}), false);
-        log.info("{} members has been generated.", createdMembersCount);
     }
 
     private void generateProducts() throws SQLException {
@@ -77,7 +74,6 @@ public class Mock {
                     .setSalesPrice(RandomUtils.nextDouble(10.0f, 50.0f)));
         }
         int[] createdProductsCount = Product.create(products.toArray(new Product[]{}), false);
-        log.info("{} products has been generated.", createdProductsCount);
     }
 
     private void generateOrdersAndOrderLines() throws SQLException {
@@ -92,8 +88,8 @@ public class Mock {
             order.setNo(orderNo).setMemberId(memberId).setSalesAt(salesAt);
             order = Order.create(order, false);
 
-            double amount = 0f;
-            double quantitySum = 0f;
+            float amount = 0f;
+            float quantitySum = 0f;
             for (int productKinds = 0; productKinds < RandomUtils.nextInt(1, 5); productKinds++) {
                 double quantity = RandomUtils.nextDouble(1.0f, 5.0f);
                 String productName = PRODUCT_NAMES[RandomUtils.nextInt(1, PRODUCT_NAMES.length)];
@@ -117,7 +113,6 @@ public class Mock {
             order.save(false);
         }
         int[] createOrderLinesCount = OrderLine.create(orderLines.toArray(new OrderLine[]{}), false, false);
-        log.info("1000 orders has been generated, and {} has been generated.", createOrderLinesCount);
     }
 
 

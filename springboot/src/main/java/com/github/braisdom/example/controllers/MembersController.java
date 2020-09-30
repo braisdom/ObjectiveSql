@@ -3,13 +3,11 @@ package com.github.braisdom.example.controllers;
 import com.github.braisdom.example.RequestObject;
 import com.github.braisdom.example.ResponseObject;
 import com.github.braisdom.example.model.Member;
+import com.github.braisdom.example.model.Order;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
 import java.util.List;
-
-import static com.github.braisdom.example.model.Member.HAS_MANY_ORDERS;
-import static com.github.braisdom.example.model.Order.HAS_MANY_ORDER_LINES;
 
 @RestController
 public class MembersController {
@@ -38,7 +36,7 @@ public class MembersController {
 
     @GetMapping("/members/{no}/orders")
     public ResponseObject getMemberOrders(@PathVariable("no") String no) throws SQLException {
-        Member member = Member.queryByNo(no, HAS_MANY_ORDERS, HAS_MANY_ORDER_LINES);
+        Member member = Member.queryByNo(no, Member.HAS_MANY_ORDERS, Order.HAS_MANY_ORDER_LINES);
         return ResponseObject.createSuccessResponse(member);
     }
 

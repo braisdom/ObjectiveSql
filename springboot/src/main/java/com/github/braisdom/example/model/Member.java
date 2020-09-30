@@ -8,7 +8,7 @@ import com.github.braisdom.objsql.relation.RelationType;
 
 import java.util.List;
 
-@DomainModel(dataSource = "")
+@DomainModel
 public class Member {
     @Queryable
     @Column(updatable = false)
