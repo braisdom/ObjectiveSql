@@ -164,6 +164,7 @@ If you are using Maven just add the following dependency to your pom.xml:
 - [Validations](https://github.com/braisdom/ObjectiveSql/wiki/Validations)
 - [Transaction Principle](https://github.com/braisdom/ObjectiveSql/wiki/Transaction-Principle)
 - [Data Types between database and Java](https://github.com/braisdom/ObjectiveSql/wiki/Data-Types-between-database-and-Java)
+- [Extension Point](https://github.com/braisdom/ObjectiveSql/wiki/Extension-Point)
 - Extensions
   - [Caching data into Redis](https://github.com/braisdom/ObjectiveSql/wiki/Caching-data-into-Redis)
   - [How to save a ProtoBuffer message](https://github.com/braisdom/ObjectiveSql/wiki/How-to-save-a-ProtoBuffer-message)
