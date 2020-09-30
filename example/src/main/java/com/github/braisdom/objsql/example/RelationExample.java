@@ -26,7 +26,7 @@ public class RelationExample {
 
         for (int i = 1; i <= 6; i++) {
             members.add(new Member()
-                    .setId(i)
+                    .setId(Long.valueOf(i))
                     .setNo("Q200000" + i)
                     .setName(MEMBER_NAMES[i])
                     .setGender(0)

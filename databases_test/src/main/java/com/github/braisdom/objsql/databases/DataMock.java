@@ -4,7 +4,6 @@ import com.github.braisdom.objsql.databases.model.Member;
 import com.github.braisdom.objsql.databases.model.Order;
 import com.github.braisdom.objsql.databases.model.OrderLine;
 import com.github.braisdom.objsql.databases.model.Product;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
 
 import java.sql.SQLException;
@@ -15,7 +14,6 @@ import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Slf4j
 public class DataMock {
 
     private static final String[] MEMBER_NAMES = {"Joe", "Juan", "Jack", "Albert", "Jonathan", "Justin", "Terry", "Gerald", "Keith", "Samuel",
@@ -67,7 +65,6 @@ public class DataMock {
         }
         int[] createdProductsCount = Product.create(products.toArray(new Product[]{}),
                 false, true);
-        log.info("{} products has been generated.", createdProductsCount);
     }
 
     public void generateOrdersAndOrderLines() throws SQLException {
@@ -108,7 +105,6 @@ public class DataMock {
         }
 
         int[] createOrderLinesCount = OrderLine.create(orderLines.toArray(new OrderLine[]{}), false, true);
-        log.info("1000 orders has been generated, and {} has been generated.", createOrderLinesCount);
     }
 
 

@@ -18,7 +18,7 @@ public class PersistenceExample {
 
     private static void createSimpleMember() throws SQLException {
         Member newMember = new Member();
-        newMember.setId(100)
+        newMember.setId(100l)
                 .setNo("100000")
                 .setName("Pamela")
                 .setGender(1)
@@ -30,7 +30,7 @@ public class PersistenceExample {
 
     private static void validateMember() {
         Member newMember = new Member()
-                .setId(2)
+                .setId(2l)
                 .setNo("100")
                 .setName("Pamela")
                 .setGender(1)
@@ -42,7 +42,7 @@ public class PersistenceExample {
 
     private static void createSimpleMemberWithValidation() throws SQLException {
         Member newMember = new Member()
-                .setId(3)
+                .setId(3l)
                 .setNo("100000")
                 .setName("Pamela")
                 .setGender(1)
@@ -97,7 +97,7 @@ public class PersistenceExample {
         extendedAttributes.put("age", 28);
 
         Member newMember = new Member()
-                .setId(1)
+                .setId(1l)
                 .setNo("200000")
                 .setName("Smith")
                 .setGender(1)
@@ -138,7 +138,7 @@ public class PersistenceExample {
                 .setName("Smith => Jackson")
                 .setExtendedAttributes(extendedAttributes);
 
-        Member.update(12, newMember, true);
+        Member.update(12l, newMember, true);
     }
 
     private static void updateJacksonMember() throws SQLException {
@@ -146,7 +146,7 @@ public class PersistenceExample {
     }
 
     private static void deleteAliceMember() throws SQLException {
-        Member.destroy(13);
+        Member.destroy(13l);
     }
 
     private static void deleteMaryMember() throws SQLException {

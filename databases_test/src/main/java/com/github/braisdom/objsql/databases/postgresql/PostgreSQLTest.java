@@ -44,7 +44,7 @@ public class PostgreSQLTest {
 
     @Test
     public void testDelete() throws SQLException {
-        Assert.assertEquals(Order.destroy(1000), 1);
+        Assert.assertEquals(Order.destroy(1000l), 1);
     }
 
     @Test
