@@ -147,24 +147,13 @@ public final class Tables {
         Tables.validator = validator;
     }
 
-    public static final void validate(Object bean) throws ValidationException {
-        validate(bean, true);
-    }
-
-    public static final Validator.Violation[] validate(Object bean, boolean suppressException) throws ValidationException {
+    public static final Validator.Violation[] validate(Object bean) {
         Validator validator = getValidator();
         Validator.Violation[] violations = validator.validate(bean);
-        if (violations.length > 0 && !suppressException)
-            throw new ValidationException(violations);
-
         return violations;
     }
 
-    public static final void validate(Object[] beans) throws ValidationException {
-        validate(beans, false);
-    }
-
-    public static final Validator.Violation[] validate(Object[] beans, boolean suppressException) throws ValidationException {
+    public static final Validator.Violation[] validate(Object[] beans) {
         Validator validator = getValidator();
         List<Validator.Violation> violationList = new ArrayList<>();
         for (Object bean : beans) {
@@ -172,10 +161,7 @@ public final class Tables {
             if (violations.length > 0)
                 violationList.addAll(Arrays.asList(violations));
         }
-        if (violationList.size() > 0 && !suppressException)
-            throw new ValidationException(violationList.toArray(new Validator.Violation[]{}));
-
-        return violationList.toArray(new Validator.Violation[0]);
+        return violationList.toArray(violationList.toArray(new Validator.Violation[]{}));
     }
 
     public static final <T> List<T> query(Class<T> domainModelClass, String sql, Object... params) throws SQLException {

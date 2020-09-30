@@ -530,21 +530,11 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
 
     private void handleValidateMethod(APTBuilder aptBuilder) {
         MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
-        TreeMaker treeMaker = aptBuilder.getTreeMaker();
 
-        JCTree.JCExpression methodRef = treeMaker.Select(aptBuilder.typeRef(Tables.class),
-                aptBuilder.toName("validate"));
-        JCReturn jcReturn = treeMaker.Return(treeMaker.Apply(List.nil(), methodRef, List.of(aptBuilder.varRef("this"),
-                aptBuilder.getTreeMaker().Literal(true))));
-        JCCatch jcCatch = treeMaker.Catch(aptBuilder.newVar(ValidationException.class, "ex"),
-                treeMaker.Block(0, List.of(treeMaker.Return(aptBuilder.methodCall("ex", "getViolations")))));
-
-        JCTry jcTry = treeMaker.Try(treeMaker.Block(0, List.of(jcReturn)), List.of(jcCatch),
-                treeMaker.Block(0, List.nil()));
+        methodBuilder.setReturnStatement(Tables.class, "validate", aptBuilder.varRef("this"));
 
         aptBuilder.inject(methodBuilder
                 .setReturnType(aptBuilder.newArrayType(Validator.Violation.class))
-                .addStatement(jcTry)
                 .build("validate", Flags.PUBLIC | Flags.FINAL));
     }
 

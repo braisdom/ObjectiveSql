@@ -56,8 +56,11 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
     public T insert(T dirtyObject, boolean skipValidation) throws SQLException {
         Objects.requireNonNull(dirtyObject, "The dirtyObject cannot be null");
 
-        if(!skipValidation)
-            Tables.validate(dirtyObject);
+        if(!skipValidation) {
+            Validator.Violation[] violations = Tables.validate(dirtyObject);
+            if(violations.length > 0)
+                throw new ValidationException(violations);
+        }
 
         String dataSourceName = Tables.getDataSourceName(domainModelDescriptor.getDomainModelClass());
         return Databases.execute(dataSourceName, (connection, sqlExecutor) -> {
@@ -93,8 +96,11 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
     public int[] insert(T[] dirtyObjects, boolean skipValidation) throws SQLException {
         Objects.requireNonNull(dirtyObjects, "The dirtyObject cannot be null");
 
-        if(!skipValidation)
-            Tables.validate(dirtyObjects);
+        if(!skipValidation) {
+            Validator.Violation[] violations = Tables.validate(dirtyObjects);
+            if(violations.length > 0)
+                throw new ValidationException(violations);
+        }
 
         String dataSourceName = Tables.getDataSourceName(domainModelDescriptor.getDomainModelClass());
         return Databases.execute(dataSourceName, (connection, sqlExecutor) -> {
@@ -126,8 +132,11 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
         Objects.requireNonNull(id, "The id cannot be null");
         Objects.requireNonNull(dirtyObject, "The dirtyObject cannot be null");
 
-        if(!skipValidation)
-            Tables.validate(dirtyObject);
+        if(!skipValidation) {
+            Validator.Violation[] violations = Tables.validate(dirtyObject);
+            if(violations.length > 0)
+                throw new ValidationException(violations);
+        }
 
         PrimaryKey primaryKey = domainModelDescriptor.getPrimaryKey();
         ensurePrimaryKeyNotNull(primaryKey);

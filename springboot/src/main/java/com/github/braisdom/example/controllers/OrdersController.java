@@ -19,6 +19,7 @@ public class OrdersController {
             @PathVariable("memberNo") String memberNo,
             @RequestBody RequestObject rawOrder) throws SQLException {
         Member owner = Member.queryByNo(memberNo);
+
         Order.makeOrder(owner, rawOrder);
         return ResponseObject.createSuccessResponse();
     }

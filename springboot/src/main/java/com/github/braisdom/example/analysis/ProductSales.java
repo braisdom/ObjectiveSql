@@ -8,7 +8,6 @@ import com.github.braisdom.objsql.Databases;
 import com.github.braisdom.objsql.DynamicModel;
 import com.github.braisdom.objsql.DynamicQuery;
 import com.github.braisdom.objsql.sql.*;
-import com.sun.tools.corba.se.idl.constExpr.Or;
 
 import java.sql.SQLException;
 import java.util.List;

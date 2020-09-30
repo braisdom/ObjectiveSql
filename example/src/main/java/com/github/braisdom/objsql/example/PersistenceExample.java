@@ -47,7 +47,6 @@ public class PersistenceExample {
                 .setName("Pamela")
                 .setGender(1)
                 .setMobile("15011112222");
-
         Member.create(newMember, true);
     }
 
