@@ -1,20 +1,16 @@
 package com.github.braisdom.objsql.example;
 
-import com.github.braisdom.objsql.Databases;
 import com.github.braisdom.objsql.example.Domains.Member;
 import com.github.braisdom.objsql.relation.Relationship;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.Assert;
 
-import java.io.File;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.github.braisdom.objsql.ConnectionFactory.DEFAULT_DATA_SOURCE_NAME;
-import static com.github.braisdom.objsql.example.Domains.*;
+import static com.github.braisdom.objsql.example.Domains.Order;
 
 public class RelationExample {
 
