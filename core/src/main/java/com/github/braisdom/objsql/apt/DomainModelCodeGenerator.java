@@ -37,6 +37,7 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
         handleCreateSelectMethod(aptBuilder);
         handleCreatePersistenceMethod(aptBuilder);
         handleSaveMethod(aptBuilder);
+        handleSave2Method(aptBuilder);
         handleCreateMethod(aptBuilder);
         handleCreate2Method(aptBuilder);
         handleCreateArrayMethod(aptBuilder);
@@ -182,19 +183,41 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
                 .build("createPersistence", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
 
+    private void handleSave2Method(APTBuilder aptBuilder) {
+        MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
+        TreeMaker treeMaker = aptBuilder.getTreeMaker();
+
+        methodBuilder.setReturnStatement("this", "save",
+                aptBuilder.varRef("skipValidation"), treeMaker.Literal(false));
+        aptBuilder.inject(methodBuilder
+                .addParameter("skipValidation", treeMaker.TypeIdent(TypeTag.BOOLEAN))
+                .setReturnType(aptBuilder.typeRef(aptBuilder.getClassName()))
+                .setThrowsClauses(SQLException.class)
+                .build("save", Flags.PUBLIC | Flags.FINAL));
+    }
+
     private void handleSaveMethod(APTBuilder aptBuilder) {
         MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
         TreeMaker treeMaker = aptBuilder.getTreeMaker();
         StatementBuilder statementBuilder = aptBuilder.createStatementBuilder();
 
-        statementBuilder.append(aptBuilder.newGenericsType(Persistence.class, aptBuilder.getClassName()), "persistence",
-                "createPersistence");
+        statementBuilder.append(aptBuilder.typeRef(PersistenceFactory.class),
+                "persistenceFactory", Databases.class,
+                "getPersistenceFactory", List.nil());
+
+        statementBuilder.append(aptBuilder.newGenericsType(Persistence.class, aptBuilder.getClassName()),
+                "persistence", "persistenceFactory", "createPersistence",
+                treeMaker.NewClass(null, List.nil(),
+                        aptBuilder.typeRef(BeanModelDescriptor.class),
+                        List.of(aptBuilder.classRef(aptBuilder.getClassName()),
+                                aptBuilder.varRef("skipPrimaryKeyOnInserting")), null));
 
         methodBuilder.setReturnStatement("persistence", "save",
                 aptBuilder.varRef("this"), aptBuilder.varRef("skipValidation"));
         aptBuilder.inject(methodBuilder
                 .addStatements(statementBuilder.build())
                 .addParameter("skipValidation", treeMaker.TypeIdent(TypeTag.BOOLEAN))
+                .addParameter("skipPrimaryKeyOnInserting", treeMaker.TypeIdent(TypeTag.BOOLEAN))
                 .setReturnType(aptBuilder.typeRef(aptBuilder.getClassName()))
                 .setThrowsClauses(SQLException.class)
                 .build("save", Flags.PUBLIC | Flags.FINAL));

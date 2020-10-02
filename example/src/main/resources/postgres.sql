@@ -1,6 +1,6 @@
-DROP TABLE objective_sql.members;
-DROP TABLE objective_sql.orders;
-DROP TABLE objective_sql.order_lines;
+DROP TABLE IF EXISTS objective_sql.members;
+DROP TABLE IF EXISTS objective_sql.orders;
+DROP TABLE IF EXISTS objective_sql.order_lines;
 
 CREATE TABLE objective_sql.members(
     id BIGSERIAL PRIMARY KEY,
