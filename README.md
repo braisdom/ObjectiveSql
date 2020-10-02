@@ -1,9 +1,9 @@
-ObjectiveSql’s mission is to provide  the most obvious approach to access various databases, without configuration,  without coding about JDBC&ORM. ObjectiveSql-based programming is the best practice in ActiveRecord pattern, which incorporates both behavior and data and avoids unmeaningful declaration of Java. Thus, ObjectiveSql-based programming will change the way to build an application base on relation database.
+ObjectiveSql’s mission is to provide  the most obvious approach to access various databases, without configuration,  without coding about `JDBC&ORM`. ObjectiveSql-based programming is the best practice in `ActiveRecord` pattern, which incorporates both behavior and data and avoids unmeaningful `Interface` declaration of Java. Thus, ObjectiveSql-based programming will change the way to build an application base on relation database.
 
 ### Features
 
-- Defining a domain model with code generating automatically, which carries the query and persistence behavior by itself, no configuration, no empty Interface
-- Validating the Java Bean with Jakarta Bean Validation integrated to ObjectiveSql
+- Defining a domain model with code generating automatically, which carries the query and persistence behavior by itself, no configuration, no empty `Interface`
+- Validating the Java Bean with Jakarta Bean Validation integrated to `ObjectiveSql`
 - Database transaction into an Annotation tagged on a method only
 - The relations tagged with Annotation, who will be applied in query as a static field generated automatically
 
