@@ -18,7 +18,7 @@
     <modules>
         <module>core</module>
         <module>example</module>
-        <module>databases_test</module>
+        <module>database_adaptation</module>
         <module>springboot_example</module>
     </modules>
 
