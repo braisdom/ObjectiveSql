@@ -19,7 +19,7 @@ public class PersistenceExample {
 
     private static void createSimpleMember() throws SQLException {
         Member newMember = new Member();
-        newMember.setNo("100000")
+        newMember.setId(1L).setNo("100000")
                 .setName("Pamela")
                 .setGender(1)
                 .setRegisteredAtWithJoda(DateTime.now())

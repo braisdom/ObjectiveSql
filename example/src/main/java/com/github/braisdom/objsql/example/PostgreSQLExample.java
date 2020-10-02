@@ -45,6 +45,6 @@ public class PostgreSQLExample {
         installConnectionFactory(new PostgreSQLConnectionFactory());
         initializeSchema();
 
-
+        PersistenceExample.run();
     }
 }

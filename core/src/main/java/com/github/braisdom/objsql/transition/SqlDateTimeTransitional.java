@@ -23,18 +23,30 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+import static com.github.braisdom.objsql.DatabaseType.PostgreSQL;
+import static com.github.braisdom.objsql.DatabaseType.SQLite;
 
 public class SqlDateTimeTransitional<T> implements ColumnTransitional<T> {
+
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ISO_INSTANT;
 
     @Override
     public Object sinking(DatabaseMetaData databaseMetaData, T object,
                           TableRowDescriptor tableRowDescriptor, String fieldName, Object fieldValue) throws SQLException {
+        String databaseName = databaseMetaData.getDatabaseProductName();
         if (fieldValue != null) {
-            if (DatabaseType.SQLite.nameEquals(databaseMetaData.getDatabaseProductName())) {
+            if (SQLite.nameEquals(databaseName)) {
                 return fieldValue.toString();
-            } else {
-                return fieldValue;
-            }
+            } else if(PostgreSQL.nameEquals(databaseName)) {
+                if(fieldValue instanceof Timestamp) {
+                    Timestamp timestamp = (Timestamp) fieldValue;
+                    return timestamp.toLocalDateTime();
+                }
+                return fieldValue.toString();
+            }else return fieldValue;
         }
         return null;
     }
@@ -43,7 +55,7 @@ public class SqlDateTimeTransitional<T> implements ColumnTransitional<T> {
     public Object rising(DatabaseMetaData databaseMetaData, ResultSetMetaData resultSetMetaData,
                          T object, TableRowDescriptor tableRowDescriptor, String columnName, Object columnValue) throws SQLException {
         if (columnValue != null) {
-            if (DatabaseType.SQLite.nameEquals(databaseMetaData.getDatabaseProductName())) {
+            if (SQLite.nameEquals(databaseMetaData.getDatabaseProductName())) {
                 return Timestamp.valueOf(String.valueOf(columnValue));
             } else return columnValue;
         }
