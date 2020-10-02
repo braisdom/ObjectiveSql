@@ -21,8 +21,8 @@ public class TransactionalExample {
         Domains.Order order = new Domains.Order()
                 .setNo("202000001")
                 .setMemberId(3)
-                .setAmount(3.5f)
-                .setQuantity(100.3f)
+                .setAmount(3.5)
+                .setQuantity(100.3)
                 .setSalesAt(Timestamp.valueOf("2020-05-01 09:30:00"));
 
         ExecutorService executorService = Executors.newFixedThreadPool(4);

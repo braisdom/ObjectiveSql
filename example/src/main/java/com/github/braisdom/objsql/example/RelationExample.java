@@ -26,7 +26,7 @@ public class RelationExample {
 
         for (int i = 1; i <= 6; i++) {
             members.add(new Member()
-                    .setId(Long.valueOf(i))
+                    .setId(i)
                     .setNo("Q200000" + i)
                     .setName(MEMBER_NAMES[i])
                     .setGender(0)
@@ -37,8 +37,8 @@ public class RelationExample {
             orders.add(new Order()
                     .setNo("20200000" + i)
                     .setMemberId(i % 6 + 1)
-                    .setAmount(RandomUtils.nextFloat(10.0f, 30.0f))
-                    .setQuantity(RandomUtils.nextFloat(100.0f, 300.0f))
+                    .setAmount(RandomUtils.nextDouble(10.0f, 30.0f))
+                    .setQuantity(RandomUtils.nextDouble(100.0f, 300.0f))
                     .setSalesAt(Timestamp.valueOf("2020-05-01 09:30:00")));
         }
 

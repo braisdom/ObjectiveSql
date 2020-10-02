@@ -16,7 +16,7 @@ public final class Domains {
     private Domains() {
     }
 
-    @DomainModel
+    @DomainModel(primaryClass = Integer.class)
     public static class Member {
         // The validation constraints, it will be applied for validate method.
         // for example: Validator.Violation[] violations = member.validate();
@@ -45,12 +45,12 @@ public final class Domains {
         private String otherInfo;
     }
 
-    @DomainModel
+    @DomainModel(primaryClass = Integer.class)
     public static class Order {
         private String no;
         private Integer memberId;
-        private Float amount;
-        private Float quantity;
+        private Double amount;
+        private Double quantity;
 
         @Column(transition = SqlDateTimeTransitional.class)
         private Timestamp salesAt;
@@ -68,7 +68,7 @@ public final class Domains {
         }
     }
 
-    @DomainModel
+    @DomainModel(primaryClass = Integer.class)
     public static class OrderLine {
         private String orderNo;
         private Float amount;
