@@ -2,8 +2,10 @@ package com.github.braisdom.objsql.example;
 
 import com.github.braisdom.objsql.ConnectionFactory;
 import com.github.braisdom.objsql.Databases;
+import com.github.braisdom.objsql.util.WordUtil;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -35,17 +37,13 @@ public class SQLiteExample {
         }
     }
 
-    private static void initializeSchemas() throws SQLException {
-        Databases.execute("drop table if exists members;");
-        Databases.execute("drop table if exists orders");
-        Databases.execute("drop table if exists order_lines");
+    private static void initializeSchemas() throws SQLException, IOException {
+        SQLFile sqlFile = new SQLFile("/sqlite.sql");
 
-        Databases.execute("create table members (id INTEGER PRIMARY KEY AUTOINCREMENT, no TEXT, " +
-                "name TEXT, gender INTEGER, mobile TEXT, extended_attributes TEXT)");
-        Databases.execute("create table orders (id INTEGER PRIMARY KEY AUTOINCREMENT, no TEXT, member_id INTEGER, " +
-                "amount REAL, quantity REAL, sales_at TEXT)");
-        Databases.execute("create table order_lines (id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "order_no TEXT, amount REAL, quantity REAL)");
+        for(String sql : sqlFile.getSqls()){
+            if(!WordUtil.isEmpty(sql))
+                Databases.execute(sql);
+        }
     }
 
     private static void clearTables() throws SQLException {
@@ -54,7 +52,7 @@ public class SQLiteExample {
         Databases.execute("DELETE FROM order_lines");
     }
 
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) throws SQLException, IOException {
         if (DATABASE_FILE.exists()) DATABASE_FILE.delete();
 
         installConnectionFactory(new SqliteConnectionFactory(DATABASE_FILE.getName()));
