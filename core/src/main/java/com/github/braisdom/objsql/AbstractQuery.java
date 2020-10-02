@@ -89,11 +89,6 @@ public abstract class AbstractQuery<T> implements Query<T> {
         return this;
     }
 
-    protected <C> List<C> executeInternally(Connection connection, String sql) throws SQLException {
-        SQLExecutor sqlExecutor = Databases.getSqlExecutor();
-        return sqlExecutor.query(connection, sql, domainModelDescriptor, params);
-    }
-
     protected String getTableName(Class tableClass) {
         return Tables.getTableName(tableClass);
     }
