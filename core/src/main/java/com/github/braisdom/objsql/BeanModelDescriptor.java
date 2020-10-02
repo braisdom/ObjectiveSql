@@ -146,7 +146,9 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
     @Override
     public Class getFieldType(String fieldName) {
         try {
-            return domainModelClass.getDeclaredField(fieldName).getType();
+            if(fieldName == null) return null;
+            Field field = domainModelClass.getDeclaredField(fieldName);
+            return field == null ? null : field.getType();
         } catch (NoSuchFieldException ex) {
             throw new IllegalStateException(ex.getMessage(), ex);
         }

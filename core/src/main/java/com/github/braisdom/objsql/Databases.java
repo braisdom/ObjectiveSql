@@ -245,6 +245,8 @@ public final class Databases {
                 throw (SQLException) ex;
             else if (ex instanceof IllegalArgumentException)
                 throw (IllegalArgumentException) ex;
+            else if (ex instanceof ClassCastException)
+                throw (ClassCastException) ex;
             else {
                 logger.error(ex.getMessage(), ex);
                 throw new RollbackCauseException(ex.getMessage(), ex);
