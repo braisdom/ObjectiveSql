@@ -129,7 +129,7 @@ public final class Tables {
             Column column = field.getDeclaredAnnotation(Column.class);
 
             if (column != null) {
-                if(!WordUtil.isEmpty(column.name()))
+                if (!WordUtil.isEmpty(column.name()))
                     return column.name();
             }
 
@@ -180,15 +180,21 @@ public final class Tables {
                 sqlExecutor.execute(connection, sql, params));
     }
 
-    public static final int count(Class<?> domainModelClass, String predicate, Object... params) throws SQLException {
+    public static final Long count(Class<?> domainModelClass, String predicate, Object... params) throws SQLException {
         Query<?> query = Databases.getQueryFactory().createQuery(domainModelClass);
         String countAlias = "_count";
         List rows = query.select("COUNT(*) AS " + countAlias).where(predicate, params).execute();
 
         if (rows.size() > 0) {
             Object count = PropertyUtils.getRawAttribute(rows.get(0), countAlias);
-            return count == null ? 0 : (int) count;
-        } else return 0;
+            if (count == null)
+                return 0L;
+            else if (count instanceof Long)
+                return (Long) count;
+            else if (count instanceof Integer)
+                return Long.valueOf((Integer) count);
+            else return 0L;
+        } else return 0L;
     }
 
     public static final String encodeDefaultKey(String name) {

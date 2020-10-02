@@ -19,8 +19,7 @@ public class PersistenceExample {
 
     private static void createSimpleMember() throws SQLException {
         Member newMember = new Member();
-        newMember.setId(100)
-                .setNo("100000")
+        newMember.setNo("100000")
                 .setName("Pamela")
                 .setGender(1)
                 .setRegisteredAtWithJoda(DateTime.now())
@@ -33,7 +32,6 @@ public class PersistenceExample {
 
     private static void validateMember() {
         Member newMember = new Member()
-                .setId(2)
                 .setNo("100")
                 .setName("Pamela")
                 .setGender(1)
@@ -45,7 +43,6 @@ public class PersistenceExample {
 
     private static void createSimpleMemberWithValidation() throws SQLException {
         Member newMember = new Member()
-                .setId(3)
                 .setNo("100000")
                 .setName("Pamela")
                 .setGender(1)
@@ -100,7 +97,6 @@ public class PersistenceExample {
         extendedAttributes.put("age", 28);
 
         Member newMember = new Member()
-                .setId(1)
                 .setNo("200000")
                 .setName("Smith")
                 .setGender(1)
@@ -141,7 +137,7 @@ public class PersistenceExample {
                 .setName("Smith => Jackson")
                 .setExtendedAttributes(extendedAttributes);
 
-        Member.update(12, newMember, true);
+        Member.update(12L, newMember, true);
     }
 
     private static void updateJacksonMember() throws SQLException {
@@ -149,7 +145,7 @@ public class PersistenceExample {
     }
 
     private static void deleteAliceMember() throws SQLException {
-        Member.destroy(13);
+        Member.destroy(13L);
     }
 
     private static void deleteMaryMember() throws SQLException {
@@ -163,9 +159,9 @@ public class PersistenceExample {
     private static void createOrder() throws SQLException {
         Domains.Order order = new Domains.Order()
                 .setNo("202000001")
-                .setMemberId(3)
-                .setAmount(3.5)
-                .setQuantity(100.3)
+                .setMemberId(3L)
+                .setAmount(3.5f)
+                .setQuantity(100.3f)
                 .setSalesAt(Timestamp.valueOf("2020-05-01 09:30:00"));
         order.save(false);
     }

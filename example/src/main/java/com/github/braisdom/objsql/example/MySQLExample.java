@@ -46,5 +46,6 @@ public class MySQLExample {
         initializeSchema();
 
         PersistenceExample.run();
+        QueryExample.run();
     }
 }

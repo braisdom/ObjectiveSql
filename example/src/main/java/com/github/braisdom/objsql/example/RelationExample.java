@@ -22,7 +22,7 @@ public class RelationExample {
 
         for (int i = 1; i <= 6; i++) {
             members.add(new Member()
-                    .setId(i)
+                    .setId(Long.valueOf(i))
                     .setNo("Q200000" + i)
                     .setName(MEMBER_NAMES[i])
                     .setGender(0)
@@ -31,11 +31,11 @@ public class RelationExample {
 
         for (int i = 0; i < 100; i++) {
             orders.add(new Order()
-                    .setId(i)
+                    .setId(Long.valueOf(i))
                     .setNo("20200000" + i)
-                    .setMemberId(i % 6 + 1)
-                    .setAmount(RandomUtils.nextDouble(10.0f, 30.0f))
-                    .setQuantity(RandomUtils.nextDouble(100.0f, 300.0f))
+                    .setMemberId(Long.valueOf(i % 6 + 1))
+                    .setAmount(RandomUtils.nextFloat(10.0f, 30.0f))
+                    .setQuantity(RandomUtils.nextFloat(100.0f, 300.0f))
                     .setSalesAt(Timestamp.valueOf("2020-05-01 09:30:00")));
         }
 
@@ -62,7 +62,7 @@ public class RelationExample {
     }
 
     private static void queryOrder() throws SQLException {
-        Order order = Order.queryByPrimaryKey(1, Order.BELONGS_TO_MEMBER);
+        Order order = Order.queryByPrimaryKey(1L, Order.BELONGS_TO_MEMBER);
 
         Assert.assertNotNull(order);
         Assert.assertNotNull(order.getMember());

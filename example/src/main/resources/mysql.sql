@@ -17,23 +17,23 @@ CREATE TABLE `objective_sql`.`members`(
 CREATE TABLE `objective_sql`.`orders`(
    `id` INT UNSIGNED AUTO_INCREMENT,
    `no` VARCHAR(100),
-   `member_id` VARCHAR(100),
-   `amount` FLOAT,
-   `quantity` FLOAT,
+   `member_id` INT(10) UNSIGNED,
+   `amount` FLOAT(6,2),
+   `quantity` FLOAT(6,2),
    `sales_at` DATETIME,
    PRIMARY KEY ( `id` )
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `objective_sql`.`order_lines`(
    `id` INT UNSIGNED AUTO_INCREMENT,
-   `order_id` INT(10),
+   `order_id` INT(10) UNSIGNED,
    `order_no` VARCHAR(100),
    `barcode` VARCHAR(100),
-   `product_id` INT(10),
-   `member_id` VARCHAR(100),
+   `product_id` INT(10) UNSIGNED,
+   `member_id` INT(10) UNSIGNED,
    `sales_price` FLOAT,
-   `amount` FLOAT,
-   `quantity` FLOAT,
+   `amount` FLOAT(6,2),
+   `quantity` FLOAT(6,2),
    PRIMARY KEY ( `id` )
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

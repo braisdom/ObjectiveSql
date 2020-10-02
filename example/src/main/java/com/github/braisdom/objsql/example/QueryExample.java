@@ -37,9 +37,9 @@ public class QueryExample {
         for (int i = 0; i < 100; i++) {
             orders.add(new Order()
                     .setNo("20200000" + i)
-                    .setMemberId(i)
-                    .setAmount(RandomUtils.nextDouble(10.0, 30.0))
-                    .setQuantity(RandomUtils.nextDouble(100.0f, 300.0f))
+                    .setMemberId(Long.valueOf(i))
+                    .setAmount(RandomUtils.nextFloat(10.0f, 30.0f))
+                    .setQuantity(RandomUtils.nextFloat(100.0f, 300.0f))
                     .setSalesAt(Timestamp.valueOf("2020-05-01 09:30:00")));
         }
 
@@ -51,7 +51,7 @@ public class QueryExample {
     }
 
     private static void countMember() throws SQLException {
-        int count = Member.count("id > ?", 10);
+        long count = Member.count("id > ?", 10);
 
         Assert.assertTrue(count > 0);
     }

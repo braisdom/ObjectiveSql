@@ -511,7 +511,7 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
                 .addParameter("predicate", aptBuilder.typeRef(String.class))
                 .addVarargsParameter("params", aptBuilder.typeRef(Object.class))
                 .setThrowsClauses(SQLException.class)
-                .setReturnType(aptBuilder.getTreeMaker().TypeIdent(TypeTag.INT))
+                .setReturnType(aptBuilder.getTreeMaker().TypeIdent(TypeTag.LONG))
                 .build("count", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
 
@@ -524,7 +524,7 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
 
         aptBuilder.inject(methodBuilder
                 .setThrowsClauses(SQLException.class)
-                .setReturnType(aptBuilder.getTreeMaker().TypeIdent(TypeTag.INT))
+                .setReturnType(aptBuilder.getTreeMaker().TypeIdent(TypeTag.LONG))
                 .build("countAll", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
 

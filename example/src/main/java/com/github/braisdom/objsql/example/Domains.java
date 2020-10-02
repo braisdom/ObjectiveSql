@@ -6,6 +6,7 @@ import com.github.braisdom.objsql.transition.SqlDateTimeTransitional;
 import org.joda.time.DateTime;
 
 import javax.validation.constraints.Size;
+import java.math.BigInteger;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
@@ -16,7 +17,8 @@ public final class Domains {
     private Domains() {
     }
 
-    @DomainModel(primaryClass = Integer.class)
+    // Annotation definition @DomainModel(primaryClass = Integer.class) for SQLite
+    @DomainModel
     public static class Member {
         // The validation constraints, it will be applied for validate method.
         // for example: Validator.Violation[] violations = member.validate();
@@ -56,12 +58,13 @@ public final class Domains {
         }
     }
 
-    @DomainModel(primaryClass = Integer.class)
+    // Annotation definition @DomainModel(primaryClass = Integer.class) for SQLite
+    @DomainModel
     public static class Order {
         private String no;
-        private Integer memberId;
-        private Double amount;
-        private Double quantity;
+        private Long memberId;
+        private Float amount;
+        private Float quantity;
 
         @Column(transition = SqlDateTimeTransitional.class)
         private Timestamp salesAt;
@@ -79,7 +82,8 @@ public final class Domains {
         }
     }
 
-    @DomainModel(primaryClass = Integer.class)
+    // Annotation definition @DomainModel(primaryClass = Integer.class) for SQLite
+    @DomainModel
     public static class OrderLine {
         private String orderNo;
         private Float amount;

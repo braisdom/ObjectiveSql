@@ -1,4 +1,6 @@
-CREATE SCHEMA IF NOT EXISTS objective_sql;
+DROP IF NOT TABLE objective_sql.members;
+DROP IF NOT TABLE objective_sql.orders;
+DROP IF NOT TABLE objective_sql.order_lines;
 
 CREATE TABLE IF NOT EXISTS objective_sql.members(
     id SERIAL PRIMARY KEY,
@@ -30,13 +32,4 @@ CREATE TABLE IF NOT EXISTS objective_sql.order_lines(
     sales_price FLOAT,
     amount FLOAT,
     quantity FLOAT
-);
-
-CREATE TABLE IF NOT EXISTS objective_sql.products(
-    id SERIAL PRIMARY KEY,
-    barcode VARCHAR(100),
-    name VARCHAR(100),
-    category_id INT,
-    sales_price FLOAT,
-    cost FLOAT
 );

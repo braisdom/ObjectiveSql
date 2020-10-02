@@ -76,7 +76,7 @@ public class DefaultForcedFieldValueConverter implements ForcedFieldValueConvert
         else if (raw instanceof String)
             return Long.valueOf((String) raw);
         else
-            throw new IllegalArgumentException(String.format("'%s' cannot convert to Long", String.valueOf(raw)));
+            throw new IllegalArgumentException(String.format("'%s' cannot convert to Long", raw));
     }
 
     private Boolean toBoolean(Object raw) {
