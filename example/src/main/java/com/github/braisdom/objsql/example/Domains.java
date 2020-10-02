@@ -3,6 +3,7 @@ package com.github.braisdom.objsql.example;
 import com.github.braisdom.objsql.annotations.*;
 import com.github.braisdom.objsql.relation.RelationType;
 import com.github.braisdom.objsql.transition.SqlDateTimeTransitional;
+import org.joda.time.DateTime;
 
 import javax.validation.constraints.Size;
 import java.sql.SQLException;
@@ -48,6 +49,11 @@ public final class Domains {
         // The field will not be save into database;
         @Transient
         private String otherInfo;
+
+        public Member setRegisteredAtWithJoda(DateTime dateTime) {
+            registeredAt = new Timestamp(dateTime.getMillis());
+            return this;
+        }
     }
 
     @DomainModel(primaryClass = Integer.class)

@@ -4,6 +4,7 @@ import com.github.braisdom.objsql.Databases;
 import com.github.braisdom.objsql.Validator;
 import com.github.braisdom.objsql.example.Domains.Member;
 import com.google.gson.GsonBuilder;
+import org.joda.time.DateTime;
 import org.junit.Assert;
 
 import java.io.File;
@@ -22,7 +23,7 @@ public class PersistenceExample {
                 .setNo("100000")
                 .setName("Pamela")
                 .setGender(1)
-                .setRegisteredAt(Timestamp.valueOf("2020-10-02 00:00:00"))
+                .setRegisteredAtWithJoda(DateTime.now())
                 .setUpdatedAt(Timestamp.valueOf("2020-10-05 00:00:00"))
                 .setMobile("15011112222");
 
