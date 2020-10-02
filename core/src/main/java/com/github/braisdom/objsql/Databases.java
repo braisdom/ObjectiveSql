@@ -214,6 +214,17 @@ public final class Databases {
         }
     }
 
+    public static void execute(String sql) throws SQLException {
+        execute(ConnectionFactory.DEFAULT_DATA_SOURCE_NAME, sql);
+    }
+
+    public static void execute(String dataSourceName, String sql) throws SQLException {
+        execute(dataSourceName, (connection, sqlExecutor) -> {
+            connection.createStatement().execute(sql);
+            return null;
+        });
+    }
+
     public static <T, R> R execute(DatabaseInvoke<T, R> databaseInvoke) throws SQLException {
         return execute(ConnectionFactory.DEFAULT_DATA_SOURCE_NAME, databaseInvoke);
     }

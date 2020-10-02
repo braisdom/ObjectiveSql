@@ -34,19 +34,15 @@ public class SQLiteExample {
     }
 
     public static void initializeSchemas() throws SQLException {
-        Databases.execute(((connection, sqlExecutor) -> {
-            connection.createStatement().execute("drop table if exists members;");
-            connection.createStatement().execute("drop table if exists orders");
-            connection.createStatement().execute("drop table if exists order_lines");
-
-            connection.createStatement().execute("create table members (id INTEGER PRIMARY KEY AUTOINCREMENT, no TEXT, " +
-                    "name TEXT, gender INTEGER, mobile TEXT, extended_attributes TEXT)");
-            connection.createStatement().execute("create table orders (id INTEGER PRIMARY KEY AUTOINCREMENT, no TEXT, member_id INTEGER, " +
-                    "amount REAL, quantity REAL, sales_at TEXT)");
-            connection.createStatement().execute("create table order_lines (id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    "order_no TEXT, amount REAL, quantity REAL)");
-            return null;
-        }));
+        Databases.execute("drop table if exists members;");
+        Databases.execute("drop table if exists orders");
+        Databases.execute("drop table if exists order_lines");
+        Databases.execute("create table members (id INTEGER PRIMARY KEY AUTOINCREMENT, no TEXT, " +
+                "name TEXT, gender INTEGER, mobile TEXT, extended_attributes TEXT)");
+        Databases.execute("create table orders (id INTEGER PRIMARY KEY AUTOINCREMENT, no TEXT, member_id INTEGER, " +
+                "amount REAL, quantity REAL, sales_at TEXT)");
+        Databases.execute("create table order_lines (id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "order_no TEXT, amount REAL, quantity REAL)");
     }
 
     public static void main(String[] args) throws SQLException {
