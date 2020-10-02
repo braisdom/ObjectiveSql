@@ -21,7 +21,9 @@ import java.sql.SQLException;
 
 public interface Quoter {
 
-    String quoteColumn(DatabaseMetaData databaseMetaData, String columnName) throws SQLException;
+    String quoteTableName(DatabaseMetaData databaseMetaData, String tableName) throws SQLException;
+
+    String quoteColumnName(DatabaseMetaData databaseMetaData, String columnName) throws SQLException;
 
     String quoteValue(Object... values);
 }

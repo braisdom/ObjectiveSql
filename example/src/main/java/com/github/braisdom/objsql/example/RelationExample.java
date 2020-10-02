@@ -72,7 +72,7 @@ public class RelationExample {
         Assert.assertNotNull(order.getMember());
     }
 
-    public static void main(String args[]) throws SQLException {
+    public static void run() throws SQLException {
         prepareRelationData();
         queryFirstMemberWithOrders();
         queryManyMembersWithOrders();

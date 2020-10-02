@@ -217,7 +217,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
         return Databases.execute(dataSourceName, (connection, sqlExecutor) -> {
             Quoter quoter = Databases.getQuoter();
             String sql = formatDeleteSql(domainModelDescriptor.getTableName(),
-                    String.format("%s = %s", quoter.quoteColumn(connection.getMetaData(),
+                    String.format("%s = %s", quoter.quoteColumnName(connection.getMetaData(),
                             primaryKey.name()), quoter.quoteValue(id)));
             return sqlExecutor.execute(connection, sql);
         });

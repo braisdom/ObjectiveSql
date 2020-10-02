@@ -107,7 +107,7 @@ class DomainModelListHandler implements ResultSetHandler<List> {
 
                     Class fieldType = tableRowDescriptor.getFieldType(fieldName);
                     if (fieldType != null && value != null &&
-                            !fieldType.equals(value.getClass()))
+                            !fieldType.isAssignableFrom(value.getClass()))
                         throw new ClassCastException(String.format("Inconsistent data types field:%s(%s) " +
                                         "vs column:%s(%s) in %s", fieldName, fieldType.getName(), columnName,
                                 value.getClass().getName(), bean.getClass().getName()));
@@ -162,7 +162,7 @@ class DomainModelHandler implements ResultSetHandler<Object> {
 
                         Class fieldType = tableRowDescriptor.getFieldType(fieldName);
                         if (fieldType != null && value != null &&
-                                !fieldType.equals(value.getClass()))
+                                !fieldType.isAssignableFrom(value.getClass()))
                             throw new ClassCastException(String.format("Inconsistent data types field:%s(%s) " +
                                             "vs column:%s(%s) in %s", fieldName, fieldType.getName(), columnName,
                                     value.getClass().getName(), bean.getClass().getName()));

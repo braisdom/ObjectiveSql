@@ -8,6 +8,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import static com.github.braisdom.objsql.Databases.installConnectionFactory;
+
 public class SQLiteExample {
 
     private static final File DATABASE_FILE = new File("objective_sql.db");
@@ -48,9 +50,11 @@ public class SQLiteExample {
     public static void main(String[] args) throws SQLException {
         if (DATABASE_FILE.exists()) DATABASE_FILE.delete();
 
-        ConnectionFactory connectionFactory = new SqliteConnectionFactory(DATABASE_FILE.getName());
-        Databases.installConnectionFactory(connectionFactory);
-
+        installConnectionFactory(new SqliteConnectionFactory(DATABASE_FILE.getName()));
         initializeSchemas();
+
+        PersistenceExample.run();
+        QueryExample.run();
+        RelationExample.run();
     }
 }

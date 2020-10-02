@@ -17,6 +17,7 @@
 package com.github.braisdom.objsql;
 
 import com.github.braisdom.objsql.jdbc.DbUtils;
+import com.github.braisdom.objsql.util.FunctionWithThrowable;
 import com.github.braisdom.objsql.util.StringUtil;
 
 import java.sql.Connection;
@@ -34,17 +35,6 @@ import static com.github.braisdom.objsql.DatabaseType.*;
  */
 @SuppressWarnings("ALL")
 public final class Databases {
-
-    /**
-     * The LoggerFactory is definied for too many Log frameworks appearing,
-     * the ObjectiveSql can't decide which one to use
-     */
-    private static LoggerFactory loggerFactory = new LoggerFactory() {
-        @Override
-        public Logger create(Class<?> clazz) {
-            return new LoggerImpl(clazz);
-        }
-    };
 
     /**
      * The default sql executor for Objective, and customized the implementation when meeting the specific database
@@ -67,6 +57,19 @@ public final class Databases {
      */
     private static ThreadLocal<Connection> connectionThreadLocal = new ThreadLocal<>();
 
+    private static Quoter quoter = new DefaultQuoter();
+
+    /**
+     * The LoggerFactory is definied for too many Log frameworks appearing,
+     * the ObjectiveSql can't decide which one to use
+     */
+    private static LoggerFactory loggerFactory = new LoggerFactory() {
+        @Override
+        public Logger create(Class<?> clazz) {
+            return new LoggerImpl(clazz);
+        }
+    };
+
     private static QueryFactory queryFactory = new QueryFactory() {
         @Override
         public <T> Query<T> createQuery(Class<T> clazz) {
@@ -74,35 +77,6 @@ public final class Databases {
         }
     };
 
-    private static Quoter quoter = new Quoter() {
-        @Override
-        public String quoteColumn(DatabaseMetaData databaseMetaData, String columnName) throws SQLException {
-            String databaseName = databaseMetaData.getDatabaseProductName();
-            if (MySQL.nameEquals(databaseName) || MariaDB.nameEquals(databaseName))
-                return String.format("`%s`", columnName);
-            else if (PostgreSQL.nameEquals(databaseName) || Oracle.nameEquals(databaseName)
-                    || SQLite.nameEquals(databaseName))
-                return String.format("\"%s\"", columnName);
-            return String.format("\"%s\"", columnName);
-        }
-
-        @Override
-        public String quoteValue(Object... values) {
-            StringBuilder sb = new StringBuilder();
-
-            for (Object value : values) {
-                if (value instanceof Integer || value instanceof Long ||
-                        value instanceof Float || value instanceof Double)
-                    sb.append(value);
-                else
-                    sb.append(String.format("'%s'", String.valueOf(value)));
-                sb.append(",");
-            }
-            if (sb.length() > 0)
-                sb.delete(sb.length() - 1, sb.length());
-            return sb.toString();
-        }
-    };
 
     private static PersistenceFactory persistenceFactory = new PersistenceFactory() {
 

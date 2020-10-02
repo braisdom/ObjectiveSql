@@ -167,7 +167,7 @@ public class PersistenceExample {
         order.save(false);
     }
 
-    public static void main(String args[]) throws SQLException {
+    public static void run() throws SQLException {
         createSimpleMember();
         createSimpleMemberCopyFromMap();
         createSimpleMemberCopyFromUnderlineMap();
