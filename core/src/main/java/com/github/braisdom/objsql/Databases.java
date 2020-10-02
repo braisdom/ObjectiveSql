@@ -214,6 +214,10 @@ public final class Databases {
         }
     }
 
+    public static <T, R> R execute(DatabaseInvoke<T, R> databaseInvoke) throws SQLException {
+        return execute(ConnectionFactory.DEFAULT_DATA_SOURCE_NAME, databaseInvoke);
+    }
+
     public static <T, R> R execute(String dataSourceName, DatabaseInvoke<T, R> databaseInvoke) throws SQLException {
         Objects.requireNonNull(databaseInvoke, "The datasourceName cannot be null");
         Objects.requireNonNull(databaseInvoke, "The databaseInvoke cannot be null");

@@ -168,14 +168,6 @@ public class PersistenceExample {
     }
 
     public static void main(String args[]) throws SQLException {
-        File file = new File("persistence_example.db");
-
-        if (file.exists())
-            file.delete();
-
-        Databases.installConnectionFactory(new SqliteConnectionFactory(file.getPath()));
-        Domains.createTables(Databases.getConnectionFactory().getConnection(DEFAULT_DATA_SOURCE_NAME));
-
         createSimpleMember();
         createSimpleMemberCopyFromMap();
         createSimpleMemberCopyFromUnderlineMap();

@@ -73,15 +73,6 @@ public class RelationExample {
     }
 
     public static void main(String args[]) throws SQLException {
-        File file = new File("relation_example.db");
-
-        if (file.exists())
-            file.delete();
-
-        Databases.installConnectionFactory(new SqliteConnectionFactory(file.getPath()));
-        Connection connection = Databases.getConnectionFactory().getConnection(DEFAULT_DATA_SOURCE_NAME);
-        createTables(connection);
-
         prepareRelationData();
         queryFirstMemberWithOrders();
         queryManyMembersWithOrders();

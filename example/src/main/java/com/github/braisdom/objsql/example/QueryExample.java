@@ -1,19 +1,15 @@
 package com.github.braisdom.objsql.example;
 
-import com.github.braisdom.objsql.Databases;
 import com.github.braisdom.objsql.example.Domains.Member;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.Assert;
 
-import java.io.File;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.github.braisdom.objsql.ConnectionFactory.DEFAULT_DATA_SOURCE_NAME;
-import static com.github.braisdom.objsql.example.Domains.*;
+import static com.github.braisdom.objsql.example.Domains.Order;
 
 public class QueryExample {
 
@@ -49,6 +45,7 @@ public class QueryExample {
 
         int[] createdMembersCount = Member.create(members.toArray(new Member[]{}), true);
         int[] createdOrderCount = Order.create(orders.toArray(new Order[]{}), true);
+
         Assert.assertEquals(createdMembersCount.length, 100);
         Assert.assertEquals(createdOrderCount.length, 100);
     }
@@ -61,6 +58,7 @@ public class QueryExample {
 
     private static void queryByName() throws SQLException {
         Member member = Member.queryByName("Ralph");
+
         Assert.assertEquals(member.getName(), "Ralph");
         Assert.assertEquals(member.getId(), Integer.valueOf(12));
     }
@@ -97,16 +95,7 @@ public class QueryExample {
         Assert.assertTrue(orders.size() > 0);
     }
 
-    public static void main(String[] args) throws SQLException {
-        File file = new File("query_example.db");
-
-        if (file.exists())
-            file.delete();
-
-        Databases.installConnectionFactory(new SqliteConnectionFactory(file.getPath()));
-        Connection connection = Databases.getConnectionFactory().getConnection(DEFAULT_DATA_SOURCE_NAME);
-        createTables(connection);
-
+    public static void run() throws SQLException {
         prepareQueryData();
         countMember();
         rawQuery();

@@ -1,19 +1,11 @@
 package com.github.braisdom.objsql.example;
 
-import com.github.braisdom.objsql.Databases;
 import com.github.braisdom.objsql.RollbackCauseException;
-import com.github.braisdom.objsql.jdbc.DbUtils;
-import org.apache.commons.lang3.RandomUtils;
 
-import java.io.File;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import static com.github.braisdom.objsql.ConnectionFactory.DEFAULT_DATA_SOURCE_NAME;
-import static com.github.braisdom.objsql.example.Domains.createTables;
 
 public class TransactionalExample {
 
@@ -39,21 +31,6 @@ public class TransactionalExample {
     }
 
     public static void main(String[] args) throws SQLException, RollbackCauseException {
-        File file = new File("transactional.db");
-
-        if (file.exists())
-            file.delete();
-
-        Databases.installConnectionFactory(new SqliteConnectionFactory(file.getPath()));
-        Connection connection = null;
-
-        try {
-            connection = Databases.getConnectionFactory().getConnection(DEFAULT_DATA_SOURCE_NAME);
-            createTables(connection);
-        } finally {
-            DbUtils.close(connection);
-        }
-
         createNormally();
     }
 }
