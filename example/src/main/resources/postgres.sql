@@ -16,20 +16,20 @@ CREATE TABLE objective_sql.members(
 CREATE TABLE objective_sql.orders(
     id BIGSERIAL PRIMARY KEY,
     no VARCHAR(100),
-    member_id VARCHAR(100),
-    amount FLOAT,
-    quantity FLOAT,
+    member_id BIGINT,
+    amount REAL,
+    quantity REAL,
     sales_at TIMESTAMP
 );
 
 CREATE TABLE objective_sql.order_lines(
     id BIGSERIAL PRIMARY KEY,
-    order_id INT,
+    order_id BIGINT	,
     order_no VARCHAR(100),
     barcode VARCHAR(100),
-    product_id INT,
-    member_id VARCHAR(100),
-    sales_price FLOAT,
-    amount FLOAT,
-    quantity FLOAT
+    product_id BIGINT,
+    member_id BIGINT,
+    sales_price REAL,
+    amount REAL,
+    quantity REAL
 );

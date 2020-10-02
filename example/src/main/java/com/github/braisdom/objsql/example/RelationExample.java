@@ -39,8 +39,10 @@ public class RelationExample {
                     .setSalesAt(Timestamp.valueOf("2020-05-01 09:30:00")));
         }
 
-        int[] createdMembersCount = Member.create(members.toArray(new Member[]{}), true);
-        int[] createdOrderCount = Order.create(orders.toArray(new Order[]{}), true);
+        int[] createdMembersCount = Member.create(members.toArray(new Member[]{}),
+                true, true);
+        int[] createdOrderCount = Order.create(orders.toArray(new Order[]{}),
+                true, true);
 
         Assert.assertEquals(createdMembersCount.length, 6);
         Assert.assertEquals(createdOrderCount.length, 100);

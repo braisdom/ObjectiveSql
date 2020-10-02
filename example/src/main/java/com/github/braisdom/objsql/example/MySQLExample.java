@@ -47,5 +47,6 @@ public class MySQLExample {
 
         PersistenceExample.run();
         QueryExample.run();
+        RelationExample.run();
     }
 }

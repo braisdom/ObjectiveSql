@@ -46,5 +46,7 @@ public class PostgreSQLExample {
         initializeSchema();
 
         PersistenceExample.run();
+        QueryExample.run();
+        RelationExample.run();
     }
 }
