@@ -24,6 +24,13 @@ public class DefaultQuoter implements Quoter{
     }
 
     @Override
+    public String[] quoteColumnNames(DatabaseMetaData databaseMetaData, String[] columnNames) throws SQLException {
+        String[] quotedColumnNames = Arrays.stream(columnNames).map(FunctionWithThrowable
+                .castFunctionWithThrowable(column -> quoteItem(databaseMetaData, column))).toArray(String[]::new);
+        return quotedColumnNames;
+    }
+
+    @Override
     public String quoteValue(Object... values) {
         StringBuilder sb = new StringBuilder();
 

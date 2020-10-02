@@ -17,17 +17,13 @@
 package com.github.braisdom.objsql;
 
 import com.github.braisdom.objsql.jdbc.DbUtils;
-import com.github.braisdom.objsql.util.FunctionWithThrowable;
 import com.github.braisdom.objsql.util.StringUtil;
 
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.logging.Level;
-
-import static com.github.braisdom.objsql.DatabaseType.*;
 
 /**
  * This class consists exclusively of static methods that operate of behavior of database.
@@ -37,9 +33,10 @@ import static com.github.braisdom.objsql.DatabaseType.*;
 public final class Databases {
 
     /**
-     * The default sql executor for Objective, and customized the implementation when meeting the specific database
+     * The default sql executor for Objective, and customized the implementation when meeting
+     * the specific database
      */
-    private static SQLExecutor sqlExecutor = new DefaultSQLExecutor();
+    private static SQLExecutor sqlExecutor;
 
     /**
      * The default implementation to rise the column value from database to Java with common way
@@ -57,38 +54,20 @@ public final class Databases {
      */
     private static ThreadLocal<Connection> connectionThreadLocal = new ThreadLocal<>();
 
-    private static Quoter quoter = new DefaultQuoter();
+    /**
+     * Quoting name of table or column by various database type.
+     */
+    private static Quoter quoter;
 
     /**
      * The LoggerFactory is definied for too many Log frameworks appearing,
      * the ObjectiveSql can't decide which one to use
      */
-    private static LoggerFactory loggerFactory = new LoggerFactory() {
-        @Override
-        public Logger create(Class<?> clazz) {
-            return new LoggerImpl(clazz);
-        }
-    };
+    private static LoggerFactory loggerFactory;
 
-    private static QueryFactory queryFactory = new QueryFactory() {
-        @Override
-        public <T> Query<T> createQuery(Class<T> clazz) {
-            return new DefaultQuery<>(clazz);
-        }
-    };
+    private static QueryFactory queryFactory;
 
-
-    private static PersistenceFactory persistenceFactory = new PersistenceFactory() {
-
-        @Override
-        public <T> Persistence<T> createPersistence(Class<T> clazz) {
-            return createPersistence(new BeanModelDescriptor<>(clazz));
-        }
-
-        public <T> Persistence<T> createPersistence(DomainModelDescriptor<T> domainModelDescriptor) {
-            return new DefaultPersistence<T>(domainModelDescriptor);
-        }
-    };
+    private static PersistenceFactory persistenceFactory;
 
     /**
      * Represents a logic of data process, it will provide the connection and sql
@@ -129,37 +108,31 @@ public final class Databases {
 
     public static void installConnectionFactory(ConnectionFactory connectionFactory) {
         Objects.requireNonNull(connectionFactory, "The connectionFactory cannot be null");
-
         Databases.connectionFactory = connectionFactory;
     }
 
     public static void installSqlExecutor(SQLExecutor sqlExecutor) {
         Objects.requireNonNull(sqlExecutor, "The sqlExecutor cannot be null");
-
         Databases.sqlExecutor = sqlExecutor;
     }
 
     public static void installQueryFacotry(QueryFactory queryFactory) {
         Objects.requireNonNull(sqlExecutor, "The queryFactory cannot be null");
-
         Databases.queryFactory = queryFactory;
     }
 
     public static void installPersistenceFactory(PersistenceFactory persistenceFactory) {
         Objects.requireNonNull(sqlExecutor, "The persistenceFactory cannot be null");
-
         Databases.persistenceFactory = persistenceFactory;
     }
 
     public static void installLoggerFactory(LoggerFactory loggerFactory) {
         Objects.requireNonNull(sqlExecutor, "The loggerFactory cannot be null");
-
         Databases.loggerFactory = loggerFactory;
     }
 
     public static void installQuoter(Quoter quoter) {
         Objects.requireNonNull(sqlExecutor, "The quoter cannot be null");
-
         Databases.quoter = quoter;
     }
 
@@ -186,6 +159,18 @@ public final class Databases {
             connectionThreadLocal.remove();
             DbUtils.close(connection);
         }
+    }
+
+    public static void truncateTable(String tableName) throws SQLException {
+        truncateTable(ConnectionFactory.DEFAULT_DATA_SOURCE_NAME, tableName);
+    }
+
+    public static void truncateTable(String dataSourceName, String tableName) throws SQLException {
+        execute(dataSourceName, (connection, sqlExecutor) -> {
+            String quotedTableName = getQuoter().quoteTableName(connection.getMetaData(), tableName);
+            connection.createStatement().execute(String.format("TRUNCATE TABLE %s", quotedTableName));
+            return null;
+        });
     }
 
     public static void execute(String sql) throws SQLException {
@@ -250,22 +235,57 @@ public final class Databases {
     }
 
     public static QueryFactory getQueryFactory() {
+        if (queryFactory == null) {
+            queryFactory = new QueryFactory() {
+                @Override
+                public <T> Query<T> createQuery(Class<T> clazz) {
+                    return new DefaultQuery<>(clazz);
+                }
+            };
+        }
         return queryFactory;
     }
 
     public static PersistenceFactory getPersistenceFactory() {
+        if (persistenceFactory == null) {
+            persistenceFactory = new PersistenceFactory() {
+
+                @Override
+                public <T> Persistence<T> createPersistence(Class<T> clazz) {
+                    return createPersistence(new BeanModelDescriptor<>(clazz));
+                }
+
+                public <T> Persistence<T> createPersistence(DomainModelDescriptor<T> domainModelDescriptor) {
+                    return new DefaultPersistence<T>(domainModelDescriptor);
+                }
+            };
+        }
         return persistenceFactory;
     }
 
     public static SQLExecutor getSqlExecutor() {
+        if (sqlExecutor == null)
+            sqlExecutor = new DefaultSQLExecutor();
+
         return sqlExecutor;
     }
 
     public static Quoter getQuoter() {
+        if (quoter == null)
+            quoter = new DefaultQuoter();
+
         return quoter;
     }
 
     public static LoggerFactory getLoggerFactory() {
+        if (loggerFactory == null) {
+            loggerFactory = new LoggerFactory() {
+                @Override
+                public Logger create(Class<?> clazz) {
+                    return new LoggerImpl(clazz);
+                }
+            };
+        }
         return loggerFactory;
     }
 

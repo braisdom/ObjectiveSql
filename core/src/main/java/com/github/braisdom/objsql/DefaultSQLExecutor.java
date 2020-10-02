@@ -28,7 +28,7 @@ import java.util.List;
 
 public class DefaultSQLExecutor<T> implements SQLExecutor<T> {
 
-    private static final Logger logger = Databases.getLoggerFactory().create(DefaultSQLExecutor.class);
+    private final Logger logger = Databases.getLoggerFactory().create(DefaultSQLExecutor.class);
     private final QueryRunner queryRunner;
 
     public DefaultSQLExecutor() {
