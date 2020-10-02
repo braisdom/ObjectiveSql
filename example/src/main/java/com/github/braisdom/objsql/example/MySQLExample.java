@@ -2,7 +2,9 @@ package com.github.braisdom.objsql.example;
 
 import com.github.braisdom.objsql.ConnectionFactory;
 import com.github.braisdom.objsql.Databases;
+import com.github.braisdom.objsql.util.WordUtil;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -11,11 +13,11 @@ import static com.github.braisdom.objsql.Databases.installConnectionFactory;
 
 public class MySQLExample {
 
-    public static class MySQLConnectionFactory implements ConnectionFactory {
+    private static class MySQLConnectionFactory implements ConnectionFactory {
 
         @Override
         public Connection getConnection(String dataSourceName) throws SQLException {
-            String url = "jdbc:mysql://localhost:3306/objective_sql";
+            String url = "jdbc:mysql://localhost:4406/objective_sql?serverTimezone=Asia/Shanghai";
             String user = "root";
             String password = "123456";
 
@@ -30,13 +32,19 @@ public class MySQLExample {
         }
     }
 
-    private static void initializeSchema() throws SQLException {
-        Databases.execute("drop table if exists members;");
+    private static void initializeSchema() throws SQLException, IOException {
+        SQLFile sqlFile = new SQLFile("/mysql.sql");
+
+        for(String sql : sqlFile.getSqls()){
+            if(!WordUtil.isEmpty(sql))
+                Databases.execute(sql);
+        }
     }
 
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) throws SQLException, IOException {
         installConnectionFactory(new MySQLConnectionFactory());
         initializeSchema();
 
+        PersistenceExample.run();
     }
 }

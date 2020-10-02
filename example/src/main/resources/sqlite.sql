@@ -6,7 +6,9 @@ create table members (id INTEGER PRIMARY KEY AUTOINCREMENT,
     no TEXT, name TEXT,
     gender INTEGER,
     mobile TEXT,
-    extended_attributes TEXT);
+    extended_attributes TEXT,
+    registered_at TEXT,
+    updated_at TEXT);
 
 create table orders (id INTEGER PRIMARY KEY AUTOINCREMENT,
     no TEXT, member_id INTEGER,

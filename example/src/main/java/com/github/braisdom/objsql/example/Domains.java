@@ -39,6 +39,12 @@ public final class Domains {
         @Column(transition = JsonColumnTransitional.class)
         private Map extendedAttributes;
 
+        @Column(transition = SqlDateTimeTransitional.class)
+        private Timestamp registeredAt;
+
+        @Column(transition = SqlDateTimeTransitional.class)
+        private Timestamp updatedAt;
+
         // The field will not be save into database;
         @Transient
         private String otherInfo;
