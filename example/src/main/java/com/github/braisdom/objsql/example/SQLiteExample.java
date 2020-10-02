@@ -35,16 +35,23 @@ public class SQLiteExample {
         }
     }
 
-    public static void initializeSchemas() throws SQLException {
+    private static void initializeSchemas() throws SQLException {
         Databases.execute("drop table if exists members;");
         Databases.execute("drop table if exists orders");
         Databases.execute("drop table if exists order_lines");
+
         Databases.execute("create table members (id INTEGER PRIMARY KEY AUTOINCREMENT, no TEXT, " +
                 "name TEXT, gender INTEGER, mobile TEXT, extended_attributes TEXT)");
         Databases.execute("create table orders (id INTEGER PRIMARY KEY AUTOINCREMENT, no TEXT, member_id INTEGER, " +
                 "amount REAL, quantity REAL, sales_at TEXT)");
         Databases.execute("create table order_lines (id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "order_no TEXT, amount REAL, quantity REAL)");
+    }
+
+    private static void clearTables() throws SQLException {
+        Databases.execute("DELETE FROM members");
+        Databases.execute("DELETE FROM orders");
+        Databases.execute("DELETE FROM order_lines");
     }
 
     public static void main(String[] args) throws SQLException {
@@ -54,7 +61,9 @@ public class SQLiteExample {
         initializeSchemas();
 
         PersistenceExample.run();
+        clearTables();
         QueryExample.run();
+        clearTables();
         RelationExample.run();
     }
 }

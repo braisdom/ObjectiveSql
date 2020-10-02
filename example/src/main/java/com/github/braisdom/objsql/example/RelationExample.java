@@ -35,6 +35,7 @@ public class RelationExample {
 
         for (int i = 0; i < 100; i++) {
             orders.add(new Order()
+                    .setId(i)
                     .setNo("20200000" + i)
                     .setMemberId(i % 6 + 1)
                     .setAmount(RandomUtils.nextDouble(10.0f, 30.0f))
@@ -65,8 +66,7 @@ public class RelationExample {
     }
 
     private static void queryOrder() throws SQLException {
-        Order order = Order.queryFirst("id = ?",
-                new Relationship[]{Order.BELONGS_TO_MEMBER}, 10);
+        Order order = Order.queryByPrimaryKey(1, Order.BELONGS_TO_MEMBER);
 
         Assert.assertNotNull(order);
         Assert.assertNotNull(order.getMember());

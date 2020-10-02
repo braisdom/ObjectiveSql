@@ -63,7 +63,7 @@ public class QueryExample {
     }
 
     private static void rawQuery() throws SQLException {
-        List<Member> members = Member.queryBySql("SELECT id, name FROM members WHERE id < ?", 10);
+        List<Member> members = Member.queryBySql("SELECT id, name FROM members WHERE id > ?", 10);
         List<Member> members2 = Member.queryBySql("SELECT * FROM members WHERE name = ?", "Jonathan");
         List<Member> members3 = Member.queryBySql("SELECT name AS _name FROM members WHERE name = ?", "Jonathan");
 
