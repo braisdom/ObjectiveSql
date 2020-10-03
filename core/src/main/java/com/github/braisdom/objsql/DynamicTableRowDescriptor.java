@@ -28,6 +28,11 @@ public class DynamicTableRowDescriptor<T extends DynamicModel> implements TableR
     }
 
     @Override
+    public Object getFieldValue(Object bean, String fieldName) {
+        throw new UnsupportedOperationException("Dynamic row descriptor cannot be saved");
+    }
+
+    @Override
     public Class getFieldType(String fieldName) {
         try {
             return clazz.getDeclaredField(fieldName).getType();

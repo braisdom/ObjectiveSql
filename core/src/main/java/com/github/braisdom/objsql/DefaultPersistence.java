@@ -77,7 +77,8 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
             Object[] values = Arrays.stream(columnNames)
                     .map(FunctionWithThrowable.castFunctionWithThrowable(columnName -> {
                         String fieldName = domainModelDescriptor.getFieldName(columnName);
-                        ColumnTransitional<T> columnTransitional = domainModelDescriptor.getColumnTransition(fieldName);
+                        ColumnTransitional<T> columnTransitional = domainModelDescriptor
+                                .getColumnTransition(fieldName);
                         if (columnTransitional != null) {
                             return columnTransitional.sinking(metaData, dirtyObject, domainModelDescriptor,
                                     fieldName, PropertyUtils.read(dirtyObject, fieldName));
@@ -111,19 +112,21 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
 
             String tableName = quoter.quoteTableName(metaData, domainModelDescriptor.getTableName());
             String[] columnNames = domainModelDescriptor.getInsertableColumns();
-            String[] quotedColumnNames = quoter.quoteColumnNames(metaData, domainModelDescriptor.getInsertableColumns());
+            String[] quotedColumnNames = quoter.quoteColumnNames(metaData, domainModelDescriptor
+                    .getInsertableColumns());
             Object[][] values = new Object[dirtyObjects.length][columnNames.length];
 
             for (int i = 0; i < dirtyObjects.length; i++) {
                 for (int t = 0; t < columnNames.length; t++) {
                     String fieldName = domainModelDescriptor.getFieldName(columnNames[t]);
-                    ColumnTransitional<T> columnTransitional = domainModelDescriptor.getColumnTransition(fieldName);
+                    ColumnTransitional<T> columnTransitional = domainModelDescriptor
+                            .getColumnTransition(fieldName);
                     if (columnTransitional != null)
                         values[i][t] = columnTransitional.sinking(metaData,
                                 dirtyObjects[i], domainModelDescriptor, fieldName,
                                 PropertyUtils.read(dirtyObjects[i], fieldName));
                     else
-                        values[i][t] = PropertyUtils.read(dirtyObjects[i], fieldName);
+                        values[i][t] = domainModelDescriptor.getFieldValue(dirtyObjects[i], fieldName);
                 }
             }
 
@@ -163,10 +166,11 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
             Object[] values = Arrays.stream(columnNames)
                     .map(FunctionWithThrowable.castFunctionWithThrowable(columnName -> {
                         String fieldName = domainModelDescriptor.getFieldName(columnName);
-                        ColumnTransitional<T> columnTransitional = domainModelDescriptor.getColumnTransition(fieldName);
+                        ColumnTransitional<T> columnTransitional = domainModelDescriptor
+                                .getColumnTransition(fieldName);
                         if (columnTransitional != null)
-                            return columnTransitional.sinking(connection.getMetaData(), dirtyObject, domainModelDescriptor,
-                                    fieldName, PropertyUtils.read(dirtyObject, fieldName));
+                            return columnTransitional.sinking(connection.getMetaData(), dirtyObject,
+                                    domainModelDescriptor,fieldName, PropertyUtils.read(dirtyObject, fieldName));
                         else return PropertyUtils.read(dirtyObject, fieldName);
                     })).toArray(Object[]::new);
 

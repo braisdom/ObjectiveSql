@@ -63,8 +63,6 @@ public @interface DomainModel {
      * be named that way.
      *
      * @return a name of data source related to the domain model who maps a table.
-     *
-     * @see ConnectionFactory#DEFAULT_DATA_SOURCE_NAME
      */
     String dataSource() default ConnectionFactory.DEFAULT_DATA_SOURCE_NAME;
 
@@ -78,8 +76,6 @@ public @interface DomainModel {
      *          .setField3(...);
      * </pre>
      * You can disable the feature if in special scenes.
-     *
-     * @return
      */
     boolean fluent() default true;
 
@@ -88,29 +84,23 @@ public @interface DomainModel {
      * By default, the <code>Integer</code> is used for a primary key as the mapping of database.<br/>
      *
      * <b>Notice:</b> Only Long, Integer, Short can be as a primary key.
-     *
-     * @return
      */
     Class<?> primaryClass() default Long.class;
 
     /**
      * Customizes the column name mapped for the domain model
-     *
-     * @return
      */
     String primaryColumnName() default "id";
 
     /**
      * Customizes the field name for mapping the column
-     * @return
+
      */
     String primaryFieldName() default "id";
 
     /**
      * Skips the null value of field when updating a domain model if true
      * Returns false if the null value can save into the database.
-     *
-     * @return
      */
     boolean skipNullValueOnUpdating() default true;
 
@@ -118,8 +108,12 @@ public @interface DomainModel {
      * This option indicates the most of field can save into database,
      * however the domain model can be applied into lots of different scenarios,
      * sometimes, only few field can save into database, so the option defined.
-     *
-     * @return
      */
     boolean allFieldsPersistent() default true;
+
+    /**
+     * Default value for primary key, in general, it is a auto increment identifier
+     * at inserting.
+     */
+    String primaryKeyDefaultValue() default "";
 }

@@ -38,8 +38,9 @@ public class DefaultQuoter implements Quoter{
             if (value instanceof Integer || value instanceof Long ||
                     value instanceof Float || value instanceof Double)
                 sb.append(value);
-            else
-                sb.append(String.format("'%s'", String.valueOf(value)));
+            else {
+                sb.append(String.format("'%s'", value));
+            }
             sb.append(",");
         }
 
