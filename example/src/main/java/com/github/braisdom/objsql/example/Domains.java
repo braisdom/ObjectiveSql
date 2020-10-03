@@ -6,7 +6,6 @@ import com.github.braisdom.objsql.transition.SqlDateTimeTransitional;
 import org.joda.time.DateTime;
 
 import javax.validation.constraints.Size;
-import java.math.BigInteger;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;

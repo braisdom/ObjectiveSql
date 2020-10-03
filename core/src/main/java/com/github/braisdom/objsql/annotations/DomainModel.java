@@ -36,7 +36,7 @@ import java.lang.annotation.Target;
  *     <li>The factory method for query and persistence</li>
  *     <li>The query methods of queryable field and model instance</li>
  *     <li>The persistence methods of model instance</li>
- *     <li>The transactional methods of domain logic</li>
+ *     <li>The transactional logic methods of domain</li>
  * </ul>
  *
  * @author braisdom
