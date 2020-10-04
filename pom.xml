@@ -17,9 +17,10 @@
 
     <modules>
         <module>core</module>
-        <module>example</module>
+        <module>generic_example</module>
         <module>database_adaptation</module>
         <module>springboot_example</module>
+        <module>oracle_example</module>
     </modules>
 
     <licenses>
