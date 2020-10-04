@@ -36,23 +36,23 @@ public class DefaultSQLExecutor<T> implements SQLExecutor<T> {
     }
 
     @Override
-    public List<T> query(Connection connection, String sql, TableRowDescriptor tableRowDescriptor,
+    public List<T> query(Connection connection, String sql, TableRowAdapter tableRowAdapter,
                          Object... params) throws SQLException {
         return Databases.sqlBenchmarking(() ->
                 queryRunner.query(connection, sql,
-                        new DomainModelListHandler(tableRowDescriptor, connection.getMetaData()), params), logger, sql, params);
+                        new DomainModelListHandler(tableRowAdapter, connection.getMetaData()), params), logger, sql, params);
     }
 
     @Override
-    public T insert(Connection connection, String sql, TableRowDescriptor tableRowDescriptor,
+    public T insert(Connection connection, String sql, TableRowAdapter tableRowAdapter,
                     Object... params) throws SQLException {
         return (T) Databases.sqlBenchmarking(() ->
                 queryRunner.insert(connection, sql,
-                        new DomainModelHandler(tableRowDescriptor, connection.getMetaData()), params), logger, sql, params);
+                        new DomainModelHandler(tableRowAdapter, connection.getMetaData()), params), logger, sql, params);
     }
 
     @Override
-    public int[] insert(Connection connection, String sql, TableRowDescriptor tableRowDescriptor,
+    public int[] insert(Connection connection, String sql, TableRowAdapter tableRowAdapter,
                         Object[][] params) throws SQLException {
         return Databases.sqlBenchmarking(() ->
                 queryRunner.insertBatch(connection, sql, params), logger, sql, params);
@@ -67,10 +67,10 @@ public class DefaultSQLExecutor<T> implements SQLExecutor<T> {
 
 class DomainModelListHandler implements ResultSetHandler<List> {
 
-    private final TableRowDescriptor tableRowDescriptor;
+    private final TableRowAdapter tableRowDescriptor;
     private final DatabaseMetaData databaseMetaData;
 
-    public DomainModelListHandler(TableRowDescriptor tableRowDescriptor,
+    public DomainModelListHandler(TableRowAdapter tableRowDescriptor,
                                   DatabaseMetaData databaseMetaData) {
         this.tableRowDescriptor = tableRowDescriptor;
         this.databaseMetaData = databaseMetaData;
@@ -130,10 +130,10 @@ class DomainModelHandler implements ResultSetHandler<Object> {
     private static final List<String> AUTO_GENERATE_COLUMN_NAMES = Arrays
             .asList(new String[]{"last_insert_rowid()", "GENERATED_KEY", "GENERATED_KEYS"});
 
-    private final TableRowDescriptor tableRowDescriptor;
+    private final TableRowAdapter tableRowDescriptor;
     private final DatabaseMetaData databaseMetaData;
 
-    public DomainModelHandler(TableRowDescriptor tableRowDescriptor, DatabaseMetaData databaseMetaData) {
+    public DomainModelHandler(TableRowAdapter tableRowDescriptor, DatabaseMetaData databaseMetaData) {
         this.tableRowDescriptor = tableRowDescriptor;
         this.databaseMetaData = databaseMetaData;
     }

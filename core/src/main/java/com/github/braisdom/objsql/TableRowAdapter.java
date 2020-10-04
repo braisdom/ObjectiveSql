@@ -5,11 +5,11 @@ import com.github.braisdom.objsql.transition.ColumnTransitional;
 import java.util.Objects;
 
 /**
- * Describes the Java Bean who maps a row in the table.
+ * Describes the Java Bean which maps a row in the table, and it
  *
  * @param <T> the bean class
  */
-public interface TableRowDescriptor<T> {
+public interface TableRowAdapter<T> {
 
     T newInstance();
 

@@ -16,13 +16,12 @@
  */
 package com.github.braisdom.objsql.transition;
 
-import com.github.braisdom.objsql.TableRowDescriptor;
+import com.github.braisdom.objsql.TableRowAdapter;
 
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.time.format.DateTimeFormatter;
 
 import static com.github.braisdom.objsql.DatabaseType.*;
 
@@ -30,7 +29,7 @@ public class SqlDateTimeTransitional<T> implements ColumnTransitional<T> {
 
     @Override
     public Object sinking(DatabaseMetaData databaseMetaData, T object,
-                          TableRowDescriptor tableRowDescriptor, String fieldName, Object fieldValue) throws SQLException {
+                          TableRowAdapter tableRowDescriptor, String fieldName, Object fieldValue) throws SQLException {
         String databaseName = databaseMetaData.getDatabaseProductName();
         if (fieldValue != null) {
             if (SQLite.nameEquals(databaseName)) {
@@ -54,7 +53,7 @@ public class SqlDateTimeTransitional<T> implements ColumnTransitional<T> {
 
     @Override
     public Object rising(DatabaseMetaData databaseMetaData, ResultSetMetaData resultSetMetaData,
-                         T object, TableRowDescriptor tableRowDescriptor, String columnName, Object columnValue) throws SQLException {
+                         T object, TableRowAdapter tableRowDescriptor, String columnName, Object columnValue) throws SQLException {
         if (columnValue != null) {
             if (SQLite.nameEquals(databaseMetaData.getDatabaseProductName())) {
                 return Timestamp.valueOf(String.valueOf(columnValue));

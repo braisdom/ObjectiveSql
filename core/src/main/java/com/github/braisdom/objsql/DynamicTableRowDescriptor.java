@@ -4,7 +4,7 @@ import com.github.braisdom.objsql.reflection.ClassUtils;
 import com.github.braisdom.objsql.transition.ColumnTransitional;
 import com.github.braisdom.objsql.util.WordUtil;
 
-public class DynamicTableRowDescriptor<T extends DynamicModel> implements TableRowDescriptor {
+public class DynamicTableRowDescriptor<T extends DynamicModel> implements TableRowAdapter {
 
     private final Class<T> clazz;
 

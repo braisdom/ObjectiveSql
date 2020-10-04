@@ -28,7 +28,7 @@ import java.util.Optional;
  *
  * @param <T> the domain model class
  */
-public interface DomainModelDescriptor<T> extends TableRowDescriptor<T> {
+public interface DomainModelDescriptor<T> extends TableRowAdapter<T> {
 
     PrimaryKey getPrimaryKey();
 
