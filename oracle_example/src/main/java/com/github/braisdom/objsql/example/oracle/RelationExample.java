@@ -1,6 +1,7 @@
 package com.github.braisdom.objsql.example.oracle;
 
-import com.github.braisdom.objsql.example.Domains.Member;
+import com.github.braisdom.objsql.example.oracle.Domains.Member;
+import com.github.braisdom.objsql.example.oracle.Domains.Order;
 import com.github.braisdom.objsql.relation.Relationship;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.Assert;
@@ -9,8 +10,6 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.github.braisdom.objsql.example.Domains.Order;
 
 public class RelationExample {
 

@@ -1,5 +1,6 @@
 package com.github.braisdom.objsql.example.oracle;
 
+import com.github.braisdom.objsql.annotations.*;
 import com.github.braisdom.objsql.relation.RelationType;
 import com.github.braisdom.objsql.transition.SqlDateTimeTransitional;
 import org.joda.time.DateTime;
@@ -15,7 +16,6 @@ public final class Domains {
     private Domains() {
     }
 
-    // @DomainModel(primaryClass = Integer.class) for SQLite
     @DomainModel(tableName = "SCOTT.MEMBERS", primaryKeyDefaultValue = "members_seq.nextval")
     public static class Member {
         // The validation constraints, it will be applied for validate method.
@@ -56,7 +56,6 @@ public final class Domains {
         }
     }
 
-    // @DomainModel(primaryClass = Integer.class) for SQLite
     @DomainModel
     public static class Order {
         private String no;
@@ -80,7 +79,6 @@ public final class Domains {
         }
     }
 
-    // @DomainModel(primaryClass = Integer.class) for SQLite
     @DomainModel
     public static class OrderLine {
         private String orderNo;

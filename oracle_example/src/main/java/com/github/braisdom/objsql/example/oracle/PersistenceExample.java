@@ -1,7 +1,7 @@
 package com.github.braisdom.objsql.example.oracle;
 
 import com.github.braisdom.objsql.Validator;
-import com.github.braisdom.objsql.example.Domains.Member;
+import com.github.braisdom.objsql.example.oracle.Domains.Member;
 import com.google.gson.GsonBuilder;
 import org.joda.time.DateTime;
 import org.junit.Assert;
