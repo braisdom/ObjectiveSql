@@ -18,11 +18,9 @@ public class PersistenceExample {
         newMember.setNo("100000")
                 .setName("Pamela")
                 .setGender(1)
-                .setRegisteredAtWithJoda(DateTime.now())
-                .setUpdatedAt(Timestamp.valueOf("2020-10-05 00:00:00"))
                 .setMobile("15011112222");
 
-        Member member = Member.create(newMember, true, false);
+        Member member = Member.create(newMember, true);
         Assert.assertNotNull(member);
     }
 
@@ -43,7 +41,7 @@ public class PersistenceExample {
                 .setName("Pamela")
                 .setGender(1)
                 .setMobile("15011112222");
-        Member.create(newMember, true, true);
+        Member.create(newMember, true);
     }
 
     private static void createSimpleMemberCopyFromMap() throws SQLException {
@@ -60,7 +58,7 @@ public class PersistenceExample {
         attributes.put("extendedAttributes", extendedAttributes);
 
         Member.create(Member.newInstanceFrom(attributes, false),
-                false, true);
+                false);
     }
 
     private static void createSimpleMemberCopyFromUnderlineMap() throws SQLException {
@@ -77,7 +75,7 @@ public class PersistenceExample {
         attributes.put("extended_attributes", extendedAttributes);
 
         Member member = Member.newInstanceFrom(attributes, true);
-        Member.create(member, false, true);
+        Member.create(member, false);
     }
 
     private static void createSimpleFromJsonMember() throws SQLException {
@@ -85,7 +83,7 @@ public class PersistenceExample {
                 "\"extendedAttributes\":{\"hobbies\":[\"Play football\"],\"age\":28}}";
         Member newMember = new GsonBuilder().create().fromJson(json, Member.class);
 
-        Member.create(newMember, false, true);
+        Member.create(newMember, false);
     }
 
     private static void createMember() throws SQLException {
@@ -100,7 +98,7 @@ public class PersistenceExample {
                 .setExtendedAttributes(extendedAttributes)
                 .setMobile("15011112222");
 
-        Member.create(newMember, false, true);
+        Member.create(newMember, false);
     }
 
     private static void createMemberArray() throws SQLException {
@@ -123,7 +121,7 @@ public class PersistenceExample {
                 .setMobile("15011112222");
 
         Member.create(new Member[]{newMember1, newMember2, newMember3},
-                false, true);
+                false);
     }
 
     private static void updateSmithMember() throws SQLException {
@@ -161,7 +159,7 @@ public class PersistenceExample {
                 .setAmount(3.5f)
                 .setQuantity(100.3f)
                 .setSalesAt(Timestamp.valueOf("2020-05-01 09:30:00"));
-        order.save(false, true);
+        order.save(false);
     }
 
     public static void run() throws SQLException {

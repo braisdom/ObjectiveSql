@@ -17,16 +17,16 @@
 package com.github.braisdom.objsql;
 
 import com.github.braisdom.objsql.annotations.PrimaryKey;
-import com.github.braisdom.objsql.reflection.PropertyUtils;
 import com.github.braisdom.objsql.transition.ColumnTransitional;
 import com.github.braisdom.objsql.util.ArrayUtil;
-import com.github.braisdom.objsql.util.FunctionWithThrowable;
 import com.github.braisdom.objsql.util.StringUtil;
 
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Objects;
+
+import static com.github.braisdom.objsql.util.FunctionWithThrowable.castFunctionWithThrowable;
 
 /**
  * The persistence default implementation with JavaBean
@@ -71,19 +71,21 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
 
             String tableName = quoter.quoteTableName(metaData, domainModelDescriptor.getTableName());
             String[] columnNames = domainModelDescriptor.getInsertableColumns();
-            String[] quotedColumnNames = quoter.quoteColumnNames(metaData, domainModelDescriptor.getInsertableColumns());
+            String[] quotedColumnNames = quoter.quoteColumnNames(metaData, columnNames);
+
             String sql = formatInsertSql(tableName, columnNames, quotedColumnNames);
 
             Object[] values = Arrays.stream(columnNames)
                     .filter(columnName -> {
                         String fieldName = domainModelDescriptor.getFieldName(columnName);
-                        return !domainModelDescriptor.getInvariableValue(fieldName).isPresent();
+                        return domainModelDescriptor.isOccupiable(fieldName);
                     })
-                    .map(FunctionWithThrowable.castFunctionWithThrowable(columnName -> {
+                    .map(castFunctionWithThrowable(columnName -> {
                         String fieldName = domainModelDescriptor.getFieldName(columnName);
+                        Object fieldValue = domainModelDescriptor.getFieldValue(dirtyObject, fieldName);
+
                         ColumnTransitional<T> columnTransitional = domainModelDescriptor
                                 .getColumnTransition(fieldName);
-                        Object fieldValue = domainModelDescriptor.getFieldValue(dirtyObject, fieldName);
                         if (columnTransitional != null) {
                             return columnTransitional.sinking(metaData, dirtyObject,
                                     domainModelDescriptor, fieldName, fieldValue);
@@ -169,7 +171,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
                     }).toArray(String[]::new);
 
             Object[] values = Arrays.stream(columnNames)
-                    .map(FunctionWithThrowable.castFunctionWithThrowable(columnName -> {
+                    .map(castFunctionWithThrowable(columnName -> {
                         String fieldName = domainModelDescriptor.getFieldName(columnName);
                         ColumnTransitional<T> columnTransitional = domainModelDescriptor
                                 .getColumnTransition(fieldName);

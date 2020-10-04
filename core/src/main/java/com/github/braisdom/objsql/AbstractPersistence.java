@@ -47,7 +47,7 @@ public abstract class AbstractPersistence<T> implements Persistence<T> {
         String[] valuesPlaceHolder = Arrays.stream(columnNames)
                 .map(columnName -> {
                     String fieldName = domainModelDescriptor.getFieldName(columnName);
-                    Optional invariableValue = domainModelDescriptor.getInvariableValue(fieldName);
+                    Optional invariableValue = domainModelDescriptor.getOccupiedValue(fieldName);
                     if(invariableValue.isPresent())
                         return invariableValue.get();
                     else return "?";

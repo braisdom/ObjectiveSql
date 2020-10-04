@@ -48,5 +48,7 @@ public interface DomainModelDescriptor<T> extends TableRowAdapter<T> {
 
     String[] getUpdatableColumns();
 
-    Optional<String> getInvariableValue(String fieldName);
+    boolean isOccupiable(String fieldName);
+
+    Optional<String> getOccupiedValue(String fieldName);
 }

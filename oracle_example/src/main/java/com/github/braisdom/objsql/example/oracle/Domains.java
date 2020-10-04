@@ -56,7 +56,7 @@ public final class Domains {
         }
     }
 
-    @DomainModel
+    @DomainModel(tableName = "SCOTT.ORDERS", primaryKeyDefaultValue = "members_seq.nextval")
     public static class Order {
         private String no;
         private Long memberId;

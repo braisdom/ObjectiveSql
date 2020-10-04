@@ -136,7 +136,24 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
     }
 
     @Override
-    public Optional<String> getInvariableValue(String fieldName) {
+    public boolean isOccupiable(String fieldName) {
+        try {
+            DomainModel domainModel = domainModelClass.getAnnotation(DomainModel.class);
+            if(domainModel.primaryFieldName().equals(fieldName))
+                return WordUtil.isEmpty(domainModel.primaryKeyDefaultValue());
+
+            Field field = domainModelClass.getDeclaredField(fieldName);
+            Column column = field.getAnnotation(Column.class);
+            if(column != null)
+                return column.occupiable();
+            return true;
+        }catch (NoSuchFieldException ex) {
+            throw new IllegalArgumentException(ex.getMessage(), ex);
+        }
+    }
+
+    @Override
+    public Optional<String> getOccupiedValue(String fieldName) {
         try {
             DomainModel domainModel = domainModelClass.getAnnotation(DomainModel.class);
             Field field = domainModelClass.getDeclaredField(fieldName);
@@ -198,7 +215,7 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
 
     @Override
     public boolean isTransitable(String fieldName) {
-        return true;
+        return columnTransitionMap.get(fieldName) != null;
     }
 
     @Override

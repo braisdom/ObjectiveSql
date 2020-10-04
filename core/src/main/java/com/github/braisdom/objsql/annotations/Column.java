@@ -68,4 +68,12 @@ public @interface Column {
      * @return an invariable value
      */
     String defaultValue() default "";
+
+    /**
+     * Indicates the field can be as a placeholder in SQL when SQL formatting,
+     * such as, INSERT ... VALUES(?, ?), the '?' is a placeholder.
+     *
+     * @return
+     */
+    boolean occupiable() default true;
 }

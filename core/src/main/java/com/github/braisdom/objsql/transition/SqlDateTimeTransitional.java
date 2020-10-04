@@ -32,18 +32,12 @@ public class SqlDateTimeTransitional<T> implements ColumnTransitional<T> {
                           TableRowAdapter tableRowDescriptor, String fieldName, Object fieldValue) throws SQLException {
         String databaseName = databaseMetaData.getDatabaseProductName();
         if (fieldValue != null) {
-            if (SQLite.nameEquals(databaseName)) {
+            if (SQLite.nameEquals(databaseName) || Oracle.nameEquals(databaseName)) {
                 return fieldValue.toString();
             } else if (PostgreSQL.nameEquals(databaseName)) {
                 if (fieldValue instanceof Timestamp) {
                     Timestamp timestamp = (Timestamp) fieldValue;
                     return timestamp.toLocalDateTime();
-                }
-                return fieldValue.toString();
-            }
-            if (Oracle.nameEquals(databaseName)) {
-                if (fieldValue instanceof Timestamp) {
-                    return String.format("timestamp'%s'", fieldValue.toString());
                 }
                 return fieldValue.toString();
             } else return fieldValue;
