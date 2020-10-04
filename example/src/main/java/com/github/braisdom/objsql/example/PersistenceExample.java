@@ -26,7 +26,7 @@ public class PersistenceExample {
                 .setUpdatedAt(Timestamp.valueOf("2020-10-05 00:00:00"))
                 .setMobile("15011112222");
 
-        Member member = Member.create(newMember, true, true);
+        Member member = Member.create(newMember, true, false);
         Assert.assertNotNull(member);
     }
 

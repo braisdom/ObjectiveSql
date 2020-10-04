@@ -27,5 +27,5 @@ public interface Quoter {
 
     String[] quoteColumnNames(DatabaseMetaData databaseMetaData, String[] columnNames) throws SQLException;
 
-    String quoteValue(Object... values);
+    String quoteValues(Object... values);
 }

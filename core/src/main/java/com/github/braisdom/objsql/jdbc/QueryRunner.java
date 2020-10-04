@@ -596,7 +596,7 @@ public class QueryRunner extends AbstractQueryRunner {
         T generatedKeys = null;
 
         try {
-            stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            stmt = conn.prepareStatement(sql, Statement.NO_GENERATED_KEYS);
             this.fillStatement(stmt, params);
             stmt.executeUpdate();
             ResultSet resultSet = stmt.getGeneratedKeys();

@@ -149,7 +149,8 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
     @Override
     public Object getFieldValue(Object bean, String fieldName) {
         DomainModel domainModel = domainModelClass.getAnnotation(DomainModel.class);
-        if (domainModel != null) {
+
+        if (domainModel != null && domainModel.primaryFieldName().equals(fieldName)) {
             String defaultValue = domainModel.primaryKeyDefaultValue();
             if (!WordUtil.isEmpty(defaultValue)) {
                 return defaultValue;

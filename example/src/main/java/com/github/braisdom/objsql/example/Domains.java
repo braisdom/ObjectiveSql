@@ -16,8 +16,8 @@ public final class Domains {
     private Domains() {
     }
 
-    // Annotation definition @DomainModel(primaryClass = Integer.class) for SQLite
-    @DomainModel
+    // @DomainModel(primaryClass = Integer.class) for SQLite
+    @DomainModel(tableName = "SCOTT.MEMBERS", primaryKeyDefaultValue = "members_seq.nextval")
     public static class Member {
         // The validation constraints, it will be applied for validate method.
         // for example: Validator.Violation[] violations = member.validate();
@@ -57,7 +57,7 @@ public final class Domains {
         }
     }
 
-    // Annotation definition @DomainModel(primaryClass = Integer.class) for SQLite
+    // @DomainModel(primaryClass = Integer.class) for SQLite
     @DomainModel
     public static class Order {
         private String no;
@@ -81,7 +81,7 @@ public final class Domains {
         }
     }
 
-    // Annotation definition @DomainModel(primaryClass = Integer.class) for SQLite
+    // @DomainModel(primaryClass = Integer.class) for SQLite
     @DomainModel
     public static class OrderLine {
         private String orderNo;

@@ -85,8 +85,8 @@ public class RelationshipNetwork implements RelationProcessor.Context {
         Quoter quoter = Databases.getQuoter();
 
         String relationConditions = StringUtil.isBlank(condition)
-                ? String.format(" %s IN (%s) ", associatedColumnName, quoter.quoteValue(associatedValues))
-                : String.format(" %s IN (%s) AND (%s)", associatedColumnName, quoter.quoteValue(associatedValues),
+                ? String.format(" %s IN (%s) ", associatedColumnName, quoter.quoteValues(associatedValues))
+                : String.format(" %s IN (%s) AND (%s)", associatedColumnName, quoter.quoteValues(associatedValues),
                 condition);
         String relationTableQuerySql = String.format(SELECT_RELATION_STATEMENT, relationTableName, relationConditions);
 

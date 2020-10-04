@@ -31,7 +31,7 @@ public class DefaultQuoter implements Quoter{
     }
 
     @Override
-    public String quoteValue(Object... values) {
+    public String quoteValues(Object... values) {
         StringBuilder sb = new StringBuilder();
 
         for (Object value : values) {

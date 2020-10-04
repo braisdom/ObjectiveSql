@@ -1,6 +1,6 @@
 CREATE SEQUENCE members_seq START WITH 1;
 CREATE TABLE objective_sql.members(
-    id NUMBER(10) NOT NULL ,
+    id NUMBER NOT NULL ,
     no VARCHAR2(100),
     name VARCHAR2(100),
     gender INT,

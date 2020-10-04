@@ -16,22 +16,17 @@
  */
 package com.github.braisdom.objsql.transition;
 
-import com.github.braisdom.objsql.DatabaseType;
 import com.github.braisdom.objsql.TableRowDescriptor;
 
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import static com.github.braisdom.objsql.DatabaseType.PostgreSQL;
-import static com.github.braisdom.objsql.DatabaseType.SQLite;
+import static com.github.braisdom.objsql.DatabaseType.*;
 
 public class SqlDateTimeTransitional<T> implements ColumnTransitional<T> {
-
-    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ISO_INSTANT;
 
     @Override
     public Object sinking(DatabaseMetaData databaseMetaData, T object,
@@ -40,13 +35,20 @@ public class SqlDateTimeTransitional<T> implements ColumnTransitional<T> {
         if (fieldValue != null) {
             if (SQLite.nameEquals(databaseName)) {
                 return fieldValue.toString();
-            } else if(PostgreSQL.nameEquals(databaseName)) {
-                if(fieldValue instanceof Timestamp) {
+            } else if (PostgreSQL.nameEquals(databaseName)) {
+                if (fieldValue instanceof Timestamp) {
                     Timestamp timestamp = (Timestamp) fieldValue;
                     return timestamp.toLocalDateTime();
                 }
                 return fieldValue.toString();
-            }else return fieldValue;
+            }
+            if (Oracle.nameEquals(databaseName)) {
+                if (fieldValue instanceof Timestamp) {
+                    Timestamp timestamp = (Timestamp) fieldValue;
+                    return String.format("timestamp'%s'", timestamp.toString());
+                }
+                return fieldValue.toString();
+            } else return fieldValue;
         }
         return null;
     }

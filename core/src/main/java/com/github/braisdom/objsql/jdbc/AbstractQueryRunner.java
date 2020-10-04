@@ -356,11 +356,7 @@ public abstract class AbstractQueryRunner {
             msg.append(Arrays.deepToString(params));
         }
 
-        SQLException e = new SQLException(msg.toString(), cause.getSQLState(),
-                cause.getErrorCode());
-        e.setNextException(cause);
-
-        throw e;
+        throw  new SQLException(msg.toString(), cause.getSQLState(), cause);
     }
 
     /**
