@@ -237,10 +237,10 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
         String dataSourceName = Tables.getDataSourceName(domainModelDescriptor.getDomainModelClass());
         return Databases.execute(dataSourceName, (connection, sqlExecutor) -> {
             DatabaseMetaData metaData = connection.getMetaData();
+            
             String tableName = quoter.quoteTableName(metaData, domainModelDescriptor.getTableName());
             String quotedPrimaryName = quoter.quoteColumnName(connection.getMetaData(), primaryKey.name());
-            String sql = formatDeleteSql(tableName, String.format("%s = %s", quotedPrimaryName,
-                            quoter.quoteValues(id)));
+            String sql = formatDeleteSql(tableName, String.format("%s = %s", quotedPrimaryName, quoter.quoteValue(id)));
 
             return sqlExecutor.execute(connection, sql);
         });

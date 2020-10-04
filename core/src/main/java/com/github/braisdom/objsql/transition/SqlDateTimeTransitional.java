@@ -44,8 +44,7 @@ public class SqlDateTimeTransitional<T> implements ColumnTransitional<T> {
             }
             if (Oracle.nameEquals(databaseName)) {
                 if (fieldValue instanceof Timestamp) {
-                    Timestamp timestamp = (Timestamp) fieldValue;
-                    return String.format("timestamp'%s'", timestamp.toString());
+                    return String.format("timestamp'%s'", fieldValue.toString());
                 }
                 return fieldValue.toString();
             } else return fieldValue;

@@ -84,10 +84,10 @@ public class RelationshipNetwork implements RelationProcessor.Context {
         SQLExecutor sqlExecutor = Databases.getSqlExecutor();
         Quoter quoter = Databases.getQuoter();
 
+        String associatedValueString = String.join(",", quoter.quoteValues(associatedValues));
         String relationConditions = StringUtil.isBlank(condition)
-                ? String.format(" %s IN (%s) ", associatedColumnName, quoter.quoteValues(associatedValues))
-                : String.format(" %s IN (%s) AND (%s)", associatedColumnName, quoter.quoteValues(associatedValues),
-                condition);
+                ? String.format(" %s IN (%s) ", associatedColumnName, associatedValueString)
+                : String.format(" %s IN (%s) AND (%s)", associatedColumnName, associatedValueString, condition);
         String relationTableQuerySql = String.format(SELECT_RELATION_STATEMENT, relationTableName, relationConditions);
 
         return sqlExecutor.query(connection, relationTableQuerySql, domainModelDescriptor.getRelatedModeDescriptor(clazz));

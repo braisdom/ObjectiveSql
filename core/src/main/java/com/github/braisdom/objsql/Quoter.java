@@ -21,11 +21,15 @@ import java.sql.SQLException;
 
 public interface Quoter {
 
+    String NO_QUOTE_PREFIX = "noquote:";
+
     String quoteTableName(DatabaseMetaData databaseMetaData, String tableName) throws SQLException;
 
     String quoteColumnName(DatabaseMetaData databaseMetaData, String columnName) throws SQLException;
 
     String[] quoteColumnNames(DatabaseMetaData databaseMetaData, String[] columnNames) throws SQLException;
 
-    String quoteValues(Object... values);
+    String[] quoteValues(Object... values);
+
+    String quoteValue(Object value);
 }
