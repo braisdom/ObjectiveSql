@@ -136,8 +136,24 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
     }
 
     @Override
-    public String getColumnName(String fieldName) {
-        return null;
+    public Optional<String> getInvariableValue(String fieldName) {
+        try {
+            DomainModel domainModel = domainModelClass.getAnnotation(DomainModel.class);
+            Field field = domainModelClass.getDeclaredField(fieldName);
+
+            if (domainModel.primaryFieldName().equals(fieldName)
+                    && !WordUtil.isEmpty(domainModel.primaryKeyDefaultValue()))
+                return Optional.of(domainModel.primaryKeyDefaultValue());
+
+            Column column = field.getAnnotation(Column.class);
+
+            if (column != null && !WordUtil.isEmpty(column.defaultValue()))
+                return Optional.of((column.defaultValue()));
+
+            return Optional.empty();
+        } catch (NoSuchFieldException ex) {
+            throw new IllegalArgumentException(ex.getMessage(), ex);
+        }
     }
 
     @Override

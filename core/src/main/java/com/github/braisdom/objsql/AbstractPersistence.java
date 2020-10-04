@@ -18,6 +18,7 @@ package com.github.braisdom.objsql;
 
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * The class provides abstracted method of SQL construction.
@@ -42,9 +43,16 @@ public abstract class AbstractPersistence<T> implements Persistence<T> {
         this.domainModelDescriptor = domainModelDescriptor;
     }
 
-    protected String formatInsertSql(String tableName, String[] columnNames) {
-        String[] valuesPlaceHolder = Arrays.stream(columnNames).map(c -> "?").toArray(String[]::new);
-        return formatInsertSql(tableName, columnNames, String.join(",", valuesPlaceHolder));
+    protected String formatInsertSql(String tableName, String[] columnNames, String[] quotedColumnNames) {
+        String[] valuesPlaceHolder = Arrays.stream(columnNames)
+                .map(columnName -> {
+                    String fieldName = domainModelDescriptor.getFieldName(columnName);
+                    Optional invariableValue = domainModelDescriptor.getInvariableValue(fieldName);
+                    if(invariableValue.isPresent())
+                        return invariableValue.get();
+                    else return "?";
+                }).toArray(String[]::new);
+        return formatInsertSql(tableName, quotedColumnNames, String.join(",", valuesPlaceHolder));
     }
 
     protected String formatInsertSql(String tableName, String[] columnNames, String values) {

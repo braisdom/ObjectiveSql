@@ -60,4 +60,12 @@ public @interface Column {
      * @return
      */
     boolean updatable() default true;
+
+    /**
+     * Returns invariable value for the column, it means that the invariable value
+     * will replace the real value of domain model when inserting or updating.
+     *
+     * @return an invariable value
+     */
+    String defaultValue() default "";
 }

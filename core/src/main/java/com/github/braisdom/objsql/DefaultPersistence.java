@@ -44,7 +44,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
     }
 
     @Override
-    public T save(final T dirtyObject, boolean skipValidation) throws SQLException {
+    public T save(final T dirtyObject, final boolean skipValidation) throws SQLException {
         Objects.requireNonNull(dirtyObject, "The dirtyObject cannot be null");
 
         Object primaryValue = domainModelDescriptor.getPrimaryValue(dirtyObject);
@@ -55,7 +55,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
     }
 
     @Override
-    public T insert(T dirtyObject, boolean skipValidation) throws SQLException {
+    public T insert(final T dirtyObject, final boolean skipValidation) throws SQLException {
         Objects.requireNonNull(dirtyObject, "The dirtyObject cannot be null");
 
         if (!skipValidation) {
@@ -72,9 +72,13 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
             String tableName = quoter.quoteTableName(metaData, domainModelDescriptor.getTableName());
             String[] columnNames = domainModelDescriptor.getInsertableColumns();
             String[] quotedColumnNames = quoter.quoteColumnNames(metaData, domainModelDescriptor.getInsertableColumns());
-            String sql = formatInsertSql(tableName, quotedColumnNames);
+            String sql = formatInsertSql(tableName, columnNames, quotedColumnNames);
 
             Object[] values = Arrays.stream(columnNames)
+                    .filter(columnName -> {
+                        String fieldName = domainModelDescriptor.getFieldName(columnName);
+                        return !domainModelDescriptor.getInvariableValue(fieldName).isPresent();
+                    })
                     .map(FunctionWithThrowable.castFunctionWithThrowable(columnName -> {
                         String fieldName = domainModelDescriptor.getFieldName(columnName);
                         ColumnTransitional<T> columnTransitional = domainModelDescriptor
@@ -97,7 +101,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
     }
 
     @Override
-    public int[] insert(T[] dirtyObjects, boolean skipValidation) throws SQLException {
+    public int[] insert(final T[] dirtyObjects, final boolean skipValidation) throws SQLException {
         Objects.requireNonNull(dirtyObjects, "The dirtyObject cannot be null");
 
         if (!skipValidation) {
@@ -131,13 +135,13 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
                 }
             }
 
-            String sql = formatInsertSql(tableName, quotedColumnNames);
+            String sql = formatInsertSql(tableName, columnNames, quotedColumnNames);
             return sqlExecutor.insert(connection, sql, domainModelDescriptor, values);
         });
     }
 
     @Override
-    public T update(Object id, T dirtyObject, boolean skipValidation) throws SQLException {
+    public T update(final Object id, final T dirtyObject, final boolean skipValidation) throws SQLException {
         Objects.requireNonNull(id, "The id cannot be null");
         Objects.requireNonNull(dirtyObject, "The dirtyObject cannot be null");
 
@@ -227,7 +231,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
     }
 
     @Override
-    public int delete(Object id) throws SQLException {
+    public int delete(final Object id) throws SQLException {
         Objects.requireNonNull(id, "The id cannot be null");
 
         PrimaryKey primaryKey = domainModelDescriptor.getPrimaryKey();
@@ -247,7 +251,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
     }
 
     @Override
-    public int execute(String sql) throws SQLException {
+    public int execute(final String sql) throws SQLException {
         Objects.requireNonNull(sql, "The sql cannot be null");
 
         String dataSourceName = Tables.getDataSourceName(domainModelDescriptor.getDomainModelClass());
