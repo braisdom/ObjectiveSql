@@ -57,8 +57,7 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
         handleCountAllMethod(aptBuilder);
         handleValidateMethod(aptBuilder);
         handleNewInstanceFromMethod(aptBuilder);
-        handleNewInstanceFrom2Method(aptBuilder);
-        handleNewInstanceFrom3Method(aptBuilder);
+        handleNewInstanceFrom1Method(aptBuilder);
         handleRawAttributesField(aptBuilder);
         handleInnerTableClass(aptBuilder);
     }
@@ -570,31 +569,11 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
                 treeMaker.Apply(List.nil(), treeMaker.Select(aptBuilder.typeRef(ClassUtils.class),
                         aptBuilder.toName("createNewInstance")), List.of(aptBuilder.classRef(aptBuilder.getClassName()))));
         statementBuilder.append(aptBuilder.typeRef(aptBuilder.getClassName()), "bean", createInstance);
+
         statementBuilder.append(PropertyUtils.class, "populate", aptBuilder.varRef("bean"),
-                aptBuilder.varRef("properties"), aptBuilder.varRef("underLine"), aptBuilder.varRef("converter"));
+                aptBuilder.varRef("properties"), aptBuilder.varRef("underLine"));
 
         methodBuilder.setReturnStatement(aptBuilder.varRef("bean"));
-
-        aptBuilder.inject(methodBuilder
-                .addStatements(statementBuilder.build())
-                .addParameter("properties", Map.class)
-                .addParameter("underLine", treeMaker.TypeIdent(TypeTag.BOOLEAN))
-                .addParameter("converter", ForcedFieldValueConverter.class)
-                .setReturnType(aptBuilder.typeRef(aptBuilder.getClassName()))
-                .build("newInstanceFrom", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
-    }
-
-    private void handleNewInstanceFrom2Method(APTBuilder aptBuilder) {
-        MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
-        TreeMaker treeMaker = aptBuilder.getTreeMaker();
-        StatementBuilder statementBuilder = aptBuilder.createStatementBuilder();
-
-        statementBuilder.append(aptBuilder.typeRef(ForcedFieldValueConverter.class), "convert",
-                treeMaker.NewClass(null, List.nil(),
-                        aptBuilder.typeRef(DefaultForcedFieldValueConverter.class), List.nil(), null));
-
-        methodBuilder.setReturnStatement(aptBuilder.getClassName(), "newInstanceFrom",
-                aptBuilder.varRef("properties"), aptBuilder.varRef("underLine"), aptBuilder.varRef("convert"));
         aptBuilder.inject(methodBuilder
                 .addStatements(statementBuilder.build())
                 .addParameter("properties", Map.class)
@@ -603,7 +582,7 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
                 .build("newInstanceFrom", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
 
-    private void handleNewInstanceFrom3Method(APTBuilder aptBuilder) {
+    private void handleNewInstanceFrom1Method(APTBuilder aptBuilder) {
         MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
         TreeMaker treeMaker = aptBuilder.getTreeMaker();
         StatementBuilder statementBuilder = aptBuilder.createStatementBuilder();

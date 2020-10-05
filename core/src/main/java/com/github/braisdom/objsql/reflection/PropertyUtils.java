@@ -309,14 +309,6 @@ public final class PropertyUtils {
         return type.getSimpleName() + "." + name;
     }
 
-    static String getQualifiedPropertyName(Object bean, Field field) {
-        return getQualifiedPropertyName(bean, field.getName());
-    }
-
-    private static String getQualifiedPropertyName(Object bean, String name) {
-        return getQualifiedPropertyName(ClassUtils.getRealClass(bean), name);
-    }
-
     public static boolean isCollectionType(PropertyDescriptor propertyDescriptor) {
         return Collection.class.isAssignableFrom(propertyDescriptor.getPropertyType());
     }

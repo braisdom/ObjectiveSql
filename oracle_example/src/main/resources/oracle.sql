@@ -3,7 +3,7 @@ CREATE TABLE objective_sql.members(
     id NUMBER NOT NULL PRIMARY KEY,
     no VARCHAR2(100),
     name VARCHAR2(100),
-    gender INT,
+    gender SMALLINT,
     mobile VARCHAR2(11),
     extended_attributes VARCHAR2(512),
     registered_at TIMESTAMP,
