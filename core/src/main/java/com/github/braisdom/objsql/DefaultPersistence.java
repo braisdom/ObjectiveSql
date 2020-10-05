@@ -74,23 +74,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
             String[] quotedColumnNames = quoter.quoteColumnNames(metaData, columnNames);
 
             String sql = formatInsertSql(tableName, columnNames, quotedColumnNames);
-
-            Object[] values = Arrays.stream(columnNames)
-                    .filter(columnName -> {
-                        String fieldName = domainModelDescriptor.getFieldName(columnName);
-                        return !domainModelDescriptor.hasDefaultValue(fieldName);
-                    })
-                    .map(castFunctionWithThrowable(columnName -> {
-                        String fieldName = domainModelDescriptor.getFieldName(columnName);
-                        FieldValue fieldValue = domainModelDescriptor.getFieldValue(dirtyObject, fieldName);
-
-                        ColumnTransitional<T> columnTransitional = domainModelDescriptor
-                                .getColumnTransition(fieldName);
-                        if (columnTransitional != null) {
-                            return columnTransitional.sinking(metaData, dirtyObject,
-                                    domainModelDescriptor, fieldName, fieldValue);
-                        } else return fieldValue;
-                    })).toArray(Object[]::new);
+            Object[] values = filterValues(metaData, dirtyObject, columnNames);
 
             T domainObject = (T) sqlExecutor.insert(connection, sql, domainModelDescriptor, values);
             Object primaryValue = Tables.getPrimaryValue(domainObject);
@@ -122,23 +106,35 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
             String[] quotedColumnNames = quoter.quoteColumnNames(metaData, columnNames);
             String sql = formatInsertSql(tableName, columnNames, quotedColumnNames);
 
-            Object[][] values = new Object[dirtyObjects.length][columnNames.length];
+            Object[][] values = new Object[dirtyObjects.length][];
             for (int i = 0; i < dirtyObjects.length; i++) {
-                for (int t = 0; t < columnNames.length; t++) {
-                    String fieldName = domainModelDescriptor.getFieldName(columnNames[t]);
-                    ColumnTransitional<T> columnTransitional = domainModelDescriptor
-                            .getColumnTransition(fieldName);
-                    FieldValue fieldValue = domainModelDescriptor.getFieldValue(dirtyObjects[i], fieldName);
-
-                    if (columnTransitional != null)
-                        values[i][t] = columnTransitional.sinking(metaData, dirtyObjects[i],
-                                domainModelDescriptor, fieldName, fieldValue);
-                    else
-                        values[i][t] = fieldValue;
+                Object[] rowValues = filterValues(metaData, dirtyObjects[i], columnNames);
+                values[i] = new Object[rowValues.length];
+                for (int t = 0; t < rowValues.length; t++) {
+                    values[i][t] = rowValues[t];
                 }
             }
             return sqlExecutor.insert(connection, sql, domainModelDescriptor, values);
         });
+    }
+
+    private Object[] filterValues(DatabaseMetaData metaData, T dirtyObject, String[] columnNames) {
+        return Arrays.stream(columnNames)
+                .filter(columnName -> {
+                    String fieldName = domainModelDescriptor.getFieldName(columnName);
+                    return !domainModelDescriptor.hasDefaultValue(fieldName);
+                })
+                .map(castFunctionWithThrowable(columnName -> {
+                    String fieldName = domainModelDescriptor.getFieldName(columnName);
+                    FieldValue fieldValue = domainModelDescriptor.getFieldValue(dirtyObject, fieldName);
+
+                    ColumnTransitional<T> columnTransitional = domainModelDescriptor
+                            .getColumnTransition(fieldName);
+                    if (columnTransitional != null) {
+                        return columnTransitional.sinking(metaData, dirtyObject,
+                                domainModelDescriptor, fieldName, fieldValue);
+                    } else return fieldValue;
+                })).toArray(Object[]::new);
     }
 
     @Override
@@ -177,7 +173,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
                         FieldValue fieldValue = domainModelDescriptor.getFieldValue(dirtyObject, fieldName);
                         if (columnTransitional != null)
                             return columnTransitional.sinking(connection.getMetaData(), dirtyObject,
-                                    domainModelDescriptor,fieldName, fieldValue);
+                                    domainModelDescriptor, fieldName, fieldValue);
                         else return fieldValue;
                     })).toArray(Object[]::new);
 
@@ -191,7 +187,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
 
             String tableName = quoter.quoteTableName(connection.getMetaData(), domainModelDescriptor.getTableName());
             String sql = formatUpdateSql(tableName, updatesSql.toString(), String.format("%s = ?",
-                            quoter.quoteColumnName(metaData, primaryKey.name())));
+                    quoter.quoteColumnName(metaData, primaryKey.name())));
 
             sqlExecutor.execute(connection, sql, ArrayUtil.appendElement(Object.class, values, id));
 
@@ -242,7 +238,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
         String dataSourceName = Tables.getDataSourceName(domainModelDescriptor.getDomainModelClass());
         return Databases.execute(dataSourceName, (connection, sqlExecutor) -> {
             DatabaseMetaData metaData = connection.getMetaData();
-            
+
             String tableName = quoter.quoteTableName(metaData, domainModelDescriptor.getTableName());
             String quotedPrimaryName = quoter.quoteColumnName(connection.getMetaData(), primaryKey.name());
             String sql = formatDeleteSql(tableName, String.format("%s = %s", quotedPrimaryName, quoter.quoteValue(id)));
