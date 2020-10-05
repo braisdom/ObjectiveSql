@@ -1,4 +1,4 @@
-ObjectiveSql’s mission is to provide  the most intuitive and convenient approach to access various databases, without configuration,  without coding relevant to `JDBC`&`ORM`. It is an abstraction and encapsulation of java in domain logic in database.
+ObjectiveSql’s mission is to provide  the most intuitive and convenient approach to access various databases, without configuration,  without coding relevant to `JDBC`&`ORM`. It is an abstraction and encapsulation of java in relation database domain logic.
 
 ObjectiveSql-based programming is the best practice in `ActiveRecord` pattern in Java, which incorporates both behavior and data and avoids meaningless `Interface` declaration of Java. Thus, ObjectiveSql-based programming will change the way to build an application base on relation database.
 
