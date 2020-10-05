@@ -8,5 +8,5 @@ public interface FieldValue {
 
     Object getValue();
 
-    void resetValue(Object value);
+    void setValue(Object value);
 }

@@ -39,7 +39,7 @@ public class SqlDateTimeTransition<T> implements ColumnTransition<T> {
                 return fieldValue;
             }else if (PostgreSQL.nameEquals(databaseName)) {
                 if (fieldValue.getValue() instanceof Timestamp) {
-                    fieldValue.resetValue(fieldValue.getValue().toString());
+                    fieldValue.setValue(fieldValue.getValue().toString());
                     return fieldValue;
                 }
                 return fieldValue;

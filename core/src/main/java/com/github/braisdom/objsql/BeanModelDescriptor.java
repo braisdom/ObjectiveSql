@@ -81,7 +81,7 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
         }
 
         @Override
-        public void resetValue(Object value) {
+        public void setValue(Object value) {
             this.value = value;
         }
 
