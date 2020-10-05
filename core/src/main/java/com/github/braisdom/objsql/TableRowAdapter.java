@@ -3,6 +3,7 @@ package com.github.braisdom.objsql;
 import com.github.braisdom.objsql.transition.ColumnTransitional;
 
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Describes the Java Bean which maps a row in the table, and it
@@ -17,7 +18,11 @@ public interface TableRowAdapter<T> {
 
     String getFieldName(String columnName);
 
-    Object getFieldValue(Object bean, String fieldName);
+    Optional<String> getFieldDefaultValue(String fieldName);
+
+    boolean hasDefaultValue(String fieldName);
+
+    FieldValue getFieldValue(Object bean, String fieldName);
 
     Class getFieldType(String fieldName);
 
@@ -25,7 +30,5 @@ public interface TableRowAdapter<T> {
 
     ColumnTransitional getColumnTransition(String fieldName);
 
-    void setValue(T modelObject, String fieldName, Object fieldValue);
-
-    Object getValue(T modelObject, String fieldName);
+    void setFieldValue(T modelObject, String fieldName, Object fieldValue);
 }

@@ -16,6 +16,7 @@
  */
 package com.github.braisdom.objsql.transition;
 
+import com.github.braisdom.objsql.FieldValue;
 import com.github.braisdom.objsql.TableRowAdapter;
 
 import java.sql.DatabaseMetaData;
@@ -29,17 +30,19 @@ public class SqlDateTimeTransitional<T> implements ColumnTransitional<T> {
 
     @Override
     public Object sinking(DatabaseMetaData databaseMetaData, T object,
-                          TableRowAdapter tableRowDescriptor, String fieldName, Object fieldValue) throws SQLException {
+                          TableRowAdapter tableRowDescriptor, String fieldName, FieldValue fieldValue) throws SQLException {
         String databaseName = databaseMetaData.getDatabaseProductName();
-        if (fieldValue != null) {
-            if (SQLite.nameEquals(databaseName) || Oracle.nameEquals(databaseName)) {
-                return fieldValue.toString();
-            } else if (PostgreSQL.nameEquals(databaseName)) {
-                if (fieldValue instanceof Timestamp) {
+        if (fieldValue != null && fieldValue.getValue() != null) {
+            if (SQLite.nameEquals(databaseName)) {
+                return fieldValue;
+            } else if(Oracle.nameEquals(databaseName)) {
+                return fieldValue;
+            }else if (PostgreSQL.nameEquals(databaseName)) {
+                if (fieldValue.getValue() instanceof Timestamp) {
                     Timestamp timestamp = (Timestamp) fieldValue;
-                    return timestamp.toLocalDateTime();
+                    return fieldValue;
                 }
-                return fieldValue.toString();
+                return fieldValue;
             } else return fieldValue;
         }
         return null;

@@ -16,6 +16,8 @@
  */
 package com.github.braisdom.objsql.jdbc;
 
+import com.github.braisdom.objsql.FieldValue;
+
 import javax.sql.DataSource;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
@@ -220,7 +222,13 @@ public abstract class AbstractQueryRunner {
                 if (params[i] instanceof int[] || params[i] instanceof Integer[]) {
                     Array array = stmt.getConnection().createArrayOf("INTEGER", params);
                     stmt.setArray(i + 1, array);
-                } else
+                } if(params[i] instanceof FieldValue) {
+                    FieldValue fieldValue = (FieldValue) params[i];
+                    if(JDBCType.NULL.equals(fieldValue.getSQLType()))
+                        stmt.setObject(i + 1, fieldValue.getValue());
+                    else
+                        stmt.setObject(i + 1, fieldValue.getValue(), fieldValue.getSQLType());
+                }  else
                     stmt.setObject(i + 1, params[i]);
             } else {
                 // VARCHAR works with many drivers regardless

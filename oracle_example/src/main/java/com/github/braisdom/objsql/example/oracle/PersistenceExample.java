@@ -3,7 +3,6 @@ package com.github.braisdom.objsql.example.oracle;
 import com.github.braisdom.objsql.Validator;
 import com.github.braisdom.objsql.example.oracle.Domains.Member;
 import com.google.gson.GsonBuilder;
-import org.joda.time.DateTime;
 import org.junit.Assert;
 
 import java.sql.SQLException;
@@ -18,6 +17,8 @@ public class PersistenceExample {
         newMember.setNo("100000")
                 .setName("Pamela")
                 .setGender(1)
+                .setRegisteredAt(Timestamp.valueOf("2020-10-01 09:30:00"))
+                .setUpdatedAt(Timestamp.valueOf("2020-10-01 09:30:00"))
                 .setMobile("15011112222");
 
         Member member = Member.create(newMember, true);

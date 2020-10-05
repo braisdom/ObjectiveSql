@@ -6,6 +6,7 @@ import com.github.braisdom.objsql.transition.SqlDateTimeTransitional;
 import org.joda.time.DateTime;
 
 import javax.validation.constraints.Size;
+import java.sql.JDBCType;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
@@ -40,10 +41,10 @@ public final class Domains {
         @Column(transition = JsonColumnTransitional.class)
         private Map extendedAttributes;
 
-        @Column(transition = SqlDateTimeTransitional.class)
+        @Column(transition = SqlDateTimeTransitional.class, sqlType = JDBCType.TIMESTAMP)
         private Timestamp registeredAt;
 
-        @Column(transition = SqlDateTimeTransitional.class)
+        @Column(transition = SqlDateTimeTransitional.class, sqlType = JDBCType.TIMESTAMP)
         private Timestamp updatedAt;
 
         // The field will not be save into database;

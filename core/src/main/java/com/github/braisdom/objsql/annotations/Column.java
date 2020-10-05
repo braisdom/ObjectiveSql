@@ -22,6 +22,8 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.sql.JDBCType;
+import java.sql.SQLType;
 
 /**
  * The annotation is used for mapping the column and field of Java Bean.
@@ -69,11 +71,5 @@ public @interface Column {
      */
     String defaultValue() default "";
 
-    /**
-     * Indicates the field can be as a placeholder in SQL when SQL formatting,
-     * such as, INSERT ... VALUES(?, ?), the '?' is a placeholder.
-     *
-     * @return
-     */
-    boolean occupiable() default true;
+    JDBCType sqlType() default JDBCType.NULL;
 }

@@ -1,5 +1,6 @@
 package com.github.braisdom.objsql.example;
 
+import com.github.braisdom.objsql.FieldValue;
 import com.github.braisdom.objsql.TableRowAdapter;
 import com.github.braisdom.objsql.transition.ColumnTransitional;
 import com.google.gson.Gson ;
@@ -14,9 +15,9 @@ public class JsonColumnTransitional implements ColumnTransitional {
 
     @Override
     public Object sinking(DatabaseMetaData databaseMetaData, Object object,
-                          TableRowAdapter tableRowDescriptor, String fieldName, Object fieldValue) {
+                          TableRowAdapter tableRowDescriptor, String fieldName, FieldValue fieldValue) {
         if(fieldValue != null)
-            return gson.toJson(fieldValue);
+            return gson.toJson(fieldValue.getValue());
         return null;
     }
 

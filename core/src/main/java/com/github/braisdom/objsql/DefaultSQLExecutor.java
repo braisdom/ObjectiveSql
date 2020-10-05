@@ -112,9 +112,9 @@ class DomainModelListHandler implements ResultSetHandler<List> {
                                         "vs column:%s(%s) in %s", fieldName, fieldType.getName(), columnName,
                                 value.getClass().getName(), bean.getClass().getName()));
 
-                    tableRowDescriptor.setValue(bean, fieldName, value);
+                    tableRowDescriptor.setFieldValue(bean, fieldName, value);
                 } else
-                    tableRowDescriptor.setValue(bean, fieldName, rawColumnValue);
+                    tableRowDescriptor.setFieldValue(bean, fieldName, rawColumnValue);
             } else {
                 if (PropertyUtils.supportRawAttribute(bean))
                     PropertyUtils.writeRawAttribute(bean, columnName, rawColumnValue);
@@ -167,9 +167,9 @@ class DomainModelHandler implements ResultSetHandler<Object> {
                                             "vs column:%s(%s) in %s", fieldName, fieldType.getName(), columnName,
                                     value.getClass().getName(), bean.getClass().getName()));
 
-                        tableRowDescriptor.setValue(bean, fieldName, value);
+                        tableRowDescriptor.setFieldValue(bean, fieldName, value);
                     } else
-                        tableRowDescriptor.setValue(bean, fieldName, rawColumnValue);
+                        tableRowDescriptor.setFieldValue(bean, fieldName, rawColumnValue);
                 } else {
                     if (PropertyUtils.supportRawAttribute(bean))
                         PropertyUtils.writeRawAttribute(bean, columnName, rawColumnValue);

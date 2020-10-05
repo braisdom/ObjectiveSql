@@ -78,11 +78,11 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
             Object[] values = Arrays.stream(columnNames)
                     .filter(columnName -> {
                         String fieldName = domainModelDescriptor.getFieldName(columnName);
-                        return domainModelDescriptor.isOccupiable(fieldName);
+                        return !domainModelDescriptor.hasDefaultValue(fieldName);
                     })
                     .map(castFunctionWithThrowable(columnName -> {
                         String fieldName = domainModelDescriptor.getFieldName(columnName);
-                        Object fieldValue = domainModelDescriptor.getFieldValue(dirtyObject, fieldName);
+                        FieldValue fieldValue = domainModelDescriptor.getFieldValue(dirtyObject, fieldName);
 
                         ColumnTransitional<T> columnTransitional = domainModelDescriptor
                                 .getColumnTransition(fieldName);
@@ -128,7 +128,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
                     String fieldName = domainModelDescriptor.getFieldName(columnNames[t]);
                     ColumnTransitional<T> columnTransitional = domainModelDescriptor
                             .getColumnTransition(fieldName);
-                    Object fieldValue = domainModelDescriptor.getFieldValue(dirtyObjects[i], fieldName);
+                    FieldValue fieldValue = domainModelDescriptor.getFieldValue(dirtyObjects[i], fieldName);
                     if (columnTransitional != null)
                         values[i][t] = columnTransitional.sinking(metaData, dirtyObjects[i],
                                 domainModelDescriptor, fieldName, fieldValue);
@@ -175,7 +175,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
                         String fieldName = domainModelDescriptor.getFieldName(columnName);
                         ColumnTransitional<T> columnTransitional = domainModelDescriptor
                                 .getColumnTransition(fieldName);
-                        Object fieldValue = domainModelDescriptor.getFieldValue(dirtyObject, fieldName);
+                        FieldValue fieldValue = domainModelDescriptor.getFieldValue(dirtyObject, fieldName);
                         if (columnTransitional != null)
                             return columnTransitional.sinking(connection.getMetaData(), dirtyObject,
                                     domainModelDescriptor,fieldName, fieldValue);

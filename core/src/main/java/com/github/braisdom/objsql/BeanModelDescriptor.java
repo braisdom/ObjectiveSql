@@ -26,10 +26,12 @@ import com.github.braisdom.objsql.transition.ColumnTransitional;
 import com.github.braisdom.objsql.util.StringUtil;
 import com.github.braisdom.objsql.util.WordUtil;
 
+import javax.swing.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.sql.JDBCType;
+import java.sql.SQLType;
 import java.util.*;
 
 /**
@@ -52,6 +54,36 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
     private final Map<String, ColumnTransitional> columnTransitionMap;
     private final Map<String, Field> columnToField;
     private final boolean skipPrimaryKeyOnInserting;
+
+    private class DefaultFieldValue implements FieldValue {
+
+        private final SQLType sqlType;
+        private final Object value;
+
+        public DefaultFieldValue(Object value) {
+            this(JDBCType.NULL, value);
+        }
+
+        public DefaultFieldValue(SQLType sqlType, Object value) {
+            this.sqlType = sqlType;
+            this.value = value;
+        }
+
+        @Override
+        public SQLType getSQLType() {
+            return sqlType;
+        }
+
+        @Override
+        public Object getValue() {
+            return value;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+    }
 
     public BeanModelDescriptor(Class<T> domainModelClass) {
         this(domainModelClass, false);
@@ -82,7 +114,7 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
         Field primaryField = Tables.getPrimaryField(domainModelClass);
         if (primaryKeyValue instanceof BigInteger)
             primaryKeyValue = Long.valueOf(primaryKeyValue.toString());
-        setValue(bean, primaryField.getName(), primaryKeyValue);
+        setFieldValue(bean, primaryField.getName(), primaryKeyValue);
     }
 
     @Override
@@ -136,37 +168,24 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
     }
 
     @Override
-    public boolean isOccupiable(String fieldName) {
-        try {
-            DomainModel domainModel = domainModelClass.getAnnotation(DomainModel.class);
-            if(domainModel.primaryFieldName().equals(fieldName))
-                return WordUtil.isEmpty(domainModel.primaryKeyDefaultValue());
-
-            Field field = domainModelClass.getDeclaredField(fieldName);
-            Column column = field.getAnnotation(Column.class);
-            if(column != null)
-                return column.occupiable();
-            return true;
-        }catch (NoSuchFieldException ex) {
-            throw new IllegalArgumentException(ex.getMessage(), ex);
-        }
+    public String getFieldName(String fieldName) {
+        Field field = columnToField.get(fieldName);
+        return field == null ? null : field.getName();
     }
 
     @Override
-    public Optional<String> getOccupiedValue(String fieldName) {
+    public Optional<String> getFieldDefaultValue(String fieldName) {
         try {
             DomainModel domainModel = domainModelClass.getAnnotation(DomainModel.class);
             Field field = domainModelClass.getDeclaredField(fieldName);
 
-            if (domainModel.primaryFieldName().equals(fieldName)
+            if(field.getName().equals(domainModel.primaryFieldName())
                     && !WordUtil.isEmpty(domainModel.primaryKeyDefaultValue()))
                 return Optional.of(domainModel.primaryKeyDefaultValue());
 
             Column column = field.getAnnotation(Column.class);
-
             if (column != null && !WordUtil.isEmpty(column.defaultValue()))
-                return Optional.of((column.defaultValue()));
-
+                return Optional.of(column.defaultValue());
             return Optional.empty();
         } catch (NoSuchFieldException ex) {
             throw new IllegalArgumentException(ex.getMessage(), ex);
@@ -174,22 +193,49 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
     }
 
     @Override
-    public String getFieldName(String fieldName) {
-        Field field = columnToField.get(fieldName);
-        return field == null ? null : field.getName();
+    public boolean hasDefaultValue(String fieldName) {
+        try {
+            DomainModel domainModel = domainModelClass.getAnnotation(DomainModel.class);
+            Field field = domainModelClass.getDeclaredField(fieldName);
+
+            if(field.getName().equals(domainModel.primaryFieldName()))
+                return !WordUtil.isEmpty(domainModel.primaryKeyDefaultValue());
+
+            Column column = field.getAnnotation(Column.class);
+            if (column != null)
+                return !WordUtil.isEmpty(column.defaultValue());
+            return false;
+        } catch (NoSuchFieldException ex) {
+            throw new IllegalArgumentException(ex.getMessage(), ex);
+        }
     }
 
     @Override
-    public Object getFieldValue(Object bean, String fieldName) {
-        DomainModel domainModel = domainModelClass.getAnnotation(DomainModel.class);
+    public FieldValue getFieldValue(Object bean, String fieldName) {
+        try {
+            Object value = PropertyUtils.read(bean, fieldName);
 
-        if (domainModel != null && domainModel.primaryFieldName().equals(fieldName)) {
-            String defaultValue = domainModel.primaryKeyDefaultValue();
-            if (!WordUtil.isEmpty(defaultValue)) {
-                return defaultValue;
-            } else return PropertyUtils.read(bean, fieldName);
-        } else
-            return PropertyUtils.read(bean, fieldName);
+            DomainModel domainModel = domainModelClass.getAnnotation(DomainModel.class);
+            Field field = domainModelClass.getDeclaredField(fieldName);
+
+            if (domainModel.primaryFieldName().equals(fieldName)) {
+                String primaryValue = domainModel.primaryKeyDefaultValue();
+                return new DefaultFieldValue(JDBCType.JAVA_OBJECT, primaryValue);
+            }
+
+            Column column = field.getAnnotation(Column.class);
+
+            if (column != null) {
+                return new DefaultFieldValue(column.sqlType(), String.valueOf(value));
+            }
+
+            if (value == null)
+                return new DefaultFieldValue(null);
+
+            return new DefaultFieldValue(value);
+        } catch (NoSuchFieldException ex) {
+            throw new IllegalArgumentException(ex.getMessage(), ex);
+        }
     }
 
     @Override
@@ -204,12 +250,7 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
     }
 
     @Override
-    public Object getValue(T modelObject, String fieldName) {
-        return PropertyUtils.read(modelObject, fieldName);
-    }
-
-    @Override
-    public void setValue(T modelObject, String fieldName, Object fieldValue) {
+    public void setFieldValue(T modelObject, String fieldName, Object fieldValue) {
         PropertyUtils.write(modelObject, fieldName, fieldValue);
     }
 

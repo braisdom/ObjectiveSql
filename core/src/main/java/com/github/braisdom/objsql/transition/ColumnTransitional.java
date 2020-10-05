@@ -16,6 +16,7 @@
  */
 package com.github.braisdom.objsql.transition;
 
+import com.github.braisdom.objsql.FieldValue;
 import com.github.braisdom.objsql.TableRowAdapter;
 
 import java.sql.DatabaseMetaData;
@@ -35,7 +36,7 @@ public interface ColumnTransitional<T> {
      */
     default Object sinking(DatabaseMetaData databaseMetaData,
                            T object, TableRowAdapter tableRowDescriptor,
-                           String fieldName, Object fieldValue) throws SQLException {
+                           String fieldName, FieldValue fieldValue) throws SQLException {
         return fieldValue;
     }
 

@@ -4,6 +4,8 @@ import com.github.braisdom.objsql.reflection.ClassUtils;
 import com.github.braisdom.objsql.transition.ColumnTransitional;
 import com.github.braisdom.objsql.util.WordUtil;
 
+import java.util.Optional;
+
 public class DynamicTableRowDescriptor<T extends DynamicModel> implements TableRowAdapter {
 
     private final Class<T> clazz;
@@ -28,8 +30,18 @@ public class DynamicTableRowDescriptor<T extends DynamicModel> implements TableR
     }
 
     @Override
-    public Object getFieldValue(Object bean, String fieldName) {
+    public FieldValue getFieldValue(Object bean, String fieldName) {
         throw new UnsupportedOperationException("Dynamic row descriptor cannot be saved");
+    }
+
+    @Override
+    public Optional<String> getFieldDefaultValue(String fieldName) {
+        return Optional.empty();
+    }
+
+    @Override
+    public boolean hasDefaultValue(String fieldName) {
+        return false;
     }
 
     @Override
@@ -53,12 +65,7 @@ public class DynamicTableRowDescriptor<T extends DynamicModel> implements TableR
     }
 
     @Override
-    public void setValue(Object modelObject, String fieldName, Object fieldValue) {
+    public void setFieldValue(Object modelObject, String fieldName, Object fieldValue) {
         ((DynamicModel)modelObject).put(fieldName, fieldValue);
-    }
-
-    @Override
-    public Object getValue(Object modelObject, String fieldName) {
-        return ((DynamicModel)modelObject).get(fieldName);
     }
 }
