@@ -34,7 +34,7 @@ public class OracleExample {
         installConnectionFactory(new OracleConnectionFactory());
 
         PersistenceExample.run();
-//        QueryExample.run();
+        QueryExample.run();
 //        RelationExample.run();
     }
 }

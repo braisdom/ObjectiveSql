@@ -26,6 +26,7 @@ import com.github.braisdom.objsql.util.WordUtil;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -182,17 +183,20 @@ public final class Tables {
 
     public static final Long count(Class<?> domainModelClass, String predicate, Object... params) throws SQLException {
         Query<?> query = Databases.getQueryFactory().createQuery(domainModelClass);
-        String countAlias = "_count";
+        String countAlias = "count_rows";
         List rows = query.select("COUNT(*) AS " + countAlias).where(predicate, params).execute();
 
         if (rows.size() > 0) {
-            Object count = PropertyUtils.getRawAttribute(rows.get(0), countAlias);
+            Map<String, Object> countRowsMap = PropertyUtils.getRawAttributes(rows.get(0));
+            Object count = countRowsMap.get(countRowsMap.keySet().toArray()[0]);
             if (count == null)
                 return 0L;
             else if (count instanceof Long)
                 return (Long) count;
             else if (count instanceof Integer)
                 return Long.valueOf((Integer) count);
+            else if(count instanceof BigDecimal)
+                return ((BigDecimal)count).longValue();
             else return 0L;
         } else return 0L;
     }

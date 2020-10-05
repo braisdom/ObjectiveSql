@@ -17,15 +17,13 @@ public final class Domains {
     private Domains() {
     }
 
-    @DomainModel(tableName = "SCOTT.MEMBERS", primaryKeyDefaultValue = "members_seq.nextval")
+    @DomainModel(tableName = "SCOTT.MEMBERS",
+            primaryClass = java.math.BigDecimal.class,
+            primaryKeyDefaultValue = "members_seq.nextval")
     public static class Member {
-        // The validation constraints, it will be applied for validate method.
-        // for example: Validator.Violation[] violations = member.validate();
         @Size(min = 5, max = 20)
         private String no;
 
-        // The queryByName method will be generated, usage example:
-        // List<Member> members = Member.queryByName("Benjamin");
         @Queryable
         private String name;
 
@@ -33,8 +31,6 @@ public final class Domains {
         private Integer gender;
         private String mobile;
 
-        // The HAS_MANY_ORDERS field will be generated,
-        // public static final Relationship HAS_MANY_ORDERS = ...
         @Relation(relationType = RelationType.HAS_MANY)
         private List<Order> orders;
 
@@ -47,7 +43,6 @@ public final class Domains {
         @Column(transition = SqlDateTimeTransitional.class, sqlType = JDBCType.TIMESTAMP)
         private Timestamp updatedAt;
 
-        // The field will not be save into database;
         @Transient
         private String otherInfo;
 

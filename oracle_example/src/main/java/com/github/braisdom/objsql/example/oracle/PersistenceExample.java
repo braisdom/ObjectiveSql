@@ -5,6 +5,7 @@ import com.github.braisdom.objsql.example.oracle.Domains.Member;
 import com.google.gson.GsonBuilder;
 import org.junit.Assert;
 
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.HashMap;
@@ -133,7 +134,7 @@ public class PersistenceExample {
                 .setName("Smith => Jackson")
                 .setExtendedAttributes(extendedAttributes);
 
-        Member.update(12L, newMember, true);
+        Member.update(BigDecimal.valueOf(12L), newMember, true);
     }
 
     private static void updateJacksonMember() throws SQLException {
@@ -141,7 +142,7 @@ public class PersistenceExample {
     }
 
     private static void deleteAliceMember() throws SQLException {
-        Member.destroy(13L);
+        Member.destroy(BigDecimal.valueOf(13));
     }
 
     private static void deleteMaryMember() throws SQLException {

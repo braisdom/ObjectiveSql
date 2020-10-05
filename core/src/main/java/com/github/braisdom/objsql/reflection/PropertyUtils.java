@@ -221,6 +221,19 @@ public final class PropertyUtils {
         }
     }
 
+    public static Map<String, Object> getRawAttributes(Object bean) {
+        try {
+            Method method = bean.getClass().getMethod("getRawAttributes");
+            return (Map<String, Object>) method.invoke(bean);
+        } catch (NoSuchMethodException ex) {
+            throw new ReflectionException(ex.getMessage(), ex);
+        } catch (IllegalAccessException ex) {
+            throw new ReflectionException(ex.getMessage(), ex);
+        } catch (InvocationTargetException ex) {
+            throw new ReflectionException(ex.getMessage(), ex);
+        }
+    }
+
     public static boolean supportRawAttribute(Object bean) {
         try {
             Method method = bean.getClass().getMethod("setRawAttribute", String.class, Object.class);

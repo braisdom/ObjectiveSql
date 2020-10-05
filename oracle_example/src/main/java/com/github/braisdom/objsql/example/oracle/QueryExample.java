@@ -43,16 +43,16 @@ public class QueryExample {
         }
 
         int[] createdMembersCount = Member.create(members.toArray(new Member[]{}),
-                true, true);
+                true);
         int[] createdOrderCount = Order.create(orders.toArray(new Order[]{}),
-                true, true);
+                true);
 
         Assert.assertEquals(createdMembersCount.length, 100);
         Assert.assertEquals(createdOrderCount.length, 100);
     }
 
     private static void countMember() throws SQLException {
-        long count = Member.count("id > ?", 10);
+        long count = Member.count("ID > ?", 10);
 
         Assert.assertTrue(count > 0);
     }
@@ -66,12 +66,12 @@ public class QueryExample {
     private static void rawQuery() throws SQLException {
         List<Member> members = Member.queryBySql("SELECT id, name FROM members WHERE id > ?", 10);
         List<Member> members2 = Member.queryBySql("SELECT * FROM members WHERE name = ?", "Jonathan");
-        List<Member> members3 = Member.queryBySql("SELECT name AS _name FROM members WHERE name = ?", "Jonathan");
+        List<Member> members3 = Member.queryBySql("SELECT name AS new_name FROM members WHERE name = ?", "Jonathan");
 
         Assert.assertTrue(members.size() > 0);
         Assert.assertTrue(members2.size() > 0);
         Assert.assertTrue(members3.size() > 0);
-        Assert.assertEquals(members3.get(0).getRawAttribute("_name"), "Jonathan");
+        Assert.assertEquals(members3.get(0).getRawAttribute("NEW_NAME"), "Jonathan");
     }
 
     private static void queryFirst() throws SQLException {

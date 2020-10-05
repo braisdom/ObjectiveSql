@@ -6,6 +6,7 @@ import com.github.braisdom.objsql.relation.Relationship;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.Assert;
 
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ public class RelationExample {
 
         for (int i = 1; i <= 6; i++) {
             members.add(new Member()
-                    .setId(Long.valueOf(i))
+                    .setId(BigDecimal.valueOf(i))
                     .setNo("Q200000" + i)
                     .setName(MEMBER_NAMES[i])
                     .setGender(0)

@@ -29,6 +29,7 @@ import com.github.braisdom.objsql.util.WordUtil;
 import javax.swing.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.JDBCType;
 import java.sql.SQLType;
@@ -47,7 +48,8 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
             Integer.class, int.class,
             Short.class, short.class,
             Float.class, float.class,
-            Double.class, double.class
+            Double.class, double.class,
+            BigInteger.class, BigDecimal.class
     });
 
     private final Class<T> domainModelClass;
@@ -326,12 +328,15 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
                 String columnName = StringUtil.isBlank(primaryKey.name())
                         ? WordUtil.underscore(field.getName()) : primaryKey.name();
                 columnToField.put(columnName, field);
+                columnToField.put(columnName.toUpperCase(), field);
             } else if (column != null) {
                 String columnName = StringUtil.isBlank(column.name())
                         ? WordUtil.underscore(field.getName()) : primaryKey.name();
+                columnToField.put(columnName.toUpperCase(), field);
                 columnToField.put(columnName, field);
             } else {
                 columnToField.put(WordUtil.underscore(field.getName()), field);
+                columnToField.put(WordUtil.underscore(field.getName()).toUpperCase(), field);
             }
         });
     }
