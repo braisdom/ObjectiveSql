@@ -1,19 +1,15 @@
 package com.github.braisdom.objsql.example;
 
-import com.github.braisdom.objsql.Databases;
 import com.github.braisdom.objsql.Validator;
 import com.github.braisdom.objsql.example.Domains.Member;
 import com.google.gson.GsonBuilder;
 import org.joda.time.DateTime;
 import org.junit.Assert;
 
-import java.io.File;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
-
-import static com.github.braisdom.objsql.ConnectionFactory.DEFAULT_DATA_SOURCE_NAME;
 
 public class PersistenceExample {
 
@@ -56,7 +52,7 @@ public class PersistenceExample {
         extendedAttributes.put("age", 28);
 
         Map<String, Object> attributes = new HashMap<>();
-        attributes.put("id", 10);
+        attributes.put("id", 10L);
         attributes.put("no", "200000");
         attributes.put("name", "Carter");
         attributes.put("gender", 1);
@@ -73,7 +69,7 @@ public class PersistenceExample {
         extendedAttributes.put("age", 28);
 
         Map<String, Object> attributes = new HashMap<>();
-        attributes.put("id", 9);
+        attributes.put("id", 9L);
         attributes.put("no", "200000");
         attributes.put("name", "Barbara\t");
         attributes.put("gender", 1);

@@ -39,7 +39,6 @@ public class SqlDateTimeTransition<T> implements ColumnTransition<T> {
                 return fieldValue;
             }else if (PostgreSQL.nameEquals(databaseName)) {
                 if (fieldValue.getValue() instanceof Timestamp) {
-                    Timestamp timestamp = (Timestamp) fieldValue;
                     return fieldValue;
                 }
                 return fieldValue;
