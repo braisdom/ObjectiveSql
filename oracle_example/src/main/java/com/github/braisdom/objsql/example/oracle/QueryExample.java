@@ -5,6 +5,7 @@ import com.github.braisdom.objsql.example.oracle.Domains.Order;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.Assert;
 
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -36,9 +37,9 @@ public class QueryExample {
         for (int i = 0; i < 100; i++) {
             orders.add(new Order()
                     .setNo("20200000" + i)
-                    .setMemberId(Long.valueOf(i))
-                    .setAmount(RandomUtils.nextFloat(10.0f, 30.0f))
-                    .setQuantity(RandomUtils.nextFloat(100.0f, 300.0f))
+                    .setMemberId(BigDecimal.valueOf(i))
+                    .setAmount(BigDecimal.valueOf(RandomUtils.nextFloat(10.0f, 30.0f)))
+                    .setQuantity(BigDecimal.valueOf(RandomUtils.nextFloat(100.0f, 300.0f)))
                     .setSalesAt(Timestamp.valueOf("2020-05-01 09:30:00")));
         }
 

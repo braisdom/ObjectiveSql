@@ -51,6 +51,7 @@ public class SqlDateTimeTransition<T> implements ColumnTransition<T> {
     @Override
     public Object rising(DatabaseMetaData databaseMetaData, ResultSetMetaData resultSetMetaData,
                          T object, TableRowAdapter tableRowDescriptor, String columnName, Object columnValue) throws SQLException {
+        String databaseName = databaseMetaData.getDatabaseProductName();
         if (columnValue != null) {
             if (SQLite.nameEquals(databaseMetaData.getDatabaseProductName())) {
                 return Timestamp.valueOf(String.valueOf(columnValue));

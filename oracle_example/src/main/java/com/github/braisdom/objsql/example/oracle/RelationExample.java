@@ -31,18 +31,18 @@ public class RelationExample {
 
         for (int i = 0; i < 100; i++) {
             orders.add(new Order()
-                    .setId(Long.valueOf(i))
+                    .setId(BigDecimal.valueOf(i))
                     .setNo("20200000" + i)
-                    .setMemberId(Long.valueOf(i % 6 + 1))
-                    .setAmount(RandomUtils.nextFloat(10.0f, 30.0f))
-                    .setQuantity(RandomUtils.nextFloat(100.0f, 300.0f))
+                    .setMemberId(BigDecimal.valueOf(i % 6 + 1))
+                    .setAmount(BigDecimal.valueOf(RandomUtils.nextFloat(10.0f, 30.0f)))
+                    .setQuantity(BigDecimal.valueOf(RandomUtils.nextFloat(100.0f, 300.0f)))
                     .setSalesAt(Timestamp.valueOf("2020-05-01 09:30:00")));
         }
 
         int[] createdMembersCount = Member.create(members.toArray(new Member[]{}),
-                true, true);
+                true);
         int[] createdOrderCount = Order.create(orders.toArray(new Order[]{}),
-                true, true);
+                true);
 
         Assert.assertEquals(createdMembersCount.length, 6);
         Assert.assertEquals(createdOrderCount.length, 100);
@@ -64,7 +64,7 @@ public class RelationExample {
     }
 
     private static void queryOrder() throws SQLException {
-        Order order = Order.queryByPrimaryKey(1L, Order.BELONGS_TO_MEMBER);
+        Order order = Order.queryByPrimaryKey(BigDecimal.valueOf(1), Order.BELONGS_TO_MEMBER);
 
         Assert.assertNotNull(order);
         Assert.assertNotNull(order.getMember());

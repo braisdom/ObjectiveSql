@@ -156,9 +156,9 @@ public class PersistenceExample {
     private static void createOrder() throws SQLException {
         Domains.Order order = new Domains.Order()
                 .setNo("202000001")
-                .setMemberId(3L)
-                .setAmount(3.5f)
-                .setQuantity(100.3f)
+                .setMemberId(BigDecimal.valueOf(3L))
+                .setAmount(BigDecimal.valueOf(3.5f))
+                .setQuantity(BigDecimal.valueOf(100.3f))
                 .setSalesAt(Timestamp.valueOf("2020-05-01 09:30:00"));
         order.save(false);
     }

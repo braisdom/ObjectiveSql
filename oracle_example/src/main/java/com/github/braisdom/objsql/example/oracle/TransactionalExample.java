@@ -1,6 +1,7 @@
 package com.github.braisdom.objsql.example.oracle;
 
 
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.concurrent.ExecutorService;
@@ -11,9 +12,9 @@ public class TransactionalExample {
     public static void createNormally() {
         Domains.Order order = new Domains.Order()
                 .setNo("202000001")
-                .setMemberId(3L)
-                .setAmount(3.5f)
-                .setQuantity(100.3f)
+                .setMemberId(BigDecimal.valueOf(3L))
+                .setAmount(BigDecimal.valueOf(3.5f))
+                .setQuantity(BigDecimal.valueOf(100.3f))
                 .setSalesAt(Timestamp.valueOf("2020-05-01 09:30:00"));
 
         ExecutorService executorService = Executors.newFixedThreadPool(4);

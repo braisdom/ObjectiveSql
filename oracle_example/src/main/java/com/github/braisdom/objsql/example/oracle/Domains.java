@@ -6,6 +6,7 @@ import com.github.braisdom.objsql.transition.SqlDateTimeTransition;
 import org.joda.time.DateTime;
 
 import javax.validation.constraints.Size;
+import java.math.BigDecimal;
 import java.sql.JDBCType;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -28,7 +29,9 @@ public final class Domains {
         private String name;
 
         @Queryable
+        @Column(transition = BigDecimalToIntegerTransition.class)
         private Integer gender;
+
         private String mobile;
 
         @Relation(relationType = RelationType.HAS_MANY)
@@ -37,10 +40,10 @@ public final class Domains {
         @Column(transition = JsonColumnTransition.class)
         private Map extendedAttributes;
 
-        @Column(transition = SqlDateTimeTransition.class, sqlType = JDBCType.TIMESTAMP)
+        @Column(transition = OracleDateTimeTransition.class, sqlType = JDBCType.TIMESTAMP)
         private Timestamp registeredAt;
 
-        @Column(transition = SqlDateTimeTransition.class, sqlType = JDBCType.TIMESTAMP)
+        @Column(transition = OracleDateTimeTransition.class, sqlType = JDBCType.TIMESTAMP)
         private Timestamp updatedAt;
 
         @Transient
@@ -52,14 +55,16 @@ public final class Domains {
         }
     }
 
-    @DomainModel(tableName = "SCOTT.ORDERS", primaryKeyDefaultValue = "members_seq.nextval")
+    @DomainModel(tableName = "SCOTT.ORDERS",
+            primaryClass = java.math.BigDecimal.class,
+            primaryKeyDefaultValue = "members_seq.nextval")
     public static class Order {
         private String no;
-        private Long memberId;
-        private Float amount;
-        private Float quantity;
+        private BigDecimal memberId;
+        private BigDecimal amount;
+        private BigDecimal quantity;
 
-        @Column(transition = SqlDateTimeTransition.class)
+        @Column(transition = OracleDateTimeTransition.class, sqlType = JDBCType.TIMESTAMP)
         private Timestamp salesAt;
 
         @Relation(relationType = RelationType.BELONGS_TO)
@@ -78,8 +83,8 @@ public final class Domains {
     @DomainModel
     public static class OrderLine {
         private String orderNo;
-        private Float amount;
-        private Float quantity;
+        private BigDecimal amount;
+        private BigDecimal quantity;
 
         @Relation(relationType = RelationType.BELONGS_TO)
         private Order order;
