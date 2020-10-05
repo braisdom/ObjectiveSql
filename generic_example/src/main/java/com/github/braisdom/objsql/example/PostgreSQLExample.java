@@ -17,7 +17,7 @@ public class PostgreSQLExample {
 
         @Override
         public Connection getConnection(String dataSourceName) throws SQLException {
-            String url = "jdbc:postgresql://localhost:5432/postgres?currentSchema=objective_sql";
+            String url = "jdbc:postgresql://localhost:5432/postgres?currentSchema=objective_sql&stringtype=unspecified";
             String user = "postgres";
             String password = "123456";
 

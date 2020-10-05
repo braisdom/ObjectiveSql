@@ -39,6 +39,7 @@ public class SqlDateTimeTransition<T> implements ColumnTransition<T> {
                 return fieldValue;
             }else if (PostgreSQL.nameEquals(databaseName)) {
                 if (fieldValue.getValue() instanceof Timestamp) {
+                    fieldValue.resetValue(fieldValue.getValue().toString());
                     return fieldValue;
                 }
                 return fieldValue;
@@ -52,7 +53,7 @@ public class SqlDateTimeTransition<T> implements ColumnTransition<T> {
                          T object, TableRowAdapter tableRowDescriptor, String columnName, Object columnValue) throws SQLException {
         String databaseName = databaseMetaData.getDatabaseProductName();
         if (columnValue != null) {
-            if (SQLite.nameEquals(databaseMetaData.getDatabaseProductName())) {
+            if (SQLite.nameEquals(databaseName)) {
                 return Timestamp.valueOf(String.valueOf(columnValue));
             } else return columnValue;
         }

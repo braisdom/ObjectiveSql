@@ -59,7 +59,7 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
     private class DefaultFieldValue implements FieldValue {
 
         private final SQLType sqlType;
-        private final Object value;
+        private Object value;
 
         public DefaultFieldValue(Object value) {
             this(JDBCType.NULL, value);
@@ -78,6 +78,11 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
         @Override
         public Object getValue() {
             return value;
+        }
+
+        @Override
+        public void resetValue(Object value) {
+            this.value = value;
         }
 
         @Override

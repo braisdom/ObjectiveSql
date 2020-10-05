@@ -7,4 +7,6 @@ public interface FieldValue {
     SQLType getSQLType();
 
     Object getValue();
+
+    void resetValue(Object value);
 }
