@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.github.braisdom</groupId>
-    <artifactId>generic_example</artifactId>
+    <artifactId>universal_example</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <dependencies>
