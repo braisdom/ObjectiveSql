@@ -47,7 +47,7 @@ public class DefaultQuery<T> extends AbstractQuery<T> {
                     having, orderBy, offset, limit);
             List rows = sqlExecutor.query(connection, sql, domainModelDescriptor, params);
 
-            if (relationships.length > 0)
+            if (relationships.length > 0 && rows.size() > 0)
                 new RelationshipNetwork(connection, domainModelDescriptor).process(rows, relationships);
 
             return rows;

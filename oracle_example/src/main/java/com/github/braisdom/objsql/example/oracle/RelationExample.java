@@ -49,10 +49,12 @@ public class RelationExample {
     }
 
     private static void queryFirstMemberWithOrders() throws SQLException {
+        // The member should associate with orders
         Member member = Member.queryFirst("id = ?",
-                new Relationship[]{Member.HAS_MANY_ORDERS}, 3);
+                new Relationship[]{Member.HAS_MANY_ORDERS}, 67);
 
         Assert.assertNotNull(member);
+        Assert.assertNotNull(member.getOrders());
         Assert.assertTrue(member.getOrders().size() > 0);
     }
 
@@ -64,7 +66,8 @@ public class RelationExample {
     }
 
     private static void queryOrder() throws SQLException {
-        Order order = Order.queryByPrimaryKey(BigDecimal.valueOf(1), Order.BELONGS_TO_MEMBER);
+        // The order should associate with a member
+        Order order = Order.queryByPrimaryKey(BigDecimal.valueOf(10255), Order.BELONGS_TO_MEMBER);
 
         Assert.assertNotNull(order);
         Assert.assertNotNull(order.getMember());
