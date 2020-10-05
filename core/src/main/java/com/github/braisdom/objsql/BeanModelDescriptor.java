@@ -223,14 +223,13 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
                 return new DefaultFieldValue(JDBCType.JAVA_OBJECT, primaryValue);
             }
 
-            Column column = field.getAnnotation(Column.class);
-
-            if (column != null) {
-                return new DefaultFieldValue(column.sqlType(), String.valueOf(value));
-            }
-
             if (value == null)
                 return new DefaultFieldValue(null);
+
+            Column column = field.getAnnotation(Column.class);
+            if (column != null) {
+                return new DefaultFieldValue(column.sqlType(), value);
+            }
 
             return new DefaultFieldValue(value);
         } catch (NoSuchFieldException ex) {

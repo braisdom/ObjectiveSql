@@ -119,16 +119,17 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
 
             String tableName = quoter.quoteTableName(metaData, domainModelDescriptor.getTableName());
             String[] columnNames = domainModelDescriptor.getInsertableColumns();
-            String[] quotedColumnNames = quoter.quoteColumnNames(metaData, domainModelDescriptor
-                    .getInsertableColumns());
-            Object[][] values = new Object[dirtyObjects.length][columnNames.length];
+            String[] quotedColumnNames = quoter.quoteColumnNames(metaData, columnNames);
+            String sql = formatInsertSql(tableName, columnNames, quotedColumnNames);
 
+            Object[][] values = new Object[dirtyObjects.length][columnNames.length];
             for (int i = 0; i < dirtyObjects.length; i++) {
                 for (int t = 0; t < columnNames.length; t++) {
                     String fieldName = domainModelDescriptor.getFieldName(columnNames[t]);
                     ColumnTransitional<T> columnTransitional = domainModelDescriptor
                             .getColumnTransition(fieldName);
                     FieldValue fieldValue = domainModelDescriptor.getFieldValue(dirtyObjects[i], fieldName);
+
                     if (columnTransitional != null)
                         values[i][t] = columnTransitional.sinking(metaData, dirtyObjects[i],
                                 domainModelDescriptor, fieldName, fieldValue);
@@ -136,8 +137,6 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
                         values[i][t] = fieldValue;
                 }
             }
-
-            String sql = formatInsertSql(tableName, columnNames, quotedColumnNames);
             return sqlExecutor.insert(connection, sql, domainModelDescriptor, values);
         });
     }

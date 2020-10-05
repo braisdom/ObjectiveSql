@@ -17,7 +17,7 @@ public final class Domains {
     }
 
     // @DomainModel(primaryClass = Integer.class) for SQLite
-    @DomainModel
+    @DomainModel(primaryKeyDefaultValue = "default")
     public static class Member {
         // The validation constraints, it will be applied for validate method.
         // for example: Validator.Violation[] violations = member.validate();

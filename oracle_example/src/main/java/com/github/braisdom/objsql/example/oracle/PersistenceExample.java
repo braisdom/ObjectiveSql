@@ -121,8 +121,7 @@ public class PersistenceExample {
                 .setGender(0)
                 .setMobile("15011112222");
 
-        Member.create(new Member[]{newMember1, newMember2, newMember3},
-                false);
+        Member.create(new Member[]{newMember1, newMember2, newMember3},false);
     }
 
     private static void updateSmithMember() throws SQLException {
