@@ -1,8 +1,7 @@
 package com.github.braisdom.objsql;
 
-import com.github.braisdom.objsql.transition.ColumnTransitional;
+import com.github.braisdom.objsql.transition.ColumnTransition;
 
-import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -28,7 +27,7 @@ public interface TableRowAdapter<T> {
 
     boolean isTransitable(String fieldName);
 
-    ColumnTransitional getColumnTransition(String fieldName);
+    ColumnTransition getColumnTransition(String fieldName);
 
     void setFieldValue(T modelObject, String fieldName, Object fieldValue);
 }

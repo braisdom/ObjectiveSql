@@ -26,7 +26,7 @@ import java.sql.Timestamp;
 
 import static com.github.braisdom.objsql.DatabaseType.*;
 
-public class SqlDateTimeTransitional<T> implements ColumnTransitional<T> {
+public class SqlDateTimeTransition<T> implements ColumnTransition<T> {
 
     @Override
     public Object sinking(DatabaseMetaData databaseMetaData, T object,

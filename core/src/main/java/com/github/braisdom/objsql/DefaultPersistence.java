@@ -17,7 +17,7 @@
 package com.github.braisdom.objsql;
 
 import com.github.braisdom.objsql.annotations.PrimaryKey;
-import com.github.braisdom.objsql.transition.ColumnTransitional;
+import com.github.braisdom.objsql.transition.ColumnTransition;
 import com.github.braisdom.objsql.util.ArrayUtil;
 import com.github.braisdom.objsql.util.StringUtil;
 
@@ -128,10 +128,10 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
                     String fieldName = domainModelDescriptor.getFieldName(columnName);
                     FieldValue fieldValue = domainModelDescriptor.getFieldValue(dirtyObject, fieldName);
 
-                    ColumnTransitional<T> columnTransitional = domainModelDescriptor
+                    ColumnTransition<T> columnTransition = domainModelDescriptor
                             .getColumnTransition(fieldName);
-                    if (columnTransitional != null) {
-                        return columnTransitional.sinking(metaData, dirtyObject,
+                    if (columnTransition != null) {
+                        return columnTransition.sinking(metaData, dirtyObject,
                                 domainModelDescriptor, fieldName, fieldValue);
                     } else return fieldValue;
                 })).toArray(Object[]::new);
@@ -168,11 +168,11 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
             Object[] values = Arrays.stream(columnNames)
                     .map(castFunctionWithThrowable(columnName -> {
                         String fieldName = domainModelDescriptor.getFieldName(columnName);
-                        ColumnTransitional<T> columnTransitional = domainModelDescriptor
+                        ColumnTransition<T> columnTransition = domainModelDescriptor
                                 .getColumnTransition(fieldName);
                         FieldValue fieldValue = domainModelDescriptor.getFieldValue(dirtyObject, fieldName);
-                        if (columnTransitional != null)
-                            return columnTransitional.sinking(connection.getMetaData(), dirtyObject,
+                        if (columnTransition != null)
+                            return columnTransition.sinking(connection.getMetaData(), dirtyObject,
                                     domainModelDescriptor, fieldName, fieldValue);
                         else return fieldValue;
                     })).toArray(Object[]::new);

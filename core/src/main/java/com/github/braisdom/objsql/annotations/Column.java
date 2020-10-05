@@ -16,14 +16,13 @@
  */
 package com.github.braisdom.objsql.annotations;
 
-import com.github.braisdom.objsql.transition.ColumnTransitional;
+import com.github.braisdom.objsql.transition.ColumnTransition;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.sql.JDBCType;
-import java.sql.SQLType;
 
 /**
  * The annotation is used for mapping the column and field of Java Bean.
@@ -43,9 +42,9 @@ public @interface Column {
      * Customize a column transition for the column.
      *
      * @return
-     * @see ColumnTransitional
+     * @see ColumnTransition
      */
-    Class<? extends ColumnTransitional> transition() default ColumnTransitional.class;
+    Class<? extends ColumnTransition> transition() default ColumnTransition.class;
 
     /**
      * Indicates Whether the field can be inserted.

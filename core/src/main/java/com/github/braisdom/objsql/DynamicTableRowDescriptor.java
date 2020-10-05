@@ -1,7 +1,7 @@
 package com.github.braisdom.objsql;
 
 import com.github.braisdom.objsql.reflection.ClassUtils;
-import com.github.braisdom.objsql.transition.ColumnTransitional;
+import com.github.braisdom.objsql.transition.ColumnTransition;
 import com.github.braisdom.objsql.util.WordUtil;
 
 import java.util.Optional;
@@ -59,7 +59,7 @@ public class DynamicTableRowDescriptor<T extends DynamicModel> implements TableR
     }
 
     @Override
-    public ColumnTransitional getColumnTransition(String fieldName) {
+    public ColumnTransition getColumnTransition(String fieldName) {
         // The dynamic model need not transit
         return null;
     }

@@ -27,7 +27,7 @@ import java.sql.SQLException;
  * A transition between database and Java bean.
  * @param <T>
  */
-public interface ColumnTransitional<T> {
+public interface ColumnTransition<T> {
 
     /**
      * Transforming the value into database compatible

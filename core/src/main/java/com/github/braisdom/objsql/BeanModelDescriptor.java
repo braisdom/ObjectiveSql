@@ -22,11 +22,10 @@ import com.github.braisdom.objsql.annotations.PrimaryKey;
 import com.github.braisdom.objsql.annotations.Transient;
 import com.github.braisdom.objsql.reflection.ClassUtils;
 import com.github.braisdom.objsql.reflection.PropertyUtils;
-import com.github.braisdom.objsql.transition.ColumnTransitional;
+import com.github.braisdom.objsql.transition.ColumnTransition;
 import com.github.braisdom.objsql.util.StringUtil;
 import com.github.braisdom.objsql.util.WordUtil;
 
-import javax.swing.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
@@ -53,7 +52,7 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
     });
 
     private final Class<T> domainModelClass;
-    private final Map<String, ColumnTransitional> columnTransitionMap;
+    private final Map<String, ColumnTransition> columnTransitionMap;
     private final Map<String, Field> columnToField;
     private final boolean skipPrimaryKeyOnInserting;
 
@@ -261,7 +260,7 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
     }
 
     @Override
-    public ColumnTransitional getColumnTransition(String fieldName) {
+    public ColumnTransition getColumnTransition(String fieldName) {
         return columnTransitionMap.get(fieldName);
     }
 
@@ -341,10 +340,10 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
         });
     }
 
-    private Map<String, ColumnTransitional> instantiateColumnTransitionMap(Field[] fields) {
+    private Map<String, ColumnTransition> instantiateColumnTransitionMap(Field[] fields) {
         Arrays.stream(fields).forEach(field -> {
             Column column = field.getAnnotation(Column.class);
-            if (column != null && !column.transition().equals(ColumnTransitional.class))
+            if (column != null && !column.transition().equals(ColumnTransition.class))
                 columnTransitionMap.put(field.getName(), ClassUtils.createNewInstance(column.transition()));
         });
 

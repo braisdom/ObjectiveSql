@@ -2,7 +2,7 @@ package com.github.braisdom.objsql.example;
 
 import com.github.braisdom.objsql.annotations.*;
 import com.github.braisdom.objsql.relation.RelationType;
-import com.github.braisdom.objsql.transition.SqlDateTimeTransitional;
+import com.github.braisdom.objsql.transition.SqlDateTimeTransition;
 import org.joda.time.DateTime;
 
 import javax.validation.constraints.Size;
@@ -38,13 +38,13 @@ public final class Domains {
         @Relation(relationType = RelationType.HAS_MANY)
         private List<Order> orders;
 
-        @Column(transition = JsonColumnTransitional.class)
+        @Column(transition = JsonColumnTransition.class)
         private Map extendedAttributes;
 
-        @Column(transition = SqlDateTimeTransitional.class)
+        @Column(transition = SqlDateTimeTransition.class)
         private Timestamp registeredAt;
 
-        @Column(transition = SqlDateTimeTransitional.class)
+        @Column(transition = SqlDateTimeTransition.class)
         private Timestamp updatedAt;
 
         // The field will not be save into database;
@@ -65,7 +65,7 @@ public final class Domains {
         private Float amount;
         private Float quantity;
 
-        @Column(transition = SqlDateTimeTransitional.class)
+        @Column(transition = SqlDateTimeTransition.class)
         private Timestamp salesAt;
 
         @Relation(relationType = RelationType.BELONGS_TO)

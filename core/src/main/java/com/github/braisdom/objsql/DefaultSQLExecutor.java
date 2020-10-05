@@ -19,7 +19,7 @@ package com.github.braisdom.objsql;
 import com.github.braisdom.objsql.jdbc.QueryRunner;
 import com.github.braisdom.objsql.jdbc.ResultSetHandler;
 import com.github.braisdom.objsql.reflection.PropertyUtils;
-import com.github.braisdom.objsql.transition.ColumnTransitional;
+import com.github.braisdom.objsql.transition.ColumnTransition;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -101,8 +101,8 @@ class DomainModelListHandler implements ResultSetHandler<List> {
 
             if (fieldName != null) {
                 if (tableRowDescriptor.isTransitable(fieldName)) {
-                    ColumnTransitional columnTransitional = tableRowDescriptor.getColumnTransition(fieldName);
-                    Object value = columnTransitional == null ? rawColumnValue : columnTransitional
+                    ColumnTransition columnTransition = tableRowDescriptor.getColumnTransition(fieldName);
+                    Object value = columnTransition == null ? rawColumnValue : columnTransition
                             .rising(databaseMetaData, metaData, bean, tableRowDescriptor, fieldName, rawColumnValue);
 
                     Class fieldType = tableRowDescriptor.getFieldType(fieldName);
@@ -156,8 +156,8 @@ class DomainModelHandler implements ResultSetHandler<Object> {
             } else {
                 if (fieldName != null) {
                     if (tableRowDescriptor.isTransitable(fieldName)) {
-                        ColumnTransitional columnTransitional = tableRowDescriptor.getColumnTransition(fieldName);
-                        Object value = columnTransitional == null ? rawColumnValue : columnTransitional
+                        ColumnTransition columnTransition = tableRowDescriptor.getColumnTransition(fieldName);
+                        Object value = columnTransition == null ? rawColumnValue : columnTransition
                                 .rising(databaseMetaData, metaData, bean, tableRowDescriptor, fieldName, rawColumnValue);
 
                         Class fieldType = tableRowDescriptor.getFieldType(fieldName);

@@ -2,14 +2,14 @@ package com.github.braisdom.objsql.example;
 
 import com.github.braisdom.objsql.FieldValue;
 import com.github.braisdom.objsql.TableRowAdapter;
-import com.github.braisdom.objsql.transition.ColumnTransitional;
+import com.github.braisdom.objsql.transition.ColumnTransition;
 import com.google.gson.Gson ;
 import com.google.gson.GsonBuilder;
 
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSetMetaData;
 
-public class JsonColumnTransitional implements ColumnTransitional {
+public class JsonColumnTransition implements ColumnTransition {
 
     private Gson gson = new GsonBuilder().create();
 
