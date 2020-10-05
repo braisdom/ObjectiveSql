@@ -1,4 +1,4 @@
-ObjectiveSql’s mission is to provide  the most obvious and convenient approach to access various databases, without configuration,  without coding about `JDBC&ORM`. ObjectiveSql-based programming is the best practice in `ActiveRecord` pattern, which incorporates both behavior and data and avoids meaningless `Interface` declaration of Java. Thus, ObjectiveSql-based programming will change the way to build an application base on relation database.
+ObjectiveSql’s mission is to provide  the most intuitive and convenient approach to access various databases, without configuration,  without coding about `JDBC&ORM`. ObjectiveSql-based programming is the best practice in `ActiveRecord` pattern, which incorporates both behavior and data and avoids meaningless `Interface` declaration of Java. Thus, ObjectiveSql-based programming will change the way to build an application base on relation database.
 
 ### Features
 
