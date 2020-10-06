@@ -1,6 +1,5 @@
 package com.github.braisdom.objsql.example.oracle;
 
-import com.github.braisdom.objsql.FieldValue;
 import com.github.braisdom.objsql.TableRowAdapter;
 import com.github.braisdom.objsql.transition.ColumnTransition;
 

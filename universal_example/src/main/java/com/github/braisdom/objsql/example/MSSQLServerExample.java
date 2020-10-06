@@ -43,7 +43,7 @@ public class MSSQLServerExample {
 
     public static void main(String[] args) throws SQLException, IOException {
         installConnectionFactory(new MSSQLServerConnectionFactory());
-        initializeSchema();
+//        initializeSchema();
 
         PersistenceExample.run();
         QueryExample.run();
