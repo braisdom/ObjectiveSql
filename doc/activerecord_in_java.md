@@ -12,7 +12,7 @@ In java, generics only applies to instance of Class, static method is the basic 
 
 ActiveRecord is a domain logic pattern defined by Martin Fowler, it describes a practical application in actual domain, only makes the Java class more object-oriented, not only includes status of domain but also involves logics, makes codes can describe accurately complex bussiness logic and rule.
 
-Due to the static nature of the Java language, ActiveRecord cannot be applied widely in Java, it is only widely used in Rails, Python, and so on. Dynamic proxy is used in different domain,  it lead to no-implementational Interface and unnecessary abstraction technicality.
+Due to the static nature of the Java language, ActiveRecord cannot be applied widely in Java, it is only widely used in Rails, Python, and so on. Dynamic proxy is used in Java generally which can describe bussiness login by application,  but also lead to no-implementational Interface and unnecessary abstraction.
 
 #### Solution
 

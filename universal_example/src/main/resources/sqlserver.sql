@@ -1,12 +1,11 @@
-CREATE DATABASE objective_sql;
 
 CREATE TABLE objective_sql.dbo.members(
-    id INT IDENTITY(1,1) PRIMARY KEY,
+    id bigint IDENTITY(1,1) PRIMARY KEY,
     no VARCHAR(100),
     name VARCHAR(100),
     gender INT,
     mobile VARCHAR(11),
-    other_info VARCHAR(512),
+    extended_attributes VARCHAR(512),
     registered_at DATETIME,
     updated_at DATETIME
 );

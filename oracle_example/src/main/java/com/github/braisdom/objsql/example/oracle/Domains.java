@@ -2,7 +2,6 @@ package com.github.braisdom.objsql.example.oracle;
 
 import com.github.braisdom.objsql.annotations.*;
 import com.github.braisdom.objsql.relation.RelationType;
-import com.github.braisdom.objsql.transition.SqlDateTimeTransition;
 import org.joda.time.DateTime;
 
 import javax.validation.constraints.Size;

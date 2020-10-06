@@ -20,8 +20,10 @@ public class TransactionalExample {
         ExecutorService executorService = Executors.newFixedThreadPool(4);
 
         for(int i = 0; i< 1; i++) {
+            final int seq = i;
             executorService.execute(() -> {
                 try {
+                    order.setNo(String.format("202000001%d", seq));
                     Domains.Order.makeOrder(order, null);
                 } catch (SQLException e) {
                     e.printStackTrace();
@@ -30,7 +32,7 @@ public class TransactionalExample {
         }
     }
 
-    public static void main(String[] args) throws SQLException {
+    public static void run() throws SQLException {
         createNormally();
     }
 }

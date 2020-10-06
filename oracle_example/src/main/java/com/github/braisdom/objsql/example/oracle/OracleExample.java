@@ -36,5 +36,6 @@ public class OracleExample {
         PersistenceExample.run();
         QueryExample.run();
         RelationExample.run();
+        TransactionalExample.run();
     }
 }

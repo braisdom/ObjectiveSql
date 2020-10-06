@@ -226,7 +226,7 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
 
             if (domainModel.primaryFieldName().equals(fieldName)) {
                 String primaryValue = domainModel.primaryKeyDefaultValue();
-                return new DefaultFieldValue(JDBCType.JAVA_OBJECT, primaryValue);
+                return new DefaultFieldValue(JDBCType.NULL, primaryValue);
             }
 
             if (value == null)
