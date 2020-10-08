@@ -4,7 +4,7 @@ ObjectiveSql-based programming is the best practice in `ActiveRecord` pattern in
 
 ### Features
 
-- Defining a domain model with code generating automatically, which carries the query and persistence behavior by itself, no configuration, no empty `Interface`
+- Defining a domain model, which carries the query and persistence capabilities by itself, no configuration, no empty `Interface`
 - Validating the Java Bean with Jakarta Bean Validation integrated to `ObjectiveSql`
 - Database transaction into an Annotation tagged on a method only
 - The relations tagged with Annotation, who will be applied in query as a static field generated automatically
