@@ -1,9 +1,11 @@
 package com.github.braisdom.example;
 
+import com.github.braisdom.example.objsql.CacheableSQLExecutor;
 import com.github.braisdom.example.objsql.ObjLoggerFactoryImpl;
 import com.github.braisdom.objsql.ConnectionFactory;
 import com.github.braisdom.objsql.Databases;
 import com.github.braisdom.objsql.LoggerFactory;
+import com.github.braisdom.objsql.SQLExecutor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -59,9 +61,11 @@ public class Application {
     @EventListener
     public void onApplicationEvent(ApplicationStartedEvent event) {
         ConnectionFactory connectionFactory = new ApplicationConnectionFactory(event.getApplicationContext());
+        SQLExecutor sqlExecutor = new CacheableSQLExecutor();
         LoggerFactory loggerFactory = new ObjLoggerFactoryImpl();
 
         Databases.installConnectionFactory(connectionFactory);
+        Databases.installSqlExecutor(sqlExecutor);
         Databases.installLoggerFactory(loggerFactory);
     }
 
