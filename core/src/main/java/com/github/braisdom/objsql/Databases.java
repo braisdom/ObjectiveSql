@@ -112,22 +112,22 @@ public final class Databases {
     }
 
     public static void installQueryFacotry(QueryFactory queryFactory) {
-        Objects.requireNonNull(sqlExecutor, "The queryFactory cannot be null");
+        Objects.requireNonNull(queryFactory, "The queryFactory cannot be null");
         Databases.queryFactory = queryFactory;
     }
 
     public static void installPersistenceFactory(PersistenceFactory persistenceFactory) {
-        Objects.requireNonNull(sqlExecutor, "The persistenceFactory cannot be null");
+        Objects.requireNonNull(persistenceFactory, "The persistenceFactory cannot be null");
         Databases.persistenceFactory = persistenceFactory;
     }
 
     public static void installLoggerFactory(LoggerFactory loggerFactory) {
-        Objects.requireNonNull(sqlExecutor, "The loggerFactory cannot be null");
+        Objects.requireNonNull(loggerFactory, "The loggerFactory cannot be null");
         Databases.loggerFactory = loggerFactory;
     }
 
     public static void installQuoter(Quoter quoter) {
-        Objects.requireNonNull(sqlExecutor, "The quoter cannot be null");
+        Objects.requireNonNull(quoter, "The quoter cannot be null");
         Databases.quoter = quoter;
     }
 
