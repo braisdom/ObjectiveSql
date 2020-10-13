@@ -34,11 +34,7 @@ public interface DomainModelDescriptor<T> extends TableRowAdapter<T> {
 
     Object getPrimaryValue(T domainObject);
 
-    String getTableName();
-
     boolean skipNullOnUpdate();
-
-    Class getDomainModelClass();
 
     DomainModelDescriptor getRelatedModeDescriptor(Class relatedClass);
 

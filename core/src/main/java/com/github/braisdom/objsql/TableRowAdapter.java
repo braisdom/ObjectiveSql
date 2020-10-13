@@ -11,6 +11,10 @@ import java.util.Optional;
  */
 public interface TableRowAdapter<T> {
 
+    String getTableName();
+
+    Class getDomainModelClass();
+
     T newInstance();
 
     void setGeneratedKey(T bean, Object primaryKeyValue);

@@ -15,6 +15,16 @@ public class DynamicTableRowDescriptor<T extends DynamicModel> implements TableR
     }
 
     @Override
+    public Class getDomainModelClass() {
+        return clazz;
+    }
+
+    @Override
+    public String getTableName() {
+        return Tables.getTableName(clazz);
+    }
+
+    @Override
     public T newInstance() {
         return ClassUtils.createNewInstance(clazz);
     }
