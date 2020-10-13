@@ -16,7 +16,6 @@
  */
 package com.github.braisdom.objsql.reflection;
 
-import com.github.braisdom.objsql.ForcedFieldValueConverter;
 import com.github.braisdom.objsql.relation.RelationalException;
 import com.github.braisdom.objsql.util.WordUtil;
 
@@ -122,11 +121,6 @@ public final class PropertyUtils {
         write(destination, propertyDescriptor, value);
     }
 
-    public static void write(Object destination, String propertyName, Object value, ForcedFieldValueConverter valueConverter) {
-        PropertyDescriptor propertyDescriptor = getPropertyDescriptorByNameOrThrow(destination, propertyName);
-        write(destination, propertyDescriptor, valueConverter.convert(propertyDescriptor.getPropertyType(), value));
-    }
-
     public static void write(Object destination, PropertyDescriptor propertyDescriptor, Object value) {
         write(destination, propertyDescriptor, value, false);
     }
@@ -189,22 +183,6 @@ public final class PropertyUtils {
             if (name == null)
                 continue;
             write(bean, name, entry.getValue());
-        }
-    }
-
-    public static void populate(final Object bean, final Map<String, ? extends Object> properties,
-                                final boolean underline, ForcedFieldValueConverter valueConverter)
-            throws ReflectionException {
-        Objects.requireNonNull(bean, "The bean cannot be null");
-
-        if (properties == null)
-            return;
-
-        for (final Map.Entry<String, ? extends Object> entry : properties.entrySet()) {
-            final String name = underline ? WordUtil.camelize(entry.getKey(), true) : entry.getKey();
-            if (name == null)
-                continue;
-            write(bean, name, entry.getValue(), valueConverter);
         }
     }
 
