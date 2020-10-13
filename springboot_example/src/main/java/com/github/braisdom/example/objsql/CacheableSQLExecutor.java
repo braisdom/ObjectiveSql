@@ -6,7 +6,6 @@ import com.github.braisdom.objsql.TableRowAdapter;
 import org.springframework.util.SerializationUtils;
 import redis.clients.jedis.Jedis;
 
-import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
