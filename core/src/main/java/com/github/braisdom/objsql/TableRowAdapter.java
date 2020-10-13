@@ -17,21 +17,37 @@ public interface TableRowAdapter<T> {
 
     T newInstance();
 
-    void setGeneratedKey(T bean, Object primaryKeyValue);
+    default void setGeneratedKey(T bean, Object primaryKeyValue) {
+        throw new UnsupportedOperationException("The setGeneratedKey is unsupported");
+    }
 
     String getFieldName(String columnName);
 
-    Optional<String> getFieldDefaultValue(String fieldName);
+    default Optional<String> getFieldDefaultValue(String fieldName) {
+        throw new UnsupportedOperationException("The getFieldDefaultValue is unsupported");
+    }
 
-    boolean hasDefaultValue(String fieldName);
+    default boolean hasDefaultValue(String fieldName) {
+        throw new UnsupportedOperationException("The hasDefaultValue is unsupported");
+    }
 
-    FieldValue getFieldValue(Object bean, String fieldName);
+    default FieldValue getFieldValue(Object bean, String fieldName) {
+        throw new UnsupportedOperationException("The getFieldValue is unsupported");
+    }
 
-    Class getFieldType(String fieldName);
+    default Class getFieldType(String fieldName) {
+        throw new UnsupportedOperationException("The getFieldType is unsupported");
+    }
 
-    boolean isTransitable(String fieldName);
+    default boolean isTransitable(String fieldName) {
+        throw new UnsupportedOperationException("The isTransitable is unsupported");
+    }
 
-    ColumnTransition getColumnTransition(String fieldName);
+    default ColumnTransition getColumnTransition(String fieldName) {
+        throw new UnsupportedOperationException("The getColumnTransition is unsupported");
+    }
 
-    void setFieldValue(T modelObject, String fieldName, Object fieldValue);
+    default void setFieldValue(T modelObject, String fieldName, Object fieldValue) {
+        throw new UnsupportedOperationException("The setFieldValue is unsupported");
+    }
 }

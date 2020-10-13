@@ -31,12 +31,18 @@ public interface SQLExecutor<T> {
     List<T> query(Connection connection, String sql,
                   TableRowAdapter tableRowAdapter, Object... params) throws SQLException;
 
-    T insert(Connection connection, String sql,
-             TableRowAdapter tableRowAdapter, Object... params) throws SQLException;
+    default T insert(Connection connection, String sql,
+             TableRowAdapter tableRowAdapter, Object... params) throws SQLException {
+        throw new UnsupportedOperationException("The insert is unsupported");
+    };
 
-    int[] insert(Connection connection, String sql,
-                 TableRowAdapter tableRowAdapter, Object[][] params) throws SQLException;
+    default int[] insert(Connection connection, String sql,
+                 TableRowAdapter tableRowAdapter, Object[][] params) throws SQLException {
+        throw new UnsupportedOperationException("The insert is unsupported");
+    }
 
-    int execute(Connection connection, String sql, Object... params) throws SQLException;
+    default int execute(Connection connection, String sql, Object... params) throws SQLException {
+        throw new UnsupportedOperationException("The execute is unsupported");
+    };
 
 }
