@@ -25,17 +25,6 @@ public class Member {
     @Relation(relationType = RelationType.HAS_MANY)
     private List<Order> orders;
 }
-
-@DomainModel
-public class Order {
-    private String no;
-    private Integer memberId;
-    private Double amount;
-    private Double quantity;
-
-    @Relation(relationType = RelationType.BELONGS_TO)
-    private Member member;
-}
 ```
 
 ### Query methods
