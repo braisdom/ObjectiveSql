@@ -44,5 +44,4 @@ public interface SQLExecutor<T> {
     default int execute(Connection connection, String sql, Object... params) throws SQLException {
         throw new UnsupportedOperationException("The execute is unsupported");
     };
-
 }

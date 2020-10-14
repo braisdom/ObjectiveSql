@@ -62,5 +62,4 @@ public class CacheableSQLExecutor<T> extends DefaultSQLExecutor<T> {
         }
         return super.query(connection, sql, tableRowAdapter, params);
     }
-
 }
