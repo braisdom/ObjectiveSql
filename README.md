@@ -143,7 +143,7 @@ If you are using Maven just add the following dependency to your pom.xml:
 <dependency>
     <groupId>com.github.braisdom</groupId>
     <artifactId>objective-sql</artifactId>
-    <version>1.3.4</version>
+    <version>1.3.5</version>
 </dependency>
 ```
 
