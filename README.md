@@ -25,17 +25,6 @@ public class Member {
     @Relation(relationType = RelationType.HAS_MANY)
     private List<Order> orders;
 }
-
-@DomainModel
-public class Order {
-    private String no;
-    private Integer memberId;
-    private Double amount;
-    private Double quantity;
-
-    @Relation(relationType = RelationType.BELONGS_TO)
-    private Member member;
-}
 ```
 
 ### Query methods
@@ -154,7 +143,7 @@ If you are using Maven just add the following dependency to your pom.xml:
 <dependency>
     <groupId>com.github.braisdom</groupId>
     <artifactId>objective-sql</artifactId>
-    <version>1.3.4</version>
+    <version>1.3.5</version>
 </dependency>
 ```
 
