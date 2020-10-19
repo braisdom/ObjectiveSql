@@ -23,5 +23,4 @@ public class Member implements Serializable {
 
     @Relation(relationType = RelationType.HAS_MANY)
     private List<Order> orders;
-
 }
