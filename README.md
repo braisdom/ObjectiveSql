@@ -1,13 +1,12 @@
-ObjectiveSql’s mission is to provide  the most intuitive and convenient approach to access various databases, without configuration,  without coding relevant to `JDBC`&`ORM`. It is an abstraction and encapsulation of java in relation database domain logic.
+ObjectiveSQL is a ORM framework base on ActiveRecord pattern, which encourages rapid development and clean, codes with the least
 
-ObjectiveSql-based programming is the best practice in `ActiveRecord` pattern in Java, which incorporates both behavior and data and avoids meaningless `Interface` declaration of Java. Thus, ObjectiveSql-based programming will change the way to build an application base on relation database especially in the WEB development.
 
 ### Features
 
-- Defining a domain model, which carries the query and persistence capabilities by itself, no configuration, no no-implementational `Interface`
-- Validating the Java Bean with Jakarta Bean Validation integrated to `ObjectiveSql`
-- Database transactions simply add an `Annotation` to the method
-- Add `Queryable` annotation to field, which can be queried by static method `queryByFieldName`
+- Codes generation with JSR 269 for Java API of database access
+- Extensions for various SQL executor, customized query and persistence, value of column mapping, etc
+- Protogenetic Java codes instead of dynamic proxy avoid to overlong stack
+- Object-oriented SQL programming for complex SQL in Java
 
 ### Defining domain models
 
