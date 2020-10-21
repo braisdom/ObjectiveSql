@@ -1,4 +1,4 @@
-ObjectiveSQL is a ORM framework base on ActiveRecord pattern, which encourages rapid development and clean, codes with the least
+ObjectiveSQL is a ORM framework in Java base on ActiveRecord pattern, which encourages rapid development and clean, codes with the least
 
 
 ### Features
