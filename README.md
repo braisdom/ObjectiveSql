@@ -10,7 +10,7 @@ ObjectiveSQL is a ORM framework in Java base on ActiveRecord pattern, which enco
 
 [![](http://img.youtube.com/vi/Domd3uvTMlw/0.jpg)](http://www.youtube.com/watch?v=Domd3uvTMlw "ObjectiveSQL Introduction")
 
-### Defining domain models
+### Defining domain models only
 
 ```java
 @DomainModel
@@ -28,7 +28,7 @@ public class Member {
 }
 ```
 
-### Query methods
+### Query methods you will get
 
 ```java
 Member member = Member.queryByPrimaryKey(11);
