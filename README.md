@@ -27,7 +27,9 @@ public class Member {
 }
 ```
 
-### Query methods you will get
+### You will get...
+
+### Query methods 
 
 ```java
 Member member = Member.queryByPrimaryKey(11);
