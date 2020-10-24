@@ -29,7 +29,7 @@ public class Member {
 
 ### You will get...
 
-### Query methods 
+#### Query methods 
 
 ```java
 Member member = Member.queryByPrimaryKey(11);
@@ -55,7 +55,7 @@ int count = Member.count("id > ?", 10);
 ...
 ```
 
-### Validation methods
+#### Validation methods
 
 ```java
 try {
@@ -67,7 +67,7 @@ try {
 }
 ```
 
-### Persistence methods
+#### Persistence methods
 
 ```java
 Member newMember = new Member();
@@ -99,7 +99,7 @@ Member.destory("id = ?", 1);
 ...
 ```
 
-### The relation query
+#### The relation query
 
 ```java
 Member member = Member.queryPrimary(1, Member.HAS_MANY_ORDERS);
@@ -116,7 +116,7 @@ Member member = Member.queryByName("demo", Member.HAS_MANY_ORDERS);
 List<Order> orders = member.getOrders();
 ```
 
-### Transactional
+#### Transactional
 
 ```java
 @DomainModel
