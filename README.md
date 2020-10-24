@@ -1,15 +1,15 @@
-ObjectiveSql’s mission is to provide  the most intuitive and convenient approach to access various databases, without configuration,  without coding relevant to `JDBC`&`ORM`. It is an abstraction and encapsulation of java in relation database domain logic.
+ObjectiveSQL is an ORM framework in Java base on ActiveRecord pattern, which encourages rapid development and clean, codes with the least, and convention over configuration.
 
-ObjectiveSql-based programming is the best practice in `ActiveRecord` pattern in Java, which incorporates both behavior and data and avoids meaningless `Interface` declaration of Java. Thus, ObjectiveSql-based programming will change the way to build an application base on relation database especially in the WEB development.
 
 ### Features
 
-- Defining a domain model, which carries the query and persistence capabilities by itself, no configuration, no no-implementational `Interface`
-- Validating the Java Bean with Jakarta Bean Validation integrated to `ObjectiveSql`
-- Database transactions simply add an `Annotation` to the method
-- Add `Queryable` annotation to field, which can be queried by static method `queryByFieldName`
+- Dynamic code generation with JSR 269 for Java API of database access
+- Full Java API for database access without coding
+- Object-oriented SQL programming for complex SQL in Java
 
-### Defining domain models
+[![](http://img.youtube.com/vi/Domd3uvTMlw/0.jpg)](http://www.youtube.com/watch?v=Domd3uvTMlw "ObjectiveSQL Introduction")
+
+### Defining domain models only
 
 ```java
 @DomainModel
@@ -27,7 +27,9 @@ public class Member {
 }
 ```
 
-### Query methods
+### You will have an amazing experience
+
+#### Query methods 
 
 ```java
 Member member = Member.queryByPrimaryKey(11);
@@ -53,7 +55,7 @@ int count = Member.count("id > ?", 10);
 ...
 ```
 
-### Validation methods
+#### Validation methods
 
 ```java
 try {
@@ -65,7 +67,7 @@ try {
 }
 ```
 
-### Persistence methods
+#### Persistence methods
 
 ```java
 Member newMember = new Member();
@@ -97,7 +99,7 @@ Member.destory("id = ?", 1);
 ...
 ```
 
-### The relation query
+#### The relation query
 
 ```java
 Member member = Member.queryPrimary(1, Member.HAS_MANY_ORDERS);
@@ -114,7 +116,7 @@ Member member = Member.queryByName("demo", Member.HAS_MANY_ORDERS);
 List<Order> orders = member.getOrders();
 ```
 
-### Transactional
+#### Transactional
 
 ```java
 @DomainModel
