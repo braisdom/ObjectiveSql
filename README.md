@@ -27,7 +27,7 @@ public class Member {
 }
 ```
 
-### You will get...
+### You will have an amazing experience
 
 #### Query methods 
 
