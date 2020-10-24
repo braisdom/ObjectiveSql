@@ -12,9 +12,6 @@ import java.util.List;
 @RestController
 public class MembersController {
 
-    /**
-     * The post body is in "resources/json/create_member.json"
-     */
     @PostMapping("/members")
     public ResponseObject create(@RequestBody RequestObject rawMember) throws SQLException {
         Member dirtyMember = Member.newInstanceFrom(rawMember, false);
