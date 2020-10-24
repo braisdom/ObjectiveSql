@@ -11,6 +11,7 @@ import java.util.List;
 
 @DomainModel
 public class Member implements Serializable {
+
     @Queryable
     @Column(updatable = false)
     private String no;

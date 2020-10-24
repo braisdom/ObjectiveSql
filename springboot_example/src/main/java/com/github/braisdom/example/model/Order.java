@@ -1,10 +1,7 @@
 package com.github.braisdom.example.model;
 
 import com.github.braisdom.example.RequestObject;
-import com.github.braisdom.objsql.annotations.Column;
-import com.github.braisdom.objsql.annotations.DomainModel;
-import com.github.braisdom.objsql.annotations.Relation;
-import com.github.braisdom.objsql.annotations.Transactional;
+import com.github.braisdom.objsql.annotations.*;
 import com.github.braisdom.objsql.relation.RelationType;
 import com.github.braisdom.objsql.transition.SqlDateTimeTransition;
 
@@ -18,6 +15,7 @@ public class Order {
 
     private static final String KEY_ORDER_LINES = "orderLines";
 
+    @Queryable
     private String no;
     private Long memberId;
     private Float amount;
