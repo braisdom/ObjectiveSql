@@ -55,38 +55,6 @@ int count = Member.count("id > ?", 10);
 ...
 ```
 
-#### Validation methods
-
-```java
-try {
-    Map<String, String> requestObject = ...; // From the POST request of SpringBoot
-    Member rawMember = Member.newInstanceFrom(requestObject, false);
-    newMember.validate(); //Skip the validation
-} catch(ValidationException ex) {
-    ...
-}
-```
-
-#### Persistence methods
-
-```java
-Member newMember = new Member();
-// To set the field value for "newMember"
-newMember.save(false); //Skip the validation
-// newMember.save(true); // Validating the field value before save
-```
-
-```java
-Map<String, String> requestObject = ...; // From the POST request of SpringBoot
-Member rawMember = Member.newInstanceFrom(requestObject, false);
-newMember.save(false); //Skip the validation
-// newMember.save(true); // Validating the field value before save
-```
-
-```java
-Member.update(1, changedMemberInstance, false);
-```
-
 ```java
 Member.destory(1);
 ```
@@ -114,27 +82,6 @@ List<Order> orders = member.getOrders();
 ```java
 Member member = Member.queryByName("demo", Member.HAS_MANY_ORDERS);
 List<Order> orders = member.getOrders();
-```
-
-#### Transactional
-
-```java
-@DomainModel
-public class Order {
-    private String no;
-    private Integer memberId;
-    private Double amount;
-    private Double quantity;
-
-    @Relation(relationType = RelationType.BELONGS_TO)
-    private Member member;
-
-    @Transactional
-    public static void makeOrder(Order order, OrderLine... orderLines) throws SQLException {
-        Order.create(order, false);
-        OrderLine.create(orderLines, false);
-    }
-}
 ```
 
 ### Guides/[中文](http://www.objsql.com/)
