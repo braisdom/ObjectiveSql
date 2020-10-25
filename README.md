@@ -29,7 +29,7 @@ public class Member {
 
 ### You will have an amazing experience
 
-#### Query methods 
+#### Query&Update methods 
 
 ```java
 Member member = Member.queryByPrimaryKey(11);
@@ -52,10 +52,6 @@ int count = Member.count("id > ?", 10);
 ```
 
 ```java
-...
-```
-
-```java
 Member.destory(1);
 ```
 
@@ -68,11 +64,6 @@ Member.destory("id = ?", 1);
 ```
 
 #### The relation query
-
-```java
-Member member = Member.queryPrimary(1, Member.HAS_MANY_ORDERS);
-List<Order> orders = member.getOrders();
-```
 
 ```java
 Member member = Member.queryPrimary(1, Member.HAS_MANY_ORDERS);
