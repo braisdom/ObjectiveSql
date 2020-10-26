@@ -4,7 +4,7 @@ ObjectiveSQL is an ORM framework in Java base on ActiveRecord pattern, which enc
 ### Features
 
 - Dynamic code generation with JSR 269 for Java API of database access
-- Full Java API for database access without coding
+- Full Java of for database access without coding
 - Object-oriented SQL programming for complex SQL in Java
 
 [![](http://img.youtube.com/vi/Domd3uvTMlw/0.jpg)](http://www.youtube.com/watch?v=Domd3uvTMlw "ObjectiveSQL Introduction")
@@ -29,7 +29,7 @@ public class Member {
 
 ### You will have an amazing experience
 
-#### Query methods 
+#### Query&Update methods 
 
 ```java
 Member member = Member.queryByPrimaryKey(11);
@@ -52,42 +52,6 @@ int count = Member.count("id > ?", 10);
 ```
 
 ```java
-...
-```
-
-#### Validation methods
-
-```java
-try {
-    Map<String, String> requestObject = ...; // From the POST request of SpringBoot
-    Member rawMember = Member.newInstanceFrom(requestObject, false);
-    newMember.validate(); //Skip the validation
-} catch(ValidationException ex) {
-    ...
-}
-```
-
-#### Persistence methods
-
-```java
-Member newMember = new Member();
-// To set the field value for "newMember"
-newMember.save(false); //Skip the validation
-// newMember.save(true); // Validating the field value before save
-```
-
-```java
-Map<String, String> requestObject = ...; // From the POST request of SpringBoot
-Member rawMember = Member.newInstanceFrom(requestObject, false);
-newMember.save(false); //Skip the validation
-// newMember.save(true); // Validating the field value before save
-```
-
-```java
-Member.update(1, changedMemberInstance, false);
-```
-
-```java
 Member.destory(1);
 ```
 
@@ -107,34 +71,8 @@ List<Order> orders = member.getOrders();
 ```
 
 ```java
-Member member = Member.queryPrimary(1, Member.HAS_MANY_ORDERS);
-List<Order> orders = member.getOrders();
-```
-
-```java
 Member member = Member.queryByName("demo", Member.HAS_MANY_ORDERS);
 List<Order> orders = member.getOrders();
-```
-
-#### Transactional
-
-```java
-@DomainModel
-public class Order {
-    private String no;
-    private Integer memberId;
-    private Double amount;
-    private Double quantity;
-
-    @Relation(relationType = RelationType.BELONGS_TO)
-    private Member member;
-
-    @Transactional
-    public static void makeOrder(Order order, OrderLine... orderLines) throws SQLException {
-        Order.create(order, false);
-        OrderLine.create(orderLines, false);
-    }
-}
 ```
 
 ### Guides/[中文](http://www.objsql.com/)
