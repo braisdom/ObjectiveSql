@@ -16,6 +16,10 @@
  */
 package com.github.braisdom.objsql;
 
+/**
+ * It defines a extension pointer for various Log framework, such as Slf4J, Log4F, etc,
+ * Application system should implement it and fill the log logic.
+ */
 public interface Logger {
 
     void debug(long elapsedTime, String sql, Object[] params);
