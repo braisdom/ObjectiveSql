@@ -54,7 +54,7 @@ public class MembersController {
 
     @GetMapping("/members/summary_orders")
     public ResponseObject summaryOrders() throws SQLException, SQLSyntaxException {
-        List<Member> members = Member.summaryOrders();
+        List<Member> members = Member.countOrders();
         return ResponseObject.createSuccessResponse(members);
     }
 }

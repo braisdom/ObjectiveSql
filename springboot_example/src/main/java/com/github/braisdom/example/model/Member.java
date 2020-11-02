@@ -32,7 +32,7 @@ public class Member implements Serializable {
     @Relation(relationType = RelationType.HAS_MANY)
     private List<Order> orders;
 
-    public static List<Member> summaryOrders() throws SQLSyntaxException, SQLException {
+    public static List<Member> countOrders() throws SQLSyntaxException, SQLException {
         Member.Table memberTable = Member.asTable();
         Order.Table orderTable = Order.asTable();
 
