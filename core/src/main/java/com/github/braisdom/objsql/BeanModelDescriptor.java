@@ -341,7 +341,7 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
                 columnToField.put(columnName.toUpperCase(), field);
             } else if (column != null) {
                 String columnName = StringUtil.isBlank(column.name())
-                        ? WordUtil.underscore(field.getName()) : primaryKey.name();
+                        ? WordUtil.underscore(field.getName()) : column.name();
                 columnToField.put(columnName.toUpperCase(), field);
                 columnToField.put(columnName, field);
             } else {
