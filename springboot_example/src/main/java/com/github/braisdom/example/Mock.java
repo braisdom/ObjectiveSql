@@ -31,7 +31,7 @@ public class Mock {
             "Douglas", "Henry", "Carl", "Arthur", "Ryan", "Roger"};
 
     private static final String[] PRODUCT_NAMES = {
-            "face wash", "toner", "firming lotion", "smoothing toner", "moisturizers and creams", "", "moisturizer",
+            "face wash", "toner", "firming lotion", "smoothing toner", "moisturizers and creams", "moisturizer",
             "sun screen", "eye gel", "facial mask", "Lip care", "Lip coat", "facial scrub", "bodylotion", "Shower Gel",
             "eye shadow", "mascara", "lip liner", "makeup remover ", "makeup removing lotion", "baby diapers", "milk powder",
             "toothbrush", "toothpaste", "wine", "beer", "Refrigerator", "television", "Microwave Oven", "rice cooker",
@@ -70,10 +70,11 @@ public class Mock {
             products.add(product.setName(PRODUCT_NAMES[i])
                     .setBarcode(String.format("P20200000%s", (i + 1)))
                     .setCategoryId(RandomUtils.nextInt(1, 10))
-                    .setCost(RandomUtils.nextDouble(5.0f, 40.0f))
-                    .setSalesPrice(RandomUtils.nextDouble(10.0f, 50.0f)));
+                    .setCost(RandomUtils.nextFloat(5.0f, 40.0f))
+                    .setSalesPrice(RandomUtils.nextFloat(10.0f, 50.0f)));
         }
-        int[] createdProductsCount = Product.create(products.toArray(new Product[]{}), false);
+        int[] createdProductsCount = Product.create(products.toArray(new Product[]{}),
+                false,true);
     }
 
     private void generateOrdersAndOrderLines() throws SQLException {
@@ -86,12 +87,12 @@ public class Mock {
             String orderNo = String.format("O20200000%s", (i + 1));
             Timestamp salesAt = Timestamp.valueOf(SALES_TIMES[RandomUtils.nextInt(0, SALES_TIMES.length)]);
             order.setNo(orderNo).setMemberId(memberId).setSalesAt(salesAt);
-            order = Order.create(order, false);
+            order = Order.create(order, true, true);
 
             float amount = 0f;
             float quantitySum = 0f;
             for (int productKinds = 0; productKinds < RandomUtils.nextInt(1, 5); productKinds++) {
-                double quantity = RandomUtils.nextDouble(1.0f, 5.0f);
+                float quantity = RandomUtils.nextFloat(1.0f, 5.0f);
                 String productName = PRODUCT_NAMES[RandomUtils.nextInt(1, PRODUCT_NAMES.length)];
                 Product product = Product.queryByName(productName);
                 amount += product.getSalesPrice() * quantity;
@@ -103,7 +104,7 @@ public class Mock {
                         .setAmount(product.getSalesPrice() * quantity)
                         .setQuantity(quantity)
                         .setMemberId(memberId)
-                        .setSalesPrice(RandomUtils.nextDouble(10.0f, 50.0f))
+                        .setSalesPrice(RandomUtils.nextFloat(10.0f, 50.0f))
                         .setProductId(product.getId());
                 orderLines.add(orderLine);
             }
@@ -112,9 +113,9 @@ public class Mock {
             order.setQuantity(quantitySum);
             order.save(false);
         }
-        int[] createOrderLinesCount = OrderLine.create(orderLines.toArray(new OrderLine[]{}), false, false);
+        int[] createOrderLinesCount = OrderLine.create(orderLines.toArray(new OrderLine[]{}),
+                true, true);
     }
-
 
     private String getMobile() {
         while (true) {

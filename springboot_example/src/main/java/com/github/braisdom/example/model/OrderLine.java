@@ -12,9 +12,9 @@ public class OrderLine {
     private String orderNo;
     private Long memberId;
     private Long orderId;
-    private Double salesPrice;
-    private Double amount;
-    private Double quantity;
+    private Float salesPrice;
+    private Float amount;
+    private Float quantity;
 
     @Relation(relationType = RelationType.BELONGS_TO)
     private Order order;
