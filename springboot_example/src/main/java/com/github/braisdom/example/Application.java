@@ -57,7 +57,6 @@ public class Application {
         return DataSourceBuilder.create().build();
     }
 
-
     @EventListener
     public void onApplicationEvent(ApplicationStartedEvent event) {
         ConnectionFactory connectionFactory = new ApplicationConnectionFactory(event.getApplicationContext());
