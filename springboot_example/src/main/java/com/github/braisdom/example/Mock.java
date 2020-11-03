@@ -6,6 +6,7 @@ import com.github.braisdom.example.model.OrderLine;
 import com.github.braisdom.example.model.Product;
 import com.github.braisdom.objsql.ConnectionFactory;
 import com.github.braisdom.objsql.Databases;
+import com.sun.tools.corba.se.idl.constExpr.Or;
 import org.apache.commons.lang3.RandomUtils;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 
@@ -20,6 +21,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Mock {
+
+    private static String[] telFirst = "134,135,136,137,138,139,150,151,152,157,158,159,130,131,132,155,156,133,153".split(",");
 
     private static final String[] MEMBER_NAMES = {"Joe", "Juan", "Jack", "Albert", "Jonathan", "Justin", "Terry", "Gerald", "Keith", "Samuel",
             "Willie", "Ralph", "Lawrence", "Nicholas", "Roy", "Benjamin", "Bruce", "Brandon", "Adam", "Harry", "Fred", "Wayne", "Billy", "Steve",
@@ -46,102 +49,101 @@ public class Mock {
     };
 
     public void generateData() throws SQLException {
-        generateMembers();
-        generateProducts();
-        generateOrdersAndOrderLines();
+        List<Member> members = generateMembers();
+        List<Product> products = generateProducts();
+
+        generateOrdersAndOrderLines(members, products);
     }
 
-    private void generateMembers() throws SQLException {
+    private List<Member> generateMembers() throws SQLException {
         List<Member> members = new ArrayList<>();
-        for (int i = 0; i < MEMBER_NAMES.length; i++) {
+        for (int i = 1; i < MEMBER_NAMES.length; i++) {
             Member member = new Member();
-            members.add(member.setNo(String.format("M20200000%s", (i + 1)))
+            members.add(member.setId(Long.valueOf(i))
+                    .setNo(String.format("M20200000%s", (i + 1)))
                     .setName(MEMBER_NAMES[i])
                     .setGender(RandomUtils.nextInt(1, 3))
                     .setMobile(getMobile()));
         }
-        int[] createdMembersCount = Member.create(members.toArray(new Member[]{}), false);
+        Member.create(members.toArray(new Member[]{}), false, true);
+
+        return members;
     }
 
-    private void generateProducts() throws SQLException {
+    private List<Product> generateProducts() throws SQLException {
         List<Product> products = new ArrayList<>();
-        for (int i = 0; i < PRODUCT_NAMES.length; i++) {
+        for (int i = 1; i < PRODUCT_NAMES.length; i++) {
             Product product = new Product();
-            products.add(product.setName(PRODUCT_NAMES[i])
-                    .setBarcode(String.format("P20200000%s", (i + 1)))
+            products.add(product.setId(Long.valueOf(i))
+                    .setName(PRODUCT_NAMES[i])
+                    .setBarcode(String.format("6901234567%s", (i + 10)))
                     .setCategoryId(RandomUtils.nextInt(1, 10))
                     .setCost(RandomUtils.nextFloat(5.0f, 40.0f))
                     .setSalesPrice(RandomUtils.nextFloat(10.0f, 50.0f)));
         }
-        int[] createdProductsCount = Product.create(products.toArray(new Product[]{}),
-                false,true);
+        Product.create(products.toArray(new Product[]{}), false, true);
+        return products;
     }
 
-    private void generateOrdersAndOrderLines() throws SQLException {
+    private void generateOrdersAndOrderLines(List<Member> members, List<Product> products) throws SQLException {
+        List<Order> orders = new ArrayList<>();
         List<OrderLine> orderLines = new ArrayList<>();
-        for (int i = 0; i < 1000; i++) {
+
+        for (int i = 1; i < 500; i++) {
             Order order = new Order();
-            OrderLine orderLine = new OrderLine();
+            Member member = members.get(RandomUtils.nextInt(1, members.size()));
 
-            long memberId = RandomUtils.nextInt(1, MEMBER_NAMES.length + 1);
-            String orderNo = String.format("O20200000%s", (i + 1));
-            Timestamp salesAt = Timestamp.valueOf(SALES_TIMES[RandomUtils.nextInt(0, SALES_TIMES.length)]);
-            order.setNo(orderNo).setMemberId(memberId).setSalesAt(salesAt);
-            order = Order.create(order, true, true);
+            int orderLineCount = RandomUtils.nextInt(2, 5);
+            float totalAmount = 0;
+            float totalQuantity = 0;
 
-            float amount = 0f;
-            float quantitySum = 0f;
-            for (int productKinds = 0; productKinds < RandomUtils.nextInt(1, 5); productKinds++) {
-                float quantity = RandomUtils.nextFloat(1.0f, 5.0f);
-                String productName = PRODUCT_NAMES[RandomUtils.nextInt(1, PRODUCT_NAMES.length)];
-                Product product = Product.queryByName(productName);
-                amount += product.getSalesPrice() * quantity;
-                quantitySum += quantity;
-                orderLine.setOrderId(order.getId())
-                        .setOrderNo(orderNo)
+            order.setId(Long.valueOf(i))
+                    .setNo("O0000000" + i);
+
+            for (int t = 1; t < orderLineCount; t++) {
+                Product product = products.get(RandomUtils.nextInt(0, products.size()));
+                int productQuantity = RandomUtils.nextInt(1, 5);
+                float productAmount = productQuantity * product.getSalesPrice();
+
+                OrderLine orderLine = new OrderLine();
+                orderLine.setId(Long.valueOf(t))
+                        .setAmount(productAmount)
+                        .setQuantity(Float.valueOf(productQuantity))
+                        .setProductId(product.getId())
                         .setBarcode(product.getBarcode())
                         .setSalesPrice(product.getSalesPrice())
-                        .setAmount(product.getSalesPrice() * quantity)
-                        .setQuantity(quantity)
-                        .setMemberId(memberId)
-                        .setSalesPrice(RandomUtils.nextFloat(10.0f, 50.0f))
-                        .setProductId(product.getId());
+                        .setMemberId(member.getId())
+                        .setOrderId(order.getId())
+                        .setOrderNo(order.getNo());
+
+                totalAmount += productAmount;
+                totalQuantity += productQuantity;
+
                 orderLines.add(orderLine);
             }
 
-            order.setAmount(amount);
-            order.setQuantity(quantitySum);
-            order.save(false);
+            order.setAmount(totalAmount)
+                    .setQuantity(totalQuantity)
+                    .setMemberId(member.getId())
+                    .setSalesAt(Timestamp.valueOf(SALES_TIMES[RandomUtils.nextInt(0, SALES_TIMES.length)]));
+
+            orders.add(order);
         }
-        int[] createOrderLinesCount = OrderLine.create(orderLines.toArray(new OrderLine[]{}),
-                true, true);
+
+        Order.create(orders.toArray(new Order[]{}), true, true);
+        OrderLine.create(orderLines.toArray(new OrderLine[]{}), true, true);
     }
 
-    private String getMobile() {
-        while (true) {
-            String phone = "1";
-            Random random = new Random();
-            int nextInt = random.nextInt(3);
-
-            if (nextInt == 0) {
-                phone = phone + "3" + randomNumber();
-            } else if (nextInt == 1) {
-                phone = phone + "5" + randomNumber();
-            } else {
-                phone = phone + "8" + randomNumber();
-            }
-            Pattern pattern = Pattern.compile("^((13[0-9])|(15[^4,\\D])|(18[0,5-9]))\\d{8}$");
-            Matcher matcher = pattern.matcher(phone);
-            if (matcher.matches())
-                return phone;
-        }
+    private static String getMobile() {
+        int index = getRandomNum(0, telFirst.length - 1);
+        String first = telFirst[index];
+        String second = String.valueOf(getRandomNum(1, 888) + 10000).substring(1);
+        String third = String.valueOf(getRandomNum(1, 9100) + 10000).substring(1);
+        return first + second + third;
     }
 
-    private String randomNumber() {
-        Random random = new Random();
-        int nextInt = random.nextInt(900000000) + 100000000;
-        int abs = Math.abs(nextInt);
-        return String.valueOf(abs);
+    public static int getRandomNum(int start, int end) {
+        return (int) (Math.random() * (end - start + 1) + start);
     }
 
     public static void main(String[] args) throws SQLException {
@@ -158,6 +160,12 @@ public class Mock {
                 return dataSource.getConnection();
             }
         });
+
+        Databases.execute("TRUNCATE TABLE members");
+        Databases.execute("TRUNCATE TABLE products");
+        Databases.execute("TRUNCATE TABLE orders");
+        Databases.execute("TRUNCATE TABLE order_lines");
+
         new Mock().generateData();
     }
 }
