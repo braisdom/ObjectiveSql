@@ -32,6 +32,13 @@ public class Member implements Serializable {
     @Relation(relationType = RelationType.HAS_MANY)
     private List<Order> orders;
 
+    /**
+     * Count order by distinct member, and summary amount and quantity of order.
+     *
+     * @return
+     * @throws SQLSyntaxException
+     * @throws SQLException
+     */
     public static List<Member> countOrders() throws SQLSyntaxException, SQLException {
         Member.Table memberTable = Member.asTable();
         Order.Table orderTable = Order.asTable();
@@ -44,6 +51,7 @@ public class Member implements Serializable {
         select.where(joinCondition);
 
         select.project(memberTable.no, memberTable.name, memberTable.mobile);
+
         select.project(countDistinct(orderTable.no).as("order_count"))
                 .project(sum(orderTable.quantity).as("total_quantity"))
                 .project(sum(orderTable.amount).as("total_amount"))
