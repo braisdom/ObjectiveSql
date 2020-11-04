@@ -6,7 +6,6 @@ import com.github.braisdom.example.model.OrderLine;
 import com.github.braisdom.example.model.Product;
 import com.github.braisdom.objsql.ConnectionFactory;
 import com.github.braisdom.objsql.Databases;
-import com.sun.tools.corba.se.idl.constExpr.Or;
 import org.apache.commons.lang3.RandomUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -18,11 +17,8 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-public class Mock {
+public class SalesDataMock {
 
     private static String[] telFirst = "134,135,136,137,138,139,150,151,152,157,158,159,130,131,132,155,156,133,153".split(",");
 
@@ -191,6 +187,6 @@ public class Mock {
         Databases.execute("TRUNCATE TABLE orders");
         Databases.execute("TRUNCATE TABLE order_lines");
 
-        new Mock().generateData();
+        new SalesDataMock().generateData();
     }
 }
