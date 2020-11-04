@@ -20,7 +20,7 @@ import com.github.braisdom.objsql.sql.Expression;
 import com.github.braisdom.objsql.sql.SqlFunctionCall;
 import com.github.braisdom.objsql.sql.expression.LiteralExpression;
 
-public class SqliteFunctions {
+public class Sqlite {
 
     public static Expression notEmpty(String dateString) {
         return new SqlFunctionCall("notEmpty", new LiteralExpression(dateString));

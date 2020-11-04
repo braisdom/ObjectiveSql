@@ -32,7 +32,7 @@ import static com.github.braisdom.objsql.DatabaseType.SQLite;
 import static com.github.braisdom.objsql.sql.Expressions.literal;
 
 @Syntax(DatabaseType.All)
-public class AnsiFunctions {
+public class Ansi {
 
     /**
      * Returns the number of rows returned by the query. You can use it as an

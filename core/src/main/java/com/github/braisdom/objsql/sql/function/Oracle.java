@@ -22,7 +22,7 @@ import com.github.braisdom.objsql.sql.expression.PlainExpression;
 
 import static com.github.braisdom.objsql.sql.Expressions.literal;
 
-public class OracleFunctions {
+public class Oracle {
 
     public static final Expression cosh(Integer literal) {
         return new SqlFunctionCall("COSH", literal(literal));

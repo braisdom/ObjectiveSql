@@ -22,7 +22,7 @@ import com.github.braisdom.objsql.sql.expression.PlainExpression;
 
 import static com.github.braisdom.objsql.sql.Expressions.literal;
 
-public final class ClickHouseFunctions {
+public final class ClickHouse {
 
     public static Expression toInt8(Expression expression) {
         return new SqlFunctionCall("toInt8", expression);

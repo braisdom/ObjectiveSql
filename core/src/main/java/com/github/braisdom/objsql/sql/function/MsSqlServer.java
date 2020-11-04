@@ -27,7 +27,7 @@ import com.github.braisdom.objsql.util.FunctionWithThrowable;
 import java.util.Arrays;
 import java.util.Objects;
 
-public class MsSqlServerFunctions {
+public class MsSqlServer {
 
     public static Expression iIf(Expression expression, Expression expression1, Expression expression2) {
         Objects.requireNonNull(expression, "The expression cannot be null");

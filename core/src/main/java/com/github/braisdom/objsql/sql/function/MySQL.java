@@ -28,7 +28,7 @@ import com.github.braisdom.objsql.util.FunctionWithThrowable;
 import java.util.Arrays;
 import java.util.Objects;
 
-public class MySQLFunctions {
+public class MySQL {
 
     public static final Expression pow(Expression expression) {
         return new SqlFunctionCall("POW", expression);
