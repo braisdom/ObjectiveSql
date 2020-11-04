@@ -33,4 +33,14 @@ public abstract class AbstractExpression implements Expression {
     protected void setAlias(String alias) {
         this.alias = alias;
     }
+
+    protected String processDataset(ExpressionContext expressionContext, Dataset dataset)
+            throws SQLSyntaxException {
+        if (dataset instanceof AbstractTable) {
+            return dataset.toSql(expressionContext);
+        } else {
+            String datasetAlias = expressionContext.getAlias(dataset, true);
+            return String.format("(%s) AS %s", dataset.toSql(expressionContext), datasetAlias);
+        }
+    }
 }

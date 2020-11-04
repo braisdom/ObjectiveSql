@@ -335,6 +335,10 @@ public class DefaultColumn extends AbstractExpression implements Column {
                 columnAlias == null ? "" : " AS " + expressionContext.quoteColumn(columnAlias));
     }
 
+    protected Dataset getDataset() {
+        return this.dataset;
+    }
+
     @Override
     public String toString() {
         return columnName;

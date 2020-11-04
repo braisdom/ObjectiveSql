@@ -23,13 +23,12 @@ import com.github.braisdom.objsql.util.FunctionWithThrowable;
 import com.github.braisdom.objsql.util.SuppressedException;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class Select<T> extends AbstractExpression implements Dataset {
 
     protected List<Expression> projections = new ArrayList<>();
+    protected Map<String, Expression> projectionMaps = new HashMap<>();
     protected Dataset[] fromDatasets;
     protected Expression whereExpression;
     protected List<JoinExpression> joinExpressions = new ArrayList<>();
@@ -50,9 +49,29 @@ public class Select<T> extends AbstractExpression implements Dataset {
     }
 
     public Select project(Expression... projections) {
-        if (projections.length > 0)
+        if (projections.length > 0) {
             this.projections.addAll(Arrays.asList(projections));
+            for (Expression expression : projections) {
+                projectionMaps.put(expression.getAlias(), expression);
+            }
+        }
         return this;
+    }
+
+    public Expression col(String alias) {
+        return getProjection(alias);
+    }
+
+    public Expression getProjection(String alias) {
+        return new DefaultColumn(this, alias) {
+
+            @Override
+            public String toSql(ExpressionContext expressionContext) {
+                String tableAlias = expressionContext.getAlias(getDataset(), true);
+                return String.format("%s.%s",
+                        expressionContext.quoteTable(tableAlias), expressionContext.quoteColumn(alias));
+            }
+        };
     }
 
     public Select from(Dataset... datasets) {
@@ -171,12 +190,14 @@ public class Select<T> extends AbstractExpression implements Dataset {
     }
 
     protected void processFrom(ExpressionContext expressionContext, StringBuilder sql) throws SQLSyntaxException {
-        if(fromDatasets != null && fromDatasets.length > 0) {
+        if (fromDatasets != null && fromDatasets.length > 0) {
             try {
                 sql.append(" FROM ");
                 String[] fromStrings = Arrays.stream(fromDatasets)
                         .map(FunctionWithThrowable
-                                .castFunctionWithThrowable(dataset -> dataset.toSql(expressionContext))).toArray(String[]::new);
+                                .castFunctionWithThrowable(
+                                        dataset -> processDataset(expressionContext, dataset))
+                        ).toArray(String[]::new);
                 sql.append(String.join(", ", fromStrings));
             } catch (SuppressedException ex) {
                 if (ex.getCause() instanceof SQLSyntaxException)
@@ -198,7 +219,8 @@ public class Select<T> extends AbstractExpression implements Dataset {
             if (joinExpressions != null && joinExpressions.size() > 0) {
                 String[] joinStrings = joinExpressions.stream()
                         .map(FunctionWithThrowable
-                                .castFunctionWithThrowable(joinExpression -> joinExpression.toSql(expressionContext))).toArray(String[]::new);
+                                .castFunctionWithThrowable(
+                                        joinExpression -> joinExpression.toSql(expressionContext))).toArray(String[]::new);
                 sql.append(String.join(" ", joinStrings));
             }
         } catch (SuppressedException ex) {
@@ -247,12 +269,12 @@ public class Select<T> extends AbstractExpression implements Dataset {
 
     protected void processUnion(ExpressionContext expressionContext, StringBuilder sql) throws SQLSyntaxException {
         if (unionDatasets != null) {
-            for(Dataset dataset:unionDatasets)
+            for (Dataset dataset : unionDatasets)
                 sql.append(" UNION ").append(dataset.toSql(expressionContext)).append(" ");
         }
 
         if (unionAllDatasets != null) {
-            for(Dataset dataset:unionAllDatasets)
+            for (Dataset dataset : unionAllDatasets)
                 sql.append(" UNION ALL ").append(dataset.toSql(expressionContext)).append(" ");
         }
     }

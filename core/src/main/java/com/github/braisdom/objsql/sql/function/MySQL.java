@@ -353,6 +353,18 @@ public class MySQL {
         return extract("YEAR", expression);
     }
 
+    public static final Expression extractMonth(Expression expression) {
+        return extract("MONTH", expression);
+    }
+
+    public static final Expression year(Expression expression) {
+        return new SqlFunctionCall("YEAR", expression);
+    }
+
+    public static final Expression month(Expression expression) {
+        return new SqlFunctionCall("MONTH", expression);
+    }
+
     /**
      * The unit see: https://dev.mysql.com/doc/refman/8.0/en/expressions.html#temporal-intervals
      * @param unit

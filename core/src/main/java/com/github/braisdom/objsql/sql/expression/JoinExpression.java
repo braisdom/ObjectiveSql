@@ -60,7 +60,7 @@ public class JoinExpression extends AbstractExpression {
                 joinTypeString = "FULL JOIN";
                 break;
         }
-        return String.format(" %s %s ON %s ", joinTypeString, dataset.toSql(expressionContext),
+        return String.format(" %s %s ON %s ", joinTypeString, processDataset(expressionContext, dataset),
                 onExpression.toSql(expressionContext));
     }
 }
