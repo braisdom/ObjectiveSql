@@ -6,7 +6,6 @@ import com.github.braisdom.objsql.annotations.DomainModel;
 import com.github.braisdom.objsql.annotations.Queryable;
 import com.github.braisdom.objsql.annotations.Relation;
 import com.github.braisdom.objsql.relation.RelationType;
-import com.github.braisdom.objsql.sql.Expression;
 import com.github.braisdom.objsql.sql.SQLSyntaxException;
 import com.github.braisdom.objsql.sql.Select;
 
@@ -14,7 +13,7 @@ import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.List;
 
-import static com.github.braisdom.objsql.sql.function.AnsiFunctions.*;
+import static com.github.braisdom.objsql.sql.function.Ansi.*;
 
 @DomainModel
 public class Member implements Serializable {

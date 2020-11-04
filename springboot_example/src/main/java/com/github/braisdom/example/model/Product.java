@@ -3,6 +3,8 @@ package com.github.braisdom.example.model;
 import com.github.braisdom.objsql.annotations.DomainModel;
 import com.github.braisdom.objsql.annotations.Queryable;
 import com.github.braisdom.objsql.sql.Dataset;
+import com.github.braisdom.objsql.sql.Select;
+import com.github.braisdom.objsql.sql.function.MySQL;
 
 import java.util.Date;
 import java.util.List;
@@ -22,11 +24,22 @@ public class Product {
      *
      * @return
      */
-    public static List<Product> calSPLY(Date begin, Date end, String[] barcodes) {
+    public static List<Product> calProductSPLY(Date begin, Date end, String[] barcodes) {
         return null;
     }
 
     private static Dataset getPeriodProductsSales(Date begin, Date end) {
+        Order.Table orderTable = Order.asTable();
+        OrderLine.Table orderLineTable = OrderLine.asTable();
+
+        Select select = new Select();
+
+        select.from(orderLineTable)
+                .leftOuterJoin(orderTable, orderLineTable.orderId.eq(orderTable.id));
+
+        select.project(orderLineTable.barcode)
+                .project(MySQL.extractYear(orderTable.salesAt));
+
         return null;
     }
 }
