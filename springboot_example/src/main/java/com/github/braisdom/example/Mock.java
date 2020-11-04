@@ -8,6 +8,8 @@ import com.github.braisdom.objsql.ConnectionFactory;
 import com.github.braisdom.objsql.Databases;
 import com.sun.tools.corba.se.idl.constExpr.Or;
 import org.apache.commons.lang3.RandomUtils;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 
 import javax.sql.DataSource;
@@ -39,13 +41,6 @@ public class Mock {
             "eye shadow", "mascara", "lip liner", "makeup remover ", "makeup removing lotion", "baby diapers", "milk powder",
             "toothbrush", "toothpaste", "wine", "beer", "Refrigerator", "television", "Microwave Oven", "rice cooker",
             "coffee", "tea", "milk", "drink", "whisky", "tequila", "Liquid soap"
-    };
-
-    private static final String[] SALES_TIMES = {
-            "2020-09-01 13:41:01", "2020-09-01 09:23:34", "2020-09-02 10:15:59", "2020-09-02 15:54:12",
-            "2020-09-03 08:41:03", "2020-09-03 16:33:09", "2020-09-04 09:13:41", "2020-09-04 12:01:23",
-            "2019-09-01 13:41:01", "2019-09-01 09:23:34", "2019-09-02 10:15:59", "2019-09-02 15:54:12",
-            "2019-09-03 08:41:03", "2019-09-03 16:33:09", "2019-09-04 09:13:41", "2019-09-04 12:01:23",
     };
 
     public void generateData() throws SQLException {
@@ -85,49 +80,79 @@ public class Mock {
         return products;
     }
 
+    private List<DateTime> prepareDateTime() {
+        List<DateTime> dateTimes = new ArrayList<>();
+
+        DateTime lastYearBegin = DateTime.parse("2019-07-01 00:00:00",
+                DateTimeFormat.forPattern("YYYY-MM-dd HH:mm:SS"));
+        while (lastYearBegin.isBefore(DateTime.parse("2019-11-30 23:59:59",
+                DateTimeFormat.forPattern("YYYY-MM-dd HH:mm:SS")))) {
+            dateTimes.add(lastYearBegin);
+            lastYearBegin = lastYearBegin.plusDays(1);
+        }
+
+        DateTime thisYearBegin = DateTime.parse("2020-07-01 00:00:00",
+                DateTimeFormat.forPattern("YYYY-MM-dd HH:mm:SS"));
+        while (thisYearBegin.isBefore(DateTime.parse("2020-11-30 23:59:59",
+                DateTimeFormat.forPattern("YYYY-MM-dd HH:mm:SS")))) {
+            dateTimes.add(thisYearBegin);
+            thisYearBegin = thisYearBegin.plusDays(1);
+        }
+
+        return dateTimes;
+    }
+
     private void generateOrdersAndOrderLines(List<Member> members, List<Product> products) throws SQLException {
         List<Order> orders = new ArrayList<>();
         List<OrderLine> orderLines = new ArrayList<>();
+        List<DateTime> dateTimes = prepareDateTime();
 
-        for (int i = 1; i < 500; i++) {
-            Order order = new Order();
-            Member member = members.get(RandomUtils.nextInt(1, members.size()));
+        int orderId = 0;
+        int orderLineId = 0;
 
-            int orderLineCount = RandomUtils.nextInt(2, 5);
-            float totalAmount = 0;
-            float totalQuantity = 0;
+        for(DateTime dateTime : dateTimes) {
+            for (int i = 1; i < 20; i++) {
+                Order order = new Order();
+                Member member = members.get(RandomUtils.nextInt(1, members.size()));
 
-            order.setId(Long.valueOf(i))
-                    .setNo("O0000000" + i);
+                int orderLineCount = RandomUtils.nextInt(2, 5);
+                float totalAmount = 0;
+                float totalQuantity = 0;
 
-            for (int t = 1; t < orderLineCount; t++) {
-                Product product = products.get(RandomUtils.nextInt(0, products.size()));
-                int productQuantity = RandomUtils.nextInt(1, 5);
-                float productAmount = productQuantity * product.getSalesPrice();
+                order.setId(Long.valueOf(orderId++))
+                        .setNo("O0000000" + orderId++);
 
-                OrderLine orderLine = new OrderLine();
-                orderLine.setId(Long.valueOf(t))
-                        .setAmount(productAmount)
-                        .setQuantity(Float.valueOf(productQuantity))
-                        .setProductId(product.getId())
-                        .setBarcode(product.getBarcode())
-                        .setSalesPrice(product.getSalesPrice())
+                for (int t = 1; t < orderLineCount; t++) {
+                    Product product = products.get(RandomUtils.nextInt(0, products.size()));
+                    int productQuantity = RandomUtils.nextInt(1, 5);
+                    float productAmount = productQuantity * product.getSalesPrice();
+
+                    OrderLine orderLine = new OrderLine();
+                    orderLine.setId(Long.valueOf(orderLineId++))
+                            .setAmount(productAmount)
+                            .setQuantity(Float.valueOf(productQuantity))
+                            .setProductId(product.getId())
+                            .setBarcode(product.getBarcode())
+                            .setSalesPrice(product.getSalesPrice())
+                            .setMemberId(member.getId())
+                            .setOrderId(order.getId())
+                            .setOrderNo(order.getNo());
+
+                    totalAmount += productAmount;
+                    totalQuantity += productQuantity;
+
+                    orderLines.add(orderLine);
+                }
+
+                dateTime = dateTime.withHourOfDay(RandomUtils.nextInt(8, 20))
+                        .withMinuteOfHour(RandomUtils.nextInt(1, 60));
+                order.setAmount(totalAmount)
+                        .setQuantity(totalQuantity)
                         .setMemberId(member.getId())
-                        .setOrderId(order.getId())
-                        .setOrderNo(order.getNo());
+                        .setSalesAt(Timestamp.valueOf(dateTime.toString("YYYY-MM-dd HH:mm:SS.0")));
 
-                totalAmount += productAmount;
-                totalQuantity += productQuantity;
-
-                orderLines.add(orderLine);
+                orders.add(order);
             }
-
-            order.setAmount(totalAmount)
-                    .setQuantity(totalQuantity)
-                    .setMemberId(member.getId())
-                    .setSalesAt(Timestamp.valueOf(SALES_TIMES[RandomUtils.nextInt(0, SALES_TIMES.length)]));
-
-            orders.add(order);
         }
 
         Order.create(orders.toArray(new Order[]{}), true, true);
