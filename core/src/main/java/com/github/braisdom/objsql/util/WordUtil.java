@@ -342,7 +342,7 @@ public class WordUtil {
         else if (tmp.endsWith("o")) {
             //All words that end in a vowel plus -o (-ao, -eo, -io, -oo, -uo) have plurals that end in just -s:
             if (tmp.endsWith("ao") || tmp.endsWith("eo") || tmp.endsWith("io") ||
-                    tmp.endsWith("oo") || tmp.endsWith("uo")) {
+                    tmp.endsWith("javaoo") || tmp.endsWith("uo")) {
                 plform = word + "s";
             }
             //All musical terms ending in -o have plurals ending in just -s.

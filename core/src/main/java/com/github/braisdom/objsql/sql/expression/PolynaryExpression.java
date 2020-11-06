@@ -32,6 +32,7 @@ public class PolynaryExpression extends AbstractExpression {
     public static final String MINUS = " - ";
     public static final String MULTIPLY = " * ";
     public static final String DIVIDE = " / ";
+    public static final String REM = " % ";
     public static final String AND = " AND ";
     public static final String OR = " OR ";
     public static final String LT = " < ";

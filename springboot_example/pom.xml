@@ -21,7 +21,6 @@
     </properties>
 
     <dependencies>
-
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
@@ -103,6 +102,14 @@
             <version>2.10.8</version>
         </dependency>
     </dependencies>
+
+    <repositories>
+        <repository>
+            <id>amelentev</id>
+            <name>amelentev</name>
+            <url>http://amelentev.github.io/mvnrepo/</url>
+        </repository>
+    </repositories>
 
     <build>
         <plugins>

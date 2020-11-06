@@ -135,7 +135,9 @@ public final class PropertyUtils {
                 withAccessibleObject(writeMethod, method -> method.invoke(destination, args), force);
             }
         } catch (ReflectiveOperationException | RuntimeException e) {
-            throw new ReflectionException("Failed to write " + getQualifiedPropertyName(destination, propertyDescriptor), e);
+            String qualifiedPropertyName = getQualifiedPropertyName(destination, propertyDescriptor);
+            String message = String.format("Failed to write: %s, value: %s", qualifiedPropertyName, value);
+            throw new ReflectionException(message, e);
         }
     }
 

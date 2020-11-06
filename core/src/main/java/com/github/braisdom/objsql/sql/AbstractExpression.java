@@ -16,6 +16,9 @@
  */
 package com.github.braisdom.objsql.sql;
 
+import com.github.braisdom.objsql.sql.expression.ParenExpression;
+import com.github.braisdom.objsql.sql.expression.PolynaryExpression;
+
 public abstract class AbstractExpression implements Expression {
 
     private String alias;
@@ -28,6 +31,31 @@ public abstract class AbstractExpression implements Expression {
 
     public String getAlias() {
         return alias;
+    }
+
+    @Override
+    public Expression plus(Expression expression) {
+        return new ParenExpression(new PolynaryExpression(PolynaryExpression.PLUS, this, expression));
+    }
+
+    @Override
+    public Expression minus(Expression expression) {
+        return new ParenExpression(new PolynaryExpression(PolynaryExpression.MINUS, this, expression));
+    }
+
+    @Override
+    public Expression times(Expression expression) {
+        return new ParenExpression(new PolynaryExpression(PolynaryExpression.MULTIPLY, this, expression));
+    }
+
+    @Override
+    public Expression div(Expression expression) {
+        return new ParenExpression(new PolynaryExpression(PolynaryExpression.DIVIDE, this, expression));
+    }
+
+    @Override
+    public Expression rem(Expression expression) {
+        return new ParenExpression(new PolynaryExpression(PolynaryExpression.REM, this, expression));
     }
 
     protected void setAlias(String alias) {

@@ -33,10 +33,11 @@ public class Product {
     private Float cost;
 
     /**
-     * Calculate Same Period Last Year of products sales.
+     * Calculate LPLY and LP of products sales for a while.
      * <p>
      * SPLY: it means Same Period Last Year
      * LP: it means Last Period
+     * </p>
      *
      * @return
      */
@@ -44,47 +45,54 @@ public class Product {
         DateTime calBeginDateTime = DateTime.parse(calBegin, DATE_TIME_FORMATTER);
         DateTime calEndDateTime = DateTime.parse(calEnd, DATE_TIME_FORMATTER);
 
-        // Target data set
-        Select refDataset = getPeriodProductsSales(calBegin, calEnd);
+        // Dataset of target data set
+        Select target = getPeriodProductsSales(calBegin, calEnd);
 
-        // Last period
-        Select lpDataset = getPeriodProductsSales(
+        // Dataset of last period
+        Select lp = getPeriodProductsSales(
                 calBeginDateTime.minusMonths(1).toString(DATE_TIME_TEMPLATE),
                 calEndDateTime.minusMonths(1).toString(DATE_TIME_TEMPLATE));
 
-        // Same period last year
-        Select splyDataset = getPeriodProductsSales(
+        // Dataset of same period last year
+        Select sply = getPeriodProductsSales(
                 calBeginDateTime.minusYears(1).toString(DATE_TIME_TEMPLATE),
                 calEndDateTime.minusYears(1).toString(DATE_TIME_TEMPLATE));
 
         Select select = new Select();
-        select.from(refDataset)
-                .leftOuterJoin(lpDataset, eq(refDataset.col("sales_month"),
-                        plus(lpDataset.col("sales_month"), $(1))))
-                .leftOuterJoin(splyDataset, eq(refDataset.col("sales_month"),
-                        splyDataset.col("sales_month")));
+        select.from(target)
+                .leftOuterJoin(lp, createLPJoinCondition(target, lp))
+                .leftOuterJoin(sply, createSPLYJoinCondition(target, sply));
 
         Expression lpAmount = multiply(
                 divide(
                         minus(
-                                sum(refDataset.col("total_amount")),
-                                sum(lpDataset.col("total_amount"))
+                                sum(target.col("total_amount")),
+                                sum(lp.col("total_amount"))
                         ),
-                        sum(lpDataset.col("total_amount"))
+                        sum(lp.col("total_amount"))
                 ), $(100)
         );
 
-        select.project(refDataset.col("barcode"))
-                .project(refDataset.col("sales_year"))
-                .project(refDataset.col("sales_month"))
+        select.project(target.col("barcode"))
+                .project(target.col("sales_year"))
+                .project(target.col("sales_month"))
                 .project(format(lpAmount, 2).as("amount_lp"));
 
-        select.groupBy(refDataset.col("barcode"),
-                refDataset.col("sales_year"),
-                refDataset.col("sales_month"));
+        select.groupBy(target.col("barcode"),
+                target.col("sales_year"),
+                target.col("sales_month"));
 
         String sql = select.toSql(new DefaultExpressionContext(DatabaseType.MySQL));
         return null;
+    }
+
+    private static Expression createLPJoinCondition(Select refDataset, Select lpDataset) {
+        return eq(refDataset.col("sales_month"),
+                plus(lpDataset.col("sales_month"), $(1)));
+    }
+
+    private static Expression createSPLYJoinCondition(Select refDataset, Select splyDataset) {
+        return eq(refDataset.col("sales_month"), splyDataset.col("sales_month"));
     }
 
     private static Select getPeriodProductsSales(String salesBegin, String salesEnd) {

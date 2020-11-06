@@ -26,4 +26,14 @@ public interface Expression extends Sqlizable {
     Expression as(String alias);
 
     String getAlias();
+
+    Expression plus(Expression expression);
+
+    Expression minus(Expression expression);
+
+    Expression times(Expression expression);
+
+    Expression div(Expression expression);
+
+    Expression rem(Expression expression);
 }
