@@ -97,14 +97,6 @@
             <name>ebi repo</name>
             <url>https://www.ebi.ac.uk/intact/maven/nexus/content/repositories/ebi-repo/</url>
         </repository>
-        <repository>
-            <id>bidouille.org</id>
-            <url>http://archiva.bidouille.org/archiva/repository/releases/</url>
-        </repository>
-        <repository>
-            <id>amelentev</id>
-            <url>http://amelentev.github.io/mvnrepo/</url>
-        </repository>
     </repositories>
 
     <build>
@@ -123,17 +115,10 @@
                 <version>3.8.0</version>
 
                 <configuration>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
                     <encoding>UTF-8</encoding>
-                    <compilerArgs>
-                        <arg>-Xplugin:Manifold</arg>
-                    </compilerArgs>
-                    <annotationProcessorPaths>
-                        <path>
-                            <groupId>systems.manifold</groupId>
-                            <artifactId>manifold-exceptions</artifactId>
-                            <version>2020.1.27</version>
-                        </path>
-                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
 
@@ -146,28 +131,6 @@
                     <serverId>release</serverId>
                     <nexusUrl>https://oss.sonatype.org/</nexusUrl>
                     <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.5.1</version>
-                <configuration>
-                    <encoding>${project.build.sourceEncoding}</encoding>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
-                    <encoding>UTF-8</encoding>
-                    <compilerArgs>
-                        <arg>-Xplugin:Manifold</arg>
-                    </compilerArgs>
-                    <annotationProcessorPaths>
-                        <path>
-                            <groupId>systems.manifold</groupId>
-                            <artifactId>manifold-science</artifactId>
-                            <version>2020.1.27</version>
-                        </path>
-                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
 

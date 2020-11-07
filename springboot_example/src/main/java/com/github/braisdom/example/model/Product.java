@@ -63,15 +63,8 @@ public class Product {
                 .leftOuterJoin(lp, createLPJoinCondition(target, lp))
                 .leftOuterJoin(sply, createSPLYJoinCondition(target, sply));
 
-        Expression lpAmount = multiply(
-                divide(
-                        minus(
-                                sum(target.col("total_amount")),
-                                sum(lp.col("total_amount"))
-                        ),
-                        sum(lp.col("total_amount"))
-                ), $(100)
-        );
+        Expression lpAmount = (sum(target.col("total_amount"))
+                - sum(lp.col("total_amount"))) / sum(lp.col("total_amount")) * $(100);
 
         select.project(target.col("barcode"))
                 .project(target.col("sales_year"))
