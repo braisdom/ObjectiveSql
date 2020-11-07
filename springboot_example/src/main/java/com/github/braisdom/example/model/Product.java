@@ -3,7 +3,6 @@ package com.github.braisdom.example.model;
 import com.github.braisdom.objsql.DatabaseType;
 import com.github.braisdom.objsql.annotations.DomainModel;
 import com.github.braisdom.objsql.annotations.Queryable;
-import com.github.braisdom.objsql.sql.DefaultExpressionContext;
 import com.github.braisdom.objsql.sql.Expression;
 import com.github.braisdom.objsql.sql.SQLSyntaxException;
 import com.github.braisdom.objsql.sql.Select;
@@ -46,33 +45,25 @@ public class Product {
         DateTime begin = DateTime.parse(calBegin, DATE_TIME_FORMATTER);
         DateTime end = DateTime.parse(calEnd, DATE_TIME_FORMATTER);
 
-        // Dataset of target data set
-        Select target = getPeriodSales(calBegin, calEnd);
-
-        // Dataset of last period
-        Select lp = getPeriodSales(minusMonths(begin, 1), minusMonths(end, 1));
-
-        // Dataset of same period last year
-        Select sply = getPeriodSales(minusYears(begin, 1), minusYears(end, 1));
+        // Creating dataset of target, last period and same period last year
+        Select target = createPeriodSales(calBegin, calEnd);
+        Select lp = createPeriodSales(minusMonths(begin, 1), minusMonths(end, 1));
+        Select sply = createPeriodSales(minusYears(begin, 1), minusYears(end, 1));
 
         Select select = new Select();
         select.from(target)
                 .leftOuterJoin(lp, createLPJoinCondition(target, lp))
                 .leftOuterJoin(sply, createSPLYJoinCondition(target, sply));
 
-        Expression lpAmount = (sum(target.col("total_amount"))
-                - sum(lp.col("total_amount"))) / sum(lp.col("total_amount")) * $(100);
-        Expression lpOrderCount = (sum(target.col("order_count"))
-                - sum(lp.col("order_count"))) / sum(lp.col("order_count")) * $(100);
-        Expression lpQuantity = (sum(target.col("total_quantity"))
-                - sum(lp.col("total_quantity"))) / sum(lp.col("total_quantity")) * $(100);
+        // Create calculation expression of last period
+        Expression lpAmount = createLPExpr(target, lp, "total_amount");
+        Expression lpOrderCount = createLPExpr(target, lp, "order_count");
+        Expression lpQuantity = createLPExpr(target, lp, "total_quantity");
 
-        Expression splyAmount = (sum(target.col("total_amount"))
-                - sum(sply.col("total_amount"))) / sum(sply.col("total_amount")) * $(100);
-        Expression splyOrderCount = (sum(target.col("order_count"))
-                - sum(sply.col("order_count"))) / sum(sply.col("order_count")) * $(100);
-        Expression splyQuantity = (sum(target.col("total_quantity"))
-                - sum(sply.col("total_quantity"))) / sum(sply.col("total_quantity")) * $(100);
+        // Create calculation expression of same period last year
+        Expression splyAmount = createSPLYExpr(target, lp, "total_amount");
+        Expression splyOrderCount = createSPLYExpr(target, lp, "order_count");
+        Expression splyQuantity = createSPLYExpr(target, lp, "total_quantity");
 
         select.project(target.col("barcode"))
                 .project(target.col("sales_year"))
@@ -89,6 +80,16 @@ public class Product {
                 target.col("sales_month"));
 
         return select.execute(DatabaseType.MySQL, Product.class);
+    }
+
+    private static Expression createLPExpr(Select target, Select select, String metricsName) {
+        return (sum(target.col(metricsName))
+                - sum(select.col(metricsName))) / sum(select.col(metricsName)) * $(100);
+    }
+
+    private static Expression createSPLYExpr(Select target, Select select, String metricsName) {
+        return (sum(target.col(metricsName))
+                - sum(select.col(metricsName))) / sum(select.col(metricsName)) * $(100);
     }
 
     private static String minusMonths(DateTime dateTime, int num) {
@@ -108,7 +109,7 @@ public class Product {
         return eq(refDataset.col("sales_month"), splyDataset.col("sales_month"));
     }
 
-    private static Select getPeriodSales(String salesBegin, String salesEnd) {
+    private static Select createPeriodSales(String salesBegin, String salesEnd) {
         Order.Table orderTable = Order.asTable();
         OrderLine.Table orderLineTable = OrderLine.asTable();
 
