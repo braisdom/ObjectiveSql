@@ -11,6 +11,7 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import static com.github.braisdom.objsql.sql.Expressions.*;
@@ -41,22 +42,18 @@ public class Product {
      *
      * @return
      */
-    public static List<Product> calProductSPLYAndLP(String calBegin, String calEnd) throws SQLSyntaxException, SQLSyntaxException {
-        DateTime calBeginDateTime = DateTime.parse(calBegin, DATE_TIME_FORMATTER);
-        DateTime calEndDateTime = DateTime.parse(calEnd, DATE_TIME_FORMATTER);
+    public static List<Product> calProductSPLYAndLP(String calBegin, String calEnd) throws SQLSyntaxException, SQLException {
+        DateTime begin = DateTime.parse(calBegin, DATE_TIME_FORMATTER);
+        DateTime end = DateTime.parse(calEnd, DATE_TIME_FORMATTER);
 
         // Dataset of target data set
-        Select target = getPeriodProductsSales(calBegin, calEnd);
+        Select target = getPeriodSales(calBegin, calEnd);
 
         // Dataset of last period
-        Select lp = getPeriodProductsSales(
-                calBeginDateTime.minusMonths(1).toString(DATE_TIME_TEMPLATE),
-                calEndDateTime.minusMonths(1).toString(DATE_TIME_TEMPLATE));
+        Select lp = getPeriodSales(minusMonths(begin, 1), minusMonths(end, 1));
 
         // Dataset of same period last year
-        Select sply = getPeriodProductsSales(
-                calBeginDateTime.minusYears(1).toString(DATE_TIME_TEMPLATE),
-                calEndDateTime.minusYears(1).toString(DATE_TIME_TEMPLATE));
+        Select sply = getPeriodSales(minusYears(begin, 1), minusYears(end, 1));
 
         Select select = new Select();
         select.from(target)
@@ -65,18 +62,41 @@ public class Product {
 
         Expression lpAmount = (sum(target.col("total_amount"))
                 - sum(lp.col("total_amount"))) / sum(lp.col("total_amount")) * $(100);
+        Expression lpOrderCount = (sum(target.col("order_count"))
+                - sum(lp.col("order_count"))) / sum(lp.col("order_count")) * $(100);
+        Expression lpQuantity = (sum(target.col("total_quantity"))
+                - sum(lp.col("total_quantity"))) / sum(lp.col("total_quantity")) * $(100);
+
+        Expression splyAmount = (sum(target.col("total_amount"))
+                - sum(sply.col("total_amount"))) / sum(sply.col("total_amount")) * $(100);
+        Expression splyOrderCount = (sum(target.col("order_count"))
+                - sum(sply.col("order_count"))) / sum(sply.col("order_count")) * $(100);
+        Expression splyQuantity = (sum(target.col("total_quantity"))
+                - sum(sply.col("total_quantity"))) / sum(sply.col("total_quantity")) * $(100);
 
         select.project(target.col("barcode"))
                 .project(target.col("sales_year"))
                 .project(target.col("sales_month"))
-                .project(format(lpAmount, 2).as("amount_lp"));
+                .project(format(lpAmount, 2).as("amount_lp"))
+                .project(format(lpOrderCount, 2).as("order_count_lp"))
+                .project(format(lpQuantity, 2).as("quantity_lp"))
+                .project(format(splyAmount, 2).as("quantity_sply"))
+                .project(format(splyOrderCount, 2).as("quantity_sply"))
+                .project(format(splyQuantity, 2).as("quantity_sply"));
 
         select.groupBy(target.col("barcode"),
                 target.col("sales_year"),
                 target.col("sales_month"));
 
-        String sql = select.toSql(new DefaultExpressionContext(DatabaseType.MySQL));
-        return null;
+        return select.execute(DatabaseType.MySQL, Product.class);
+    }
+
+    private static String minusMonths(DateTime dateTime, int num) {
+        return dateTime.minusMonths(num).toString(DATE_TIME_TEMPLATE);
+    }
+
+    private static String minusYears(DateTime dateTime, int num) {
+        return dateTime.minusYears(num).toString(DATE_TIME_TEMPLATE);
     }
 
     private static Expression createLPJoinCondition(Select refDataset, Select lpDataset) {
@@ -88,7 +108,7 @@ public class Product {
         return eq(refDataset.col("sales_month"), splyDataset.col("sales_month"));
     }
 
-    private static Select getPeriodProductsSales(String salesBegin, String salesEnd) {
+    private static Select getPeriodSales(String salesBegin, String salesEnd) {
         Order.Table orderTable = Order.asTable();
         OrderLine.Table orderLineTable = OrderLine.asTable();
 
@@ -107,9 +127,5 @@ public class Product {
                 .project(sum(orderLineTable.quantity).as("total_quantity"));
 
         return select;
-    }
-
-    public static void main(String args[]) throws SQLSyntaxException {
-        calProductSPLYAndLP("2020-09-01 00:00:00", "2020-11-30 23:59:59");
     }
 }
