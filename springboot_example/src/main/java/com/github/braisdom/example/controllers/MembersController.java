@@ -4,6 +4,7 @@ import com.github.braisdom.example.RequestObject;
 import com.github.braisdom.example.ResponseObject;
 import com.github.braisdom.example.model.Member;
 import com.github.braisdom.example.model.Order;
+import com.github.braisdom.example.model.Product;
 import com.github.braisdom.objsql.sql.SQLSyntaxException;
 import org.springframework.web.bind.annotation.*;
 

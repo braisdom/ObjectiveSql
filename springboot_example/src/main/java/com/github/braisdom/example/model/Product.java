@@ -41,12 +41,12 @@ public class Product {
      *
      * @return
      */
-    public static List<Product> calProductSPLYAndLP(String calBegin, String calEnd) throws SQLSyntaxException, SQLException {
-        DateTime begin = DateTime.parse(calBegin, DATE_TIME_FORMATTER);
-        DateTime end = DateTime.parse(calEnd, DATE_TIME_FORMATTER);
+    public static List<Product> calProductSPLYAndLP(String rawBegin, String rawEnd) throws SQLSyntaxException, SQLException {
+        DateTime begin = DateTime.parse(rawBegin + " 00:00:00", DATE_TIME_FORMATTER);
+        DateTime end = DateTime.parse(rawEnd + " 23:59:59", DATE_TIME_FORMATTER);
 
         // Creating dataset of target, last period and same period last year
-        Select target = createPeriodSales(calBegin, calEnd);
+        Select target = createPeriodSales(rawBegin, rawEnd);
         Select lp = createPeriodSales(minusMonths(begin, 1), minusMonths(end, 1));
         Select sply = createPeriodSales(minusYears(begin, 1), minusYears(end, 1));
 
