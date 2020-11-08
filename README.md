@@ -37,12 +37,29 @@ Member.query("id > ?", 8);
 Member.queryAll();
 ...
 ```
+
 #### The relation query
 
 ```java
 Member.queryAll(1, Member.HAS_MANY_ORDERS);
 Member.queryPrimary(1, Member.HAS_MANY_ORDERS);
 Member.queryByName("demo", Member.HAS_MANY_ORDERS);
+```
+
+### Solutions for complex SQL programming
+
+```java
+Order.Table orderTable = Order.asTable();
+Select select = new Select();
+
+select.project(sum(orderTable.amount) / sum(orderTable.quantity) * $(100) )
+    .from(orderTable)
+    .groupBy(orderTable.productId);
+```
+生成的SQL 如下：
+```sql
+SELECT SUM(order.amount) / SUM(order.quantity)  * 100
+      FROM orders AS order GROUP BY order.produc_id
 ```
 
 ### Guides/[中文](http://www.objsql.com/)
