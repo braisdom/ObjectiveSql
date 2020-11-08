@@ -44,6 +44,7 @@ Member.queryAll();
 Member.queryAll(1, Member.HAS_MANY_ORDERS);
 Member.queryPrimary(1, Member.HAS_MANY_ORDERS);
 Member.queryByName("demo", Member.HAS_MANY_ORDERS);
+...
 ```
 
 ### Solutions for complex SQL programming
@@ -56,7 +57,7 @@ select.project(sum(orderTable.amount) / sum(orderTable.quantity) * $(100) )
     .from(orderTable)
     .groupBy(orderTable.productId);
 ```
-生成的SQL 如下：
+Generated SQL below：
 ```sql
 SELECT SUM(order.amount) / SUM(order.quantity)  * 100
       FROM orders AS order GROUP BY order.produc_id
