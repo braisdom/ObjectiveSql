@@ -35,8 +35,8 @@ public class Product {
     /**
      * Calculate LPLY and LP of products sales for a while.
      * <p>
-     * SPLY: it means Same Period Last Year
-     * LP: it means Last Period
+     * <b>SPLY:</b> it means Same Period Last Year <br/>
+     * <b>LP:</b> it means Last Period
      * </p>
      *
      * @return
