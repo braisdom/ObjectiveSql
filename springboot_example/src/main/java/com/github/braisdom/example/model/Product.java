@@ -71,8 +71,8 @@ public class Product {
                 .project(format(lpAmount, 2).as("amount_lp"))
                 .project(format(lpOrderCount, 2).as("order_count_lp"))
                 .project(format(lpQuantity, 2).as("quantity_lp"))
-                .project(format(splyAmount, 2).as("quantity_sply"))
-                .project(format(splyOrderCount, 2).as("quantity_sply"))
+                .project(format(splyAmount, 2).as("amount_sply"))
+                .project(format(splyOrderCount, 2).as("order_count_sply"))
                 .project(format(splyQuantity, 2).as("quantity_sply"));
 
         select.groupBy(target.col("barcode"),
