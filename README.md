@@ -1,14 +1,14 @@
 ObjectiveSQL is an ORM framework in Java base on ActiveRecord pattern, which encourages rapid development and clean, codes with the least, and convention over configuration.
 
 
-### Features
+### 1 Features
 
 - Dynamic code generation with JSR 269 for Java API of database access
 - Full Java API of database access without coding
 - Object-oriented SQL programming for complex SQL in Java
 
-### Solutions for simple SQL programming
-#### Defining domain models only
+### 2 Solutions for simple SQL programming
+#### 2.1 Defining domain models only
 
 ```java
 @DomainModel
@@ -26,7 +26,7 @@ public class Member {
 }
 ```
 
-#### Query&Update methods 
+#### 2.2 Query&Update methods 
 
 ```java
 Member.countAll();
@@ -38,7 +38,7 @@ Member.queryAll();
 ...
 ```
 
-#### The relation query
+#### 2.3 The relation query
 
 ```java
 Member.queryAll(1, Member.HAS_MANY_ORDERS);
@@ -47,7 +47,7 @@ Member.queryByName("demo", Member.HAS_MANY_ORDERS);
 ...
 ```
 
-### Solutions for complex SQL programming
+### 3 Solutions for complex SQL programming
 
 ```java
 Order.Table orderTable = Order.asTable();
@@ -63,7 +63,7 @@ SELECT SUM(order.amount) / SUM(order.quantity)  * 100
       FROM orders AS order GROUP BY order.produc_id
 ```
 
-### Guides/[中文](http://www.objsql.com/)
+### 4 Guides/[中文](http://www.objsql.com/)
 
 If you are using Maven just add the following dependency to your pom.xml:
 
