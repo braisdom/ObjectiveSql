@@ -7,9 +7,8 @@ ObjectiveSQL is an ORM framework in Java base on ActiveRecord pattern, which enc
 - Full Java API of database access without coding
 - Object-oriented SQL programming for complex SQL in Java
 
-[![](http://img.youtube.com/vi/Domd3uvTMlw/0.jpg)](http://www.youtube.com/watch?v=Domd3uvTMlw "ObjectiveSQL Introduction")
-
-### Defining domain models only
+### Solutions for simple SQL programming
+#### Defining domain models only
 
 ```java
 @DomainModel
@@ -27,42 +26,17 @@ public class Member {
 }
 ```
 
-### You will have an amazing experience
-
 #### Query&Update methods 
 
 ```java
-Member member = Member.queryByPrimaryKey(11);
-```
-
-```java
-Member member = Member.queryFirst("id = ?", 11);
-```
-
-```java
-List<Member> members = Member.query("id > ?", 8);
-```
-
-```java
-List<Member> members = Member.queryAll();
-```
-
-```java
-int count = Member.count("id > ?", 10);
-```
-
-```java
-Member.destory(1);
-```
-
-```java
-Member.destory("id = ?", 1);
-```
-
-```java
+Member.countAll();
+Member.count("id > ?", 10);
+Member.queryByPrimaryKey(11);
+Member.queryFirst("id = ?", 11);
+Member.query("id > ?", 8);
+Member.queryAll();
 ...
 ```
-
 #### The relation query
 
 ```java
