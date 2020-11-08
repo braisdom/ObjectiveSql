@@ -40,13 +40,9 @@ Member.queryAll();
 #### The relation query
 
 ```java
-Member member = Member.queryPrimary(1, Member.HAS_MANY_ORDERS);
-List<Order> orders = member.getOrders();
-```
-
-```java
-Member member = Member.queryByName("demo", Member.HAS_MANY_ORDERS);
-List<Order> orders = member.getOrders();
+Member.queryAll(1, Member.HAS_MANY_ORDERS);
+Member.queryPrimary(1, Member.HAS_MANY_ORDERS);
+Member.queryByName("demo", Member.HAS_MANY_ORDERS);
 ```
 
 ### Guides/[中文](http://www.objsql.com/)
