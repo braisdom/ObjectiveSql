@@ -1,15 +1,14 @@
 ObjectiveSQL is an ORM framework in Java base on ActiveRecord pattern, which encourages rapid development and clean, codes with the least, and convention over configuration.
 
 
-### Features
+### 1 Features
 
 - Dynamic code generation with JSR 269 for Java API of database access
 - Full Java API of database access without coding
 - Object-oriented SQL programming for complex SQL in Java
 
-[![](http://img.youtube.com/vi/Domd3uvTMlw/0.jpg)](http://www.youtube.com/watch?v=Domd3uvTMlw "ObjectiveSQL Introduction")
-
-### Defining domain models only
+### 2 Solutions for simple SQL programming
+#### 2.1 Defining domain models only
 
 ```java
 @DomainModel
@@ -27,55 +26,44 @@ public class Member {
 }
 ```
 
-### You will have an amazing experience
-
-#### Query&Update methods 
+#### 2.2 Query&Update methods 
 
 ```java
-Member member = Member.queryByPrimaryKey(11);
-```
-
-```java
-Member member = Member.queryFirst("id = ?", 11);
-```
-
-```java
-List<Member> members = Member.query("id > ?", 8);
-```
-
-```java
-List<Member> members = Member.queryAll();
-```
-
-```java
-int count = Member.count("id > ?", 10);
-```
-
-```java
-Member.destory(1);
-```
-
-```java
-Member.destory("id = ?", 1);
-```
-
-```java
+Member.countAll();
+Member.count("id > ?", 10);
+Member.queryByPrimaryKey(11);
+Member.queryFirst("id = ?", 11);
+Member.query("id > ?", 8);
+Member.queryAll();
 ...
 ```
 
-#### The relation query
+#### 2.3 The relation query
 
 ```java
-Member member = Member.queryPrimary(1, Member.HAS_MANY_ORDERS);
-List<Order> orders = member.getOrders();
+Member.queryAll(Member.HAS_MANY_ORDERS);
+Member.queryPrimary(1, Member.HAS_MANY_ORDERS);
+Member.queryByName("demo", Member.HAS_MANY_ORDERS);
+...
 ```
+
+### 3 Solutions for complex SQL programming
 
 ```java
-Member member = Member.queryByName("demo", Member.HAS_MANY_ORDERS);
-List<Order> orders = member.getOrders();
+Order.Table orderTable = Order.asTable();
+Select select = new Select();
+
+select.project(sum(orderTable.amount) / sum(orderTable.quantity) * $(100) )
+    .from(orderTable)
+    .groupBy(orderTable.productId);
+```
+Generated SQL below：
+```sql
+SELECT SUM(order.amount) / SUM(order.quantity)  * 100
+      FROM orders AS order GROUP BY order.produc_id
 ```
 
-### Guides/[中文](http://www.objsql.com/)
+### 4 Guides/[中文](http://www.objsql.com/)
 
 If you are using Maven just add the following dependency to your pom.xml:
 
@@ -83,7 +71,7 @@ If you are using Maven just add the following dependency to your pom.xml:
 <dependency>
     <groupId>com.github.braisdom</groupId>
     <artifactId>objective-sql</artifactId>
-    <version>1.3.5</version>
+    <version>1.3.6</version>
 </dependency>
 ```
 
