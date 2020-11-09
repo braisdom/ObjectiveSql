@@ -61,9 +61,9 @@ public class Product {
         Expression lpQuantity = createLPExpr(target, lp, "total_quantity");
 
         // Create calculation expression of same period last year
-        Expression splyAmount = createSPLYExpr(target, lp, "total_amount");
-        Expression splyOrderCount = createSPLYExpr(target, lp, "order_count");
-        Expression splyQuantity = createSPLYExpr(target, lp, "total_quantity");
+        Expression splyAmount = createSPLYExpr(target, sply, "total_amount");
+        Expression splyOrderCount = createSPLYExpr(target, sply, "order_count");
+        Expression splyQuantity = createSPLYExpr(target, sply, "total_quantity");
 
         select.project(target.col("barcode"))
                 .project(target.col("sales_year"))
