@@ -41,7 +41,7 @@ Member.queryAll();
 #### 2.3 The relation query
 
 ```java
-Member.queryAll(1, Member.HAS_MANY_ORDERS);
+Member.queryAll(Member.HAS_MANY_ORDERS);
 Member.queryPrimary(1, Member.HAS_MANY_ORDERS);
 Member.queryByName("demo", Member.HAS_MANY_ORDERS);
 ...
