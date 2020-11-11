@@ -25,8 +25,8 @@ public class CaseExpression extends AbstractExpression {
         this.whenExprPairs = new ArrayList<>();
     }
 
-    public CaseExpression when(Expression compareValueExpr, Expression thenExpr) {
-        whenExprPairs.add(new Pair<>(compareValueExpr, thenExpr));
+    public CaseExpression when(Expression logicExpr, Expression thenExpr) {
+        whenExprPairs.add(new Pair<>(logicExpr, thenExpr));
         return this;
     }
 
