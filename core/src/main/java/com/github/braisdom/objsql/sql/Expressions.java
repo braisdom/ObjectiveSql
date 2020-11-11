@@ -89,6 +89,18 @@ public class Expressions {
         return new LiteralExpression(integer);
     }
 
+    public static Expression $(Short integer) {
+        return new LiteralExpression(integer);
+    }
+
+    public static Expression $(Long integer) {
+        return new LiteralExpression(integer);
+    }
+
+    public static Expression $(Byte integer) {
+        return new LiteralExpression(integer);
+    }
+
     public static Expression $(Float floatLiteral) {
         return new LiteralExpression(floatLiteral);
     }
