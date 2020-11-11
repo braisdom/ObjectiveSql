@@ -16,12 +16,9 @@
  */
 package com.github.braisdom.objsql.sql;
 
-import com.github.braisdom.objsql.sql.Expression;
 import com.github.braisdom.objsql.sql.expression.LiteralExpression;
 import com.github.braisdom.objsql.sql.expression.ParenExpression;
 import com.github.braisdom.objsql.sql.expression.PolynaryExpression;
-
-import java.sql.Timestamp;
 
 public class Expressions {
 
@@ -49,16 +46,12 @@ public class Expressions {
         return new PolynaryExpression(PolynaryExpression.DIVIDE, left, right, others);
     }
 
-    public static Expression and(Expression left, Expression right, Expression... others) {
-        return new PolynaryExpression(PolynaryExpression.AND, left, right, others);
-    }
-
     public static Expression eq(Expression left, Expression right) {
         return new PolynaryExpression(PolynaryExpression.EQ, left, right);
     }
 
-    public static Expression eq(Expression left, String right) {
-        return new PolynaryExpression(PolynaryExpression.EQ, left, new LiteralExpression(right));
+    public static Expression and(Expression left, Expression right, Expression... others) {
+        return new PolynaryExpression(PolynaryExpression.AND, left, right, others);
     }
 
     public static Expression or(Expression left, Expression right, Expression... others) {

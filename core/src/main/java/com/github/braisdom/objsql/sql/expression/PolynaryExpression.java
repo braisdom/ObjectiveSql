@@ -16,17 +16,14 @@
  */
 package com.github.braisdom.objsql.sql.expression;
 
-import com.github.braisdom.objsql.sql.AbstractExpression;
-import com.github.braisdom.objsql.sql.Expression;
-import com.github.braisdom.objsql.sql.ExpressionContext;
-import com.github.braisdom.objsql.sql.SQLSyntaxException;
+import com.github.braisdom.objsql.sql.*;
 import com.github.braisdom.objsql.util.FunctionWithThrowable;
 import com.github.braisdom.objsql.util.SuppressedException;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class PolynaryExpression extends AbstractExpression {
+public class PolynaryExpression extends AbstractExpression implements LogicalExpression {
 
     public static final String PLUS = " + ";
     public static final String MINUS = " - ";
@@ -44,11 +41,11 @@ public class PolynaryExpression extends AbstractExpression {
     public static final String EQ = " = ";
 
     private final String operator;
-    private final Expression left;
-    private final Expression right;
-    private final Expression[] others;
+    private final Sqlizable left;
+    private final Sqlizable right;
+    private final Sqlizable[] others;
 
-    public PolynaryExpression(String operator, Expression left, Expression right, Expression... others) {
+    public PolynaryExpression(String operator, Sqlizable left, Sqlizable right, Sqlizable... others) {
         this.operator = operator;
         this.left = left;
         this.right = right;
@@ -56,9 +53,19 @@ public class PolynaryExpression extends AbstractExpression {
     }
 
     @Override
+    public LogicalExpression and(LogicalExpression logicalExpression) {
+        return new PolynaryExpression(AND, this, logicalExpression);
+    }
+
+    @Override
+    public LogicalExpression or(LogicalExpression logicalExpression) {
+        return new PolynaryExpression(OR, this, logicalExpression);
+    }
+
+    @Override
     public String toSql(ExpressionContext expressionContext) throws SQLSyntaxException {
         try {
-            List<Expression> expressions = Arrays.asList(new Expression[]{left, right});
+            List<Sqlizable> expressions = Arrays.asList(new Sqlizable[]{left, right});
             expressions.addAll(Arrays.asList(others));
 
             String[] expressionStrings = expressions.stream()

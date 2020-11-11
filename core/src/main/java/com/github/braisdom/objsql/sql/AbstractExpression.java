@@ -58,6 +58,36 @@ public abstract class AbstractExpression implements Expression {
         return new ParenExpression(new PolynaryExpression(PolynaryExpression.REM, this, expression));
     }
 
+    @Override
+    public LogicalExpression lt(Expression expression) {
+        return new PolynaryExpression(PolynaryExpression.LT, this, expression);
+    }
+
+    @Override
+    public LogicalExpression gt(Expression expression) {
+        return new PolynaryExpression(PolynaryExpression.GT, this, expression);
+    }
+
+    @Override
+    public LogicalExpression eq(Expression expression) {
+        return new PolynaryExpression(PolynaryExpression.EQ, this, expression);
+    }
+
+    @Override
+    public LogicalExpression le(Expression expression) {
+        return new PolynaryExpression(PolynaryExpression.LE, this, expression);
+    }
+
+    @Override
+    public LogicalExpression ge(Expression expression) {
+        return new PolynaryExpression(PolynaryExpression.GE, this, expression);
+    }
+
+    @Override
+    public LogicalExpression ne(Expression expression) {
+        return new PolynaryExpression(PolynaryExpression.NE, this, expression);
+    }
+
     protected void setAlias(String alias) {
         this.alias = alias;
     }

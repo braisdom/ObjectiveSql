@@ -23,139 +23,139 @@ import static com.github.braisdom.objsql.sql.Expressions.$;
  * or a function call of SQL, and it will generate a SQL expression in
  * the statement.
  */
-public interface Expression extends Sqlizable {
+public interface Expression extends Sqlizable, ComparableExpression {
 
     Expression as(String alias);
 
     String getAlias();
 
-    Expression plus(Expression expression);
+    Expression plus(Expression Expression);
 
-    default Expression plus(byte literal) {
+    default Expression plus(Byte literal) {
         return plus($(literal));
     }
 
-    default Expression plus(short literal) {
+    default Expression plus(Short literal) {
         return plus($(literal));
     }
 
-    default Expression plus(int literal) {
+    default Expression plus(Integer literal) {
         return plus($(literal));
     }
 
-    default Expression plus(long literal) {
+    default Expression plus(Long literal) {
         return plus($(literal));
     }
 
-    default Expression plus(float literal) {
+    default Expression plus(Float literal) {
         return plus($(literal));
     }
 
-    default Expression plus(double literal) {
+    default Expression plus(Double literal) {
         return plus($(literal));
     }
 
-    Expression minus(Expression expression);
+    Expression minus(Expression Expression);
 
-    default Expression minus(byte literal) {
+    default Expression minus(Byte literal) {
         return minus($(literal));
     }
 
-    default Expression minus(short literal) {
+    default Expression minus(Short literal) {
         return minus($(literal));
     }
 
-    default Expression minus(int literal) {
+    default Expression minus(Integer literal) {
         return minus($(literal));
     }
 
-    default Expression minus(long literal) {
+    default Expression minus(Long literal) {
         return minus($(literal));
     }
 
-    default Expression minus(float literal) {
+    default Expression minus(Float literal) {
         return minus($(literal));
     }
 
-    default Expression minus(double literal) {
+    default Expression minus(Double literal) {
         return minus($(literal));
     }
 
-    Expression times(Expression expression);
+    Expression times(Expression Expression);
 
-    default Expression times(byte literal) {
+    default Expression times(Byte literal) {
         return times($(literal));
     }
 
-    default Expression times(short literal) {
+    default Expression times(Short literal) {
         return times($(literal));
     }
 
-    default Expression times(int literal) {
+    default Expression times(Integer literal) {
         return times($(literal));
     }
 
-    default Expression times(long literal) {
+    default Expression times(Long literal) {
         return times($(literal));
     }
 
-    default Expression times(float literal) {
+    default Expression times(Float literal) {
         return times($(literal));
     }
 
-    default Expression times(double literal) {
+    default Expression times(Double literal) {
         return times($(literal));
     }
 
-    Expression div(Expression expression);
+    Expression div(Expression Expression);
 
-    default Expression div(byte literal) {
+    default Expression div(Byte literal) {
         return div($(literal));
     }
 
-    default Expression div(short literal) {
+    default Expression div(Short literal) {
         return div($(literal));
     }
 
-    default Expression div(int literal) {
+    default Expression div(Integer literal) {
         return div($(literal));
     }
 
-    default Expression div(long literal) {
+    default Expression div(Long literal) {
         return div($(literal));
     }
 
-    default Expression div(float literal) {
+    default Expression div(Float literal) {
         return div($(literal));
     }
 
-    default Expression div(double literal) {
+    default Expression div(Double literal) {
         return div($(literal));
     }
 
-    Expression rem(Expression expression);
+    Expression rem(Expression Expression);
 
-    default Expression rem(byte literal) {
+    default Expression rem(Byte literal) {
         return rem($(literal));
     }
 
-    default Expression rem(short literal) {
+    default Expression rem(Short literal) {
         return rem($(literal));
     }
 
-    default Expression rem(int literal) {
+    default Expression rem(Integer literal) {
         return rem($(literal));
     }
 
-    default Expression rem(long literal) {
+    default Expression rem(Long literal) {
         return rem($(literal));
     }
 
-    default Expression rem(float literal) {
+    default Expression rem(Float literal) {
         return rem($(literal));
     }
 
-    default Expression rem(double literal) {
+    default Expression rem(Double literal) {
         return rem($(literal));
     }
 }

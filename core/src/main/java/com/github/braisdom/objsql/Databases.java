@@ -26,7 +26,7 @@ import java.util.Objects;
 import java.util.logging.Level;
 
 /**
- * This class consists exclusively of static methods that operate of behavior of database.
+ * This class consists exclusively of utility methods that operate of behavior of database.
  * and the extension point for application.
  */
 @SuppressWarnings("ALL")

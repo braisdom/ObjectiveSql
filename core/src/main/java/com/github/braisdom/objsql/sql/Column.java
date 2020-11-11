@@ -30,68 +30,6 @@ public interface Column extends Expression {
 
     Expression isNotNull();
 
-    Expression lt(Expression expr);
-
-    Expression lt(Integer literal);
-
-    Expression lt(Float literal);
-
-    Expression lt(Double literal);
-
-    Expression gt(Expression expr);
-
-    Expression gt(Integer literal);
-
-    Expression gt(Float literal);
-
-    Expression gt(Double literal);
-
-    Expression eq(Expression expr);
-
-    Expression eq(Integer literal);
-
-    Expression eq(Float literal);
-
-    Expression eq(Double literal);
-
-    Expression eq(String literal);
-
-    Expression le(Expression expr);
-
-    Expression le(Integer literal);
-
-    Expression le(Float literal);
-
-    Expression le(Double literal);
-
-    Expression ge(Expression expr);
-
-    Expression ge(Integer literal);
-
-    Expression ge(Float literal);
-
-    Expression ge(Double literal);
-
-    Expression ne(Expression expr);
-
-    Expression ne(Integer literal);
-
-    Expression ne(Float literal);
-
-    Expression ne(Double literal);
-
-    Expression ne(String literal);
-
-    Expression ne2(Expression expr);
-
-    Expression ne2(Integer literal);
-
-    Expression ne2(Float literal);
-
-    Expression ne2(Double literal);
-
-    Expression ne2(String literal);
-
     Expression in(Expression... expressions);
 
     Expression in(String... strLiterals);
