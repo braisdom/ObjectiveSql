@@ -46,11 +46,11 @@ public class Expressions {
         return new PolynaryExpression(PolynaryExpression.DIVIDE, left, right, others);
     }
 
-    public static Expression eq(Expression left, Expression right) {
+    public static LogicalExpression eq(Expression left, Expression right) {
         return new PolynaryExpression(PolynaryExpression.EQ, left, right);
     }
 
-    public static Expression and(Expression left, Expression right, Expression... others) {
+    public static LogicalExpression and(Expression left, Expression right, Expression... others) {
         return new PolynaryExpression(PolynaryExpression.AND, left, right, others);
     }
 

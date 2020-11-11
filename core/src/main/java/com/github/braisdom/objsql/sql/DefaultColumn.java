@@ -19,10 +19,13 @@ package com.github.braisdom.objsql.sql;
 import com.github.braisdom.objsql.Tables;
 import com.github.braisdom.objsql.sql.expression.*;
 import com.github.braisdom.objsql.util.StringUtil;
+import sun.tools.jstat.ExpressionExecuter;
 
 import javax.validation.constraints.NotNull;
 import java.util.Arrays;
 import java.util.Objects;
+
+import static com.github.braisdom.objsql.sql.Expressions.$;
 
 public class DefaultColumn extends AbstractExpression implements Column {
 
@@ -53,109 +56,52 @@ public class DefaultColumn extends AbstractExpression implements Column {
     }
 
     @Override
-    public Expression isNull() {
+    public LogicalExpression isNull() {
         return new ColumnExpression(this, new PlainExpression(" IS NULL "));
     }
 
     @Override
-    public Expression isNotNull() {
+    public LogicalExpression isNotNull() {
         return new ColumnExpression(this, new PlainExpression(" IS NOT NULL "));
     }
     @Override
-    public Expression in(Expression... expressions) {
+    public LogicalExpression in(Expression... expressions) {
         return new ColumnExpression(this, new InExpression(false, expressions));
     }
 
     @Override
-    public Expression in(Dataset dataset) {
+    public LogicalExpression in(Dataset dataset) {
         return new ColumnExpression(this, new InExpression(false, dataset));
     }
 
     @Override
-    public Expression notIn(Expression... expressions) {
+    public LogicalExpression notIn(Expression... expressions) {
         return new ColumnExpression(this, new InExpression(true, expressions));
     }
 
     @Override
-    public Expression notIn(Dataset dataset) {
+    public LogicalExpression notIn(Dataset dataset) {
         return new ColumnExpression(this, new InExpression(true, dataset));
     }
 
     @Override
-    public Expression between(Expression left, Expression right) {
+    public LogicalExpression between(Expression left, Expression right) {
         return new ColumnExpression(this, new BetweenExpression(false, left, right));
     }
 
     @Override
-    public Expression in(String... strLiterals) {
-        Expression[] expressions = Arrays.stream(strLiterals)
-                .map(literal -> new LiteralExpression(literal)).toArray(Expression[]::new);
-        return new ColumnExpression(this, new InExpression(false, expressions));
-    }
-
-    @Override
-    public Expression in(Integer... intLiterals) {
-        Expression[] expressions = Arrays.stream(intLiterals)
-                .map(literal -> new LiteralExpression(literal)).toArray(Expression[]::new);
-        return new ColumnExpression(this, new InExpression(false, expressions));
-    }
-
-    @Override
-    public Expression in(Long... longLiterals) {
-        Expression[] expressions = Arrays.stream(longLiterals)
-                .map(literal -> new LiteralExpression(literal)).toArray(Expression[]::new);
-        return new ColumnExpression(this, new InExpression(false, expressions));
-    }
-
-    @Override
-    public Expression notIn(String... strLiterals) {
-        Expression[] expressions = Arrays.stream(strLiterals)
-                .map(literal -> new LiteralExpression(literal)).toArray(Expression[]::new);
-        return new ColumnExpression(this, new InExpression(true, expressions));
-    }
-
-    @Override
-    public Expression notIn(Integer... intLiterals) {
-        Expression[] expressions = Arrays.stream(intLiterals)
-                .map(literal -> new LiteralExpression(literal)).toArray(Expression[]::new);
-        return new ColumnExpression(this, new InExpression(true, expressions));
-    }
-
-    @Override
-    public Expression notIn(Long... longLiterals) {
-        Expression[] expressions = Arrays.stream(longLiterals)
-                .map(literal -> new LiteralExpression(literal)).toArray(Expression[]::new);
-        return new ColumnExpression(this, new InExpression(true, expressions));
-    }
-
-    @Override
-    public Expression notBetween(Expression left, Expression right) {
+    public LogicalExpression notBetween(Expression left, Expression right) {
         return new ColumnExpression(this, new BetweenExpression(true, left, right));
     }
 
     @Override
-    public Expression between(Integer left, Integer right) {
-        return between(new LiteralExpression(left), new LiteralExpression(right));
+    public LogicalExpression like(Expression expression) {
+        return new LikeException(false, this, expression);
     }
 
     @Override
-    public Expression notBetween(Integer left, Integer right) {
-        return notBetween(new LiteralExpression(left), new LiteralExpression(right));
-    }
-
-    @Override
-    public Expression between(Long left, Long right) {
-        return between(new LiteralExpression(left), new LiteralExpression(right));
-    }
-
-    @Override
-    public Expression notBetween(Long left, Long right) {
-        return notBetween(new LiteralExpression(left), new LiteralExpression(right));
-    }
-
-    @Override
-    public Expression like(String str) {
-        return new ColumnExpression(this, new LiteralExpression(str));
+    public LogicalExpression notLike(Expression expression) {
+        return new LikeException(true, this, expression);
     }
 
     @Override

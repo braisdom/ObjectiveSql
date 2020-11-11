@@ -30,7 +30,7 @@ public class Select<T> extends AbstractExpression implements Dataset {
     protected List<Expression> projections = new ArrayList<>();
     protected Map<String, Expression> projectionMaps = new HashMap<>();
     protected Dataset[] fromDatasets;
-    protected Expression whereExpression;
+    protected LogicalExpression whereExpression;
     protected List<JoinExpression> joinExpressions = new ArrayList<>();
     protected Expression[] groupByExpressions;
     protected Expression havingExpression;
@@ -79,27 +79,27 @@ public class Select<T> extends AbstractExpression implements Dataset {
         return this;
     }
 
-    public Select where(Expression expression) {
+    public Select where(LogicalExpression expression) {
         this.whereExpression = expression;
         return this;
     }
 
-    public Select leftOuterJoin(Dataset dataset, Expression onExpression) {
+    public Select leftOuterJoin(Dataset dataset, LogicalExpression onExpression) {
         this.joinExpressions.add(new JoinExpression(JoinExpression.LEFT_OUTER_JOIN, dataset, onExpression));
         return this;
     }
 
-    public Select rightOuterJoin(Dataset dataset, Expression onExpression) {
+    public Select rightOuterJoin(Dataset dataset, LogicalExpression onExpression) {
         this.joinExpressions.add(new JoinExpression(JoinExpression.RIGHT_OUTER_JOIN, dataset, onExpression));
         return this;
     }
 
-    public Select innerJoin(Dataset dataset, Expression onExpression) {
+    public Select innerJoin(Dataset dataset, LogicalExpression onExpression) {
         this.joinExpressions.add(new JoinExpression(JoinExpression.INNER_JOIN, dataset, onExpression));
         return this;
     }
 
-    public Select fullJoin(Dataset dataset, Expression onExpression) {
+    public Select fullJoin(Dataset dataset, LogicalExpression onExpression) {
         this.joinExpressions.add(new JoinExpression(JoinExpression.FULL_JOIN, dataset, onExpression));
         return this;
     }

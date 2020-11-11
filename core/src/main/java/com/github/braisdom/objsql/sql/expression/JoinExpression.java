@@ -28,9 +28,9 @@ public class JoinExpression extends AbstractExpression {
 
     public final int joinType;
     public final Dataset dataset;
-    public final Expression onExpression;
+    public final LogicalExpression onExpression;
 
-    public JoinExpression(int joinType, Dataset dataset, Expression onExpression) {
+    public JoinExpression(int joinType, Dataset dataset, LogicalExpression onExpression) {
         Objects.requireNonNull(dataset, "The dataset cannot be null");
         Objects.requireNonNull(onExpression, "The onExpression cannot be null");
         this.joinType = joinType;

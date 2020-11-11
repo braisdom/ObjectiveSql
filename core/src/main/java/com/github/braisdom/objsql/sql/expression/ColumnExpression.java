@@ -18,7 +18,7 @@ package com.github.braisdom.objsql.sql.expression;
 
 import com.github.braisdom.objsql.sql.*;
 
-public class ColumnExpression extends AbstractExpression {
+public class ColumnExpression extends AbstractExpression implements LogicalExpression{
 
     private final Column column;
     private final Expression expression;
@@ -31,5 +31,15 @@ public class ColumnExpression extends AbstractExpression {
     @Override
     public String toSql(ExpressionContext expressionContext) throws SQLSyntaxException {
         return String.format(" %s %s ", column.toSql(expressionContext), expression.toSql(expressionContext));
+    }
+
+    @Override
+    public LogicalExpression and(LogicalExpression logicalExpression) {
+        return new PolynaryExpression(PolynaryExpression.AND, this, logicalExpression);
+    }
+
+    @Override
+    public LogicalExpression or(LogicalExpression logicalExpression) {
+        return new PolynaryExpression(PolynaryExpression.OR, this, logicalExpression);
     }
 }
