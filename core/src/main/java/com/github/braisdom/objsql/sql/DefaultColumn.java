@@ -122,8 +122,8 @@ public class DefaultColumn extends AbstractExpression implements Column {
         String tableAlias = expressionContext.getAlias(dataset, true);
         String columnAlias = getAlias();
         return String.format("%s.%s %s",
-                expressionContext.quoteTable(tableAlias), expressionContext.quoteColumn(columnName),
-                columnAlias == null ? "" : " AS " + expressionContext.quoteColumn(columnAlias));
+                expressionContext.quoteTable(tableAlias), expressionContext.quoteColumn(columnName).trim(),
+                columnAlias == null ? "" : "AS " + expressionContext.quoteColumn(columnAlias).trim());
     }
 
     protected Dataset getDataset() {

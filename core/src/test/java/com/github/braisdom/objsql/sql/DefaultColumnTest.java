@@ -62,6 +62,16 @@ public class DefaultColumnTest {
         Assertions.assertEquals(column.notLike("%abc%").toSql(mysqlContext).trim(), "`T0`.`test_field` NOT LIKE '%abc%'".trim());
     }
 
+    @Test
+    public void testAs() throws SQLSyntaxException {
+        Dataset dataset = mock(Dataset.class);
+        DefaultExpressionContext mysqlContext = new DefaultExpressionContext(DatabaseType.MySQL);
+        DefaultColumn column = new DefaultColumn(DemoTable.class, dataset, "testField");
+
+        Assertions.assertEquals(column.as("ABC").toSql(mysqlContext).trim(), "`T0`.`test_field` AS `ABC`".trim());
+
+    }
+
     @DomainModel
     private static class DemoTable {
         private String testField;
