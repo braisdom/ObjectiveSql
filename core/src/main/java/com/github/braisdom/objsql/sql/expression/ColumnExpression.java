@@ -30,7 +30,8 @@ public class ColumnExpression extends AbstractExpression implements LogicalExpre
 
     @Override
     public String toSql(ExpressionContext expressionContext) throws SQLSyntaxException {
-        return String.format(" %s %s ", column.toSql(expressionContext), expression.toSql(expressionContext));
+        return String.format(" %s %s ", column.toSql(expressionContext).trim(),
+                expression.toSql(expressionContext).trim());
     }
 
     @Override

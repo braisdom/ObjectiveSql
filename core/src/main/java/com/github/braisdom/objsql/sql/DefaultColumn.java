@@ -64,6 +64,7 @@ public class DefaultColumn extends AbstractExpression implements Column {
     public LogicalExpression isNotNull() {
         return new ColumnExpression(this, new PlainExpression(" IS NOT NULL "));
     }
+
     @Override
     public LogicalExpression in(Expression... expressions) {
         return new ColumnExpression(this, new InExpression(false, expressions));
