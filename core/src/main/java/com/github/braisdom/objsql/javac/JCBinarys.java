@@ -121,6 +121,14 @@ public class JCBinarys {
         return lhs + rhs;
     }
 
+    public static double plus(double lhs, float rhs) {
+        return lhs + rhs;
+    }
+
+    public static double plus(float lhs, double rhs) {
+        return lhs + rhs;
+    }
+
     public static Expression plus(Expression lhs, Expression rhs) {
         return lhs.plus(rhs);
     }
@@ -234,7 +242,15 @@ public class JCBinarys {
         return lhs - rhs;
     }
 
-    public static double minus(double lhs, double rhs) {
+    public static float minus(double lhs, double rhs) {
+        return (float) (lhs - rhs);
+    }
+
+    public static double minus(double lhs, float rhs) {
+        return lhs - rhs;
+    }
+
+    public static double minus(float lhs, double rhs) {
         return lhs - rhs;
     }
 
@@ -355,6 +371,14 @@ public class JCBinarys {
         return lhs * rhs;
     }
 
+    public static double times(float lhs, double rhs) {
+        return lhs * rhs;
+    }
+
+    public static double times(double lhs, float rhs) {
+        return lhs * rhs;
+    }
+
     public static Expression times(Expression lhs, Expression rhs) {
         return lhs.times(rhs);
     }
@@ -469,6 +493,14 @@ public class JCBinarys {
     }
 
     public static double div(double lhs, double rhs) {
+        return lhs / rhs;
+    }
+
+    public static double div(float lhs, double rhs) {
+        return lhs / rhs;
+    }
+
+    public static double div(double lhs, float rhs) {
         return lhs / rhs;
     }
 
@@ -589,6 +621,14 @@ public class JCBinarys {
         return lhs % rhs;
     }
 
+    public static double rem(float lhs, double rhs) {
+        return lhs % rhs;
+    }
+
+    public static double rem(double lhs, float rhs) {
+        return lhs % rhs;
+    }
+
     public static Expression rem(Expression lhs, Expression rhs) {
         return lhs.rem(rhs);
     }
@@ -703,6 +743,14 @@ public class JCBinarys {
     }
 
     public static boolean lt(double lhs, double rhs) {
+        return lhs < rhs;
+    }
+
+    public static boolean lt(float lhs, double rhs) {
+        return lhs < rhs;
+    }
+
+    public static boolean lt(double lhs, float rhs) {
         return lhs < rhs;
     }
 
@@ -1168,7 +1216,7 @@ public class JCBinarys {
                 JCExpression rhs2 = createOperatorExpr(aptBuilder, binary.getTag().name(), binary.lhs, binary.rhs);
                 return aptBuilder.staticMethodCall(JCBinarys.class, methodName, realLhs, rhs2);
             } else {
-                realLhs = expression;
+                realRhs = expression;
             }
         }
 
