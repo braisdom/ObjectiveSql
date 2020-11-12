@@ -195,4 +195,50 @@ public class ArithmeticalExpressionTest {
         Assertions.assertEquals(integerPlus10, 1);
         Assertions.assertEquals(integerPlus11, 1);
     }
+
+    @Test
+    public void testRem() throws SQLSyntaxException {
+        ExpressionContext mysql = new DefaultExpressionContext(DatabaseType.MySQL);
+        Expression numberPlus = $(1) % $(1);
+        Expression numberPlus2 = $(1) % ($(1) + $(1));
+        Expression numberPlus3 = $(1) % 1;
+        Expression numberPlus4 = $(1) % 1L;
+        Expression numberPlus5 = $(1) % (short)1;
+        Expression numberPlus6 = $(1) % (byte)1;
+        Expression numberPlus7 = $(1) % 1.2f;
+        Expression numberPlus8 = $(1) % 1.2d;
+
+        int integerPlus = 1 % 1;
+        long integerPlus2 = 1 % 1L;
+        int integerPlus3 = 1 % (short)1;
+        int integerPlus4 = 1 % (byte)1;
+        Float integerPlus5 = 1.2f % 1f;
+        Double integerPlus6 = 1.2 % 1d;
+        Float integerPlus7 = 1.2f % 1;
+        Double integerPlus8 = 1.2d % 1;
+        long integerPlus9 = 1 % 1L;
+        int integerPlus10 = 1 % (short)1;
+        int integerPlus11 = 1 % (byte)1;
+
+        Assertions.assertEquals(numberPlus.toSql(mysql), "((1 % 1))");
+        Assertions.assertEquals(numberPlus2.toSql(mysql), "((1 % ((1 + 1))))");
+        Assertions.assertEquals(numberPlus3.toSql(mysql), "((1 % 1))");
+        Assertions.assertEquals(numberPlus4.toSql(mysql), "((1 % 1))");
+        Assertions.assertEquals(numberPlus5.toSql(mysql), "((1 % 1))");
+        Assertions.assertEquals(numberPlus6.toSql(mysql), "((1 % 1))");
+        Assertions.assertEquals(numberPlus7.toSql(mysql), "((1 % 1.2))");
+        Assertions.assertEquals(numberPlus8.toSql(mysql), "((1 % 1.2))");
+
+        Assertions.assertEquals(integerPlus, 0);
+        Assertions.assertEquals(integerPlus2, 0);
+        Assertions.assertEquals(integerPlus3, 0);
+        Assertions.assertEquals(integerPlus4, 0);
+        Assertions.assertTrue(integerPlus5 > 0f);
+        Assertions.assertTrue(integerPlus6 > 0d);
+        Assertions.assertTrue(integerPlus7 > 0f);
+        Assertions.assertTrue(integerPlus8 > 0d);
+        Assertions.assertEquals(integerPlus9, 0);
+        Assertions.assertEquals(integerPlus10, 0);
+        Assertions.assertEquals(integerPlus11, 0);
+    }
 }
