@@ -4,6 +4,7 @@ import com.github.braisdom.objsql.DatabaseType;
 import com.github.braisdom.objsql.annotations.DomainModel;
 import com.github.braisdom.objsql.annotations.Queryable;
 import com.github.braisdom.objsql.sql.Expression;
+import com.github.braisdom.objsql.sql.LogicalExpression;
 import com.github.braisdom.objsql.sql.SQLSyntaxException;
 import com.github.braisdom.objsql.sql.Select;
 import org.joda.time.DateTime;
@@ -83,13 +84,13 @@ public class Product {
     }
 
     private static Expression createLPExpr(Select target, Select select, String metricsName) {
-        return (sum(target.col(metricsName))
-                - sum(select.col(metricsName))) / sum(select.col(metricsName)) * $(100);
+        return (sum(target.col(metricsName)) - sum(select.col(metricsName)))
+                / sum(select.col(metricsName)) * $(100);
     }
 
     private static Expression createSPLYExpr(Select target, Select select, String metricsName) {
-        return (sum(target.col(metricsName))
-                - sum(select.col(metricsName))) / sum(select.col(metricsName)) * $(100);
+        return (sum(target.col(metricsName))- sum(select.col(metricsName)))
+                / sum(select.col(metricsName)) * $(100);
     }
 
     private static String minusMonths(DateTime dateTime, int num) {
@@ -100,12 +101,12 @@ public class Product {
         return dateTime.minusYears(num).toString(DATE_TIME_TEMPLATE);
     }
 
-    private static Expression createLPJoinCondition(Select refDataset, Select lpDataset) {
+    private static LogicalExpression createLPJoinCondition(Select refDataset, Select lpDataset) {
         return eq(refDataset.col("sales_month"),
                 plus(lpDataset.col("sales_month"), $(1)));
     }
 
-    private static Expression createSPLYJoinCondition(Select refDataset, Select splyDataset) {
+    private static LogicalExpression createSPLYJoinCondition(Select refDataset, Select splyDataset) {
         return eq(refDataset.col("sales_month"), splyDataset.col("sales_month"));
     }
 

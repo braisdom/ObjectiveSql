@@ -129,14 +129,9 @@
                     <target>8</target>
                     <encoding>UTF-8</encoding>
                     <compilerArgs>
-                        <arg>-Xplugin:Manifold</arg>
+                        <arg>-Xplugin:JavaOO</arg>
                     </compilerArgs>
                     <annotationProcessorPaths>
-                        <path>
-                            <groupId>systems.manifold</groupId>
-                            <artifactId>manifold-ext</artifactId>
-                            <version>2020.1.27</version>
-                        </path>
                         <path>
                             <groupId>com.github.braisdom</groupId>
                             <artifactId>objective-sql</artifactId>
