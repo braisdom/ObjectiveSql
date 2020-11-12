@@ -3,13 +3,12 @@ package com.github.braisdom.objsql.javac;
 import com.github.braisdom.objsql.apt.APTBuilder;
 import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.MethodInvocationTree;
+import com.sun.source.tree.ReturnTree;
 import com.sun.source.tree.VariableTree;
 import com.sun.source.util.*;
 import com.sun.tools.javac.api.BasicJavacTask;
-import com.sun.tools.javac.tree.JCTree.JCBinary;
-import com.sun.tools.javac.tree.JCTree.JCExpression;
-import com.sun.tools.javac.tree.JCTree.JCMethodInvocation;
-import com.sun.tools.javac.tree.JCTree.JCVariableDecl;
+import com.sun.tools.javac.tree.JCTree;
+import com.sun.tools.javac.tree.JCTree.*;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.Context;
 import com.sun.tools.javac.util.List;
@@ -17,19 +16,10 @@ import com.sun.tools.javac.util.ListBuffer;
 import com.sun.tools.javac.util.Names;
 import org.mangosdk.spi.ProviderFor;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
 @ProviderFor(Plugin.class)
 public class JavaOOPlugin implements Plugin {
 
     public static final String NAME = "JavaOO";
-
-    private static Set<String> TARGET_TYPES = new HashSet<>(Arrays.asList(
-            // Use only primitive types for simplicity
-            byte.class.getName(), short.class.getName(), char.class.getName(),
-            int.class.getName(), long.class.getName(), float.class.getName(), double.class.getName()));
 
     @Override
     public String getName() {
@@ -60,12 +50,24 @@ public class JavaOOPlugin implements Plugin {
                             @Override
                             public Void visitVariable(VariableTree node, Void unused) {
                                 JCVariableDecl variableDecl = (JCVariableDecl) node;
-                                if (variableDecl.init instanceof JCBinary) {
+                                if (variableDecl.init != null && variableDecl.init instanceof JCBinary) {
                                     JCExpression expression = JCBinarys.createOperatorExpr(aptBuilder,
                                             (JCBinary) variableDecl.init);
                                     variableDecl.init = expression;
                                 }
+
                                 return super.visitVariable(node, unused);
+                            }
+
+                            @Override
+                            public Void visitReturn(ReturnTree node, Void unused) {
+                                JCReturn jcReturn = (JCReturn) node;
+                                if(jcReturn.expr instanceof JCBinary) {
+                                    JCExpression expression = JCBinarys.createOperatorExpr(aptBuilder,
+                                            (JCBinary) jcReturn.expr);
+                                    jcReturn.expr = expression;
+                                }
+                                return super.visitReturn(node, unused);
                             }
 
                             @Override

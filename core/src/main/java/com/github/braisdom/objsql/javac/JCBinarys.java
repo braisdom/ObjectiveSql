@@ -23,7 +23,15 @@ public class JCBinarys {
     private static final String OPERATOR_GT = "GT";
     private static final String OPERATOR_GE = "GE";
 
-    // ==================== for Integer PLUS operation =============
+    // ==================== for PLUS operation =============
+    public static String plus(String lhs, String rhs) {
+        return lhs + rhs;
+    }
+
+    public static String plus(String lhs, Integer rhs) {
+        return lhs + rhs;
+    }
+
     public static int plus(int lhs, int rhs) {
         return lhs + rhs;
     }
