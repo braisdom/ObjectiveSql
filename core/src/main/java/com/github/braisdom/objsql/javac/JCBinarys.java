@@ -49,14 +49,6 @@ public class JCBinarys {
         return lhs + rhs;
     }
 
-    public static String plus(Object lhs, String rhs) {
-        return lhs + rhs;
-    }
-
-    public static String plus(String lhs, Integer rhs) {
-        return lhs + rhs;
-    }
-
     public static int plus(int lhs, int rhs) {
         return lhs + rhs;
     }
