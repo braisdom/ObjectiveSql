@@ -160,4 +160,30 @@ public interface ComparableExpression extends Sqlizable {
         return ne($(literal));
     }
 
+    LogicalExpression ne2(Expression expr);
+
+    default LogicalExpression ne2(Long literal) {
+        return ne($(literal));
+    }
+
+    default LogicalExpression ne2(Integer literal) {
+        return ne($(literal));
+    }
+
+    default LogicalExpression ne2(Short literal) {
+        return ne($(literal));
+    }
+
+    default LogicalExpression ne2(Byte literal) {
+        return ne($(literal));
+    }
+
+    default LogicalExpression ne2(Double literal) {
+        return ne($(literal));
+    }
+
+    default LogicalExpression ne2(Float literal) {
+        return ne($(literal));
+    }
+
 }

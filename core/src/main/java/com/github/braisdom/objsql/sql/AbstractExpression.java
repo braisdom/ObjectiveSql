@@ -88,6 +88,11 @@ public abstract class AbstractExpression implements Expression {
         return new PolynaryExpression(PolynaryExpression.NE, this, expression);
     }
 
+    @Override
+    public LogicalExpression ne2(Expression expr) {
+        return new PolynaryExpression(PolynaryExpression.NE2, this, expr);
+    }
+
     protected void setAlias(String alias) {
         this.alias = alias;
     }
