@@ -20,6 +20,7 @@
         <module>universal_example</module>
         <module>springboot_example</module>
         <module>oracle_example</module>
+        <module>javaoo_test</module>
     </modules>
 
     <licenses>
