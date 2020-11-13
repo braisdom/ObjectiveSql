@@ -242,7 +242,7 @@ public class JCBinarys {
         return lhs - rhs;
     }
 
-    public static float minus(double lhs, double rhs) {
+    public static double minus(double lhs, double rhs) {
         return (float) (lhs - rhs);
     }
 

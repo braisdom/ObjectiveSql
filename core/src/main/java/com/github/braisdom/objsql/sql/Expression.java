@@ -19,9 +19,9 @@ package com.github.braisdom.objsql.sql;
 import static com.github.braisdom.objsql.sql.Expressions.$;
 
 /**
- * The expression describes a column, a literal, a logic expression
- * or a function call of SQL, and it will generate a SQL expression in
- * the statement.
+ * In SQL syntax, <code>Expression</code> describes column,  literal,
+ * logic expression or function call and it will be generated as a SQL expression
+ * when Java expression executed
  */
 public interface Expression extends Sqlizable, ComparableExpression {
 
