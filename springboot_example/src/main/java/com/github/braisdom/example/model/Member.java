@@ -39,23 +39,23 @@ public class Member implements Serializable {
      * @throws SQLException
      */
     public static List<Member> countOrders() throws SQLSyntaxException, SQLException {
-        Member.Table memberTable = Member.asTable();
-        Order.Table orderTable = Order.asTable();
+        Member.Table member = Member.asTable();
+        Order.Table order = Order.asTable();
 
         Select select = new Select();
 
-        select.from(orderTable, memberTable);
-        select.where(orderTable.memberId.eq(memberTable.id));
+        select.from(order, member)
+                .where(order.memberId.eq(member.id));
 
-        select.project(memberTable.no, memberTable.name, memberTable.mobile);
+        select.project(member.no, member.name, member.mobile);
 
-        select.project(countDistinct(orderTable.no).as("order_count"))
-                .project(sum(orderTable.quantity).as("total_quantity"))
-                .project(sum(orderTable.amount).as("total_amount"))
-                .project(min(orderTable.salesAt).as("first_shopping"))
-                .project(max(orderTable.salesAt).as("last_shopping"));
+        select.project(countDistinct(order.no).as("order_count"),
+                sum(order.quantity).as("total_quantity"),
+                sum(order.amount).as("total_amount"),
+                min(order.salesAt).as("first_shopping"),
+                max(order.salesAt).as("last_shopping"));
 
-        select.groupBy(memberTable.no, memberTable.name, memberTable.mobile);
+        select.groupBy(member.no, member.name, member.mobile);
 
         return select.execute(DatabaseType.MySQL, Member.class);
     }
