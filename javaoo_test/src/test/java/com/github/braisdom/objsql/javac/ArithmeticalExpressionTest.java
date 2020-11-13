@@ -241,4 +241,38 @@ public class ArithmeticalExpressionTest {
         Assertions.assertEquals(integerPlus10, 0);
         Assertions.assertEquals(integerPlus11, 0);
     }
+
+    @Test
+    public void testMethodCall() throws SQLSyntaxException {
+        ExpressionContext mysql = new DefaultExpressionContext(DatabaseType.MySQL);
+        Expression numberPlus = $(1) % $(1);
+        Expression numberPlus2 = $(1) % ($(1) + $(1));
+        Expression numberPlus3 = $(1) % 1;
+        Expression numberPlus4 = $(1) % 1L;
+        Expression numberPlus5 = $(1) % (short)1;
+        Expression numberPlus6 = $(1) % (byte)1;
+        Expression numberPlus7 = $(1) % 1.2f;
+        Expression numberPlus8 = $(1) % 1.2d;
+
+        Assertions.assertTrue(numberPlus.toSql(mysql)
+                .equals(methodCall($(1) % $(1)).toSql(mysql)));
+        Assertions.assertTrue(numberPlus2.toSql(mysql)
+                .equals(methodCall($(1) % ($(1) + $(1))).toSql(mysql)));
+        Assertions.assertTrue(numberPlus3.toSql(mysql)
+                .equals(methodCall($(1) % 1).toSql(mysql)));
+        Assertions.assertTrue(numberPlus4.toSql(mysql)
+                .equals(methodCall($(1) % 1L).toSql(mysql)));
+        Assertions.assertTrue(numberPlus5.toSql(mysql)
+                .equals(methodCall($(1) % (byte)1).toSql(mysql)));
+        Assertions.assertTrue(numberPlus6.toSql(mysql)
+                .equals(methodCall($(1) % $(1)).toSql(mysql)));
+        Assertions.assertTrue(numberPlus7.toSql(mysql)
+                .equals(methodCall($(1) % 1.2f).toSql(mysql)));
+        Assertions.assertTrue(numberPlus8.toSql(mysql)
+                .equals(methodCall($(1) % 1.2d).toSql(mysql)));
+    }
+
+    private <T> T methodCall(T value) {
+        return value;
+    }
 }
