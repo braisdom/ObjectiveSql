@@ -17,6 +17,8 @@
 package com.github.braisdom.objsql.sql;
 
 import com.github.braisdom.objsql.DatabaseType;
+import com.github.braisdom.objsql.Databases;
+import com.github.braisdom.objsql.Quoter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,36 +49,14 @@ public class DefaultExpressionContext implements ExpressionContext {
 
     @Override
     public String quoteTable(String tableName) {
-        switch (databaseType) {
-            case MariaDB:
-            case MySQL:
-                return String.format("`%s`", tableName);
-            case PostgreSQL:
-            case Oracle:
-            case SQLite:
-            case MsSqlServer:
-                return String.format("\"%s\"", tableName);
-            case All:
-                return String.format("\"%s\"", tableName);
-        }
-        return null;
+        Quoter quoter = Databases.getQuoter();
+        return quoter.quoteTableName(databaseType.getName(), tableName);
     }
 
     @Override
     public String quoteColumn(String columnName) {
-        switch (databaseType) {
-            case MariaDB:
-            case MySQL:
-                return String.format("`%s`", columnName);
-            case PostgreSQL:
-            case Oracle:
-            case SQLite:
-            case MsSqlServer:
-                return String.format("\"%s\"", columnName);
-            case All:
-                return String.format("\"%s\"", columnName);
-        }
-        return null;
+        Quoter quoter = Databases.getQuoter();
+        return quoter.quoteColumnName(databaseType.getName(), columnName);
     }
 
     @Override

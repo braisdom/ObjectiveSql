@@ -69,9 +69,10 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
             DatabaseMetaData metaData = connection.getMetaData();
             Quoter quoter = Databases.getQuoter();
 
-            String tableName = quoter.quoteTableName(metaData, domainModelDescriptor.getTableName());
+            String databaseName = metaData.getDatabaseProductName();
+            String tableName = quoter.quoteTableName(databaseName, domainModelDescriptor.getTableName());
             String[] columnNames = domainModelDescriptor.getInsertableColumns();
-            String[] quotedColumnNames = quoter.quoteColumnNames(metaData, columnNames);
+            String[] quotedColumnNames = quoter.quoteColumnNames(databaseName, columnNames);
 
             String sql = formatInsertSql(tableName, columnNames, quotedColumnNames);
             Object[] values = filterValues(metaData, dirtyObject, columnNames);
@@ -101,9 +102,10 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
             DatabaseMetaData metaData = connection.getMetaData();
             Quoter quoter = Databases.getQuoter();
 
-            String tableName = quoter.quoteTableName(metaData, domainModelDescriptor.getTableName());
+            String databaseName = metaData.getDatabaseProductName();
+            String tableName = quoter.quoteTableName(databaseName, domainModelDescriptor.getTableName());
             String[] columnNames = domainModelDescriptor.getInsertableColumns();
-            String[] quotedColumnNames = quoter.quoteColumnNames(metaData, columnNames);
+            String[] quotedColumnNames = quoter.quoteColumnNames(databaseName, columnNames);
             String sql = formatInsertSql(tableName, columnNames, quotedColumnNames);
 
             Object[][] values = new Object[dirtyObjects.length][];
@@ -177,7 +179,8 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
                         else return fieldValue;
                     })).toArray(Object[]::new);
 
-            String[] quotedColumnNames = quoter.quoteColumnNames(metaData, columnNames);
+            String databaseName = metaData.getDatabaseProductName();
+            String[] quotedColumnNames = quoter.quoteColumnNames(databaseName, columnNames);
             StringBuilder updatesSql = new StringBuilder();
             Arrays.stream(quotedColumnNames).forEach(columnName ->
                     updatesSql.append(columnName).append("=").append("?").append(","));
@@ -185,9 +188,9 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
             ensureNotBlank(updatesSql.toString(), "updates");
             updatesSql.delete(updatesSql.length() - 1, updatesSql.length());
 
-            String tableName = quoter.quoteTableName(connection.getMetaData(), domainModelDescriptor.getTableName());
+            String tableName = quoter.quoteTableName(databaseName, domainModelDescriptor.getTableName());
             String sql = formatUpdateSql(tableName, updatesSql.toString(), String.format("%s = ?",
-                    quoter.quoteColumnName(metaData, primaryKey.name())));
+                    quoter.quoteColumnName(databaseName, primaryKey.name())));
 
             sqlExecutor.execute(connection, sql, ArrayUtil.appendElement(Object.class, values, id));
 
@@ -207,7 +210,8 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
         String dataSourceName = Tables.getDataSourceName(domainModelDescriptor.getDomainModelClass());
 
         return Databases.execute(dataSourceName, (connection, sqlExecutor) -> {
-            String tableName = quoter.quoteTableName(connection.getMetaData(), domainModelDescriptor.getTableName());
+            String databaseName = connection.getMetaData().getDatabaseProductName();
+            String tableName = quoter.quoteTableName(databaseName, domainModelDescriptor.getTableName());
             String sql = formatUpdateSql(tableName, updates, predication);
             return sqlExecutor.execute(connection, sql);
         });
@@ -221,7 +225,8 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
         Quoter quoter = Databases.getQuoter();
         String dataSourceName = Tables.getDataSourceName(domainModelDescriptor.getDomainModelClass());
         return Databases.execute(dataSourceName, (connection, sqlExecutor) -> {
-            String tableName = quoter.quoteTableName(connection.getMetaData(), domainModelDescriptor.getTableName());
+            String databaseName = connection.getMetaData().getDatabaseProductName();
+            String tableName = quoter.quoteTableName(databaseName, domainModelDescriptor.getTableName());
             String sql = formatDeleteSql(tableName, predication);
             return sqlExecutor.execute(connection, sql);
         });
@@ -237,10 +242,9 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
         Quoter quoter = Databases.getQuoter();
         String dataSourceName = Tables.getDataSourceName(domainModelDescriptor.getDomainModelClass());
         return Databases.execute(dataSourceName, (connection, sqlExecutor) -> {
-            DatabaseMetaData metaData = connection.getMetaData();
-
-            String tableName = quoter.quoteTableName(metaData, domainModelDescriptor.getTableName());
-            String quotedPrimaryName = quoter.quoteColumnName(connection.getMetaData(), primaryKey.name());
+            String databaseName = connection.getMetaData().getDatabaseProductName();
+            String tableName = quoter.quoteTableName(databaseName, domainModelDescriptor.getTableName());
+            String quotedPrimaryName = quoter.quoteColumnName(databaseName, primaryKey.name());
             String sql = formatDeleteSql(tableName, String.format("%s = %s", quotedPrimaryName, quoter.quoteValue(id)));
 
             return sqlExecutor.execute(connection, sql);
