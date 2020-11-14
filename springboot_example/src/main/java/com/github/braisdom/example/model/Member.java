@@ -46,15 +46,14 @@ public class Member implements Serializable {
 
         select.from(order, member)
                 .where(order.memberId.eq(member.id));
-
-        select.project(member.no, member.name, member.mobile);
-
-        select.project(countDistinct(order.no).as("order_count"),
+        select.project(member.no,
+                member.name,
+                member.mobile,
+                countDistinct(order.no).as("order_count"),
                 sum(order.quantity).as("total_quantity"),
                 sum(order.amount).as("total_amount"),
                 min(order.salesAt).as("first_shopping"),
                 max(order.salesAt).as("last_shopping"));
-
         select.groupBy(member.no, member.name, member.mobile);
 
         return select.execute(DatabaseType.MySQL, Member.class);
