@@ -33,6 +33,10 @@ public class Order {
     @Relation(relationType = RelationType.HAS_MANY)
     private List<OrderLine> orderLines;
 
+    public static List<Order> queryOrders(String begin, String end, String[] memberNos) {
+        return null;
+    }
+
     @Transactional
     public static Order makeOrder(Member member, RequestObject rawOrder) throws SQLException {
         RequestObject[] rawOrderLines = rawOrder.getArray(KEY_ORDER_LINES);
