@@ -1,6 +1,6 @@
 ### Example Package Description
 
-This package contains testing of full ObjectiveSQL API in various database, it can also be a tutorial of developers. In below example, you can get all cases of ObjectiveSQL in various database, and satisfy with all application system requirements.
+This package contains unit testing of full ObjectiveSQL API in various database, it can also be a tutorial for developers. In below example, you can get all cases of ObjectiveSQL:
 
 - Persistanting objects in different way
 - Querying and counting objects with definitions of domain object
