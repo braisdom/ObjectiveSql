@@ -1,6 +1,7 @@
 package com.github.braisdom.objsql.example;
 
 import com.github.braisdom.objsql.RollbackCauseException;
+import com.github.braisdom.objsql.example.domains.Order;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -10,7 +11,7 @@ import java.util.concurrent.Executors;
 public class TransactionalExample {
 
     public static void createNormally() {
-        Domains.Order order = new Domains.Order()
+        Order order = new Order()
                 .setNo("202000001")
                 .setMemberId(3)
                 .setAmount(3.5d)
@@ -22,7 +23,7 @@ public class TransactionalExample {
         for(int i = 0; i< 1; i++) {
             executorService.execute(() -> {
                 try {
-                    Domains.Order.makeOrder(order, null);
+                    Order.makeOrder(order, null);
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }

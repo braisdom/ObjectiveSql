@@ -1,22 +1,23 @@
 package com.github.braisdom.objsql.example;
 
-import com.github.braisdom.objsql.example.Domains.Member;
+import com.github.braisdom.objsql.example.domains.Member;
+import com.github.braisdom.objsql.example.domains.Order;
 import com.github.braisdom.objsql.relation.Relationship;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.Assert;
+import org.junit.Test;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.github.braisdom.objsql.example.Domains.Order;
-
 public class RelationExample {
 
     private static final String[] MEMBER_NAMES = {"Joe", "Juan", "Jack", "Albert", "Jonathan", "Justin", "Terry"};
 
-    private static void prepareRelationData() throws SQLException {
+    @Test
+    public void prepareRelationData() throws SQLException {
         List<Member> members = new ArrayList<>();
         List<Order> orders = new ArrayList<>();
 
@@ -48,7 +49,8 @@ public class RelationExample {
         Assert.assertEquals(createdOrderCount.length, 100);
     }
 
-    private static void queryFirstMemberWithOrders() throws SQLException {
+    @Test
+    public void queryFirstMemberWithOrders() throws SQLException {
         Member member = Member.queryFirst("id = ?",
                 new Relationship[]{Member.HAS_MANY_ORDERS}, 3);
 
@@ -68,12 +70,5 @@ public class RelationExample {
 
         Assert.assertNotNull(order);
         Assert.assertNotNull(order.getMember());
-    }
-
-    public static void run() throws SQLException {
-        prepareRelationData();
-        queryFirstMemberWithOrders();
-        queryManyMembersWithOrders();
-        queryOrder();
     }
 }

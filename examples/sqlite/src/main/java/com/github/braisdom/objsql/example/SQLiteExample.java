@@ -3,6 +3,7 @@ package com.github.braisdom.objsql.example;
 import com.github.braisdom.objsql.ConnectionFactory;
 import com.github.braisdom.objsql.Databases;
 import com.github.braisdom.objsql.util.WordUtil;
+import org.junit.Before;
 
 import java.io.File;
 import java.io.IOException;
@@ -52,16 +53,11 @@ public class SQLiteExample {
         Databases.execute("DELETE FROM order_lines");
     }
 
-    public static void main(String[] args) throws SQLException, IOException {
+    @Before
+    public void prepareEnv() throws SQLException, IOException {
         if (DATABASE_FILE.exists()) DATABASE_FILE.delete();
 
         installConnectionFactory(new SqliteConnectionFactory(DATABASE_FILE.getName()));
         initializeSchemas();
-
-        PersistenceExample.run();
-        clearTables();
-        QueryExample.run();
-        clearTables();
-        RelationExample.run();
     }
 }

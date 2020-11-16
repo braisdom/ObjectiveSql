@@ -1,19 +1,22 @@
 package com.github.braisdom.objsql.example;
 
 import com.github.braisdom.objsql.Validator;
-import com.github.braisdom.objsql.example.Domains.Member;
+import com.github.braisdom.objsql.example.domains.Member;
+import com.github.braisdom.objsql.example.domains.Order;
 import com.google.gson.GsonBuilder;
 import org.joda.time.DateTime;
 import org.junit.Assert;
+import org.junit.Test;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PersistenceExample {
+public class PersistenceExample extends SQLiteExample{
 
-    private static void createSimpleMember() throws SQLException {
+    @Test
+    public void createSimpleMember() throws SQLException {
         Member newMember = new Member();
         newMember.setNo("100000")
                 .setName("Pamela")
@@ -59,8 +62,9 @@ public class PersistenceExample {
         attributes.put("mobile", "15011112222");
         attributes.put("extendedAttributes", extendedAttributes);
 
-        Member.create(Member.newInstanceFrom(attributes, false),
+        Member member = Member.create(Member.newInstanceFrom(attributes, false),
                 false, true);
+        Assert.assertTrue(member.getId() != null);
     }
 
     private static void createSimpleMemberCopyFromUnderlineMap() throws SQLException {
@@ -155,29 +159,12 @@ public class PersistenceExample {
     }
 
     private static void createOrder() throws SQLException {
-        Domains.Order order = new Domains.Order()
+        Order order = new Order()
                 .setNo("202000001")
                 .setMemberId(3)
                 .setAmount(3.5d)
                 .setQuantity(100.3d)
                 .setSalesAt(Timestamp.valueOf("2020-05-01 09:30:00"));
         order.save(false, true);
-    }
-
-    public static void run() throws SQLException {
-        createSimpleMember();
-        createSimpleMemberCopyFromMap();
-        createSimpleMemberCopyFromUnderlineMap();
-        createSimpleFromJsonMember();
-        createMember();
-        createMemberArray();
-        updateSmithMember();
-        updateJacksonMember();
-        deleteAliceMember();
-        deleteMaryMember();
-        executeDeleteDenise();
-        createSimpleMemberWithValidation();
-        validateMember();
-        createOrder();
     }
 }
