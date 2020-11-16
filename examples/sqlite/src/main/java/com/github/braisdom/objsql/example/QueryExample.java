@@ -57,7 +57,10 @@ public class QueryExample extends SQLiteExample {
     public void countMember() throws SQLException {
         prepareQueryData();
 
+        long allMemberCount = Member.countAll();
         long memberCount = Member.count("id > ?", 10);
+
+        Assert.assertTrue(allMemberCount == 100);
         Assert.assertTrue(memberCount == 90);
     }
 
@@ -68,6 +71,15 @@ public class QueryExample extends SQLiteExample {
 
         Assert.assertNotNull(member);
         Assert.assertEquals(member.getName(), "Ralph");
+    }
+
+    @Test
+    public void queryAll() throws SQLException {
+        prepareQueryData();
+
+        List<Member> members = Member.queryAll();
+
+        Assert.assertEquals(members.size(), 100);
     }
 
     @Test
@@ -93,17 +105,13 @@ public class QueryExample extends SQLiteExample {
         Assert.assertEquals(member.getName(), "Jonathan");
     }
 
-    private static void queryByPredicate() throws SQLException {
+    @Test
+    public void queryByPredicate() throws SQLException {
+        prepareQueryData();
+
         List<Member> members = Member.query("id > ?", 8);
 
         Assert.assertNotNull(members);
         Assert.assertTrue(members.size() > 92);
-    }
-
-    private static void queryOrders() throws SQLException {
-        List<Order> orders = Order.query("");
-
-        Assert.assertNotNull(orders);
-        Assert.assertTrue(orders.size() > 0);
     }
 }
