@@ -4,24 +4,26 @@ import com.github.braisdom.objsql.example.domains.Member;
 import com.github.braisdom.objsql.example.domains.Order;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.Assert;
+import org.junit.Test;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-public class QueryExample {
+public class QueryExample extends SQLiteExample {
 
-    private static final String[] MEMBER_NAMES = {"Joe","Juan","Jack","Albert","Jonathan","Justin","Terry","Gerald","Keith","Samuel",
-            "Willie","Ralph","Lawrence","Nicholas","Roy","Benjamin","Bruce","Brandon","Adam","Harry","Fred","Wayne","Billy","Steve",
-            "Louis","Jeremy","Aaron","Randy","Howard","Eugene","Carlos","Russell","Bobby","Victor","Martin","Ernest","Phillip","Todd",
-            "Jesse","Craig","Alan","Shawn","Clarence","Sean","Philip","Chris","Johnny","Earl","Jimmy","Antonio","James","John","Robert",
-            "Michael","William","David","Richard","Charles","Joseph","Thomas","Christopher","Daniel","Paul","Mark","Donald","George",
-            "Kenneth","Steven","Edward","Brian","Ronald","Anthony","Kevin","Jason","Matthew","Gary","Timothy","Jose","Larry","Jeffrey",
-            "Frank","Scott","Eric","Stephen","Andrew","Raymond","Gregory","Joshua","Jerry","Dennis","Walter","Patrick","Peter","Harold",
-            "Douglas","Henry","Carl","Arthur","Ryan","Roger"};
+    private static final String[] MEMBER_NAMES = {"Joe", "Juan", "Jack", "Albert", "Jonathan", "Justin", "Terry", "Gerald", "Keith", "Samuel",
+            "Willie", "Ralph", "Lawrence", "Nicholas", "Roy", "Benjamin", "Bruce", "Brandon", "Adam", "Harry", "Fred", "Wayne", "Billy", "Steve",
+            "Louis", "Jeremy", "Aaron", "Randy", "Howard", "Eugene", "Carlos", "Russell", "Bobby", "Victor", "Martin", "Ernest", "Phillip", "Todd",
+            "Jesse", "Craig", "Alan", "Shawn", "Clarence", "Sean", "Philip", "Chris", "Johnny", "Earl", "Jimmy", "Antonio", "James", "John", "Robert",
+            "Michael", "William", "David", "Richard", "Charles", "Joseph", "Thomas", "Christopher", "Daniel", "Paul", "Mark", "Donald", "George",
+            "Kenneth", "Steven", "Edward", "Brian", "Ronald", "Anthony", "Kevin", "Jason", "Matthew", "Gary", "Timothy", "Jose", "Larry", "Jeffrey",
+            "Frank", "Scott", "Eric", "Stephen", "Andrew", "Raymond", "Gregory", "Joshua", "Jerry", "Dennis", "Walter", "Patrick", "Peter", "Harold",
+            "Douglas", "Henry", "Carl", "Arthur", "Ryan", "Roger"};
 
-    public static void prepareQueryData() throws SQLException {
+    @Test
+    public void prepareQueryData() throws SQLException {
         List<Member> members = new ArrayList<>();
         List<Order> orders = new ArrayList<>();
 
@@ -51,19 +53,27 @@ public class QueryExample {
         Assert.assertEquals(createdOrderCount.length, 100);
     }
 
-    private static void countMember() throws SQLException {
-        long count = Member.count("id > ?", 10);
+    @Test
+    public void countMember() throws SQLException {
+        prepareQueryData();
 
-        Assert.assertTrue(count > 0);
+        long memberCount = Member.count("id > ?", 10);
+        Assert.assertTrue(memberCount == 90);
     }
 
-    private static void queryByName() throws SQLException {
+    @Test
+    public void queryByName() throws SQLException {
+        prepareQueryData();
         Member member = Member.queryByName("Ralph");
 
+        Assert.assertNotNull(member);
         Assert.assertEquals(member.getName(), "Ralph");
     }
 
-    private static void rawQuery() throws SQLException {
+    @Test
+    public void rawQuery() throws SQLException {
+        prepareQueryData();
+
         List<Member> members = Member.queryBySql("SELECT id, name FROM members WHERE id > ?", 10);
         List<Member> members2 = Member.queryBySql("SELECT * FROM members WHERE name = ?", "Jonathan");
         List<Member> members3 = Member.queryBySql("SELECT name AS _name FROM members WHERE name = ?", "Jonathan");
@@ -74,10 +84,13 @@ public class QueryExample {
         Assert.assertEquals(members3.get(0).getRawAttribute("_name"), "Jonathan");
     }
 
-    private static void queryFirst() throws SQLException {
-        Member member = Member.queryFirst("name = ?", "Jonathan");
+    @Test
+    public void queryFirst() throws SQLException {
+        prepareQueryData();
 
+        Member member = Member.queryFirst("name = ?", "Jonathan");
         Assert.assertNotNull(member);
+        Assert.assertEquals(member.getName(), "Jonathan");
     }
 
     private static void queryByPredicate() throws SQLException {
@@ -92,15 +105,5 @@ public class QueryExample {
 
         Assert.assertNotNull(orders);
         Assert.assertTrue(orders.size() > 0);
-    }
-
-    public static void run() throws SQLException {
-        prepareQueryData();
-        countMember();
-        rawQuery();
-        queryByName();
-        queryFirst();
-        queryByPredicate();
-        queryOrders();
     }
 }
