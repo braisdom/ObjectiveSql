@@ -29,6 +29,10 @@
         <module>oracle_example</module>
         <module>javaoo_test</module>
         <module>mangosdk</module>
+        <module>examples/sqlite</module>
+        <module>examples/mysql</module>
+        <module>examples/oracle</module>
+        <module>examples/sqlserver</module>
     </modules>
 
     <scm>
