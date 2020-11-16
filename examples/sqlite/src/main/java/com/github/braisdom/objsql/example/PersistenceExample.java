@@ -137,6 +137,8 @@ public class PersistenceExample extends SQLiteExample {
 
         Member member = Member.queryByPrimaryKey(1);
         Assert.assertTrue(member.getName().equals("Smith => Jackson"));
+        Assert.assertTrue(member.getName() != null);
+        Assert.assertTrue(member.getMobile() != null);
     }
 
     @Test
