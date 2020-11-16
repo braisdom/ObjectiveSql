@@ -112,6 +112,6 @@ public class QueryExample extends SQLiteExample {
         List<Member> members = Member.query("id > ?", 8);
 
         Assert.assertNotNull(members);
-        Assert.assertTrue(members.size() > 92);
+        Assert.assertTrue(members.size() == 92);
     }
 }

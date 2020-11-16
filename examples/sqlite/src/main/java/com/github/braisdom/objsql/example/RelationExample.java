@@ -12,7 +12,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RelationExample {
+public class RelationExample extends SQLiteExample {
 
     private static final String[] MEMBER_NAMES = {"Joe", "Juan", "Jack", "Albert", "Jonathan", "Justin", "Terry"};
 
@@ -51,6 +51,8 @@ public class RelationExample {
 
     @Test
     public void queryFirstMemberWithOrders() throws SQLException {
+        prepareRelationData();
+
         Member member = Member.queryFirst("id = ?",
                 new Relationship[]{Member.HAS_MANY_ORDERS}, 3);
 
@@ -58,17 +60,30 @@ public class RelationExample {
         Assert.assertTrue(member.getOrders().size() > 0);
     }
 
-    private static void queryManyMembersWithOrders() throws SQLException {
+    @Test
+    public void queryHasMany() throws SQLException {
+        prepareRelationData();
+
         List<Member> members = Member.query("id > (?)",
                 new Relationship[]{Member.HAS_MANY_ORDERS}, 1);
 
-        System.out.println();
+        Assert.assertTrue(members.size() > 0);
+        Assert.assertTrue(members.get(0).getOrders().size() > 0);
+
+        Member firstMember = members.get(0);
+        Order firstOrder = firstMember.getOrders().get(0);
+
+        Assert.assertEquals(firstMember.getId(), firstOrder.getMemberId());
     }
 
-    private static void queryOrder() throws SQLException {
+    @Test
+    public void queryBelongsTo() throws SQLException {
+        prepareRelationData();
+
         Order order = Order.queryByPrimaryKey(1, Order.BELONGS_TO_MEMBER);
 
         Assert.assertNotNull(order);
         Assert.assertNotNull(order.getMember());
+        Assert.assertEquals(order.getMember().getId(), order.getMemberId());
     }
 }
