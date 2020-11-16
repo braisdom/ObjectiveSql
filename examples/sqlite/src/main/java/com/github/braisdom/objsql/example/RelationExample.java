@@ -53,8 +53,8 @@ public class RelationExample extends SQLiteExample {
     public void queryFirstMemberWithOrders() throws SQLException {
         prepareRelationData();
 
-        Member member = Member.queryFirst("id = ?",
-                new Relationship[]{Member.HAS_MANY_ORDERS}, 3);
+        Relationship[] orderRelation = new Relationship[]{Member.HAS_MANY_ORDERS};
+        Member member = Member.queryFirst("id = ?", orderRelation, 3);
 
         Assert.assertNotNull(member);
         Assert.assertTrue(member.getOrders().size() > 0);
@@ -64,8 +64,8 @@ public class RelationExample extends SQLiteExample {
     public void queryHasMany() throws SQLException {
         prepareRelationData();
 
-        List<Member> members = Member.query("id > (?)",
-                new Relationship[]{Member.HAS_MANY_ORDERS}, 1);
+        Relationship[] orderRelation = new Relationship[]{Member.HAS_MANY_ORDERS};
+        List<Member> members = Member.query("id > (?)", orderRelation, 1);
 
         Assert.assertTrue(members.size() > 0);
         Assert.assertTrue(members.get(0).getOrders().size() > 0);
@@ -80,7 +80,8 @@ public class RelationExample extends SQLiteExample {
     public void queryBelongsTo() throws SQLException {
         prepareRelationData();
 
-        Order order = Order.queryByPrimaryKey(1, Order.BELONGS_TO_MEMBER);
+        Relationship[] memberRelation = new Relationship[]{Order.BELONGS_TO_MEMBER};
+        Order order = Order.queryByPrimaryKey(1, memberRelation);
 
         Assert.assertNotNull(order);
         Assert.assertNotNull(order.getMember());
