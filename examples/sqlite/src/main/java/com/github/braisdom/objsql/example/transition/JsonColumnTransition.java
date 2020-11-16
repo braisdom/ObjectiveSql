@@ -1,4 +1,4 @@
-package com.github.braisdom.objsql.example;
+package com.github.braisdom.objsql.example.transition;
 
 import com.github.braisdom.objsql.FieldValue;
 import com.github.braisdom.objsql.TableRowAdapter;

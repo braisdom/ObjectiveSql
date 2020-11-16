@@ -47,12 +47,6 @@ public class SQLiteExample {
         }
     }
 
-    private static void clearTables() throws SQLException {
-        Databases.execute("DELETE FROM members");
-        Databases.execute("DELETE FROM orders");
-        Databases.execute("DELETE FROM order_lines");
-    }
-
     @Before
     public void prepareEnv() throws SQLException, IOException {
         if (DATABASE_FILE.exists()) DATABASE_FILE.delete();

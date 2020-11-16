@@ -1,7 +1,7 @@
 package com.github.braisdom.objsql.example.domains;
 
 import com.github.braisdom.objsql.annotations.*;
-import com.github.braisdom.objsql.example.JsonColumnTransition;
+import com.github.braisdom.objsql.example.transition.JsonColumnTransition;
 import com.github.braisdom.objsql.relation.RelationType;
 import com.github.braisdom.objsql.transition.SqlDateTimeTransition;
 import org.joda.time.DateTime;

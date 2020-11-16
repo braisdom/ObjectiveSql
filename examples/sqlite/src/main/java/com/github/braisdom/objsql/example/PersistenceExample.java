@@ -13,10 +13,10 @@ import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PersistenceExample extends SQLiteExample{
+public class PersistenceExample extends SQLiteExample {
 
     @Test
-    public void createSimpleMember() throws SQLException {
+    public void createSimpleMemberSkipValidation() throws SQLException {
         Member newMember = new Member();
         newMember.setNo("100000")
                 .setName("Pamela")
@@ -29,9 +29,10 @@ public class PersistenceExample extends SQLiteExample{
         Assert.assertNotNull(member);
     }
 
-    private static void validateMember() {
+    @Test
+    public void validateMemberWithError() {
         Member newMember = new Member()
-                .setNo("100")
+                .setNo("100") // @Size(min = 5, max = 20)
                 .setName("Pamela")
                 .setGender(1)
                 .setMobile("15011112222");
@@ -40,16 +41,18 @@ public class PersistenceExample extends SQLiteExample{
         Assert.assertTrue(violations.length > 0);
     }
 
-    private static void createSimpleMemberWithValidation() throws SQLException {
+    @Test
+    public void createSimpleMemberWithValidation() throws SQLException {
         Member newMember = new Member()
                 .setNo("100000")
                 .setName("Pamela")
                 .setGender(1)
                 .setMobile("15011112222");
-        Member.create(newMember, true, true);
+        Member.create(newMember, false, true);
     }
 
-    private static void createSimpleMemberCopyFromMap() throws SQLException {
+    @Test
+    public void createSimpleMemberCopyFromMap() throws SQLException {
         Map<String, Object> extendedAttributes = new HashMap<>();
         extendedAttributes.put("hobbies", new String[]{"Play football"});
         extendedAttributes.put("age", 28);
@@ -67,7 +70,8 @@ public class PersistenceExample extends SQLiteExample{
         Assert.assertTrue(member.getId() != null);
     }
 
-    private static void createSimpleMemberCopyFromUnderlineMap() throws SQLException {
+    @Test
+    public void createSimpleMemberCopyFromUnderlineMap() throws SQLException {
         Map<String, Object> extendedAttributes = new HashMap<>();
         extendedAttributes.put("hobbies", new String[]{"Play football"});
         extendedAttributes.put("age", 28);
@@ -84,7 +88,8 @@ public class PersistenceExample extends SQLiteExample{
         Member.create(member, false, true);
     }
 
-    private static void createSimpleFromJsonMember() throws SQLException {
+    @Test
+    public void createSimpleFromJsonMember() throws SQLException {
         String json = "{\"id\":7,\"no\":\"200000\",\"name\":\"Smith\",\"gender\":1,\"mobile\":\"15011112222\"," +
                 "\"extendedAttributes\":{\"hobbies\":[\"Play football\"],\"age\":28}}";
         Member newMember = new GsonBuilder().create().fromJson(json, Member.class);
@@ -92,22 +97,8 @@ public class PersistenceExample extends SQLiteExample{
         Member.create(newMember, false, true);
     }
 
-    private static void createMember() throws SQLException {
-        Map<String, Object> extendedAttributes = new HashMap<>();
-        extendedAttributes.put("hobbies", new String[]{"Play football"});
-        extendedAttributes.put("age", 28);
-
-        Member newMember = new Member()
-                .setNo("200000")
-                .setName("Smith")
-                .setGender(1)
-                .setExtendedAttributes(extendedAttributes)
-                .setMobile("15011112222");
-
-        Member.create(newMember, false, true);
-    }
-
-    private static void createMemberArray() throws SQLException {
+    @Test
+    public void createMemberWithArray() throws SQLException {
         Member newMember1 = new Member()
                 .setNo("200001")
                 .setName("Alice")
@@ -126,11 +117,14 @@ public class PersistenceExample extends SQLiteExample{
                 .setGender(0)
                 .setMobile("15011112222");
 
-        Member.create(new Member[]{newMember1, newMember2, newMember3},
-                false, true);
+        Member[] members = new Member[]{newMember1, newMember2, newMember3};
+        Member.create(members, false, true);
     }
 
-    private static void updateSmithMember() throws SQLException {
+    @Test
+    public void updateMemberById() throws SQLException {
+        createMemberWithArray();
+
         Map<String, Object> extendedAttributes = new HashMap<>();
         extendedAttributes.put("hobbies", new String[]{"Play football", "Cooking"});
         extendedAttributes.put("age", 28);
@@ -139,7 +133,7 @@ public class PersistenceExample extends SQLiteExample{
                 .setName("Smith => Jackson")
                 .setExtendedAttributes(extendedAttributes);
 
-        Member.update(12, newMember, true);
+        Member.update(1, newMember, true);
     }
 
     private static void updateJacksonMember() throws SQLException {
