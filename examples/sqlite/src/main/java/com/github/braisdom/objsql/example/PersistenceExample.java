@@ -134,25 +134,52 @@ public class PersistenceExample extends SQLiteExample {
                 .setExtendedAttributes(extendedAttributes);
 
         Member.update(1, newMember, true);
+
+        Member member = Member.queryByPrimaryKey(1);
+        Assert.assertTrue(member.getName().equals("Smith => Jackson"));
     }
 
-    private static void updateJacksonMember() throws SQLException {
-        Member.update("name = 'Smith => Jackson => Davies'", "name = 'Smith => Jackson'");
+    @Test
+    public void updateMemberBySQL() throws SQLException {
+        createMemberWithArray();
+
+        Member.update("name = 'Smith => Jackson'", "name = 'Alice'");
+
+        Member member = Member.queryByPrimaryKey(1);
+        Assert.assertTrue(member.getName().equals("Smith => Jackson"));
     }
 
-    private static void deleteAliceMember() throws SQLException {
-        Member.destroy(13);
+    @Test
+    public void deleteMemberById() throws SQLException {
+        createMemberWithArray();
+
+        Member.destroy(1);
+
+        long count = Member.countAll();
+        Assert.assertTrue(count == 2);
     }
 
-    private static void deleteMaryMember() throws SQLException {
+    @Test
+    public void deleteMemberByPredicate() throws SQLException {
+        createMemberWithArray();
+
         Member.destroy("name = 'Mary'");
+
+        long count = Member.countAll();
+        Assert.assertTrue(count == 2);
     }
 
-    private static void executeDeleteDenise() throws SQLException {
-        Member.execute(String.format("DELETE FROM %s WHERE name = 'Denise'", Member.TABLE_NAME));
+    @Test
+    public void executeDeleteDenise() throws SQLException {
+        createMemberWithArray();
+
+        Member.execute(String.format("DELETE FROM %s WHERE name = 'Mary'", Member.TABLE_NAME));
+        long count = Member.countAll();
+        Assert.assertTrue(count == 2);
     }
 
-    private static void createOrder() throws SQLException {
+    @Test
+    public void createOrder() throws SQLException {
         Order order = new Order()
                 .setNo("202000001")
                 .setMemberId(3)
@@ -160,5 +187,8 @@ public class PersistenceExample extends SQLiteExample {
                 .setQuantity(100.3d)
                 .setSalesAt(Timestamp.valueOf("2020-05-01 09:30:00"));
         order.save(false, true);
+
+        long count = Order.countAll();
+        Assert.assertTrue(count == 1);
     }
 }
