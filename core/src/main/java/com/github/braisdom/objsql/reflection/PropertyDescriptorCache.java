@@ -126,8 +126,9 @@ class PropertyDescriptorCache<T> {
     private static void detectFields(Class<?> type, List<Field> detectedFields) {
         Field[] fields = type.getDeclaredFields();
         detectedFields.addAll(Arrays.asList(fields));
-        if (!Object.class.isAssignableFrom(type.getSuperclass()))
+        if (!Object.class.isAssignableFrom(type.getSuperclass())) {
             detectFields(type.getSuperclass(), detectedFields);
+        }
     }
 
     // workaround for https://bugs.openjdk.java.net/browse/JDK-8071693

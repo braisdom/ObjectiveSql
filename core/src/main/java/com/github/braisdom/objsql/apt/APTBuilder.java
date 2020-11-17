@@ -80,8 +80,9 @@ public final class APTBuilder {
     }
 
     public void inject(JCMethodDecl methodDecl) {
-        if (!Utils.containsMethod(classDecl.sym, methodDecl, false))
+        if (!Utils.containsMethod(classDecl.sym, methodDecl, false)) {
             classDecl.defs = classDecl.defs.append(methodDecl);
+        }
     }
 
     public void injectForce(JCMethodDecl methodDecl) {
@@ -112,8 +113,11 @@ public final class APTBuilder {
 
         JCExpression e = null;
         for (String elem : elems) {
-            if (e == null) e = treeMaker.Ident(toName(elem));
-            else e = treeMaker.Select(e, toName(elem));
+            if (e == null) {
+                e = treeMaker.Ident(toName(elem));
+            } else {
+                e = treeMaker.Select(e, toName(elem));
+            }
         }
         return e;
     }
@@ -121,10 +125,16 @@ public final class APTBuilder {
     public JCExpression chainDots(int pos, String elem1, String elem2, String... elems) {
         assert elems != null;
         TreeMaker treeMaker = getTreeMaker();
-        if (pos != -1) treeMaker = treeMaker.at(pos);
+        if (pos != -1) {
+            treeMaker = treeMaker.at(pos);
+        }
         JCExpression e = null;
-        if (elem1 != null) e = treeMaker.Ident(toName(elem1));
-        if (elem2 != null) e = e == null ? treeMaker.Ident(toName(elem2)) : treeMaker.Select(e, toName(elem2));
+        if (elem1 != null) {
+            e = treeMaker.Ident(toName(elem1));
+        }
+        if (elem2 != null) {
+            e = e == null ? treeMaker.Ident(toName(elem2)) : treeMaker.Select(e, toName(elem2));
+        }
         for (int i = 0; i < elems.length; i++) {
             e = e == null ? treeMaker.Ident(toName(elems[i])) : treeMaker.Select(e, toName(elems[i]));
         }
@@ -182,8 +192,9 @@ public final class APTBuilder {
 
     public JCExpression newGenericsType(Class typeClass, Class<?>... genericTypeClasses) {
         ListBuffer<JCExpression> genericTypes = new ListBuffer<>();
-        for (Class<?> genericTypeClass : genericTypeClasses)
+        for (Class<?> genericTypeClass : genericTypeClasses) {
             genericTypes.append(typeRef(genericTypeClass));
+        }
         return treeMaker.TypeApply(typeRef(typeClass), genericTypes.toList());
     }
 
@@ -243,10 +254,11 @@ public final class APTBuilder {
     public JCMethodDecl newGetter(JCVariableDecl field) {
         String fieldName = field.name.toString();
         String getterName;
-        if (isBoolean(field.vartype))
+        if (isBoolean(field.vartype)) {
             getterName = Utils.camelize(String.format("%s_%s", "is", fieldName), true);
-        else
+        } else {
             getterName = Utils.camelize(String.format("%s_%s", "get", fieldName), true);
+        }
 
         JCStatement returnStatement = treeMaker.Return(treeMaker.Select(varRef("this"), toName(fieldName)));
 

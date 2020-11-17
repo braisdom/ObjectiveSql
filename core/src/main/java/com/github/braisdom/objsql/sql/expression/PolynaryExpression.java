@@ -74,9 +74,11 @@ public class PolynaryExpression extends AbstractExpression implements LogicalExp
                                     expression -> expression.toSql(expressionContext))).toArray(String[]::new);
             return String.format("(%s)", String.join(operator, expressionStrings));
         } catch (SuppressedException ex) {
-            if (ex.getCause() instanceof SQLSyntaxException)
+            if (ex.getCause() instanceof SQLSyntaxException) {
                 throw (SQLSyntaxException) ex.getCause();
-            else throw ex;
+            } else {
+                throw ex;
+            }
         }
     }
 }

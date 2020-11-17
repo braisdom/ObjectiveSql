@@ -177,13 +177,15 @@ public final class PropertyUtils {
             throws ReflectionException {
         Objects.requireNonNull(bean, "The bean cannot be null");
 
-        if (properties == null)
+        if (properties == null) {
             return;
+        }
 
         for (final Map.Entry<String, ? extends Object> entry : properties.entrySet()) {
             final String name = underline ? WordUtil.camelize(entry.getKey(), true) : entry.getKey();
-            if (name == null)
+            if (name == null) {
                 continue;
+            }
             write(bean, name, entry.getValue());
         }
     }

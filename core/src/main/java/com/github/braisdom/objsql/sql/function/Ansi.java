@@ -81,9 +81,11 @@ public class Ansi {
                     return String.format("%s(DISTINCT %s) %s", getName(), String.join(",", expressionStrings),
                             alias == null ? "" : " AS " + expressionContext.quoteColumn(alias));
                 } catch (SuppressedException ex) {
-                    if (ex.getCause() instanceof SQLSyntaxException)
+                    if (ex.getCause() instanceof SQLSyntaxException) {
                         throw (SQLSyntaxException) ex.getCause();
-                    else throw ex;
+                    } else {
+                        throw ex;
+                    }
                 }
             }
         };
@@ -431,29 +433,33 @@ public class Ansi {
 
     public static final Expression concat(Expression... expressions) throws SQLSyntaxException {
         Objects.requireNonNull(expressions, "The expressions cannot be null");
-        if(expressions.length == 0)
+        if(expressions.length == 0) {
             throw new SQLSyntaxException("The expressions cannot be empty");
+        }
         return new SqlFunctionCall("CONCAT", expressions);
     }
 
     public static final Expression trim(Expression... expressions) throws SQLSyntaxException {
         Objects.requireNonNull(expressions, "The expressions cannot be null");
-        if(expressions.length == 0)
+        if(expressions.length == 0) {
             throw new SQLSyntaxException("The expressions cannot be empty");
+        }
         return new SqlFunctionCall("TRIM", expressions);
     }
 
     public static final Expression rtrim(Expression... expressions) throws SQLSyntaxException {
         Objects.requireNonNull(expressions, "The expressions cannot be null");
-        if(expressions.length == 0)
+        if(expressions.length == 0) {
             throw new SQLSyntaxException("The expressions cannot be empty");
+        }
         return new SqlFunctionCall("RTRIM", expressions);
     }
 
     public static final Expression ltrim(Expression... expressions) throws SQLSyntaxException {
         Objects.requireNonNull(expressions, "The expressions cannot be null");
-        if(expressions.length == 0)
+        if(expressions.length == 0) {
             throw new SQLSyntaxException("The expressions cannot be empty");
+        }
         return new SqlFunctionCall("LTRIM", expressions);
     }
 

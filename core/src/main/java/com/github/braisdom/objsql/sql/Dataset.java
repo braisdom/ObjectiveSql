@@ -18,5 +18,6 @@ package com.github.braisdom.objsql.sql;
 
 public interface Dataset extends Expression {
 
+    @Override
     String getAlias();
 }

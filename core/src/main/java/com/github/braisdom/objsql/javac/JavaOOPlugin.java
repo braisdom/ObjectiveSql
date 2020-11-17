@@ -107,10 +107,12 @@ public class JavaOOPlugin implements Plugin {
                                             JCExpression expression = JCBinarys.createOperatorExpr(aptBuilder,
                                                     jcBinary);
                                             newArgs = newArgs.append(expression);
-                                        }else
+                                        }else {
                                             newArgs = newArgs.append((JCExpression) arg);
-                                    } else
+                                        }
+                                    } else {
                                         newArgs = newArgs.append((JCExpression) arg);
+                                    }
                                 }
 
                                 JCMethodInvocation methodInvocation = (JCMethodInvocation) node;

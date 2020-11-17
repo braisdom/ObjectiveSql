@@ -48,10 +48,11 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
         Objects.requireNonNull(dirtyObject, "The dirtyObject cannot be null");
 
         Object primaryValue = domainModelDescriptor.getPrimaryValue(dirtyObject);
-        if (primaryValue == null)
+        if (primaryValue == null) {
             return insert(dirtyObject, skipValidation);
-        else
+        } else {
             return update(primaryValue, dirtyObject, skipValidation);
+        }
     }
 
     @Override
@@ -60,8 +61,9 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
 
         if (!skipValidation) {
             Validator.Violation[] violations = Tables.validate(dirtyObject);
-            if (violations.length > 0)
+            if (violations.length > 0) {
                 throw new ValidationException(violations);
+            }
         }
 
         String dataSourceName = Tables.getDataSourceName(domainModelDescriptor.getDomainModelClass());
@@ -80,8 +82,9 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
             T domainObject = (T) sqlExecutor.insert(connection, sql, domainModelDescriptor, values);
             Object primaryValue = Tables.getPrimaryValue(domainObject);
 
-            if (primaryValue != null)
+            if (primaryValue != null) {
                 Tables.writePrimaryValue(dirtyObject, primaryValue);
+            }
 
             return dirtyObject;
         });
@@ -93,8 +96,9 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
 
         if (!skipValidation) {
             Validator.Violation[] violations = Tables.validate(dirtyObjects);
-            if (violations.length > 0)
+            if (violations.length > 0) {
                 throw new ValidationException(violations);
+            }
         }
 
         String dataSourceName = Tables.getDataSourceName(domainModelDescriptor.getDomainModelClass());
@@ -135,7 +139,9 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
                     if (columnTransition != null) {
                         return columnTransition.sinking(metaData, dirtyObject,
                                 domainModelDescriptor, fieldName, fieldValue);
-                    } else return fieldValue;
+                    } else {
+                        return fieldValue;
+                    }
                 })).toArray(Object[]::new);
     }
 
@@ -146,8 +152,9 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
 
         if (!skipValidation) {
             Validator.Violation[] violations = Tables.validate(dirtyObject);
-            if (violations.length > 0)
+            if (violations.length > 0) {
                 throw new ValidationException(violations);
+            }
         }
 
         PrimaryKey primaryKey = domainModelDescriptor.getPrimaryKey();
@@ -164,7 +171,9 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
                         if (domainModelDescriptor.skipNullOnUpdate()) {
                             String fieldName = domainModelDescriptor.getFieldName(rawColumnName);
                             return domainModelDescriptor.getFieldValue(dirtyObject, fieldName) != null;
-                        } else return true;
+                        } else {
+                            return true;
+                        }
                     }).toArray(String[]::new);
 
             Object[] values = Arrays.stream(columnNames)
@@ -173,10 +182,12 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
                         ColumnTransition<T> columnTransition = domainModelDescriptor
                                 .getColumnTransition(fieldName);
                         FieldValue fieldValue = domainModelDescriptor.getFieldValue(dirtyObject, fieldName);
-                        if (columnTransition != null)
+                        if (columnTransition != null) {
                             return columnTransition.sinking(connection.getMetaData(), dirtyObject,
                                     domainModelDescriptor, fieldName, fieldValue);
-                        else return fieldValue;
+                        } else {
+                            return fieldValue;
+                        }
                     })).toArray(Object[]::new);
 
             String databaseName = metaData.getDatabaseProductName();
@@ -261,14 +272,16 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
     }
 
     private void ensurePrimaryKeyNotNull(PrimaryKey primaryKey) throws PersistenceException {
-        if (primaryKey == null)
+        if (primaryKey == null) {
             throw new PersistenceException(String.format("The %s has no primary key",
                     domainModelDescriptor.getTableName()));
+        }
     }
 
     private void ensureNotBlank(String string, String name) throws PersistenceException {
-        if (StringUtil.isBlank(string))
+        if (StringUtil.isBlank(string)) {
             throw new PersistenceException(String.format("Empty %s for %s ", name,
                     domainModelDescriptor.getTableName()));
+        }
     }
 }

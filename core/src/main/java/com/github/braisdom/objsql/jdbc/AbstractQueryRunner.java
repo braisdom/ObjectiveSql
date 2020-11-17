@@ -224,12 +224,14 @@ public abstract class AbstractQueryRunner {
                     stmt.setArray(i + 1, array);
                 } if(params[i] instanceof FieldValue) {
                     FieldValue fieldValue = (FieldValue) params[i];
-                    if(JDBCType.NULL.equals(fieldValue.getSQLType()))
+                    if(JDBCType.NULL.equals(fieldValue.getSQLType())) {
                         stmt.setObject(i + 1, fieldValue.getValue());
-                    else
+                    } else {
                         stmt.setObject(i + 1, fieldValue.getValue(), fieldValue.getSQLType());
-                }  else
+                    }
+                }  else {
                     stmt.setObject(i + 1, params[i]);
+                }
             } else {
                 // VARCHAR works with many drivers regardless
                 // of the actual column type. Oddly, NULL and
