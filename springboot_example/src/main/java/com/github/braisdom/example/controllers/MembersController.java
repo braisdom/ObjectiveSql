@@ -4,6 +4,8 @@ import com.github.braisdom.example.RequestObject;
 import com.github.braisdom.example.ResponseObject;
 import com.github.braisdom.example.model.Member;
 import com.github.braisdom.example.model.Order;
+import com.github.braisdom.example.model.Product;
+import com.github.braisdom.objsql.sql.SQLSyntaxException;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
@@ -12,9 +14,6 @@ import java.util.List;
 @RestController
 public class MembersController {
 
-    /**
-     * The post body is in "resources/json/create_member.json"
-     */
     @PostMapping("/members")
     public ResponseObject create(@RequestBody RequestObject rawMember) throws SQLException {
         Member dirtyMember = Member.newInstanceFrom(rawMember, false);
@@ -52,5 +51,11 @@ public class MembersController {
     public ResponseObject deleteMember(@PathVariable("no") String memberNo) throws SQLException {
         int deleteCount = Member.destroy("member_no = ?");
         return ResponseObject.createSuccessResponse(deleteCount);
+    }
+
+    @GetMapping("/members/summary_orders")
+    public ResponseObject summaryOrders() throws SQLException, SQLSyntaxException {
+        List<Member> members = Member.countOrders();
+        return ResponseObject.createSuccessResponse(members);
     }
 }

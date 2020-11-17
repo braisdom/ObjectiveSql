@@ -50,8 +50,9 @@ public class InExpression extends AbstractExpression {
                 throw new SQLSyntaxException("The expressions contained cannot be empty");
             String[] expressionStrings = expressions.stream()
                     .map(FunctionWithThrowable
-                            .castFunctionWithThrowable(expression -> expression.toSql(expressionContext))).toArray(String[]::new);
-            return String.format(" %s IN (%s)", negated ? "NOT" : "", String.join(" , ", expressionStrings));
+                            .castFunctionWithThrowable(expression -> expression
+                                    .toSql(expressionContext))).toArray(String[]::new);
+            return String.format(" %s IN (%s)", negated ? "NOT" : "", String.join(", ", expressionStrings));
         } catch (SuppressedException ex) {
             if (ex.getCause() instanceof SQLSyntaxException)
                 throw (SQLSyntaxException) ex.getCause();

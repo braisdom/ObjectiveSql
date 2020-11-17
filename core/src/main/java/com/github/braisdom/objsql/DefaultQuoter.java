@@ -13,22 +13,22 @@ import static com.github.braisdom.objsql.DatabaseType.*;
 public class DefaultQuoter implements Quoter {
 
     @Override
-    public String quoteTableName(DatabaseMetaData databaseMetaData, String tableName) throws SQLException {
+    public String quoteTableName(String databaseName, String tableName) {
         String[] tableNameItems = tableName.split("\\.");
         String[] quotedTableNames = Arrays.stream(tableNameItems).map(FunctionWithThrowable
-                .castFunctionWithThrowable(item -> quoteName(databaseMetaData, item))).toArray(String[]::new);
+                .castFunctionWithThrowable(item -> quoteName(databaseName, item))).toArray(String[]::new);
         return String.join(".", quotedTableNames);
     }
 
     @Override
-    public String quoteColumnName(DatabaseMetaData databaseMetaData, String columnName) throws SQLException {
-        return quoteName(databaseMetaData, columnName);
+    public String quoteColumnName(String databaseName, String columnName) {
+        return quoteName(databaseName, columnName);
     }
 
     @Override
-    public String[] quoteColumnNames(DatabaseMetaData databaseMetaData, String[] columnNames) throws SQLException {
+    public String[] quoteColumnNames(String databaseName, String[] columnNames) {
         String[] quotedColumnNames = Arrays.stream(columnNames).map(FunctionWithThrowable
-                .castFunctionWithThrowable(column -> quoteName(databaseMetaData, column))).toArray(String[]::new);
+                .castFunctionWithThrowable(column -> quoteName(databaseName, column))).toArray(String[]::new);
         return quotedColumnNames;
     }
 
@@ -62,8 +62,7 @@ public class DefaultQuoter implements Quoter {
         return String.format("'%s'", value);
     }
 
-    private String quoteName(DatabaseMetaData databaseMetaData, String item) throws SQLException {
-        String databaseName = databaseMetaData.getDatabaseProductName();
+    private String quoteName(String databaseName, String item) {
         if (MySQL.nameEquals(databaseName) || MariaDB.nameEquals(databaseName))
             return String.format("`%s`", item);
         else if (PostgreSQL.nameEquals(databaseName) || SQLite.nameEquals(databaseName))

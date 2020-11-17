@@ -16,18 +16,17 @@
  */
 package com.github.braisdom.objsql;
 
-import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
 public interface Quoter {
 
     String NO_QUOTE_PREFIX = "noquote:";
 
-    String quoteTableName(DatabaseMetaData databaseMetaData, String tableName) throws SQLException;
+    String quoteTableName(String databaseName, String tableName);
 
-    String quoteColumnName(DatabaseMetaData databaseMetaData, String columnName) throws SQLException;
+    String quoteColumnName(String databaseName, String columnName);
 
-    String[] quoteColumnNames(DatabaseMetaData databaseMetaData, String[] columnNames) throws SQLException;
+    String[] quoteColumnNames(String databaseName, String[] columnNames);
 
     String[] quoteValues(Object... values);
 

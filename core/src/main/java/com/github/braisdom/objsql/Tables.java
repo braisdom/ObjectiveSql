@@ -31,7 +31,7 @@ import java.sql.SQLException;
 import java.util.*;
 
 /**
- * The static methods relates to the database table.
+ * Utility methods relates to the database table.
  *
  * @author braisdom
  * @since 1.0

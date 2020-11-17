@@ -16,6 +16,10 @@
  */
 package com.github.braisdom.objsql.sql;
 
+import java.util.Arrays;
+
+import static com.github.braisdom.objsql.sql.Expressions.$;
+
 /**
  * It describes a column of database, and defines the operators between
  * column and expressions. It is a object-oriented programming for the SQL statements.
@@ -26,103 +30,71 @@ public interface Column extends Expression {
 
     Expression desc();
 
-    Expression isNull();
+    LogicalExpression isNull();
 
-    Expression isNotNull();
+    LogicalExpression isNotNull();
 
-    Expression lt(Expression expr);
+    LogicalExpression in(Expression... expressions);
 
-    Expression lt(Integer literal);
+    default LogicalExpression in(String... strLiterals) {
+        return in(Arrays.stream(strLiterals).map(str -> $(str)).toArray(Expression[]::new));
+    }
 
-    Expression lt(Float literal);
+    default LogicalExpression in(Integer... intLiterals) {
+        return in(Arrays.stream(intLiterals).map(intL -> $(intL)).toArray(Expression[]::new));
+    }
 
-    Expression lt(Double literal);
+    default LogicalExpression in(Long... longLiterals) {
+        return in(Arrays.stream(longLiterals).map(longL -> $(longL)).toArray(Expression[]::new));
+    }
 
-    Expression gt(Expression expr);
+    LogicalExpression in(Dataset dataset);
 
-    Expression gt(Integer literal);
+    LogicalExpression notIn(Expression... expressions);
 
-    Expression gt(Float literal);
+    default LogicalExpression notIn(String... strLiterals) {
+        return notIn(Arrays.stream(strLiterals).map(literal -> $(literal)).toArray(Expression[]::new));
+    }
 
-    Expression gt(Double literal);
+    default LogicalExpression notIn(Integer... intLiterals) {
+        return notIn(Arrays.stream(intLiterals).map(literal -> $(literal)).toArray(Expression[]::new));
+    }
 
-    Expression eq(Expression expr);
+    default LogicalExpression notIn(Long... longLiterals) {
+        return notIn(Arrays.stream(longLiterals).map(literal -> $(literal)).toArray(Expression[]::new));
+    }
 
-    Expression eq(Integer literal);
+    LogicalExpression notIn(Dataset dataset);
 
-    Expression eq(Float literal);
+    LogicalExpression between(Expression left, Expression right);
 
-    Expression eq(Double literal);
+    default LogicalExpression between(Integer left, Integer right) {
+        return between($(left), $(right));
+    }
 
-    Expression eq(String literal);
+    default LogicalExpression between(Long left, Long right) {
+        return between($(left), $(right));
+    }
 
-    Expression le(Expression expr);
+    LogicalExpression notBetween(Expression left, Expression right);
 
-    Expression le(Integer literal);
+    default LogicalExpression notBetween(Integer left, Integer right) {
+        return notBetween($(left), $(right));
+    }
 
-    Expression le(Float literal);
+    default LogicalExpression notBetween(Long left, Long right) {
+        return notBetween($(left), $(right));
+    }
 
-    Expression le(Double literal);
+    LogicalExpression like(Expression expression);
 
-    Expression ge(Expression expr);
+    default LogicalExpression like(String str) {
+        return like($(str));
+    }
 
-    Expression ge(Integer literal);
+    LogicalExpression notLike(Expression expression);
 
-    Expression ge(Float literal);
-
-    Expression ge(Double literal);
-
-    Expression ne(Expression expr);
-
-    Expression ne(Integer literal);
-
-    Expression ne(Float literal);
-
-    Expression ne(Double literal);
-
-    Expression ne(String literal);
-
-    Expression ne2(Expression expr);
-
-    Expression ne2(Integer literal);
-
-    Expression ne2(Float literal);
-
-    Expression ne2(Double literal);
-
-    Expression ne2(String literal);
-
-    Expression in(Expression... expressions);
-
-    Expression in(String... strLiterals);
-
-    Expression in(Integer... intLiterals);
-
-    Expression in(Long... longLiterals);
-
-    Expression in(Dataset dataset);
-
-    Expression notIn(Expression... expressions);
-
-    Expression notIn(String... strLiterals);
-
-    Expression notIn(Integer... intLiterals);
-
-    Expression notIn(Long... longLiterals);
-
-    Expression notIn(Dataset dataset);
-
-    Expression between(Expression left, Expression right);
-
-    Expression notBetween(Expression left, Expression right);
-
-    Expression between(Integer left, Integer right);
-
-    Expression notBetween(Integer left, Integer right);
-
-    Expression between(Long left, Long right);
-
-    Expression notBetween(Long left, Long right);
-
-    Expression like(String str);
+    default LogicalExpression notLike(String str) {
+        return notLike($(str));
+    }
 }

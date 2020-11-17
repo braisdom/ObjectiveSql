@@ -42,7 +42,8 @@ public class DefaultQuery<T> extends AbstractQuery<T> {
         Quoter quoter = Databases.getQuoter();
         String dataSourceName = Tables.getDataSourceName(domainModelDescriptor.getDomainModelClass());
         return Databases.execute(dataSourceName, (connection, sqlExecutor) -> {
-            String tableName = quoter.quoteTableName(connection.getMetaData(), domainModelDescriptor.getTableName());
+            String databaseName = connection.getMetaData().getDatabaseProductName();
+            String tableName = quoter.quoteTableName(databaseName, domainModelDescriptor.getTableName());
             String sql = createQuerySQL(tableName, projection, filter, groupBy,
                     having, orderBy, offset, limit);
             List rows = sqlExecutor.query(connection, sql, domainModelDescriptor, params);

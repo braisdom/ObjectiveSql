@@ -16,6 +16,11 @@
  */
 package com.github.braisdom.objsql;
 
+/**
+ * An abstract factory for creating Logger
+ *
+ * @see Logger
+ */
 public interface LoggerFactory {
 
     Logger create(Class<?> clazz);

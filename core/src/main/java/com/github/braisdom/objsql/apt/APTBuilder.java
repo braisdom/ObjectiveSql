@@ -24,6 +24,10 @@ public final class APTBuilder {
     private final Names names;
     private final Messager messager;
 
+    public APTBuilder(TreeMaker treeMaker, Names names) {
+        this(null, null, null, treeMaker, names, null);
+    }
+
     public APTBuilder(JCClassDecl classDecl, Element element, JCTree ast, TreeMaker treeMaker,
                       Names names, Messager messager) {
         this.classDecl = classDecl;

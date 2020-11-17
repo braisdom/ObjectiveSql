@@ -23,7 +23,7 @@ public class CacheableSQLExecutor<T> extends DefaultSQLExecutor<T> {
     private static final Integer CACHED_OBJECT_EXPIRED = 60;
     private static final String KEY_SHA = "SHA";
 
-    private Jedis jedis = new Jedis("127.0.0.1", 6379);
+    private Jedis jedis = new Jedis("localhost", 6379);
     private MessageDigest messageDigest;
 
     public CacheableSQLExecutor() {
