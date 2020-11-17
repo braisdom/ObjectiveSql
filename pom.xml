@@ -24,7 +24,7 @@
 
     <modules>
         <module>core</module>
-        <module>universal_example</module>
+        <module>springboot</module>
         <module>springboot_example</module>
         <module>oracle_example</module>
         <module>javaoo_test</module>
