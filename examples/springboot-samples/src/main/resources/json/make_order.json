@@ -1,0 +1,16 @@
+{
+  "no": "202009100001",
+  "amount": 100.50,
+  "quantity": 2,
+  "orderLines": [
+    {
+      "barcode" : "0611901211039",
+      "amount": 50.0,
+      "quantity": 1
+    },{
+      "barcode" : "0611901211045",
+      "amount": 50.5,
+      "quantity": 1
+    }
+  ]
+}
