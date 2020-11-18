@@ -399,6 +399,7 @@ public final class DbUtils {
         /**
          * Java 1.7 method.
          */
+        @Override
         public Logger getParentLogger() throws SQLFeatureNotSupportedException {
             if (parentLoggerSupported) {
                 try {

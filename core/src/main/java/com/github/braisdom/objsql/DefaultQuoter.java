@@ -46,14 +46,15 @@ public class DefaultQuoter implements Quoter {
     @Override
     public String quoteValue(Object value) {
         if (value instanceof Integer || value instanceof Long ||
-                value instanceof Float || value instanceof Double)
+                value instanceof Float || value instanceof Double) {
             return String.valueOf(value);
-        else {
+        } else {
             String stringValue = String.valueOf(value);
             if (stringValue.startsWith(NO_QUOTE_PREFIX)) {
                 String[] stringValues = stringValue.split(":");
-                if(stringValues.length < 2)
+                if(stringValues.length < 2) {
                     throw new IllegalArgumentException("'%s' is invalid no quote value");
+                }
                 return String.join("",
                         Arrays.copyOfRange(stringValues, 1, stringValues.length));
             }
@@ -63,12 +64,13 @@ public class DefaultQuoter implements Quoter {
     }
 
     private String quoteName(String databaseName, String item) {
-        if (MySQL.nameEquals(databaseName) || MariaDB.nameEquals(databaseName))
+        if (MySQL.nameEquals(databaseName) || MariaDB.nameEquals(databaseName)) {
             return String.format("`%s`", item);
-        else if (PostgreSQL.nameEquals(databaseName) || SQLite.nameEquals(databaseName))
+        } else if (PostgreSQL.nameEquals(databaseName) || SQLite.nameEquals(databaseName)) {
             return String.format("\"%s\"", item);
-        else if (Oracle.nameEquals(databaseName))
+        } else if (Oracle.nameEquals(databaseName)) {
             return String.format("\"%s\"", item.toUpperCase());
+        }
         return String.format("\"%s\"", item);
     }
 }

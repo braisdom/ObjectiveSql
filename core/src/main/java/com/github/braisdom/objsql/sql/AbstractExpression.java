@@ -29,6 +29,7 @@ public abstract class AbstractExpression implements Expression {
         return this;
     }
 
+    @Override
     public String getAlias() {
         return alias;
     }

@@ -43,7 +43,9 @@ public class SqlDateTimeTransition<T> implements ColumnTransition<T> {
                     return fieldValue;
                 }
                 return fieldValue;
-            } else return fieldValue;
+            } else {
+                return fieldValue;
+            }
         }
         return null;
     }
@@ -55,7 +57,9 @@ public class SqlDateTimeTransition<T> implements ColumnTransition<T> {
         if (columnValue != null) {
             if (SQLite.nameEquals(databaseName)) {
                 return Timestamp.valueOf(String.valueOf(columnValue));
-            } else return columnValue;
+            } else {
+                return columnValue;
+            }
         }
         return null;
     }

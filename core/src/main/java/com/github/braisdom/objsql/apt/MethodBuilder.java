@@ -35,8 +35,9 @@ public class MethodBuilder {
     }
 
     public MethodBuilder setThrowsClauses(Class<? extends Throwable>... throwsClauseArray) {
-        for (Class<? extends Throwable> throwsClause : throwsClauseArray)
+        for (Class<? extends Throwable> throwsClause : throwsClauseArray) {
             throwsClauses.append(aptBuilder.typeRef(throwsClause.getName()));
+        }
         return this;
     }
 
@@ -114,7 +115,9 @@ public class MethodBuilder {
         if (genTypes.size() > 0) {
             JCTypeApply typeApply = treeMaker.TypeApply(type, genTypes);
             addParameter(name, typeApply);
-        } else addParameter(name, type);
+        } else {
+            addParameter(name, type);
+        }
         return this;
     }
 
@@ -162,11 +165,13 @@ public class MethodBuilder {
     }
 
     public JCTree.JCMethodDecl build(String name, int modifiers) {
-        if (returnType == null)
+        if (returnType == null) {
             returnType = treeMaker.TypeIdent(TypeTag.VOID);
+        }
 
-        if (returnStatement != null)
+        if (returnStatement != null) {
             statements.append(treeMaker.Return(returnStatement));
+        }
 
         return treeMaker.MethodDef(treeMaker.Modifiers(modifiers),
                 aptBuilder.toName(name),

@@ -161,11 +161,13 @@ public class Select<T> extends AbstractExpression implements Dataset {
         processGroupBy(expressionContext, sql);
         processOrderBy(expressionContext, sql);
 
-        if (offset > 0)
+        if (offset > 0) {
             sql.append(" OFFSET ").append(offset);
+        }
 
-        if (limit > 0)
+        if (limit > 0) {
             sql.append(" LIMIT ").append(limit);
+        }
 
         processUnion(expressionContext, sql);
 
@@ -173,18 +175,20 @@ public class Select<T> extends AbstractExpression implements Dataset {
     }
 
     protected void processProjections(ExpressionContext expressionContext, StringBuilder sql) throws SQLSyntaxException {
-        if (projections.size() == 0)
+        if (projections.size() == 0) {
             sql.append(" * ");
-        else {
+        } else {
             try {
                 String[] projectionStrings = projections.stream()
                         .map(FunctionWithThrowable
                                 .castFunctionWithThrowable(projection -> projection.toSql(expressionContext))).toArray(String[]::new);
                 sql.append(String.join(",", projectionStrings));
             } catch (SuppressedException ex) {
-                if (ex.getCause() instanceof SQLSyntaxException)
+                if (ex.getCause() instanceof SQLSyntaxException) {
                     throw (SQLSyntaxException) ex.getCause();
-                else throw ex;
+                } else {
+                    throw ex;
+                }
             }
         }
     }
@@ -200,9 +204,11 @@ public class Select<T> extends AbstractExpression implements Dataset {
                         ).toArray(String[]::new);
                 sql.append(String.join(", ", fromStrings));
             } catch (SuppressedException ex) {
-                if (ex.getCause() instanceof SQLSyntaxException)
+                if (ex.getCause() instanceof SQLSyntaxException) {
                     throw (SQLSyntaxException) ex.getCause();
-                else throw ex;
+                } else {
+                    throw ex;
+                }
             }
         }
     }
@@ -224,9 +230,11 @@ public class Select<T> extends AbstractExpression implements Dataset {
                 sql.append(String.join(" ", joinStrings));
             }
         } catch (SuppressedException ex) {
-            if (ex.getCause() instanceof SQLSyntaxException)
+            if (ex.getCause() instanceof SQLSyntaxException) {
                 throw (SQLSyntaxException) ex.getCause();
-            else throw ex;
+            } else {
+                throw ex;
+            }
         }
     }
 
@@ -244,9 +252,11 @@ public class Select<T> extends AbstractExpression implements Dataset {
                     sql.append(havingExpression.toSql(expressionContext));
                 }
             } catch (SuppressedException ex) {
-                if (ex.getCause() instanceof SQLSyntaxException)
+                if (ex.getCause() instanceof SQLSyntaxException) {
                     throw (SQLSyntaxException) ex.getCause();
-                else throw ex;
+                } else {
+                    throw ex;
+                }
             }
         }
     }
@@ -260,22 +270,26 @@ public class Select<T> extends AbstractExpression implements Dataset {
                                 .castFunctionWithThrowable(orderBy -> orderBy.toSql(expressionContext))).toArray(String[]::new);
                 sql.append(String.join(", ", orderByStrings));
             } catch (SuppressedException ex) {
-                if (ex.getCause() instanceof SQLSyntaxException)
+                if (ex.getCause() instanceof SQLSyntaxException) {
                     throw (SQLSyntaxException) ex.getCause();
-                else throw ex;
+                } else {
+                    throw ex;
+                }
             }
         }
     }
 
     protected void processUnion(ExpressionContext expressionContext, StringBuilder sql) throws SQLSyntaxException {
         if (unionDatasets != null) {
-            for (Dataset dataset : unionDatasets)
+            for (Dataset dataset : unionDatasets) {
                 sql.append(" UNION ").append(dataset.toSql(expressionContext)).append(" ");
+            }
         }
 
         if (unionAllDatasets != null) {
-            for (Dataset dataset : unionAllDatasets)
+            for (Dataset dataset : unionAllDatasets) {
                 sql.append(" UNION ALL ").append(dataset.toSql(expressionContext)).append(" ");
+            }
         }
     }
 }

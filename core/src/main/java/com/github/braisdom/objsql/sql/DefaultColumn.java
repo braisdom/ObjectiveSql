@@ -111,6 +111,7 @@ public class DefaultColumn extends AbstractExpression implements Column {
         // cannot be applied in anywhere, then a new instance of Column will be created
         // after "AS" operation, avoiding to pollute the old instance.
         return new DefaultColumn(dataset, columnName) {
+            @Override
             public String getAlias() {
                 return alias;
             }

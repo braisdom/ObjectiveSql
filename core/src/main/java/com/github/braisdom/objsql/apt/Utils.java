@@ -9,7 +9,9 @@ import java.util.StringTokenizer;
 final class Utils {
 
     public static String camelize(String word, boolean firstLetterInLowerCase) {
-        if (word == null || "".equals(word)) return word;
+        if (word == null || "".equals(word)) {
+            return word;
+        }
 
         String result = "";
         if (word.indexOf('_') != -1) {
@@ -42,20 +44,27 @@ final class Utils {
         for (Symbol symbol : methodSymbols) {
             if (symbol instanceof Symbol.MethodSymbol) {
                 Symbol.MethodSymbol methodSymbol = (Symbol.MethodSymbol) symbol;
-                if (methodName.equals(methodSymbol.name.toString()) && paramCount == methodDecl.params.size())
+                if (methodName.equals(methodSymbol.name.toString()) && paramCount == methodDecl.params.size()) {
                     return true;
+                }
             }
         }
         if (recursive) {
             Symbol.TypeSymbol superclass = classSymbol.getSuperclass().tsym;
-            if ("java.lang.Object".equals(superclass.toString()))
+            if ("java.lang.Object".equals(superclass.toString())) {
                 return false;
-            else return containsMethod((Symbol.ClassSymbol) superclass, methodDecl, recursive);
-        } else return false;
+            } else {
+                return containsMethod((Symbol.ClassSymbol) superclass, methodDecl, recursive);
+            }
+        } else {
+            return false;
+        }
     }
 
     private static String camelizeOneWord(String word, boolean firstLetterInLowerCase) {
-        if (word == null || "".equals(word)) return word;
+        if (word == null || "".equals(word)) {
+            return word;
+        }
 
         String firstChar = word.substring(0,1);
         String result = (firstLetterInLowerCase)?firstChar.toLowerCase():firstChar.toUpperCase();

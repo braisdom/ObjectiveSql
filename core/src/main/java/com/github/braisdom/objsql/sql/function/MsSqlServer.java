@@ -87,12 +87,13 @@ public class MsSqlServer {
                         .toArray(String[]::new);
                 String alias = getAlias();
                 String sql;
-                if (using == null)
+                if (using == null) {
                     sql = String.format("%s(%s AS %s) %s", getName(), expressionStrings[0], type,
                             alias == null ? "" : "AS " + expressionContext.quoteColumn(alias));
-                else
+                } else {
                     sql = String.format("%s(%s AS %s USING %s) %s", getName(), expressionStrings[0], type,
                             using, alias == null ? "" : "AS " + expressionContext.quoteColumn(alias));
+                }
                 return sql;
             }
         };

@@ -86,9 +86,10 @@ public class AnnotationValues {
                     } else if (assign.rhs instanceof JCTree.JCLiteral) {
                         if ("boolean".equalsIgnoreCase(assign.rhs.type.toString())) {
                             annotationValueMap.put(attributeName, Boolean.valueOf(assign.rhs.toString()));
-                        } else
+                        } else {
                             annotationValueMap.put(attributeName,
                                     ((JCTree.JCLiteral) assign.rhs).value);
+                        }
                     }
                 }
             }
@@ -113,12 +114,13 @@ public class AnnotationValues {
 
     private void extractAnnotation(Tree tree) {
         List<JCAnnotation> annotations = Collections.emptyList();
-        if (tree instanceof ClassTree)
+        if (tree instanceof ClassTree) {
             annotations = (List<JCAnnotation>) ((ClassTree) tree).getModifiers().getAnnotations();
-        else if (tree instanceof VariableTree)
+        } else if (tree instanceof VariableTree) {
             annotations = (List<JCAnnotation>) ((VariableTree) tree).getModifiers().getAnnotations();
-        else if (tree instanceof JCTree.JCMethodDecl)
+        } else if (tree instanceof JCTree.JCMethodDecl) {
             annotations = ((JCTree.JCMethodDecl) tree).getModifiers().getAnnotations();
+        }
 
         for (JCAnnotation annotation : annotations) {
             values.put(annotation.getAnnotationType().type.toString(), new AnnotationValue(annotation));
@@ -130,12 +132,14 @@ public class AnnotationValues {
             @Override
             public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
                 AnnotationValue annotationValue = values.get(method.getDeclaringClass().getName());
-                if (annotationValue == null)
+                if (annotationValue == null) {
                     return method.getDefaultValue();
+                }
 
                 Object value = annotationValue.getValue(method);
-                if (value == null)
+                if (value == null) {
                     return method.getDefaultValue();
+                }
 
                 return value;
             }

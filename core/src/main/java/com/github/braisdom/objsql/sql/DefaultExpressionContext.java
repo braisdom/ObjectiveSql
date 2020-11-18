@@ -40,10 +40,12 @@ public class DefaultExpressionContext implements ExpressionContext {
 
     @Override
     public String getAlias(Dataset dataset, boolean forceCreate) {
-        if (dataset.getAlias() != null)
+        if (dataset.getAlias() != null) {
             return dataset.getAlias();
-        if (!datasets.contains(dataset))
+        }
+        if (!datasets.contains(dataset)) {
             datasets.add(dataset);
+        }
         return String.format("T%d", datasets.indexOf(dataset));
     }
 

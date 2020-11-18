@@ -30,8 +30,9 @@ public class PostgreSql {
 
     public static final Expression concatWs(String delimiter, Expression... expressions) throws SQLSyntaxException {
         Objects.requireNonNull(expressions, "The expressions cannot be null");
-        if(expressions.length == 0)
+        if(expressions.length == 0) {
             throw new SQLSyntaxException("The expressions cannot be empty");
+        }
 
         return new SqlFunctionCall("concat_ws", ArrayUtil.aheadElement(Expression.class, expressions,
                 new LiteralExpression(delimiter)));

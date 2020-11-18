@@ -22,8 +22,9 @@ public class RelationFieldCodeGenerator extends DomainModelProcessor {
         Relation relation = annotationValues.getAnnotationValue(Relation.class);
         JCTree.JCVariableDecl relationField = (JCTree.JCVariableDecl) ast;
 
-        if(ast == null || relationField == null)
+        if(ast == null || relationField == null) {
             return;
+        }
 
         handleRelationField(relation, relationField, aptBuilder);
     }

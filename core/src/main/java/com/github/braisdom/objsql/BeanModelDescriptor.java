@@ -104,8 +104,9 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
     public BeanModelDescriptor(Class<T> domainModelClass, boolean skipPrimaryKeyOnInserting) {
         Objects.requireNonNull(domainModelClass, "The domainModelClass cannot be null");
 
-        if (Tables.getPrimaryKey(domainModelClass) == null)
+        if (Tables.getPrimaryKey(domainModelClass) == null) {
             throw new DomainModelException(String.format("The %s has no primary key", domainModelClass.getSimpleName()));
+        }
 
         DomainModel domainModel = domainModelClass.getAnnotation(DomainModel.class);
 
@@ -128,8 +129,9 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
     @Override
     public void setGeneratedKey(T bean, Object primaryKeyValue) {
         Field primaryField = Tables.getPrimaryField(domainModelClass);
-        if (primaryKeyValue instanceof BigInteger)
+        if (primaryKeyValue instanceof BigInteger) {
             primaryKeyValue = Long.valueOf(primaryKeyValue.toString());
+        }
         setFieldValue(bean, primaryField.getName(), primaryKeyValue);
     }
 
@@ -197,12 +199,14 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
             Field field = domainModelClass.getDeclaredField(fieldName);
 
             if(field.getName().equals(domainModel.primaryFieldName())
-                    && !WordUtil.isEmpty(domainModel.primaryKeyDefaultValue()))
+                    && !WordUtil.isEmpty(domainModel.primaryKeyDefaultValue())) {
                 return Optional.of(domainModel.primaryKeyDefaultValue());
+            }
 
             Column column = field.getAnnotation(Column.class);
-            if (column != null && !WordUtil.isEmpty(column.defaultValue()))
+            if (column != null && !WordUtil.isEmpty(column.defaultValue())) {
                 return Optional.of(column.defaultValue());
+            }
             return Optional.empty();
         } catch (NoSuchFieldException ex) {
             throw new IllegalArgumentException(ex.getMessage(), ex);
@@ -215,12 +219,14 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
             DomainModel domainModel = domainModelClass.getAnnotation(DomainModel.class);
             Field field = domainModelClass.getDeclaredField(fieldName);
 
-            if(field.getName().equals(domainModel.primaryFieldName()))
+            if(field.getName().equals(domainModel.primaryFieldName())) {
                 return !WordUtil.isEmpty(domainModel.primaryKeyDefaultValue());
+            }
 
             Column column = field.getAnnotation(Column.class);
-            if (column != null)
+            if (column != null) {
                 return !WordUtil.isEmpty(column.defaultValue());
+            }
             return false;
         } catch (NoSuchFieldException ex) {
             throw new IllegalArgumentException(ex.getMessage(), ex);
@@ -240,8 +246,9 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
                 return new DefaultFieldValue(JDBCType.NULL, primaryValue);
             }
 
-            if (value == null)
+            if (value == null) {
                 return new DefaultFieldValue(null);
+            }
 
             Column column = field.getAnnotation(Column.class);
             if (column != null) {
@@ -257,7 +264,9 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
     @Override
     public Class getFieldType(String fieldName) {
         try {
-            if (fieldName == null) return null;
+            if (fieldName == null) {
+                return null;
+            }
             Field field = domainModelClass.getDeclaredField(fieldName);
             return field == null ? null : field.getType();
         } catch (NoSuchFieldException ex) {
@@ -290,32 +299,39 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
                 Column column = field.getAnnotation(Column.class);
                 Transient transientAnnotation = field.getAnnotation(Transient.class);
                 if (!Modifier.isStatic(field.getModifiers()) && transientAnnotation == null) {
-                    if (column == null)
+                    if (column == null) {
                         return isColumnizable(field);
-                    else {
+                    } else {
                         return ensureColumnizable(column, field, primaryField, insertable, updatable);
                     }
-                } else return false;
+                } else {
+                    return false;
+                }
             }).toArray(Field[]::new);
         } else {
             return Arrays.stream(fields).filter(field -> {
                 Column column = field.getAnnotation(Column.class);
                 Transient transientAnnotation = field.getAnnotation(Transient.class);
                 if (!Modifier.isStatic(field.getModifiers()) && transientAnnotation == null) {
-                    if (column == null)
+                    if (column == null) {
                         return false;
-                    else
+                    } else {
                         return ensureColumnizable(column, field, primaryField, insertable, updatable);
-                } else return false;
+                    }
+                } else {
+                    return false;
+                }
             }).toArray(Field[]::new);
         }
     }
 
     protected String getColumnName(Field field) {
         Column column = field.getAnnotation(Column.class);
-        if (column != null && !StringUtil.isBlank(column.name()))
+        if (column != null && !StringUtil.isBlank(column.name())) {
             return column.name();
-        else return WordUtil.underscore(field.getName());
+        } else {
+            return WordUtil.underscore(field.getName());
+        }
     }
 
     protected boolean isColumnizable(Field field) {
@@ -324,13 +340,15 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
 
     private boolean ensureColumnizable(Column column, Field field, Field primaryField,
                                        boolean insertable, boolean updatable) {
-        if (insertable && updatable)
+        if (insertable && updatable) {
             return true;
-        else if (insertable) {
+        } else if (insertable) {
             return column.insertable();
         } else if (updatable) {
             return (updatable && column.updatable() && !field.equals(primaryField));
-        } else return false;
+        } else {
+            return false;
+        }
     }
 
     private void prepareColumnToPropertyOverrides(Class<T> rowClass) {
@@ -359,8 +377,9 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
     private Map<String, ColumnTransition> instantiateColumnTransitionMap(Field[] fields) {
         Arrays.stream(fields).forEach(field -> {
             Column column = field.getAnnotation(Column.class);
-            if (column != null && !column.transition().equals(ColumnTransition.class))
+            if (column != null && !column.transition().equals(ColumnTransition.class)) {
                 columnTransitionMap.put(field.getName(), ClassUtils.createNewInstance(column.transition()));
+            }
         });
 
         return columnTransitionMap;
