@@ -20,10 +20,7 @@ import com.github.braisdom.objsql.relation.RelationalException;
 import com.github.braisdom.objsql.util.WordUtil;
 
 import java.beans.PropertyDescriptor;
-import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
@@ -135,8 +132,13 @@ public final class PropertyUtils {
                 withAccessibleObject(writeMethod, method -> method.invoke(destination, args), force);
             }
         } catch (ReflectiveOperationException | RuntimeException e) {
+            Method writeMethod = propertyDescriptor.getWriteMethod();
+            Parameter[] parameters = writeMethod.getParameters();
             String qualifiedPropertyName = getQualifiedPropertyName(destination, propertyDescriptor);
-            String message = String.format("Failed to write: %s, value: %s", qualifiedPropertyName, value);
+            String realTypeName = value != null ? value.getClass().getSimpleName() : "Null";
+            String methodTypeName = parameters.length > 0 ? parameters[0].getType().getSimpleName() : "Null";
+            String message = String.format("Failed to write %s, because setter method require %s, but given %s(%s)",
+                    qualifiedPropertyName, methodTypeName, realTypeName, value);
             throw new ReflectionException(message, e);
         }
     }
