@@ -24,6 +24,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.time.format.DateTimeParseException;
 
 import static com.github.braisdom.objsql.DatabaseType.*;
 
@@ -55,12 +56,18 @@ public class SqlDateTimeTransition<T> implements ColumnTransition<T> {
     public Object rising(DatabaseMetaData databaseMetaData, ResultSetMetaData resultSetMetaData,
                          T object, TableRowAdapter tableRowDescriptor, String columnName, Object columnValue) throws SQLException {
         String databaseName = databaseMetaData.getDatabaseProductName();
-        if (columnValue != null) {
-            if (SQLite.nameEquals(databaseName)) {
-                return Timestamp.from(Instant.ofEpochMilli(Long.valueOf(String.valueOf(columnValue))));
-            } else {
-                return columnValue;
+        try {
+            if (columnValue != null) {
+                if (SQLite.nameEquals(databaseName)) {
+                    return Timestamp.from(Instant.ofEpochMilli(Long.valueOf(String.valueOf(columnValue))));
+                } else {
+                    return columnValue;
+                }
             }
+        } catch (DateTimeParseException ex) {
+            String message = String.format("Invalid raw DataTime of '%s' from database: %s",
+                    columnName, columnValue);
+            throw new IllegalArgumentException(message, ex);
         }
         return null;
     }
