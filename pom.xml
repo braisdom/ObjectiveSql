@@ -33,7 +33,7 @@
         <module>examples/oracle</module>
         <module>examples/sqlserver</module>
         <module>examples/postgres</module>
-        <module>examples/springboot-samples</module>
+        <module>examples/springboot-sample</module>
     </modules>
 
     <scm>
