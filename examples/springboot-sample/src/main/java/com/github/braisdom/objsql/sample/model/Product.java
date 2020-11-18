@@ -42,7 +42,8 @@ public class Product {
      *
      * @return
      */
-    public static List<Product> calProductSPLYAndLP(String rawBegin, String rawEnd) throws SQLSyntaxException, SQLException {
+    public static List<Product> calProductSPLYAndLP(String rawBegin, String rawEnd)
+            throws SQLSyntaxException, SQLException {
         DateTime begin = DateTime.parse(rawBegin + " 00:00:00", DATE_TIME_FORMATTER);
         DateTime end = DateTime.parse(rawEnd + " 23:59:59", DATE_TIME_FORMATTER);
 
@@ -69,18 +70,22 @@ public class Product {
         select.project(target.col("barcode"))
                 .project(target.col("sales_year"))
                 .project(target.col("sales_month"))
-                .project(format(lpAmount, 2).as("amount_lp"))
-                .project(format(lpOrderCount, 2).as("order_count_lp"))
-                .project(format(lpQuantity, 2).as("quantity_lp"))
-                .project(format(splyAmount, 2).as("amount_sply"))
-                .project(format(splyOrderCount, 2).as("order_count_sply"))
-                .project(format(splyQuantity, 2).as("quantity_sply"));
+                .project(formatMoney(lpAmount).as("amount_lp"))
+                .project(formatMoney(lpOrderCount).as("order_count_lp"))
+                .project(formatMoney(lpQuantity).as("quantity_lp"))
+                .project(formatMoney(splyAmount).as("amount_sply"))
+                .project(formatMoney(splyOrderCount).as("order_count_sply"))
+                .project(formatMoney(splyQuantity).as("quantity_sply"));
 
         select.groupBy(target.col("barcode"),
                 target.col("sales_year"),
                 target.col("sales_month"));
 
         return select.execute(DatabaseType.MySQL, Product.class);
+    }
+
+    private static Expression formatMoney(Expression column) {
+        return format(column, 2);
     }
 
     private static Expression createLPExpr(Select target, Select select, String metricsName) {
