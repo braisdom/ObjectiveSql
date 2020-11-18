@@ -23,6 +23,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.Instant;
 
 import static com.github.braisdom.objsql.DatabaseType.*;
 
@@ -56,7 +57,7 @@ public class SqlDateTimeTransition<T> implements ColumnTransition<T> {
         String databaseName = databaseMetaData.getDatabaseProductName();
         if (columnValue != null) {
             if (SQLite.nameEquals(databaseName)) {
-                return Timestamp.valueOf(String.valueOf(columnValue));
+                return Timestamp.from(Instant.ofEpochMilli(Long.valueOf(String.valueOf(columnValue))));
             } else {
                 return columnValue;
             }
