@@ -58,7 +58,7 @@ public class PersistenceExample extends MySQLExample {
         extendedAttributes.put("age", 28);
 
         Map<String, Object> attributes = new HashMap<>();
-        attributes.put("id", 10);
+        attributes.put("id", 10L);
         attributes.put("no", "200000");
         attributes.put("name", "Carter");
         attributes.put("gender", 1);
@@ -77,7 +77,7 @@ public class PersistenceExample extends MySQLExample {
         extendedAttributes.put("age", 28);
 
         Map<String, Object> attributes = new HashMap<>();
-        attributes.put("id", 9);
+        attributes.put("id", 9L);
         attributes.put("no", "200000");
         attributes.put("name", "Barbara\t");
         attributes.put("gender", 1);
@@ -133,9 +133,9 @@ public class PersistenceExample extends MySQLExample {
                 .setName("Smith => Jackson")
                 .setExtendedAttributes(extendedAttributes);
 
-        Member.update(1, newMember, true);
+        Member.update(1L, newMember, true);
 
-        Member member = Member.queryByPrimaryKey(1);
+        Member member = Member.queryByPrimaryKey(1L);
         Assert.assertTrue(member.getName().equals("Smith => Jackson"));
         Assert.assertTrue(member.getName() != null);
         Assert.assertTrue(member.getMobile() != null);
@@ -147,7 +147,7 @@ public class PersistenceExample extends MySQLExample {
 
         Member.update("name = 'Smith => Jackson'", "name = 'Alice'");
 
-        Member member = Member.queryByPrimaryKey(1);
+        Member member = Member.queryByPrimaryKey(1L);
         Assert.assertTrue(member.getName().equals("Smith => Jackson"));
     }
 
@@ -155,7 +155,7 @@ public class PersistenceExample extends MySQLExample {
     public void deleteMemberById() throws SQLException {
         createMemberWithArray();
 
-        Member.destroy(1);
+        Member.destroy(1L);
 
         long count = Member.countAll();
         Assert.assertTrue(count == 2);
@@ -184,9 +184,9 @@ public class PersistenceExample extends MySQLExample {
     public void createOrder() throws SQLException {
         Order order = new Order()
                 .setNo("202000001")
-                .setMemberId(3)
-                .setAmount(3.5d)
-                .setQuantity(100.3d)
+                .setMemberId(3L)
+                .setAmount(3.5f)
+                .setQuantity(100.3f)
                 .setSalesAt(Timestamp.valueOf("2020-05-01 09:30:00"));
         order.save(false, true);
 

@@ -20,7 +20,7 @@ public class MySQLExample {
         @Override
         public Connection getConnection(String dataSourceName) throws SQLException {
             try {
-                String url = "jdbc:mysql://localhost:3306/objective_sql?serverTimezone=Asia/Shanghai&useSSL=false";
+                String url = "jdbc:mysql://localhost:4406/objective_sql?serverTimezone=Asia/Shanghai&useSSL=false";
                 String user = "root";
                 String password = "123456";
                 return DriverManager.getConnection(url, user, password);
@@ -36,8 +36,9 @@ public class MySQLExample {
         SQLFile sqlFile = new SQLFile("/mysql.sql");
 
         for(String sql : sqlFile.getSqls()){
-            if(!WordUtil.isEmpty(sql))
+            if(!WordUtil.isEmpty(sql)) {
                 Databases.execute(sql);
+            }
         }
     }
 

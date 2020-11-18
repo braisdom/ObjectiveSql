@@ -11,7 +11,7 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 
-@DomainModel(primaryClass = Integer.class)
+@DomainModel
 public class Member {
     @Size(min = 5, max = 20)
     private String no;
