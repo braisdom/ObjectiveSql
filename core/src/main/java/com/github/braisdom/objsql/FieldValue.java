@@ -4,6 +4,8 @@ import java.sql.SQLType;
 
 public interface FieldValue {
 
+    boolean isNull();
+
     SQLType getSQLType();
 
     Object getValue();

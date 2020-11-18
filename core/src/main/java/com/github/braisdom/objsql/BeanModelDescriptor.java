@@ -72,6 +72,11 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
         }
 
         @Override
+        public boolean isNull() {
+            return value == null;
+        }
+
+        @Override
         public SQLType getSQLType() {
             return sqlType;
         }

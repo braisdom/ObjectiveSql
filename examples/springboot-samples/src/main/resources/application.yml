@@ -1,0 +1,28 @@
+debug: true
+spring:
+  profiles:
+    name: objective-sql-example
+    active: development
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:4406/objective_sql
+    username: root
+    password: 123456
+    hikari:
+      idle-timeout: 10000
+      maximum-pool-size: 10
+      minimum-idle: 5
+      pool-name: WriteHikariPool
+
+    extensions:
+      slave-1:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://localhost:4406/objective_sql
+        username: root
+        password: 123456
+        hikari:
+          idle-timeout: 10000
+          maximum-pool-size: 10
+          minimum-idle: 5
+          pool-name: WriteHikariPool

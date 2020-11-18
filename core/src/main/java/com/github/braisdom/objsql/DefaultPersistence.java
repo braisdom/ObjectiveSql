@@ -170,7 +170,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
                     .filter(rawColumnName -> {
                         if (domainModelDescriptor.skipNullOnUpdate()) {
                             String fieldName = domainModelDescriptor.getFieldName(rawColumnName);
-                            return domainModelDescriptor.getFieldValue(dirtyObject, fieldName) != null;
+                            return !domainModelDescriptor.getFieldValue(dirtyObject, fieldName).isNull();
                         } else {
                             return true;
                         }
