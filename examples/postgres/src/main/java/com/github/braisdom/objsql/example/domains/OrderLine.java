@@ -4,7 +4,7 @@ import com.github.braisdom.objsql.annotations.DomainModel;
 import com.github.braisdom.objsql.annotations.Relation;
 import com.github.braisdom.objsql.relation.RelationType;
 
-@DomainModel(primaryClass = Integer.class)
+@DomainModel
 public class OrderLine {
     private String orderNo;
     private Float amount;

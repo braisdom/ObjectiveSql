@@ -23,7 +23,7 @@ public class RelationExample extends PostgresExample {
 
         for (int i = 1; i <= 6; i++) {
             members.add(new Member()
-                    .setId(i)
+                    .setId((long)i)
                     .setNo("Q200000" + i)
                     .setName(MEMBER_NAMES[i])
                     .setGender(0)
@@ -32,7 +32,7 @@ public class RelationExample extends PostgresExample {
 
         for (int i = 0; i < 100; i++) {
             orders.add(new Order()
-                    .setId(i)
+                    .setId((long)i)
                     .setNo("20200000" + i)
                     .setMemberId(i % 6 + 1)
                     .setAmount(RandomUtils.nextDouble(10.0f, 30.0f))
@@ -81,7 +81,7 @@ public class RelationExample extends PostgresExample {
         prepareRelationData();
 
         Relationship[] memberRelation = new Relationship[]{Order.BELONGS_TO_MEMBER};
-        Order order = Order.queryByPrimaryKey(1, memberRelation);
+        Order order = Order.queryByPrimaryKey(1L, memberRelation);
 
         Assert.assertNotNull(order);
         Assert.assertNotNull(order.getMember());

@@ -11,7 +11,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
 
-@DomainModel(primaryClass = Integer.class)
+@DomainModel
 public class Order {
     private String no;
     private Integer memberId;

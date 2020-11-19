@@ -133,9 +133,9 @@ public class PersistenceExample extends PostgresExample {
                 .setName("Smith => Jackson")
                 .setExtendedAttributes(extendedAttributes);
 
-        Member.update(1, newMember, true);
+        Member.update(1L, newMember, true);
 
-        Member member = Member.queryByPrimaryKey(1);
+        Member member = Member.queryByPrimaryKey(1L);
         Assert.assertTrue(member.getName().equals("Smith => Jackson"));
         Assert.assertTrue(member.getName() != null);
         Assert.assertTrue(member.getMobile() != null);
@@ -147,7 +147,7 @@ public class PersistenceExample extends PostgresExample {
 
         Member.update("name = 'Smith => Jackson'", "name = 'Alice'");
 
-        Member member = Member.queryByPrimaryKey(1);
+        Member member = Member.queryByPrimaryKey(1L);
         Assert.assertTrue(member.getName().equals("Smith => Jackson"));
     }
 
@@ -155,7 +155,7 @@ public class PersistenceExample extends PostgresExample {
     public void deleteMemberById() throws SQLException {
         createMemberWithArray();
 
-        Member.destroy(1);
+        Member.destroy(1L);
 
         long count = Member.countAll();
         Assert.assertTrue(count == 2);
