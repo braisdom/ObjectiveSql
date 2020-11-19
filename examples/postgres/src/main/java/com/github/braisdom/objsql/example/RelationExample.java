@@ -34,9 +34,9 @@ public class RelationExample extends PostgresExample {
             orders.add(new Order()
                     .setId((long)i)
                     .setNo("20200000" + i)
-                    .setMemberId(i % 6 + 1)
-                    .setAmount(RandomUtils.nextDouble(10.0f, 30.0f))
-                    .setQuantity(RandomUtils.nextDouble(100.0f, 300.0f))
+                    .setMemberId((long)i % 6 + 1)
+                    .setAmount(RandomUtils.nextFloat(10.0f, 30.0f))
+                    .setQuantity(RandomUtils.nextFloat(100.0f, 300.0f))
                     .setSalesAt(Timestamp.valueOf("2020-05-01 09:30:00")));
         }
 

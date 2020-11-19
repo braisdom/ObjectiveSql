@@ -184,9 +184,9 @@ public class PersistenceExample extends PostgresExample {
     public void createOrder() throws SQLException {
         Order order = new Order()
                 .setNo("202000001")
-                .setMemberId(3)
-                .setAmount(3.5d)
-                .setQuantity(100.3d)
+                .setMemberId((long)3)
+                .setAmount(3.5f)
+                .setQuantity(100.3f)
                 .setSalesAt(Timestamp.valueOf("2020-05-01 09:30:00"));
         order.save(false, true);
 

@@ -38,9 +38,9 @@ public class QueryExample extends PostgresExample {
         for (int i = 0; i < 100; i++) {
             orders.add(new Order()
                     .setNo("20200000" + i)
-                    .setMemberId(i)
-                    .setAmount(RandomUtils.nextDouble(10.0f, 30.0f))
-                    .setQuantity(RandomUtils.nextDouble(100.0f, 300.0f))
+                    .setMemberId((long)i)
+                    .setAmount(RandomUtils.nextFloat(10.0f, 30.0f))
+                    .setQuantity(RandomUtils.nextFloat(100.0f, 300.0f))
                     .setSalesAt(Timestamp.valueOf("2020-05-01 09:30:00")));
         }
 
