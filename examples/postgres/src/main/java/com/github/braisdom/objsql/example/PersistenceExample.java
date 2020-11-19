@@ -13,7 +13,7 @@ import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PersistenceExample extends PostgressExample {
+public class PersistenceExample extends PostgresExample {
 
     @Test
     public void createSimpleMemberSkipValidation() throws SQLException {

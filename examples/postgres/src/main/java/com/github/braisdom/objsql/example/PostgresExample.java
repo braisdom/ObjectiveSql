@@ -13,23 +13,15 @@ import java.sql.SQLException;
 
 import static com.github.braisdom.objsql.Databases.installConnectionFactory;
 
-public class PostgressExample {
-
-    private static final File DATABASE_FILE = new File("objective_sql.db");
+public class PostgresExample {
 
     private static class SqliteConnectionFactory implements ConnectionFactory {
-
-        private final String fileName;
-
-        public SqliteConnectionFactory(String fileName) {
-            this.fileName = fileName;
-        }
 
         @Override
         public Connection getConnection(String dataSourceName) throws SQLException {
             try {
-                Class.forName("org.sqlite.JDBC");
-                return DriverManager.getConnection("jdbc:sqlite:./" + fileName);
+                String url = "jdbc:postgresql://127.0.0.1:5432/postgres";
+                return DriverManager.getConnection(url, "postgres", "123456");
             } catch (SQLException e) {
                 throw e;
             } catch (Exception e) {
@@ -42,16 +34,15 @@ public class PostgressExample {
         SQLFile sqlFile = new SQLFile("/postgres.sql");
 
         for(String sql : sqlFile.getSqls()){
-            if(!WordUtil.isEmpty(sql))
+            if(!WordUtil.isEmpty(sql)) {
                 Databases.execute(sql);
+            }
         }
     }
 
     @Before
     public void prepareEnv() throws SQLException, IOException {
-        if (DATABASE_FILE.exists()) DATABASE_FILE.delete();
-
-        installConnectionFactory(new SqliteConnectionFactory(DATABASE_FILE.getName()));
+        installConnectionFactory(new SqliteConnectionFactory());
         initializeSchemas();
     }
 }
