@@ -29,10 +29,10 @@ public class Member {
     @Column(transition = JsonColumnTransition.class)
     private Map extendedAttributes;
 
-    @Column(transition = SqlDateTimeTransition.class)
+    @Column(transition = SqlDateTimeTransition.class, defaultValue = "CURRENT_TIMESTAMP")
     private Timestamp registeredAt;
 
-    @Column(transition = SqlDateTimeTransition.class)
+    @Column(transition = SqlDateTimeTransition.class, defaultValue = "CURRENT_TIMESTAMP")
     private Timestamp updatedAt;
 
     @Transient

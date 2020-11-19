@@ -58,7 +58,7 @@ public class PersistenceExample extends PostgresExample {
         extendedAttributes.put("age", 28);
 
         Map<String, Object> attributes = new HashMap<>();
-        attributes.put("id", 10);
+        attributes.put("id", 10L);
         attributes.put("no", "200000");
         attributes.put("name", "Carter");
         attributes.put("gender", 1);
@@ -77,7 +77,7 @@ public class PersistenceExample extends PostgresExample {
         extendedAttributes.put("age", 28);
 
         Map<String, Object> attributes = new HashMap<>();
-        attributes.put("id", 9);
+        attributes.put("id", 9L);
         attributes.put("no", "200000");
         attributes.put("name", "Barbara\t");
         attributes.put("gender", 1);
