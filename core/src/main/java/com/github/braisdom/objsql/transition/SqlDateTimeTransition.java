@@ -37,14 +37,16 @@ public class SqlDateTimeTransition<T> implements ColumnTransition<T> {
         if (fieldValue != null && fieldValue.getValue() != null) {
             if (SQLite.nameEquals(databaseName)) {
                 return fieldValue;
-            } else if(Oracle.nameEquals(databaseName)) {
+            } else if (Oracle.nameEquals(databaseName)) {
                 return fieldValue;
-            }else if (PostgreSQL.nameEquals(databaseName)) {
+            } else if (PostgreSQL.nameEquals(databaseName)) {
                 if (fieldValue.getValue() instanceof Timestamp) {
-                    fieldValue.setValue(fieldValue.getValue().toString());
-                    return fieldValue;
+                    return fieldValue.getValue();
+                } else if (fieldValue.getValue() instanceof Long) {
+                    return Timestamp.from(Instant.ofEpochMilli((Long) fieldValue.getValue()));
+                } else {
+                    return Timestamp.valueOf(String.valueOf(fieldValue.getValue()));
                 }
-                return fieldValue;
             } else {
                 return fieldValue;
             }
