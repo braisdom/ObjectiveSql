@@ -1,16 +1,17 @@
 package com.github.braisdom.objsql.example;
 
-import com.github.braisdom.objsql.RollbackCauseException;
 import com.github.braisdom.objsql.example.domains.Order;
+import org.junit.Test;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class TransactionalExample {
+public class TransactionalExample extends PostgresExample{
 
-    public static void createNormally() {
+    @Test
+    public void createNormally() {
         Order order = new Order()
                 .setNo("202000001")
                 .setMemberId((long)3)
@@ -29,9 +30,5 @@ public class TransactionalExample {
                 }
             });
         }
-    }
-
-    public static void main(String[] args) throws SQLException, RollbackCauseException {
-        createNormally();
     }
 }
