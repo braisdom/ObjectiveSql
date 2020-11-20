@@ -127,12 +127,39 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
     }
 
     @Override
-    public void setGeneratedKey(T bean, Object primaryKeyValue) {
+    public void setGeneratedKey(DatabaseType databaseType, T bean, Object primaryKeyValue) {
         Field primaryField = Tables.getPrimaryField(domainModelClass);
-        if (primaryKeyValue instanceof BigInteger) {
-            primaryKeyValue = Long.valueOf(primaryKeyValue.toString());
+        if (DatabaseType.MsSqlServer.equals(databaseType)) {
+            if (primaryKeyValue instanceof BigDecimal) {
+                BigDecimal bigDecimal = (BigDecimal) primaryKeyValue;
+                if (primaryField.getType().equals(Integer.class)) {
+                    setFieldValue(bean, primaryField.getName(), bigDecimal.intValue());
+                } else if (primaryField.getType().equals(Long.class)) {
+                    setFieldValue(bean, primaryField.getName(), bigDecimal.longValue());
+                } else {
+                    setFieldValue(bean, primaryField.getName(), primaryKeyValue);
+                }
+            } else {
+                setFieldValue(bean, primaryField.getName(), primaryKeyValue);
+            }
         }
-        setFieldValue(bean, primaryField.getName(), primaryKeyValue);
+        if (DatabaseType.MySQL.equals(databaseType)) {
+            if (primaryKeyValue instanceof BigInteger) {
+                BigInteger bigInteger = (BigInteger) primaryKeyValue;
+                if (primaryField.getType().equals(Integer.class)) {
+                    setFieldValue(bean, primaryField.getName(), bigInteger.intValue());
+                } else if (primaryField.getType().equals(Long.class)) {
+                    setFieldValue(bean, primaryField.getName(), bigInteger.longValue());
+                } else {
+                    setFieldValue(bean, primaryField.getName(), primaryKeyValue);
+                }
+            } else {
+                setFieldValue(bean, primaryField.getName(), primaryKeyValue);
+            }
+        } else {
+            setFieldValue(bean, primaryField.getName(), primaryKeyValue);
+        }
+        // FIXME It will be filled for various databases
     }
 
     @Override
@@ -198,7 +225,7 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
             DomainModel domainModel = domainModelClass.getAnnotation(DomainModel.class);
             Field field = domainModelClass.getDeclaredField(fieldName);
 
-            if(field.getName().equals(domainModel.primaryFieldName())
+            if (field.getName().equals(domainModel.primaryFieldName())
                     && !WordUtil.isEmpty(domainModel.primaryKeyDefaultValue())) {
                 return Optional.of(domainModel.primaryKeyDefaultValue());
             }
@@ -219,7 +246,7 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
             DomainModel domainModel = domainModelClass.getAnnotation(DomainModel.class);
             Field field = domainModelClass.getDeclaredField(fieldName);
 
-            if(field.getName().equals(domainModel.primaryFieldName())) {
+            if (field.getName().equals(domainModel.primaryFieldName())) {
                 return !WordUtil.isEmpty(domainModel.primaryKeyDefaultValue());
             }
 

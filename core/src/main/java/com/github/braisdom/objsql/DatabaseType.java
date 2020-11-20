@@ -45,4 +45,14 @@ public enum DatabaseType {
     public boolean nameEquals(String name) {
         return this.name.equalsIgnoreCase(name);
     }
+
+    public static DatabaseType createByName(String name) {
+        if("Microsoft SQL Server".equals(name)) {
+            return MsSqlServer;
+        } else if(MySQL.nameEquals(name)) {
+            return MySQL;
+        }
+
+        return null;
+    }
 }

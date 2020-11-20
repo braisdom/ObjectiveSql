@@ -17,7 +17,7 @@ public interface TableRowAdapter<T> {
 
     T newInstance();
 
-    default void setGeneratedKey(T bean, Object primaryKeyValue) {
+    default void setGeneratedKey(DatabaseType databaseType, T bean, Object primaryKeyValue) {
         throw new UnsupportedOperationException("The setGeneratedKey is unsupported");
     }
 
