@@ -1,6 +1,5 @@
 package com.github.braisdom.objsql.example;
 
-import com.github.braisdom.objsql.RollbackCauseException;
 import com.github.braisdom.objsql.example.domains.Order;
 import org.junit.Test;
 
