@@ -142,8 +142,7 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
             } else {
                 setFieldValue(bean, primaryField.getName(), primaryKeyValue);
             }
-        }
-        if (DatabaseType.MySQL.equals(databaseType)) {
+        } else if (DatabaseType.MySQL.equals(databaseType)) {
             if (primaryKeyValue instanceof BigInteger) {
                 BigInteger bigInteger = (BigInteger) primaryKeyValue;
                 if (primaryField.getType().equals(Integer.class)) {
