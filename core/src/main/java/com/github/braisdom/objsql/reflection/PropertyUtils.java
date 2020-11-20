@@ -137,7 +137,7 @@ public final class PropertyUtils {
             String qualifiedPropertyName = getQualifiedPropertyName(destination, propertyDescriptor);
             String realTypeName = value != null ? value.getClass().getSimpleName() : "Null";
             String methodTypeName = parameters.length > 0 ? parameters[0].getType().getSimpleName() : "Null";
-            String message = String.format("Failed to write %s, because setter method require %s, but give a %s(%s)",
+            String message = String.format("Failed to write %s, because setter method requires %s, but give a %s(%s)",
                     qualifiedPropertyName, methodTypeName, realTypeName, value);
             throw new ReflectionException(message, e);
         }
