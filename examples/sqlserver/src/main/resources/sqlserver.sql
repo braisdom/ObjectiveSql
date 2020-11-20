@@ -1,9 +1,10 @@
-drop table if exists objective_sql.dbo.members;
-drop table if exists objective_sql.dbo.orders;
-drop table if exists objective_sql.dbo.order_lines;
+drop table if exists dbo.members;
+drop table if exists dbo.orders;
+drop table if exists dbo.order_lines;
+drop table if exists dbo.products;
 
-CREATE TABLE objective_sql.dbo.members(
-    id INT IDENTITY(1,1) PRIMARY KEY,
+CREATE TABLE dbo.members(
+    id BIGINT IDENTITY(1,1) PRIMARY KEY,
     no VARCHAR(100),
     name VARCHAR(100),
     gender INT,
@@ -13,23 +14,32 @@ CREATE TABLE objective_sql.dbo.members(
     updated_at DATETIME
 );
 
-CREATE TABLE objective_sql.dbo.orders(
-    id INT IDENTITY(1,1) PRIMARY KEY,
+CREATE TABLE dbo.orders(
+    id BIGINT IDENTITY(1,1) PRIMARY KEY,
     no VARCHAR(100),
-    member_id VARCHAR(100),
-    amount FLOAT,
-    quantity FLOAT,
+    member_id BIGINT,
+    amount REAL,
+    quantity REAL,
     sales_at DATETIME
 );
 
-CREATE TABLE objective_sql.dbo.order_lines(
-    id INT IDENTITY(1,1) PRIMARY KEY,
+CREATE TABLE dbo.order_lines(
+    id BIGINT IDENTITY(1,1) PRIMARY KEY,
     order_id INT,
     order_no VARCHAR(100),
     barcode VARCHAR(100),
     product_id INT,
-    member_id VARCHAR(100),
-    sales_price FLOAT,
-    amount FLOAT,
-    quantity FLOAT
+    member_id BIGINT,
+    sales_price REAL,
+    amount REAL,
+    quantity REAL
+);
+
+CREATE TABLE dbo.products(
+   id BIGINT IDENTITY(1,1) PRIMARY KEY,
+   barcode VARCHAR(100),
+   name VARCHAR(100),
+   category_id INT,
+   sales_price REAL,
+   cost REAL
 );

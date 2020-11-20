@@ -19,7 +19,7 @@ public class MSSQLExample {
         @Override
         public Connection getConnection(String dataSourceName) throws SQLException {
             try {
-                String url = "jdbc:sqlserver://localhost:1433;databaseName=objective_sql;currentSchema=dbo";
+                String url = "jdbc:sqlserver://localhost:1433;databaseName=objective_sql";
                 String user = "sa";
                 String password = "yourStrong(!)Password";
                 return DriverManager.getConnection(url, user, password);
