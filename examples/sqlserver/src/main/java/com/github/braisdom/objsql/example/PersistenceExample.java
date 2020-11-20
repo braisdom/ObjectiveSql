@@ -8,7 +8,6 @@ import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.HashMap;
@@ -136,7 +135,7 @@ public class PersistenceExample extends MSSQLExample {
 
         Member.update(1L, newMember, true);
 
-        Member member = Member.queryByPrimaryKey(new BigDecimal(1L));
+        Member member = Member.queryByPrimaryKey(1L);
         Assert.assertTrue(member.getName().equals("Smith => Jackson"));
         Assert.assertTrue(member.getName() != null);
         Assert.assertTrue(member.getMobile() != null);

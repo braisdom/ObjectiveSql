@@ -7,12 +7,11 @@ import com.github.braisdom.objsql.annotations.Transactional;
 import com.github.braisdom.objsql.relation.RelationType;
 import com.github.braisdom.objsql.transition.SqlDateTimeTransition;
 
-import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
 
-@DomainModel(primaryClass = BigDecimal.class)
+@DomainModel
 public class Order {
     private String no;
     private Long memberId;
