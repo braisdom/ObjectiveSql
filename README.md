@@ -81,9 +81,9 @@ SELECT SUM(order.amount) / SUM(order.quantity)  * 100
       FROM orders AS order GROUP BY order.product_id
 ```
 
-> 1) Operator overload makes Java syntax very close to SQL syntax
+> 1) Java syntax very close to SQL syntax
 >
-> 2) Funcational SQL programming is reused and clear
+> 2) SQL program will be changed to logical program, resuable and procedural
 
 - [Count order by distinct member, and summary amount and quantity of order](https://github.com/braisdom/ObjectiveSql/blob/master/examples/springboot-sample/src/main/java/com/github/braisdom/objsql/sample/model/Member.java#L41)
 - [Calculate LPLY(Same Period Last Year) and LP(Last Period) of products sales for a while](https://github.com/braisdom/ObjectiveSql/blob/master/examples/springboot-sample/src/main/java/com/github/braisdom/objsql/sample/model/Product.java#L45)
