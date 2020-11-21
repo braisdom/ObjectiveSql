@@ -18,6 +18,8 @@ package com.github.braisdom.objsql.reflection;
 
 import com.github.braisdom.objsql.relation.RelationalException;
 import com.github.braisdom.objsql.util.WordUtil;
+import org.apache.commons.beanutils.BeanUtilsBean;
+import org.apache.commons.beanutils.ConvertUtilsBean;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.*;
@@ -127,9 +129,16 @@ public final class PropertyUtils {
             if (!isWritable(propertyDescriptor)) {
                 throw new RelationalException(propertyDescriptor.getName() + " is not writable");
             } else {
-                Object[] args = new Object[]{value};
-                Method writeMethod = propertyDescriptor.getWriteMethod();
-                withAccessibleObject(writeMethod, method -> method.invoke(destination, args), force);
+                if (value != null) {
+                    ConvertUtilsBean convertUtilsBean = BeanUtilsBean.getInstance().getConvertUtils();
+                    Object convertedValue = convertUtilsBean.convert(value, propertyDescriptor.getPropertyType());
+                    Object[] args = new Object[]{convertedValue};
+                    Method writeMethod = propertyDescriptor.getWriteMethod();
+                    withAccessibleObject(writeMethod, method -> method.invoke(destination, args), force);
+                } else {
+                    Method writeMethod = propertyDescriptor.getWriteMethod();
+                    withAccessibleObject(writeMethod, method -> method.invoke(destination, new Object[]{null}), force);
+                }
             }
         } catch (ReflectiveOperationException | RuntimeException e) {
             Method writeMethod = propertyDescriptor.getWriteMethod();
