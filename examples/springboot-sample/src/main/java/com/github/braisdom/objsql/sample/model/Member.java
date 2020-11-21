@@ -39,7 +39,7 @@ public class Member implements Serializable {
      * @throws SQLException
      */
     public static List<Member> countOrders() throws SQLSyntaxException, SQLException {
-        Table member = Member.asTable();
+        Member.Table member = Member.asTable();
         Order.Table order = Order.asTable();
 
         Select select = new Select();
