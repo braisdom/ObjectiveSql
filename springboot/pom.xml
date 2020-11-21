@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>springboot</artifactId>
-    <version>1.0.0-${springboot-version}</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
     <url>http://www.objsql.com</url>
     <description>SpringBoot adapter for ObjectiveSQL</description>
@@ -18,7 +18,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-autoconfigure</artifactId>
-            <version>${springboot-version}</version>
+            <version>2.3.6.RELEASE</version>
         </dependency>
 
         <dependency>
