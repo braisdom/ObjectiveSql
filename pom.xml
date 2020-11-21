@@ -25,7 +25,6 @@
     <modules>
         <module>core</module>
         <module>springboot</module>
-        <module>oracle_example</module>
         <module>javaoo_test</module>
         <module>mangosdk</module>
         <module>examples/sqlite</module>
