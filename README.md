@@ -19,9 +19,7 @@ If you are using Maven just add the following dependency to your pom.xml:
 </dependency>
 ```
 
-And install the plugin of IntelliJ IDEA
-
-*Preferences/Settings* -> *Plugins* -> *Search with "ObjectiveSql" in market* -> *Install*
+**Installing IntelliJ Plugin**:  *Preferences/Settings* -> *Plugins* -> *Search with "ObjectiveSql" in market* -> *Install*
 
 ### Simple SQL programming without coding
 
