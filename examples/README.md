@@ -6,3 +6,5 @@ This package contains unit testing of full ObjectiveSQL API in various database,
 - Querying and counting objects with defined annotation of domain object
 - Relational querying of different type of relation
 - Full SpringBoot sample for ObjectiveSQL
+
+Execute 'CREATE DATABASE objective_sql' before unit testing.

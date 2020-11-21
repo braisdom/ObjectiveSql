@@ -1,11 +1,7 @@
-DROP DATABASE IF EXISTS objective_sql;
-
 drop table if exists members;
 drop table if exists orders;
 drop table if exists order_lines;
 drop table if exists products;
-
-CREATE DATABASE objective_sql;
 
 CREATE TABLE members (
 	id bigserial NOT NULL,
