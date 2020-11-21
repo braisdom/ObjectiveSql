@@ -25,7 +25,7 @@ public class PersistenceExample extends SQLiteExample {
                 .setUpdatedAt(Timestamp.valueOf("2020-10-05 00:00:00"))
                 .setMobile("15011112222");
 
-        Member member = Member.create(newMember, true, true);
+        Member member = Member.create(newMember, true);
         Assert.assertNotNull(member);
     }
 
@@ -48,7 +48,7 @@ public class PersistenceExample extends SQLiteExample {
                 .setName("Pamela")
                 .setGender(1)
                 .setMobile("15011112222");
-        Member.create(newMember, false, true);
+        Member.create(newMember, false);
     }
 
     @Test
@@ -66,7 +66,7 @@ public class PersistenceExample extends SQLiteExample {
         attributes.put("extendedAttributes", extendedAttributes);
 
         Member member = Member.create(Member.newInstanceFrom(attributes, false),
-                false, true);
+                false);
         Assert.assertTrue(member.getId() != null);
     }
 
@@ -85,7 +85,7 @@ public class PersistenceExample extends SQLiteExample {
         attributes.put("extended_attributes", extendedAttributes);
 
         Member member = Member.newInstanceFrom(attributes, true);
-        Member.create(member, false, true);
+        Member.create(member, false);
     }
 
     @Test
@@ -94,7 +94,7 @@ public class PersistenceExample extends SQLiteExample {
                 "\"extendedAttributes\":{\"hobbies\":[\"Play football\"],\"age\":28}}";
         Member newMember = new GsonBuilder().create().fromJson(json, Member.class);
 
-        Member.create(newMember, false, true);
+        Member.create(newMember, false);
     }
 
     @Test
