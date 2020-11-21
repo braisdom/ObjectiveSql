@@ -152,18 +152,20 @@ public final class Relationship {
 
     public static void setRelationalObjects(Relationship relationship, Object row,
                                             String fieldName, List associatedObjects) {
-        if (relationship.isBelongsTo()) {
-            if (associatedObjects.size() > 1) {
-                throw new RelationalException(String.format("The %s[belongs_to] has too many relations", fieldName));
-            }
+        if(associatedObjects != null) {
+            if (relationship.isBelongsTo()) {
+                if (associatedObjects.size() > 1) {
+                    throw new RelationalException(String.format("The %s[belongs_to] has too many relations", fieldName));
+                }
 
-            if (associatedObjects.size() == 1) {
-                PropertyUtils.write(row, fieldName, associatedObjects.get(0));
+                if (associatedObjects.size() == 1) {
+                    PropertyUtils.write(row, fieldName, associatedObjects.get(0));
+                } else {
+                    PropertyUtils.write(row, fieldName, null);
+                }
             } else {
-                PropertyUtils.write(row, fieldName, null);
+                PropertyUtils.write(row, fieldName, associatedObjects);
             }
-        } else {
-            PropertyUtils.write(row, fieldName, associatedObjects);
         }
     }
 
