@@ -13,8 +13,7 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 
-@DomainModel(primaryClass = Integer.class,
-        primaryKeyDefaultValue = "global_seq.nextval")
+@DomainModel(primaryKeyDefaultValue = "global_seq.nextval")
 public class Member {
     @Size(min = 5, max = 20)
     private String no;

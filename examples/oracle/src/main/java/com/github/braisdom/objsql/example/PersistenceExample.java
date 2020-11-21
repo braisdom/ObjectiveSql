@@ -133,9 +133,9 @@ public class PersistenceExample extends OracleExample {
                 .setName("Smith => Jackson")
                 .setExtendedAttributes(extendedAttributes);
 
-        Member.update(2, newMember, true);
+        Member.update(2L, newMember, true);
 
-        Member member = Member.queryByPrimaryKey(2);
+        Member member = Member.queryByPrimaryKey(2L);
         Assert.assertTrue(member.getName().equals("Smith => Jackson"));
         Assert.assertTrue(member.getName() != null);
         Assert.assertTrue(member.getMobile() != null);
@@ -155,7 +155,7 @@ public class PersistenceExample extends OracleExample {
     public void deleteMemberById() throws SQLException {
         createMemberWithArray();
 
-        Member.destroy(1);
+        Member.destroy(1L);
 
         long count = Member.countAll();
         Assert.assertTrue(count > 0);

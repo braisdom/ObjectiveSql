@@ -23,7 +23,7 @@ public class RelationExample extends OracleExample {
 
         for (int i = 1; i <= 6; i++) {
             members.add(new Member()
-                    .setId(i)
+                    .setId((long)i)
                     .setNo("Q200000" + i)
                     .setName(MEMBER_NAMES[i])
                     .setGender(0)
