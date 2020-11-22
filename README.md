@@ -9,9 +9,11 @@ ObjectiveSQL is an ORM framework in Java base on ActiveRecord pattern, which enc
 
 ### Installation
 
-**Installing IntelliJ Plugin**:  *Preferences/Settings* -> *Plugins* -> *Search with "ObjectiveSql" in market* -> *Install*
+#### IntelliJ IDEA plugin installation
 
-If you are using Maven just add the following dependency to your pom.xml:
+Installation step: Preferences/Settings* -> *Plugins* -> *Search with "ObjectiveSql" in market* -> *Install*
+
+#### Maven dependencies installation
 
 ```xml
 <!-- In standalone -->
@@ -32,6 +34,8 @@ If you are using Maven just add the following dependency to your pom.xml:
 ```
 
 ### Examples
+
+ObjectiveSQL provides full example for various databases below, You can open it directly with IntelliJ IDEA as a standalone project.
 
 [MySQL](https://github.com/braisdom/ObjectiveSql/tree/master/examples/mysql),  [Oracle](https://github.com/braisdom/ObjectiveSql/tree/master/examples/oracle),  [MS SQL Server](https://github.com/braisdom/ObjectiveSql/tree/master/examples/sqlserver),  [SQLite](https://github.com/braisdom/ObjectiveSql/tree/master/examples/sqlite),  [PostgreSQL](https://github.com/braisdom/ObjectiveSql/tree/master/examples/postgres),  [Spring Boot](https://github.com/braisdom/ObjectiveSql/tree/master/examples/springboot-sample)
 
