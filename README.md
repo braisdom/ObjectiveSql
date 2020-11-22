@@ -14,7 +14,7 @@ ObjectiveSQL is an ORM framework in Java base on ActiveRecord pattern, which enc
 If you are using Maven just add the following dependency to your pom.xml:
 
 ```xml
-<!-- In standalong -->
+<!-- In standalone -->
 <dependency>
     <groupId>com.github.braisdom</groupId>
     <artifactId>objective-sql</artifactId>
@@ -23,7 +23,7 @@ If you are using Maven just add the following dependency to your pom.xml:
 ```
 
 ```xml
-<!-- In SpringBoot -->
+<!-- In Spring Boot -->
 <dependency>
   <groupId>com.github.braisdom</groupId>
   <artifactId>springboot</artifactId>
@@ -33,7 +33,7 @@ If you are using Maven just add the following dependency to your pom.xml:
 
 ### Examples
 
-[MySQL](https://github.com/braisdom/ObjectiveSql/tree/master/examples/mysql),  [Oracle](https://github.com/braisdom/ObjectiveSql/tree/master/examples/oracle),  [MS SQL Server](https://github.com/braisdom/ObjectiveSql/tree/master/examples/sqlserver),  [SQLite](https://github.com/braisdom/ObjectiveSql/tree/master/examples/sqlite),  [PostgreSQL](https://github.com/braisdom/ObjectiveSql/tree/master/examples/postgres),  [SpringBoot](https://github.com/braisdom/ObjectiveSql/tree/master/examples/springboot-sample)
+[MySQL](https://github.com/braisdom/ObjectiveSql/tree/master/examples/mysql),  [Oracle](https://github.com/braisdom/ObjectiveSql/tree/master/examples/oracle),  [MS SQL Server](https://github.com/braisdom/ObjectiveSql/tree/master/examples/sqlserver),  [SQLite](https://github.com/braisdom/ObjectiveSql/tree/master/examples/sqlite),  [PostgreSQL](https://github.com/braisdom/ObjectiveSql/tree/master/examples/postgres),  [Spring Boot](https://github.com/braisdom/ObjectiveSql/tree/master/examples/springboot-sample)
 
 ### Simple SQL programming without coding
 
