@@ -9,9 +9,12 @@ ObjectiveSQL is an ORM framework in Java base on ActiveRecord pattern, which enc
 
 ### Installation
 
+**Installing IntelliJ Plugin**:  *Preferences/Settings* -> *Plugins* -> *Search with "ObjectiveSql" in market* -> *Install*
+
 If you are using Maven just add the following dependency to your pom.xml:
 
 ```xml
+<!-- In standalong -->
 <dependency>
     <groupId>com.github.braisdom</groupId>
     <artifactId>objective-sql</artifactId>
@@ -19,7 +22,16 @@ If you are using Maven just add the following dependency to your pom.xml:
 </dependency>
 ```
 
-**Installing IntelliJ Plugin**:  *Preferences/Settings* -> *Plugins* -> *Search with "ObjectiveSql" in market* -> *Install*
+```xml
+<!-- In SpringBoot -->
+<dependency>
+  <groupId>com.github.braisdom</groupId>
+  <artifactId>springboot</artifactId>
+  <version>1.0.0</version>
+</dependency>
+```
+
+### Examples
 
 ### Simple SQL programming without coding
 
