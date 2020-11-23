@@ -68,6 +68,7 @@ Member.query("id > ?", 1);
 Member.queryAll();
 
 Member[] members = new Member[]{newMember1, newMember2, newMember3};
+Member.create(newMember1);
 Member.create(members);
 
 Member.update(1L, newMember);
@@ -99,7 +100,7 @@ select.project(sum(orderTable.amount) / sum(orderTable.quantity) * 100)
 ```
 
 ```sql
--- SQL is very close to the Java code
+-- SQL syntax is the same as Java syntax
 SELECT ((((SUM(`T0`.`amount` ) / SUM(`T0`.`quantity` ) )) * 100))
 FROM `orders` AS `T0`
 WHERE ((`T0`.`quantity` > 30) AND 
