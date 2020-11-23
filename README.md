@@ -67,26 +67,17 @@ Member.queryFirst("id = ?", 1);
 Member.query("id > ?", 1);
 Member.queryAll();
 
-Member newMember = new Member()
-        .setNo("100000")
-        .setName("Pamela")
-        .setGender(1)
-        .setMobile("15011112222");
-Member.create(newMember);
-
 Member[] members = new Member[]{newMember1, newMember2, newMember3};
-        Member.create(members);
+Member.create(members);
 
 Member.update(1L, newMember);
-
 Member.destroy(1L);
-
 Member.execute(String.format("DELETE FROM %s WHERE name = 'Mary'", Member.TABLE_NAME));
-
 ...
 ```
 
 ```java
+// Querying objects with convenient methods, and it will carry the related objects
 Member.queryAll(Member.HAS_MANY_ORDERS);
 Member.queryPrimary(1, Member.HAS_MANY_ORDERS);
 Member.queryByName("demo", Member.HAS_MANY_ORDERS);
@@ -96,17 +87,23 @@ Member.queryByName("demo", Member.HAS_MANY_ORDERS);
 ### Complex SQL programming
 
 ```java
+// SQL programming with Java syntax without losing the features of SQL syntax
 Order.Table orderTable = Order.asTable();
 Select select = new Select();
 
 select.project(sum(orderTable.amount) / sum(orderTable.quantity) * 100)
-    .from(orderTable)
-    .groupBy(orderTable.productId);
+        .from(orderTable)
+        .where(orderTable.quantity > 30 &&
+            orderTable.salesAt.between($("2020-10-10 00:00:00"), $("2020-10-30 23:59:59")))
+        .groupBy(orderTable.productId);
 ```
 
 ```sql
-SELECT SUM(order.amount) / SUM(order.quantity)  * 100
-      FROM orders AS order GROUP BY order.product_id
+SELECT ((((SUM(`T0`.`amount` ) / SUM(`T0`.`quantity` ) )) * 100))
+FROM `orders` AS `T0`
+WHERE
+	((`T0`.`quantity` > 30) AND `T0`.`sales_at` BETWEEN '2020-10-10 00:00:00' AND '2020-10-30 23:59:59')
+GROUP BY `T0`.`product_id`
 ```
 
 ```java
