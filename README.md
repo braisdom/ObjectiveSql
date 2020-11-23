@@ -99,6 +99,7 @@ select.project(sum(orderTable.amount) / sum(orderTable.quantity) * 100)
 ```
 
 ```sql
+-- SQL is very close to the Java code
 SELECT ((((SUM(`T0`.`amount` ) / SUM(`T0`.`quantity` ) )) * 100))
 FROM `orders` AS `T0`
 WHERE ((`T0`.`quantity` > 30) AND 
@@ -106,43 +107,7 @@ WHERE ((`T0`.`quantity` > 30) AND
 GROUP BY `T0`.`product_id`
 ```
 
-```java
-Member.Table member = Member.asTable();
-Order.Table order = Order.asTable();
-
-Select select = new Select();
-
-select.from(order, member)
-        .where(order.memberId.eq(member.id));
-select.project(member.no,
-        member.name,
-        member.mobile,
-        countDistinct(order.no).as("order_count"),
-        sum(order.quantity).as("total_quantity"),
-        sum(order.amount).as("total_amount"),
-        min(order.salesAt).as("first_shopping"),
-        max(order.salesAt).as("last_shopping"));
-select.groupBy(member.no, member.name, member.mobile);
-```
-
-```sql
-SELECT
-	`T0`.`no` ,
-	`T0`.`name` ,
-	`T0`.`mobile` ,
-	COUNT(DISTINCT `T1`.`no` ) AS `order_count`,
-	SUM(`T1`.`quantity` ) AS `total_quantity`,
-	SUM(`T1`.`amount` ) AS `total_amount`,
-	MIN(`T1`.`sales_at` ) AS `first_shopping`,
-	MAX(`T1`.`sales_at` ) AS `last_shopping`
-FROM `orders` AS `T1`, `members` AS `T0`
-WHERE (`T1`.`member_id` = `T0`.`id` )
-GROUP BY `T0`.`no` , `T0`.`name` , `T0`.`mobile`
-```
-
-> 1) Java syntax very close to SQL syntax
->
-> 2) SQL program will be changed to logical program, resuable and procedural
+See more:
 
 - [Count order by distinct member, and summary amount and quantity of order](https://github.com/braisdom/ObjectiveSql/blob/master/examples/springboot-sample/src/main/java/com/github/braisdom/objsql/sample/model/Member.java#L41)
 - [Calculate LPLY(Same Period Last Year) and LP(Last Period) of products sales for a while](https://github.com/braisdom/ObjectiveSql/blob/master/examples/springboot-sample/src/main/java/com/github/braisdom/objsql/sample/model/Product.java#L45)
