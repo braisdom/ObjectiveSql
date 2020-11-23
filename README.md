@@ -5,7 +5,7 @@ ObjectiveSQL is an ORM framework in Java base on ActiveRecord pattern, which enc
 
 - Dynamic code generation with [JSR 269](https://jcp.org/en/jsr/detail?id=269) for Java API of database access
 - Full Java API of database access without coding
-- Dynamically SQL programming with Java syntax,  and very close to SQL syntax
+- Dynamically SQL programming with Java syntax,  and very similar to SQL syntax
 
 ### Installation
 
