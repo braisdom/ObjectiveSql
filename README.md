@@ -101,8 +101,8 @@ select.project(sum(orderTable.amount) / sum(orderTable.quantity) * 100)
 ```sql
 SELECT ((((SUM(`T0`.`amount` ) / SUM(`T0`.`quantity` ) )) * 100))
 FROM `orders` AS `T0`
-WHERE
-	((`T0`.`quantity` > 30) AND `T0`.`sales_at` BETWEEN '2020-10-10 00:00:00' AND '2020-10-30 23:59:59')
+WHERE ((`T0`.`quantity` > 30) AND 
+       `T0`.`sales_at` BETWEEN '2020-10-10 00:00:00' AND '2020-10-30 23:59:59')
 GROUP BY `T0`.`product_id`
 ```
 
