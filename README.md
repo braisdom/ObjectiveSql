@@ -11,7 +11,7 @@ ObjectiveSQL is an ORM framework in Java base on ActiveRecord pattern, which enc
 
 #### IntelliJ IDEA plugin installation
 
-Installation step: Preferences/Settings* -> *Plugins* -> *Search with "ObjectiveSql" in market* -> *Install*
+Installation step: `Preferences/Settings -> Plugins -> Search with "ObjectiveSql" in market -> Install`
 
 #### Maven dependencies installation
 
