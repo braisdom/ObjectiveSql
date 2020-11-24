@@ -39,9 +39,9 @@ public class DefaultQuery<T> extends AbstractQuery<T> {
 
     @Override
     public List<T> execute(Relationship... relationships) throws SQLException {
-        Quoter quoter = Databases.getQuoter();
         String dataSourceName = Tables.getDataSourceName(domainModelDescriptor.getDomainModelClass());
         return Databases.execute(dataSourceName, (connection, sqlExecutor) -> {
+            Quoter quoter = Databases.getQuoter();
             String databaseName = connection.getMetaData().getDatabaseProductName();
             String tableName = quoter.quoteTableName(databaseName, domainModelDescriptor.getTableName());
             String sql = createQuerySQL(tableName, projection, filter, groupBy,
