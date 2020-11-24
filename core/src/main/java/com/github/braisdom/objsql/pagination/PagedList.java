@@ -2,7 +2,7 @@ package com.github.braisdom.objsql.pagination;
 
 import java.util.List;
 
-public interface PagedList extends List {
+public interface PagedList<T> extends List<T> {
 
     long getTotalSize();
 

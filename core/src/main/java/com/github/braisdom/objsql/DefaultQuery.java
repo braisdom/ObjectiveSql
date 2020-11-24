@@ -65,7 +65,7 @@ public class DefaultQuery<T> extends AbstractQuery<T> {
         return null;
     }
 
-    private String createQuerySQL(String tableName, String projections, String filter, String groupBy,
+    protected String createQuerySQL(String tableName, String projections, String filter, String groupBy,
                                   String having, String orderBy, int offset, int limit) {
         Objects.requireNonNull(tableName, "The tableName cannot be null");
 
