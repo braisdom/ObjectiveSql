@@ -16,9 +16,35 @@
  */
 package com.github.braisdom.objsql.pagination;
 
-public interface Paginatable {
+import java.util.ArrayList;
+import java.util.List;
 
-    String getQuerySQL();
+public class DefaultPagedList<T> extends ArrayList<T> implements PagedList<T> {
 
-    Class<?> getDomainClass();
+    private final long totalSize;
+    private final Page page;
+    private final int pageCount;
+
+    public DefaultPagedList(List<T> realList, long totalSize,
+                            Page page, int pageCount) {
+        super(realList);
+        this.totalSize = totalSize;
+        this.page = page;
+        this.pageCount = pageCount;
+    }
+
+    @Override
+    public long getTotalSize() {
+        return totalSize;
+    }
+
+    @Override
+    public Page getPage() {
+        return page;
+    }
+
+    @Override
+    public int getPageCount() {
+        return pageCount;
+    }
 }
