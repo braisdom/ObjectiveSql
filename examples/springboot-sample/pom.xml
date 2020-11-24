@@ -11,10 +11,12 @@
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>springboot-sample</artifactId>
-
+    <version>1.0</version>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
+        <core.version>1.3.9</core.version>
+        <springboot.version>1.0.1</springboot.version>
     </properties>
 
     <dependencies>
@@ -38,8 +40,8 @@
         </dependency>
         <dependency>
             <groupId>com.github.braisdom</groupId>
-            <artifactId>springboot</artifactId>
-            <version>1.0.0-2.3.6.RELEASE</version>
+            <artifactId>objsql-springboot</artifactId>
+            <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
@@ -110,7 +112,7 @@
                         <path>
                             <groupId>com.github.braisdom</groupId>
                             <artifactId>objective-sql</artifactId>
-                            <version>1.3.8</version>
+                            <version>1.3.9</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>

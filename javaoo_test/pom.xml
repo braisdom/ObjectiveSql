@@ -5,17 +5,19 @@
     <parent>
         <artifactId>objsql</artifactId>
         <groupId>com.github.braisdom</groupId>
-        <version>1.3</version>
+        <version>1.4</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
 
+    <modelVersion>4.0.0</modelVersion>
+    <version>1.0</version>
     <artifactId>javaoo_test</artifactId>
+    <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
             <groupId>com.github.braisdom</groupId>
             <artifactId>objective-sql</artifactId>
-            <version>1.3.8</version>
+            <version>${core.version}</version>
         </dependency>
 
         <dependency>
@@ -49,7 +51,7 @@
                         <path>
                             <groupId>com.github.braisdom</groupId>
                             <artifactId>objective-sql</artifactId>
-                            <version>1.3.8</version>
+                            <version>1.3.9</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
