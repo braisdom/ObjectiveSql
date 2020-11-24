@@ -1,0 +1,1092 @@
+/*
+ * This file is part of Zql.
+ *
+ * Zql is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Zql is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Zql.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+options{
+    IGNORE_CASE=true ;
+//  DEBUG_LOOKAHEAD= true ;
+}
+
+PARSER_BEGIN(ZqlJJParser)
+
+package org.gibello.zql;
+
+import java.io.*;
+import java.util.*;
+
+/**
+ * ZqlJJParser: an SQL parser
+ */
+public class ZqlJJParser {
+
+  public static void main(String args[]) throws ParseException {
+
+    ZqlJJParser p = null ;
+
+    if ( args.length < 1  ) {
+      System.out.println("Reading from stdin (exit; to finish)");
+      p = new ZqlJJParser(System.in) ;
+
+    } else {
+
+      try {
+        p = new ZqlJJParser(new DataInputStream(
+                          new FileInputStream(args[0]))) ;
+      } catch (FileNotFoundException e) {
+        System.out.println("File " + args[0] +
+                           " not found. Reading from stdin") ;
+        p = new ZqlJJParser(System.in) ;
+      }
+    } // else ends here
+
+    if ( args.length > 0 ) {
+      System.out.println(args[0]) ;
+    }
+
+    ZStatement st = null;
+    while((st = p.SQLStatement()) != null) {
+      System.out.println(st.toString());
+    }
+/*
+    Vector v = p.SQLStatements();
+
+    for(int i=0; i<v.size(); i++) {
+      ZStatement st = (ZStatement)v.elementAt(i);
+      System.out.println(st.toString());
+    }
+*/
+
+    System.out.println("Parse Successful") ;
+
+  } // main ends here
+
+} // class ZqlJJParser ends here
+
+PARSER_END(ZqlJJParser)
+
+
+SKIP:
+{
+    " "
+|   "\t"
+|   "\r"
+|   "\n"
+}
+
+/* Prefix      Meaning
+    -------------------
+    K_          Keyword
+    S_          Substitutes
+*/
+
+TOKEN: /* SQL Keywords. prefixed with K_ to avoid name clashes */
+{
+    <K_ALL: "ALL">
+|   <K_AND: "AND">
+|   <K_ANY: "ANY">
+|   <K_AS: "AS">
+|   <K_ASC:"ASC">
+|   <K_AVG:"AVG">
+|   <K_BETWEEN:"BETWEEN">
+|   <K_BINARY_INTEGER: "BINARY_INTEGER">
+|   <K_BOOLEAN:"BOOLEAN">
+|   <K_BY:"BY">
+|   <K_CHAR:"CHAR">
+|   <K_COMMENT:"COMMENT">
+|   <K_COMMIT:"COMMIT">
+|   <K_CONNECT:"CONNECT">
+|   <K_COUNT:"COUNT">
+|   <K_DATE:"DATE">
+|   <K_DELETE:"DELETE">
+|   <K_DESC:"DESC">
+|   <K_DISTINCT:"DISTINCT">
+|   <K_EXCLUSIVE:"EXCLUSIVE">
+|   <K_EXISTS:"EXISTS">
+|   <K_EXIT:"EXIT">
+|   <K_FLOAT:"FLOAT">
+|   <K_FOR:"FOR">
+|   <K_FROM:"FROM">
+|   <K_GROUP:"GROUP">
+|   <K_HAVING:"HAVING">
+|   <K_IN:"IN">
+|   <K_INSERT:"INSERT">
+|   <K_INTEGER:"INTEGER">
+|   <K_INTERSECT:"INTERSECT">
+|   <K_INTO:"INTO">
+|   <K_IS:"IS">
+|   <K_LIKE:"LIKE">
+|   <K_LOCK:"LOCK">
+|   <K_MAX:"MAX">
+|   <K_MIN:"MIN">
+|   <K_MINUS:"MINUS">
+|   <K_MODE:"MODE">
+|   <K_NATURAL:"NATURAL">
+|   <K_NOT:"NOT">
+|   <K_NOWAIT:"NOWAIT">
+|   <K_NULL:"NULL">
+|   <K_NUMBER:"NUMBER">
+|   <K_OF:"OF">
+|   <K_ONLY:"ONLY">
+|   <K_OR:"OR">
+|   <K_ORDER:"ORDER">
+|   <K_PRIOR:"PRIOR">
+|   <K_QUIT:"QUIT">
+|   <K_READ:"READ">
+|   <K_REAL:"REAL">
+|   <K_ROLLBACK:"ROLLBACK">
+|   <K_ROW:"ROW">
+|   <K_SELECT:"SELECT">
+|   <K_SET:"SET">
+|   <K_SHARE:"SHARE">
+|   <K_SMALLINT:"SMALLINT">
+|   <K_START:"START">
+|   <K_SUM:"SUM">
+|   <K_TABLE:"TABLE">
+|   <K_TRANSACTION:"TRANSACTION">
+|   <K_UNION:"UNION">
+|   <K_UPDATE:"UPDATE">
+|   <K_VALUES:"VALUES">
+|   <K_VARCHAR2:"VARCHAR2">
+|   <K_VARCHAR:"VARCHAR">
+|   <K_WHERE:"WHERE">
+|   <K_WITH:"WITH">
+|   <K_WORK:"WORK">
+|   <K_WRITE:"WRITE">
+}
+
+TOKEN : /* Numeric Constants */
+{
+	< S_NUMBER: <FLOAT>
+	    | <FLOAT> ( ["e","E"] ([ "-","+"])? <FLOAT> )?
+    	>
+  | 	< #FLOAT: <INTEGER>
+	    | <INTEGER> ( "." <INTEGER> )?
+	    | "." <INTEGER>
+    	>
+  | 	< #INTEGER: ( <DIGIT> )+ >
+  | 	< #DIGIT: ["0" - "9"] >
+}
+
+SPECIAL_TOKEN:
+{
+   <LINE_COMMENT: "--"(~["\r","\n"])*>
+|  <MULTI_LINE_COMMENT: "/*" (~["*"])* "*" ("*" | (~["*","/"] (~["*"])* "*"))* "/">
+}
+
+
+TOKEN:
+{
+	< S_IDENTIFIER: ( <LETTER> )+ ( <DIGIT> | <LETTER> |<SPECIAL_CHARS>)* >
+| 	< #LETTER: ["a"-"z", "A"-"Z"] >
+|   < #SPECIAL_CHARS: "$" | "_">
+|   < S_BIND: ":" <S_IDENTIFIER> ("." <S_IDENTIFIER>)? >
+|   < S_CHAR_LITERAL: "'" (~["'"])* "'" ("'" (~["'"])* "'")*>
+|   < S_QUOTED_IDENTIFIER: "\"" (~["\n","\r","\""])* "\"" >
+}
+
+
+void BasicDataTypeDeclaration():
+{}
+{
+    (       "CHAR"
+        |   "VARCHAR"
+        |   "VARCHAR2"
+        |   "INTEGER"
+        |   "NUMBER"
+        |   "NATURAL"
+        |   "REAL"
+        |   "FLOAT"
+    ) [ "(" <S_NUMBER> [ "," <S_NUMBER> ] ")" ]
+
+    |   "DATE"
+    |   "BINARY_INTEGER"
+    |   "BOOLEAN"
+}
+
+
+/* ---------------- DECLARATIONS SECTION ends here ------------------ */
+
+/* ---------------- Code Section starts here ---------------------- */
+                                
+Vector SQLStatements():
+{
+  Vector v = new Vector();
+  ZStatement s;
+}
+{
+    (s = SQLStatement() { if(s == null) return v; else v.addElement(s); })+
+    { return v; }
+}
+
+ZStatement SQLStatement():
+{
+  ZStatement s = null;
+}
+{
+    s = CommitStatement() { return s; }
+    |
+    s = DeleteStatement() { return s; }
+    |
+    s = InsertStatement() { return s; }
+    |
+    s = LockTableStatement() { return s; }
+    |
+    s = RollbackStatement() { return s; }
+    |
+    s = QueryStatement() { return s; }
+    |
+    s = SetTransactionStatement() { return s; }
+    |
+    s = UpdateStatement() { return s; }
+    |
+    ( "EXIT" | "QUIT" ) ";" { return null; }
+}
+
+// CommitStatement ::= COMMIT [WORK] [COMMENT <comment>];
+ZTransactStmt CommitStatement():
+{
+  Token tk;
+  ZTransactStmt t = new ZTransactStmt("COMMIT");
+}
+{
+  "COMMIT" ["WORK"]
+  ["COMMENT" tk = <S_CHAR_LITERAL> { t.setComment(tk.toString()); }] ";"
+  { return t; }
+}
+
+// LockTableStatement ::= LOCK TABLE TableReference (, TableReference)*
+//   IN LockMode MODE [NOWAIT];
+ZLockTable LockTableStatement():
+{
+  ZLockTable lck = new ZLockTable();
+  Vector v = new Vector();
+  String s;
+}
+{
+  "LOCK" "TABLE" s = TableReference() { v.addElement(s); }
+  ("," s = TableReference() { v.addElement(s); } )*
+  "IN" s = LockMode() { lck.setLockMode(s); } "MODE"
+  ["NOWAIT" { lck.nowait_ = true; }] ";"
+  { lck.addTables(v); return lck; }
+}
+
+// RollbackStatement ::= ROLLBACK [WORK] ["COMMENT" <comment>];
+ZTransactStmt RollbackStatement():
+{
+  Token tk;
+  ZTransactStmt t = new ZTransactStmt("ROLLBACK");
+}
+{
+  "ROLLBACK" ["WORK"]
+  ["COMMENT" tk = <S_CHAR_LITERAL> { t.setComment(tk.toString()); }] ";"
+  { return t; }
+}
+
+// SetTransactionStatement ::= SET TRANSACTION READ (ONLY | WRITE)
+ZTransactStmt SetTransactionStatement():
+{
+  StringBuffer b;
+  ZTransactStmt t = new ZTransactStmt("SET TRANSACTION");
+  boolean rdonly = false;
+}
+{
+  "SET" "TRANSACTION" ("READ" ("ONLY" { rdonly = true; } | "WRITE")) ";"
+  { t.readOnly_ = rdonly; return t; }
+}
+
+// LockMode ::= ROW SHARE | ROW EXCLUSIVE
+//   | SHARE [UPDATE | ROW EXCLUSIVE]
+//   | EXCLUSIVE
+String LockMode():
+{
+  StringBuffer b = new StringBuffer();
+}
+{
+   ("ROW" { b.append("ROW "); }
+    ("SHARE" { b.append("SHARE"); } | "EXCLUSIVE" { b.append("EXCLUSIVE"); } ))
+   { return b.toString(); }
+ | ("SHARE" { b.append("SHARE"); }
+    ["UPDATE" { b.append(" UPDATE"); }
+     | ("ROW" "EXCLUSIVE") { b.append(" ROW EXCLUSIVE"); }])
+   { return b.toString(); }
+ | ("EXCLUSIVE") { return new String("EXCLUSIVE"); }
+}
+
+// UpdateStatement ::=
+//   UPDATE TableReference SET ColumnValues [WHERE SQLExpression]
+ZUpdate UpdateStatement():
+{
+  ZUpdate u;
+  ZExp e;
+  Hashtable t;
+  String s;
+  Token tk;
+}
+{
+  "UPDATE" s = TableReference() { u = new ZUpdate(s); }
+  [ tk = <S_IDENTIFIER> { u.setAlias(tk.toString()); } ]  /* Alias Name */
+  "SET" ColumnValues(u) { }
+  [ "WHERE" e = SQLExpression() { u.addWhere(e); } ] ";"
+  { return u; }
+}
+
+// ColumnValues ::= TableColumn = UpdatedValue (, TableColumn = UpdatedValue)*
+void ColumnValues(ZUpdate u):
+{
+  String key;
+  ZExp val;
+}
+{
+  key = TableColumn() "=" val = UpdatedValue() { u.addColumnUpdate(key, val); }
+  ("," key = TableColumn() "=" val = UpdatedValue()
+    { u.addColumnUpdate(key, val); } )*
+  { }
+}
+
+// UpdatedValue ::= ( SelectStatement ) | SQLExpression
+ZExp UpdatedValue(): // Can be a subquery or a expression
+{
+  ZExp e;
+}
+{
+  LOOKAHEAD(("(")+ "SELECT")
+  "(" e = SelectStatement() ")" { return e; }
+  |
+  e = SQLExpression() { return e; }
+  |
+  e = PreparedCol() { return e; } // For prepared columns ("?")
+}
+
+// InsertStatement ::= INSERT INTO TableReference
+//   [ "(" TableColumn (, TableColumn)* ")" ]
+//   ValueSpec | SelectStatement
+// ValueSpec ::= VALUES ( SQLExpressionList )
+ZInsert InsertStatement():
+{
+  ZInsert ins;
+  String s;
+  Vector v;
+  ZQuery q;
+}
+{
+  "INSERT" "INTO" s = TableReference() { ins = new ZInsert(s); }
+   ["(" s = TableColumn() { v = new Vector(); v.addElement(s); }
+    ("," s = TableColumn() { v.addElement(s); } )* ")" { ins.addColumns(v); } ]
+   ( "VALUES" "(" v = SQLExpressionList() ")"
+     { ZExpression e = new ZExpression(",");
+       e.setOperands(v); ins.addValueSpec(e); }
+     |
+     q = SelectStatement() { ins.addValueSpec(q); }
+   )
+   ";" { return ins; }
+}
+
+// DeleteStatement ::= DELETE [FROM] TableReference [WHERE SQLExpression]
+ZDelete DeleteStatement():
+{
+  ZDelete d;
+  ZExp e;
+  String s;
+}
+{
+    "DELETE" ["FROM"] s = TableReference() { d = new ZDelete(s); }
+    ["WHERE" e = SQLExpression() { d.addWhere(e); }] ";"
+    { return d; }
+}
+
+// QueryStatement ::= SelectStatement
+ZQuery QueryStatement():
+{
+  ZQuery q;
+}
+{
+    q = SelectStatement() ";" { return q; }
+}
+
+
+/* ---------------- General Productions --------------------- */
+
+String TableColumn():
+{
+  StringBuffer buf = new StringBuffer();
+  String s;
+}
+{
+    // user.table.column
+    s = OracleObjectName() { buf.append(s); }
+    [ "." s = OracleObjectName() { buf.append("." + s); }
+     ["." s = OracleObjectName() { buf.append("." + s); } ]]
+    { return buf.toString(); }
+}
+
+String OracleObjectName():
+{
+  Token t;
+}
+{
+    t = <S_IDENTIFIER> { return t.toString(); } | t = <S_QUOTED_IDENTIFIER> { return t.toString(); }
+}
+
+String Relop():
+{
+  Token op;
+}
+{
+   op = "="  { return op.toString(); }
+ | op = "!=" { return op.toString(); }
+ | op = "#"  { return op.toString(); }
+ | op = "<>" { return op.toString(); }
+ | op = ">"  { return op.toString(); }
+ | op = ">=" { return op.toString(); }
+ | op = "<"  { return op.toString(); }
+ | op = "<=" { return op.toString(); }
+}
+
+// TableReference ::= OracleObjectName[.OracleObjectName]
+String TableReference():
+{
+  StringBuffer buf = new StringBuffer();
+  String s;
+}
+{
+    s = OracleObjectName() { buf.append(s); }
+    ["." s = OracleObjectName() { buf.append("." + s); } ]
+    { return buf.toString(); }
+}
+
+void NumOrID():
+{}
+{
+    <S_IDENTIFIER> | (["+" | "-"] <S_NUMBER>)
+}
+
+
+/* --------------- General Productions ends here --------------- */
+
+/* ----------- SQL productions start here ----------------- */
+
+ZQuery SelectStatement():
+{
+  ZQuery q;
+  Vector v;
+}
+{
+  q = SelectWithoutOrder()
+  [ v = OrderByClause() { q.addOrderBy(v); } ]
+  [ ForUpdateClause() { q.forupdate_ = true; } ]
+  { return q; }
+
+}
+
+ZQuery SelectWithoutOrder():
+{
+  ZQuery q = new ZQuery();
+  Vector select;
+  Vector from;
+  ZExp where = null;
+  ZGroupBy groupby = null;
+  ZExpression setclause = null;
+}
+{
+  "SELECT" [ "ALL" | "DISTINCT" { q.distinct_ = true; } ]
+  select = SelectList()
+  from = FromClause()
+  [ where = WhereClause() ]
+  [ ConnectClause() ]
+  [ groupby = GroupByClause() ]
+  [ setclause = SetClause() ]
+  {
+    q.addSelect(select);
+    q.addFrom(from);
+    q.addWhere(where);
+    q.addGroupBy(groupby);
+    q.addSet(setclause);
+
+    return q;
+  }
+}
+
+/* Checks for whatever follows  SELECT */
+
+// SelectList ::= * | COUNT(*) | SelectItem (, SelectItem)*
+// 18/10/01 PY. Gibello - Removed "COUNT(*)" from here
+// COUNT is an aggregate, like AVG...
+Vector SelectList():
+{
+  Vector v = new Vector(8);
+  ZSelectItem elem;
+}
+{
+  "*" { v.addElement(new ZSelectItem("*")); return v; }
+//  | LOOKAHEAD(3) "COUNT" "(" "*" ")"
+//  { v.addElement(new ZSelectItem("COUNT(*)")); return v; } //TBD Expression ?
+  | elem = SelectItem() { v.addElement(elem); }
+    ("," elem = SelectItem() { v.addElement(elem); } )* { return v; }
+}
+
+
+// 01/07/00 PY. Gibello - Added LOOKAHEAD(3) before COUNT
+// Due to a fix in AggregateFunc (COUNT added) that made the grammar ambiguous
+// 18/10/01 PY. Gibello - Removed "COUNT(*)" from here (see aggregate funcs)
+
+// SelectItem() ::= SelectStar | SQLSimpleExpression() [SelectAlias]
+ZSelectItem SelectItem():
+{
+  String s;
+  ZSelectItem it;
+  ZExp e;
+}
+{
+    LOOKAHEAD(SelectStar()) s = SelectStar() { return new ZSelectItem(s); }
+// |   LOOKAHEAD(3) "COUNT" "(" s = SelectStar() ")"
+//     { return new ZSelectItem("COUNT(" + s + ")"); } //TBD expression ?
+|   e = SQLSimpleExpression() // Column or Expression
+    {
+      //PY.Gibello 21 Apr 2001 - added e.toString() as arg
+      it = new ZSelectItem(e.toString());
+      it.setExpression(e);
+    }
+    [s = SelectAlias() { it.setAlias(s); } ] // Column Alias
+    { return it; }
+}
+
+// SelectAlias ::= (<S_IDENTIFIER>)+
+String SelectAlias():
+{
+  Token tk;
+  StringBuffer b = null;
+}
+{
+  [ "AS" ] ( tk = <S_QUOTED_IDENTIFIER> { return tk.toString().trim(); }
+    | (tk = <S_IDENTIFIER> {
+        if(b == null) b = new StringBuffer(tk.toString().trim());
+        else b.append(" " + tk.toString().trim()); })+
+   )
+  { return b.toString().trim(); }
+}
+
+// SelectStar() ::= OracleObjectName()".*" |
+//               OracleObjectName()"." OracleObjectName() ".*"
+String SelectStar():
+{
+  String s, s2;
+}
+{
+  LOOKAHEAD(2)
+  s = OracleObjectName()".*" { return new String(s + ".*"); } // table.*
+| LOOKAHEAD(4)
+  s = OracleObjectName()"." s2 = OracleObjectName() ".*"
+  { return new String(s + "." + s2 + ".*"); } // schema.table.*
+}
+
+// FromClause ::= FromItem (, FromItem)*
+Vector FromClause():
+{
+  Vector v = new Vector(8);
+  ZFromItem f;
+}
+{
+    "FROM" f = FromItem() { v.addElement(f); }
+    ( "," f = FromItem() { v.addElement(f); } )*
+    { return v; }
+}
+
+// FromItem ::= TableReference [alias]
+ZFromItem FromItem():
+{
+  ZFromItem f;
+  String s;
+  Token tk;
+}
+{
+  s = TableReference() { f = new ZFromItem(s); }
+  [ tk = <S_IDENTIFIER> { f.setAlias(tk.toString()); } ]  /* Alias Name */
+  { return f; }
+}
+
+
+ZExp WhereClause():
+{
+  ZExp e;
+}
+{
+    "WHERE" e = SQLExpression() { return e; }
+}
+
+void ConnectClause():
+{}
+{
+    // The following grammar will take 2 "START WITH" expressions
+    // which is not correct. But alright, because only valid statements
+    // will be given.
+   (["START" "WITH" SQLExpression()] "CONNECT" "BY" SQLExpression()
+    ["START" "WITH" SQLExpression()])
+}
+
+ZGroupBy GroupByClause():
+{
+  ZGroupBy g = null;
+  Vector v;
+  ZExp e;
+}
+{
+  "GROUP" "BY" v = SQLExpressionList() { g = new ZGroupBy(v); }
+  ["HAVING" e = SQLExpression() { g.setHaving(e);} ]
+  { return g; }
+}
+
+// SetClause ::= UNION [ALL] Qry | INTERSECT Qry | MINUS Qry
+// Qry ::= SelectWithoutOrder | ( SelectWithoutOrder )
+ZExpression SetClause():
+{
+  ZExpression e;
+  ZQuery q;
+  Token t;
+}
+{
+  ((t = "UNION" ["ALL"]) | t = "INTERSECT" | t = "MINUS")
+  { e = new ZExpression(t.toString()); }
+  // LOOKAHEAD("(") because Oracle supports "(" after a UNION
+  (LOOKAHEAD("(") ("(" q = SelectWithoutOrder() { e.addOperand(q); } ")")   //)
+      | q = SelectWithoutOrder() { e.addOperand(q); }
+  )
+  { return e; }
+}
+
+Vector OrderByClause():
+{
+  Vector v = new Vector();
+  ZExp e;
+  ZOrderBy ob;
+}
+{
+    "ORDER" "BY" e = SQLSimpleExpression() { ob = new ZOrderBy(e); }
+    ["ASC" | "DESC" { ob.setAscOrder(false); }] { v.addElement(ob); }
+    ("," e = SQLSimpleExpression() { ob = new ZOrderBy(e); }
+     ["ASC" | "DESC" { ob.setAscOrder(false); }] { v.addElement(ob); } )*
+    { return v; }
+}
+
+void ForUpdateClause():
+{}
+{
+    "FOR" "UPDATE" [ "OF" TableColumn() ("," TableColumn())* ]
+}
+
+ZExp SQLExpression():
+{
+  ZExp e1, e2;
+  ZExpression e = null;
+  boolean single = true;
+}
+{
+    e1 = SQLAndExpression()
+    ("OR" e2 = SQLAndExpression() {
+      if(single) { e = new ZExpression("OR", e1); }
+      single=false;
+      e.addOperand(e2);
+    } )*
+    { return (single ? e1 : e); }
+}
+
+ZExp SQLAndExpression():
+{
+  ZExp e1, e2;
+  ZExpression e = null;
+  boolean single = true;
+}
+{
+    e1 = SQLUnaryLogicalExpression()
+    ( "AND" e2 = SQLUnaryLogicalExpression() {
+      if(single) { e = new ZExpression("AND", e1); }
+      single=false;
+      e.addOperand(e2);
+    } )*
+    { return (single ? e1 : e); }
+}
+
+ZExp SQLUnaryLogicalExpression():
+{
+  ZExp e1, e;
+  boolean not = false;
+}
+{
+    LOOKAHEAD(2) e = ExistsClause() { return e; }
+|   ( ["NOT" { not = true; } ]
+     e1 = SQLRelationalExpression() {
+       if(not) e = new ZExpression("NOT", e1);
+       else e = e1;
+       return e;
+     }
+    )
+}
+
+ZExpression ExistsClause():
+{
+  ZExpression e;
+  ZQuery q;
+  boolean not = false;
+}
+{
+    ["NOT" { not = true; } ] "EXISTS" "(" q = SubQuery() ")" {
+      ZExpression e1 = new ZExpression("EXISTS", q);
+      if(not) e = new ZExpression("NOT", e1);
+      else e = e1;
+      return e;
+    }
+}
+
+// SQLRelationalExpression ::=
+//    ( [PRIOR] SQLSimpleExpression | SQLExpressionList )
+//    ( SQLRelationalOperatorExpression
+//      | SQLInClause | SQLBetweenClause | SQLLikeClause | IsNullClause )?
+ZExp SQLRelationalExpression():
+{
+  ZExp e1, eleft;
+  ZExpression eright = null;
+  Vector v;
+  boolean prior = false;
+}
+{
+    /* Only after looking past "(", Expression() and "," we will know that
+       it is expression list */
+
+  (LOOKAHEAD("(" SQLSimpleExpression() ",")           //)
+     "(" v = SQLExpressionList() ")" {
+       eleft = new ZExpression(",");
+       ((ZExpression)eleft).setOperands(v);
+     }
+    |
+    ( ["PRIOR" { prior = true; } ]
+      e1 = SQLSimpleExpression() {
+        if(prior) eleft = new ZExpression("PRIOR", e1);
+        else eleft = e1;
+      } )
+  ) //Closes parenthese opened before LOOKAHEAD
+
+    /* Lookahead(2) is required because of NOT IN,NOT BETWEEN and NOT LIKE */
+   ( eright = SQLRelationalOperatorExpression()
+    |  LOOKAHEAD(2) (eright = SQLInClause())
+    |  LOOKAHEAD(2) (eright = SQLBetweenClause())
+    |  LOOKAHEAD(2) (eright = SQLLikeClause())
+    |  eright = IsNullClause()
+   )?
+
+   {
+     if(eright == null) return eleft;
+     Vector v2 = eright.getOperands();
+     if(v2 == null) v2 = new Vector(); //For IS NULL, which is unary!
+     v2.insertElementAt(eleft, 0);
+     eright.setOperands(v2);
+     return eright;
+   }
+}
+
+Vector SQLExpressionList():
+{
+  Vector v = new Vector(8);
+  ZExp e;
+}
+{
+    e = SQLSimpleExpressionOrPreparedCol() { v.addElement(e); }
+    ("," e = SQLSimpleExpressionOrPreparedCol() { v.addElement(e); } )*
+    { return v; }
+}
+
+ZExpression SQLRelationalOperatorExpression():
+{
+  ZExpression e;
+  ZExp e1, eright;
+  String op;
+  String unaryOp = null;
+}
+{
+
+    op = Relop() { e = new ZExpression(op); }
+
+    /* Only after seeing an ANY/ALL or "(" followed by a SubQuery() we can
+    determine that is is a sub-query
+    */
+    (   LOOKAHEAD("ANY" | "ALL" | "(" "SELECT")    //)
+        (["ALL" { unaryOp = "ALL"; } | "ANY" { unaryOp = "ANY"; } ]
+         "(" e1 = SubQuery() ")" {
+            if(unaryOp == null) eright = e1;
+            else eright = new ZExpression(unaryOp, e1);
+          }
+        )
+        |
+        ["PRIOR" { unaryOp = "PRIOR"; } ] e1 = SQLSimpleExpressionOrPreparedCol() {
+          if(unaryOp == null) eright = e1;
+          else eright = new ZExpression(unaryOp, e1);
+        }
+    )
+
+    { e.addOperand(eright); return e; }
+}
+
+ZExp SQLSimpleExpressionOrPreparedCol():
+{
+  ZExp e;
+}
+{
+   e = SQLSimpleExpression() { return e; }
+ | e = PreparedCol() { return e; } // For prepared columns ("?")
+}
+
+// For prepared columns ("?")
+ZExp PreparedCol(): {}
+{
+  "?" { return new ZExpression("?"); } // For prepared columns ("?")
+}
+
+ZExpression SQLInClause():
+{
+  ZExpression e;
+  ZQuery q;
+  boolean not = false;
+  Vector v;
+}
+{
+  ["NOT" { not = true; }]
+  "IN" { e = new ZExpression(not ? "NOT IN" : "IN"); }
+  "(" (v = SQLExpressionList() { e.setOperands(v); }
+   | q = SubQuery() { e.addOperand(q); }) ")"
+  { return e; }
+}
+
+ZExpression SQLBetweenClause():
+{
+  ZExpression e;
+  ZExp  e1, e2;
+  boolean not = false;
+}
+{
+  ["NOT" { not = true; }]
+  "BETWEEN" e1 = SQLSimpleExpressionOrPreparedCol() "AND" e2 = SQLSimpleExpressionOrPreparedCol() {
+    if(not) e = new ZExpression("NOT BETWEEN", e1, e2);
+    else e = new ZExpression("BETWEEN", e1, e2);
+    return e;
+  }
+}
+
+ZExpression SQLLikeClause():
+{
+  ZExp eright;
+  ZExpression e;
+  boolean not = false;
+}
+{
+  ["NOT" { not = true; }]
+  "LIKE" eright = SQLSimpleExpressionOrPreparedCol() {
+    if(not) e = new ZExpression("NOT LIKE", eright);
+    else e = new ZExpression("LIKE", eright);
+    return e;
+  }
+}
+
+ZExpression IsNullClause():
+{
+  boolean not = false;
+}
+{
+  "IS" ["NOT" { not = true; }] "NULL" {
+    return(not ? new ZExpression("IS NOT NULL") : new ZExpression("IS NULL"));
+  }
+}
+
+
+// SQLSimpleExpression
+//    ::= SQLMultiplicativeExpression (OP SQLMultiplicativeExpression)*
+// OP ::= + | - | "||"
+ZExp SQLSimpleExpression():
+{
+  Token op;
+  ZExp e1, e2;
+  ZExpression e = null;
+}
+{
+    e1 = SQLMultiplicativeExpression()
+    ( ( op = "+" |  op = "-" |  op = "||") e2 = SQLMultiplicativeExpression() {
+      e = new ZExpression(op.toString(), e1);
+      e.addOperand(e2);
+      e1 = e;
+    } )*
+    { return e1; }
+}
+
+
+// SQLMultiplicativeExpression
+//    ::= SQLExpotentExpression (OP SQLExpotentExpression)*
+// OP ::= * | /
+ZExp SQLMultiplicativeExpression():
+{
+  Token op;
+  ZExp e1, e2;
+  ZExpression e = null;
+}
+{
+    e1 = SQLExpotentExpression()
+    ( (op = "*" | op = "/") e2 = SQLExpotentExpression() {
+      e = new ZExpression(op.toString(), e1);
+      e.addOperand(e2); 
+      e1 = e;
+    } )*
+    { return e1; }
+}
+
+// SQLExpotentExpression ::= SQLUnaryExpression (** SQLUnaryExpression)*
+ZExp SQLExpotentExpression():
+{
+  Token op;
+  ZExp e1, e2;
+  ZExpression e = null;
+  boolean single = true;
+}
+{
+    e1 = SQLUnaryExpression()
+    ( op = "**" e2 = SQLUnaryExpression() {
+      if(single) e = new ZExpression(op.toString(), e1);
+      single = false;
+      e.addOperand(e2);
+    } )*
+    { return (single ? e1 : e); }
+}
+
+// SQLUnaryExpression ::= [+|-] SQLPrimaryExpression
+ZExp SQLUnaryExpression():
+{
+  Token op = null;
+  ZExp e1, e;
+}
+{
+  [ op = "+" |  op = "-"] e1 = SQLPrimaryExpression() { 
+    if(op == null) e = e1;
+    else e = new ZExpression(op.toString(), e1);
+    return e;
+  }
+}
+
+// 01/07/00 PY.Gibello - Added COUNT(*) to SQLPrimaryExpression
+// TBD should be ZConstant("COUNT(*)", ZConstant.STRING))
+// instead of ZConstant("*", ZConstant.COLUMNNAME) ??
+// 01/06/02 PY.Gibello - Added ALL | DISTINCT (then the column name
+// starts with "all " or "distinct " when required, which may not be the
+// fairest solution...)
+
+// SQLPrimaryExpression ::= NULL | OuterJoinExpression
+//   | AggregateFunc ( [ ALL | DISTINCT ] TableColumn ) | TableColumn
+//   | COUNT(*)
+//   | <NUMBER> | <STRING> | <BIND>
+ZExp SQLPrimaryExpression():
+{
+  Token t;
+  String s, s2, modifier="";
+  ZExp e;
+}
+{
+  "NULL" { return new ZConstant("NULL", ZConstant.NULL); }
+|  LOOKAHEAD(OuterJoinExpression()) s = OuterJoinExpression() {
+     return new ZConstant(s, ZConstant.COLUMNNAME);
+     //return new ZExpression("_NOT_SUPPORTED"); //TBD
+   }
+|  LOOKAHEAD(3) "COUNT" "(" "*" ")" {
+     return new ZExpression("COUNT",
+      new ZConstant("*", ZConstant.COLUMNNAME));
+   }
+|  LOOKAHEAD(3) s = AggregateFunc() "("
+    ("ALL" { modifier="all "; } | "DISTINCT" { modifier="distinct "; })
+    s2 = TableColumn() ")"
+     { return new ZExpression(s, new ZConstant(modifier + s2, ZConstant.COLUMNNAME)); }
+|  LOOKAHEAD(2) e = FunctionCall() { return e; }
+/*
+|  LOOKAHEAD(<S_IDENTIFIER> "(") e = FunctionCall() { return e; }
+*/
+|  s = TableColumn() { return new ZConstant(s, ZConstant.COLUMNNAME); }
+|  t = <S_NUMBER> { return new ZConstant(t.toString(), ZConstant.NUMBER); }
+|  t = <S_CHAR_LITERAL> {
+     s = t.toString();
+     if(s.startsWith("\'")) s = s.substring(1);
+     if(s.endsWith("\'")) s = s.substring(0, s.length()-1);
+     return new ZConstant(s, ZConstant.STRING); }
+|  t = <S_BIND> { return new ZConstant(t.toString(), ZConstant.STRING); }
+|  "(" e = SQLExpression() ")" { return e; }
+}
+
+// AggregateFunc ::= SUM | AVG | MAX | MIN | COUNT
+// 01/07/00 PY.Gibello - Added COUNT
+String AggregateFunc():
+{
+  Token t;
+}
+{
+  t = "SUM" { return t.toString(); }
+| t = "AVG" { return t.toString(); }
+| t = "MAX" { return t.toString(); }
+| t = "MIN" { return t.toString(); }
+| t = "COUNT" { return t.toString(); }
+}
+
+ZExpression FunctionCall():
+{
+  Token t;
+  String s;
+  ZExpression e;
+  Vector parm = null;
+}
+{
+  (t = <S_IDENTIFIER> { s = t.toString(); } | s = AggregateFunc()) "("
+  [ parm = SQLExpressionList() ] ")" {
+
+    int nparm = ZUtils.isCustomFunction(s);
+    if(nparm < 0) nparm = (ZUtils.isAggregate(s) ? 1 : -1);
+    if(nparm < 0)
+      throw new ParseException("Undefined function: " + s);
+    if(nparm != ZUtils.VARIABLE_PLIST && nparm > 0) {
+      if(parm == null || parm.size() != nparm)
+        throw new ParseException("Function " + s + " should have "
+         + nparm + " parameter(s)");
+    }
+
+    e = new ZExpression(s);
+    e.setOperands(parm);
+    return e;
+  }
+}
+
+String OuterJoinExpression():
+{
+  String s = null;
+  String c = "";
+}
+{
+    // user.table.col
+    s = OracleObjectName()
+     [ "." c = OracleObjectName() { s += "." + c; }
+     ["."  c = OracleObjectName() { s += "." + c; } ]]
+    "(" "+" ")"
+    {
+      return s + "(+)";
+    }
+}
+
+ZQuery SubQuery():
+{
+  ZQuery q;
+}
+{
+  q = SelectWithoutOrder() { return q; }
+}
+
