@@ -11,22 +11,22 @@ import static com.github.braisdom.objsql.DatabaseType.*;
 public class DefaultQuoter implements Quoter {
 
     @Override
-    public String quoteTableName(String databaseName, String tableName) {
+    public String quoteTableName(String databaseProductName, String tableName) {
         String[] tableNameItems = tableName.split("\\.");
         String[] quotedTableNames = Arrays.stream(tableNameItems).map(FunctionWithThrowable
-                .castFunctionWithThrowable(item -> quoteName(databaseName, item))).toArray(String[]::new);
+                .castFunctionWithThrowable(item -> quoteName(databaseProductName, item))).toArray(String[]::new);
         return String.join(".", quotedTableNames);
     }
 
     @Override
-    public String quoteColumnName(String databaseName, String columnName) {
-        return quoteName(databaseName, columnName);
+    public String quoteColumnName(String databaseProductName, String columnName) {
+        return quoteName(databaseProductName, columnName);
     }
 
     @Override
-    public String[] quoteColumnNames(String databaseName, String[] columnNames) {
+    public String[] quoteColumnNames(String databaseProductName, String[] columnNames) {
         String[] quotedColumnNames = Arrays.stream(columnNames).map(FunctionWithThrowable
-                .castFunctionWithThrowable(column -> quoteName(databaseName, column))).toArray(String[]::new);
+                .castFunctionWithThrowable(column -> quoteName(databaseProductName, column))).toArray(String[]::new);
         return quotedColumnNames;
     }
 
@@ -51,12 +51,12 @@ public class DefaultQuoter implements Quoter {
         return String.format("'%s'", value);
     }
 
-    private String quoteName(String databaseName, String item) {
-        if (MySQL.equals(databaseName)) {
+    private String quoteName(String databaseProductName, String item) {
+        if (MySQL.equals(databaseProductName)) {
             return String.format("`%s`", item);
-        } else if (PostgreSQL.equals(databaseName)) {
+        } else if (PostgreSQL.equals(databaseProductName)) {
             return String.format("\"%s\"", item);
-        } else if(Oracle.equals(databaseName)) {
+        } else if(Oracle.equals(databaseProductName)) {
             return String.format("\"%s\"", item.toUpperCase());
         }
 

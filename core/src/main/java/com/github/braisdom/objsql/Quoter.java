@@ -18,11 +18,11 @@ package com.github.braisdom.objsql;
 
 public interface Quoter {
 
-    String quoteTableName(String databaseName, String tableName);
+    String quoteTableName(String databaseProductName, String tableName);
 
-    String quoteColumnName(String databaseName, String columnName);
+    String quoteColumnName(String databaseProductName, String columnName);
 
-    String[] quoteColumnNames(String databaseName, String[] columnNames);
+    String[] quoteColumnNames(String databaseProductName, String[] columnNames);
 
     String[] quoteValues(Object... values);
 
