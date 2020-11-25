@@ -9,6 +9,7 @@ public class OrderLine {
     private String orderNo;
     private Float amount;
     private Float quantity;
+    private Long productId;
 
     @Relation(relationType = RelationType.BELONGS_TO)
     private Order order;

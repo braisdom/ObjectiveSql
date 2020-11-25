@@ -25,7 +25,9 @@ public class PagedSQLBuilderTest {
                 "(SELECT t1.id, t1.`no`, t1.name, COUNT(*) AS 'order_count' " +
                 "FROM members t1 LEFT JOIN orders t2 ON t2.member_id = t1.id " +
                 "GROUP BY t1.id, t1.`no`, t1.name, t2.member_id) AS T");
-        Assertions.assertEquals(querySQL2, "SELECT COUNT(*) AS count_ FROM (SELECT name FROM members) AS T");
+        Assertions.assertEquals(querySQL2, "SELECT t1.id, t1.`no`, t1.name, COUNT(*) AS 'order_count' " +
+                "FROM members t1 LEFT JOIN orders t2 ON t2.member_id = t1.id " +
+                "GROUP BY t1.id, t1.`no`, t1.name, t2.member_id OFFSET 0 FETCH NEXT 30 ROW ONLY");
     }
 
     @Test
@@ -44,6 +46,8 @@ public class PagedSQLBuilderTest {
                 "(SELECT t1.id, t1.`no`, t1.name, COUNT(*) AS 'order_count' " +
                 "FROM members t1 LEFT JOIN orders t2 ON t2.member_id = t1.id " +
                 "GROUP BY t1.id, t1.`no`, t1.name, t2.member_id) AS T");
-        Assertions.assertEquals(querySQL2, "SELECT COUNT(*) AS count_ FROM (SELECT name FROM members) AS T");
+        Assertions.assertEquals(querySQL2, "SELECT t1.id, t1.`no`, t1.name, COUNT(*) AS 'order_count' " +
+                "FROM members t1 LEFT JOIN orders t2 ON t2.member_id = t1.id " +
+                "GROUP BY t1.id, t1.`no`, t1.name, t2.member_id LIMIT 0, 30");
     }
 }
