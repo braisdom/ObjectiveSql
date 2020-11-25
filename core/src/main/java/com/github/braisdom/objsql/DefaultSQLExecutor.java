@@ -159,9 +159,7 @@ class DomainModelHandler implements ResultSetHandler<Object> {
             Object rawColumnValue = rs.getObject(i);
 
             if (AUTO_GENERATE_COLUMN_NAMES.contains(columnName)) {
-                DatabaseType databaseType = DatabaseType.createByName(databaseMetaData.getDatabaseProductName(),
-                        databaseMetaData.getDatabaseMajorVersion());
-                tableRowDescriptor.setGeneratedKey(databaseType, bean, rawColumnValue);
+                tableRowDescriptor.setGeneratedKey(bean, rawColumnValue);
             } else {
                 if (fieldName != null) {
                     if (tableRowDescriptor.isTransitable(fieldName)) {

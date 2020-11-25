@@ -126,7 +126,7 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
     }
 
     @Override
-    public void setGeneratedKey(DatabaseType databaseType, T bean, Object primaryKeyValue) {
+    public void setGeneratedKey(T bean, Object primaryKeyValue) {
         Field primaryField = Tables.getPrimaryField(domainModelClass);
         setFieldValue(bean, primaryField.getName(), primaryKeyValue);
     }
