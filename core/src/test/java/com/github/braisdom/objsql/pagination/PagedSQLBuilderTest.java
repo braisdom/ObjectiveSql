@@ -12,7 +12,7 @@ public class PagedSQLBuilderTest {
     @Test
     public void testAnsiSQLPagination() throws SQLException {
         PagedSQLBuilder sqlBuilder = Databases.getPagedSQLBuilderFactory()
-                .createPagedSQLBuilder(DatabaseType.Unknown);
+                .createPagedSQLBuilder(DatabaseType.Ansi);
         Page page = Page.of(0, 30);
         String rawQuerySQL1 = "SELECT t1.id, t1.`no`, t1.name, COUNT(*) AS 'order_count' FROM members t1 \n" +
                 "LEFT JOIN orders t2 ON t2.member_id = t1.id \n" +

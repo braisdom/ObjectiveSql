@@ -28,10 +28,9 @@ import java.util.Arrays;
 import java.util.Objects;
 
 import static com.github.braisdom.objsql.DatabaseType.MsSqlServer;
-import static com.github.braisdom.objsql.DatabaseType.SQLite;
+
 import static com.github.braisdom.objsql.sql.Expressions.literal;
 
-@Syntax(DatabaseType.All)
 public class Ansi {
 
     /**
@@ -297,17 +296,14 @@ public class Ansi {
         return new SqlFunctionCall("LOG", expression);
     }
 
-    @Syntax(except = {SQLite, MsSqlServer})
     public static final Expression log2(Integer literal) {
         return new SqlFunctionCall("LOG2", new LiteralExpression(literal));
     }
 
-    @Syntax(except = {SQLite, MsSqlServer})
     public static final Expression log2(Float literal) {
         return new SqlFunctionCall("LOG2", new LiteralExpression(literal));
     }
 
-    @Syntax(except = {SQLite, MsSqlServer})
     public static final Expression log2(Expression expression) {
         return new SqlFunctionCall("LOG2", expression);
     }

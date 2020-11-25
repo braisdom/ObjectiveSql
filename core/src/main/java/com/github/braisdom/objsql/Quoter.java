@@ -16,11 +16,7 @@
  */
 package com.github.braisdom.objsql;
 
-import java.sql.SQLException;
-
 public interface Quoter {
-
-    String NO_QUOTE_PREFIX = "noquote:";
 
     String quoteTableName(String databaseName, String tableName);
 

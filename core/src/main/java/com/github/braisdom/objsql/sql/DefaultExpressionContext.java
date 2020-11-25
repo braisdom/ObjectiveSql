@@ -52,13 +52,13 @@ public class DefaultExpressionContext implements ExpressionContext {
     @Override
     public String quoteTable(String tableName) {
         Quoter quoter = Databases.getQuoter();
-        return quoter.quoteTableName(databaseType.getName(), tableName);
+        return quoter.quoteTableName(databaseType.getDatabaseProductName(), tableName);
     }
 
     @Override
     public String quoteColumn(String columnName) {
         Quoter quoter = Databases.getQuoter();
-        return quoter.quoteColumnName(databaseType.getName(), columnName);
+        return quoter.quoteColumnName(databaseType.getDatabaseProductName(), columnName);
     }
 
     @Override

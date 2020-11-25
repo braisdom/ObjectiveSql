@@ -35,11 +35,9 @@ public class SqlDateTimeTransition<T> implements ColumnTransition<T> {
                           TableRowAdapter tableRowDescriptor, String fieldName, FieldValue fieldValue) throws SQLException {
         String databaseName = databaseMetaData.getDatabaseProductName();
         if (fieldValue != null && fieldValue.getValue() != null) {
-            if (SQLite.nameEquals(databaseName)) {
+            if (SQLite.equals(databaseName) || Oracle.equals(databaseName)) {
                 return fieldValue;
-            } else if (Oracle.nameEquals(databaseName)) {
-                return fieldValue;
-            } else if (PostgreSQL.nameEquals(databaseName)) {
+            } else if (PostgreSQL.equals(databaseName)) {
                 if (fieldValue.getValue() instanceof Timestamp) {
                     return fieldValue.getValue();
                 } else if (fieldValue.getValue() instanceof Long) {
@@ -60,7 +58,7 @@ public class SqlDateTimeTransition<T> implements ColumnTransition<T> {
         String databaseName = databaseMetaData.getDatabaseProductName();
         try {
             if (columnValue != null) {
-                if (SQLite.nameEquals(databaseName)) {
+                if (SQLite.equals(databaseName)) {
                     return Timestamp.from(Instant.ofEpochMilli(Long.valueOf(String.valueOf(columnValue))));
                 } else {
                     return columnValue;

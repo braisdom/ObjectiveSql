@@ -17,6 +17,7 @@
 package com.github.braisdom.objsql;
 
 import com.github.braisdom.objsql.jdbc.DbUtils;
+import com.github.braisdom.objsql.pagination.Page;
 import com.github.braisdom.objsql.pagination.PagedSQLBuilder;
 import com.github.braisdom.objsql.pagination.PagedSQLBuilderFactory;
 import com.github.braisdom.objsql.pagination.impl.MySQLPagedSQLBuilder;
@@ -28,6 +29,9 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.logging.Level;
+
+import static com.github.braisdom.objsql.DatabaseType.MySQL;
+import static com.github.braisdom.objsql.DatabaseType.Oracle;
 
 /**
  * This class consists exclusively of utility methods that operate of behavior of database.
@@ -285,12 +289,12 @@ public final class Databases {
             pagedSQLBuilderFactory = new PagedSQLBuilderFactory() {
                 @Override
                 public PagedSQLBuilder createPagedSQLBuilder(DatabaseType databaseType) {
-                    switch (databaseType) {
-                        case MySQL:
-                            return new MySQLPagedSQLBuilder();
-                        case PostgreSQL:
-                        default:
-                            return new PagedSQLBuilder(){};
+                    if(MySQL.equals(databaseType)) {
+                        return new MySQLPagedSQLBuilder();
+                    }else if(Oracle.equals(databaseType)) {
+                        return new OraclePagedSQLBuilder();
+                    }else {
+                        return new PagedSQLBuilder() {};
                     }
                 }
             };

@@ -33,7 +33,7 @@ public class DefaultPaginator<T> implements Paginator<T> {
 
         Databases.execute(((connection, sqlExecutor) -> {
             DatabaseMetaData databaseMetaData = connection.getMetaData();
-            DatabaseType databaseType = DatabaseType.createByName(databaseMetaData.getDatabaseProductName(),
+            DatabaseType databaseType = DatabaseType.create(databaseMetaData.getDatabaseProductName(),
                     databaseMetaData.getDatabaseMajorVersion());
             PagedSQLBuilder sqlBuilder = Databases.getPagedSQLBuilderFactory()
                     .createPagedSQLBuilder(databaseType);

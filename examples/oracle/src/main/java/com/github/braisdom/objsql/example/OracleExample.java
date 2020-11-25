@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Properties;
 
 import static com.github.braisdom.objsql.Databases.installConnectionFactory;
 
@@ -23,6 +24,7 @@ public class OracleExample {
                 String url = "jdbc:oracle:thin:@localhost:1521/helowin";
                 String user = "scott";
                 String password = "abc";
+
                 return DriverManager.getConnection(url, user, password);
             } catch (SQLException e) {
                 throw e;

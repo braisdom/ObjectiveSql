@@ -16,42 +16,75 @@
  */
 package com.github.braisdom.objsql;
 
+import java.util.Objects;
+
 /**
  * The definitions of database for ObjectiveSql supporting
  */
-public enum DatabaseType {
-    MySQL("MySQL"),
-    MySQL8("MySQL8"),
-    PostgreSQL("PostgreSQL"),
-    Oracle("Oracle"),
-    MsSqlServer("MsSqlServer"),
-    MariaDB("MariaDB"),
-    SQLite("SQLite"),
-    Clickhouse("Clickhouse"),
-    All("All"),
-    Unknown("Unknown");
+public class DatabaseType {
 
-    private String name;
+    public static final String DATABASE_PRODUCT_NAME_ANY = "any";
 
-    DatabaseType(String name) {
-        this.name = name;
+    public static final DatabaseType SQLite = new DatabaseType("SQLite", -1);
+    public static final DatabaseType MySQL = new DatabaseType("MySQL", 5);
+    public static final DatabaseType MySQL8 = new DatabaseType("MySQL", 8);
+    public static final DatabaseType Oracle = new DatabaseType("Oracle", 11);
+    public static final DatabaseType Oracle12 = new DatabaseType("Oracle", 12);
+    public static final DatabaseType PostgreSQL = new DatabaseType("PostgreSQL", -1);
+    public static final DatabaseType MsSqlServer = new DatabaseType("Microsoft SQL Server", -1);
+    public static final DatabaseType Ansi = new DatabaseType(DATABASE_PRODUCT_NAME_ANY, -1);
+
+    private String databaseProductName;
+    private int majorVersion = -1;
+
+    protected DatabaseType(String databaseProductName) {
+        this(databaseProductName, -1);
     }
 
-    public String getName() {
-        return name;
+    protected DatabaseType(String databaseProductName, int majorVersion) {
+        Objects.requireNonNull(databaseProductName, "The databaseProductName cannot be null");
+
+        this.databaseProductName = databaseProductName;
+        this.majorVersion = majorVersion;
     }
 
-    public boolean nameEquals(String name) {
-        return this.name.equalsIgnoreCase(name);
+    public static DatabaseType create(String databaseProductName, int majorVersion) {
+        return new DatabaseType(databaseProductName, majorVersion);
     }
 
-    public static DatabaseType createByName(String name, int majorVersion) {
-        if("Microsoft SQL Server".equals(name)) {
-            return MsSqlServer;
-        } else if(MySQL.nameEquals(name) && majorVersion < 8) {
-            return MySQL;
+    public String getDatabaseProductName() {
+        return databaseProductName;
+    }
+
+    public int getMajorVersion() {
+        return majorVersion;
+    }
+
+    public boolean equals(DatabaseType databaseType) {
+        return equals(databaseType.getDatabaseProductName(),
+                databaseType.getMajorVersion());
+    }
+
+    public boolean equals(String databaseProductionName) {
+        return equals(databaseProductionName, -1);
+    }
+
+    public boolean equals(String databaseProductName, int majorVersion) {
+        Objects.requireNonNull(databaseProductName, "The databaseProductName cannot be null");
+
+        if (DATABASE_PRODUCT_NAME_ANY.equals(this.databaseProductName)) {
+            return true;
+        } else {
+            if (databaseProductName.equals(this.databaseProductName)) {
+                if (majorVersion == -1) {
+                    return true;
+                } else {
+                    return majorVersion <= this.majorVersion;
+                }
+            } else {
+                return false;
+            }
         }
-
-        return null;
     }
+
 }
