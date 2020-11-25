@@ -27,6 +27,7 @@ CREATE TABLE `objective_sql`.`orders`(
 CREATE TABLE `objective_sql`.`order_lines`(
    `id` INT UNSIGNED AUTO_INCREMENT,
    `order_no` VARCHAR(100),
+   `product_id` int(10),
    `amount` FLOAT(6,2),
    `quantity` FLOAT(6,2),
    PRIMARY KEY ( `id` )

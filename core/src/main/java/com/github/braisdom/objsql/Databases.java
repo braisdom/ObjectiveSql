@@ -19,6 +19,7 @@ package com.github.braisdom.objsql;
 import com.github.braisdom.objsql.jdbc.DbUtils;
 import com.github.braisdom.objsql.pagination.PagedSQLBuilder;
 import com.github.braisdom.objsql.pagination.PagedSQLBuilderFactory;
+import com.github.braisdom.objsql.pagination.impl.MySQLPagedSQLBuilder;
 import com.github.braisdom.objsql.pagination.impl.OraclePagedSQLBuilder;
 import com.github.braisdom.objsql.util.StringUtil;
 
@@ -285,6 +286,8 @@ public final class Databases {
                 @Override
                 public PagedSQLBuilder createPagedSQLBuilder(DatabaseType databaseType) {
                     switch (databaseType) {
+                        case MySQL:
+                            return new MySQLPagedSQLBuilder();
                         case PostgreSQL:
                         default:
                             return new PagedSQLBuilder(){};

@@ -17,7 +17,6 @@ public class Order {
     private Long memberId;
     private Float amount;
     private Float quantity;
-    private Long productId;
 
     @Column(transition = SqlDateTimeTransition.class)
     private Timestamp salesAt;
