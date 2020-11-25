@@ -1,18 +1,11 @@
 package com.github.braisdom.objsql.pagination.impl;
 
-import com.github.braisdom.objsql.pagination.AbstractPagedSQLBuilder;
-import net.sf.jsqlparser.statement.Statement;
+import com.github.braisdom.objsql.pagination.PagedSQLBuilder;
 
-public class AnsiPagedSQLBuilder extends AbstractPagedSQLBuilder {
-
-    @Override
-    protected String buildCountSQL(Statement statement) {
-
-        return null;
-    }
+public class AnsiPagedSQLBuilder implements PagedSQLBuilder {
 
     @Override
-    protected String buildQuerySQL(Statement statement) {
+    public String buildQuerySQL(String rawSQL) {
         return null;
     }
 }

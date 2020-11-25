@@ -17,6 +17,9 @@
 package com.github.braisdom.objsql;
 
 import com.github.braisdom.objsql.jdbc.DbUtils;
+import com.github.braisdom.objsql.pagination.PagedSQLBuilder;
+import com.github.braisdom.objsql.pagination.PagedSQLBuilderFactory;
+import com.github.braisdom.objsql.pagination.impl.AnsiPagedSQLBuilder;
 import com.github.braisdom.objsql.util.StringUtil;
 
 import java.sql.Connection;
@@ -63,6 +66,8 @@ public final class Databases {
     private static QueryFactory queryFactory;
 
     private static PersistenceFactory persistenceFactory;
+
+    private static PagedSQLBuilderFactory pagedSQLBuilderFactory;
 
     /**
      * Represents a logic of data process, it will provide the connection and sql
@@ -129,6 +134,11 @@ public final class Databases {
     public static void installQuoter(Quoter quoter) {
         Objects.requireNonNull(quoter, "The quoter cannot be null");
         Databases.quoter = quoter;
+    }
+
+    public static void installPagedSQLBuilderFactory(PagedSQLBuilderFactory pagedSQLBuilderFactory) {
+        Objects.requireNonNull(quoter, "The pagedSQLBuilderFactory cannot be null");
+        Databases.pagedSQLBuilderFactory = pagedSQLBuilderFactory;
     }
 
     public static <R> R executeTransactionally(String dataSourceName, TransactionalExecutor<R> executor) throws SQLException {
@@ -267,6 +277,23 @@ public final class Databases {
             quoter = new DefaultQuoter();
 
         return quoter;
+    }
+
+    public static PagedSQLBuilderFactory getPagedSQLBuilderFactory() {
+        if (pagedSQLBuilderFactory == null) {
+            pagedSQLBuilderFactory = new PagedSQLBuilderFactory() {
+                @Override
+                public PagedSQLBuilder createPagedSQLBuilder(DatabaseType databaseType) {
+                    switch (databaseType) {
+                        case Unknown:
+                            return new AnsiPagedSQLBuilder();
+                    }
+                    return null;
+                }
+            };
+        }
+
+        return pagedSQLBuilderFactory;
     }
 
     public static LoggerFactory getLoggerFactory() {

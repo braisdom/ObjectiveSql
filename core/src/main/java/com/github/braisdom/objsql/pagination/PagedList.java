@@ -18,6 +18,10 @@ package com.github.braisdom.objsql.pagination;
 
 import java.util.List;
 
+/**
+ * A collection of paged records which carries pagination info.
+ * @param <T>
+ */
 public interface PagedList<T> extends List<T> {
 
     long getTotalSize();

@@ -26,6 +26,7 @@ public class DefaultPaginator<T> implements Paginator<T> {
     public PagedList<T> paginate(Page page, Paginatable paginatable,
                                  Relationship... relationships) throws SQLException {
         String sql = paginatable.getQuerySQL();
+        Class domainClass = paginatable.getDomainClass();
 
         return null;
     }
