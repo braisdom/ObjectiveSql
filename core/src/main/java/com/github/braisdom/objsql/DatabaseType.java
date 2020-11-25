@@ -48,7 +48,7 @@ public enum DatabaseType {
     public static DatabaseType createByName(String name, int majorVersion) {
         if("Microsoft SQL Server".equals(name)) {
             return MsSqlServer;
-        } else if(MySQL.nameEquals(name)) {
+        } else if(MySQL.nameEquals(name) && majorVersion < 8) {
             return MySQL;
         }
 

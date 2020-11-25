@@ -16,8 +16,11 @@
  */
 package com.github.braisdom.objsql.pagination;
 
+import com.github.braisdom.objsql.DatabaseType;
+import com.github.braisdom.objsql.Databases;
 import com.github.braisdom.objsql.relation.Relationship;
 
+import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
 public class DefaultPaginator<T> implements Paginator<T> {
@@ -27,6 +30,16 @@ public class DefaultPaginator<T> implements Paginator<T> {
                                  Relationship... relationships) throws SQLException {
         String sql = paginatable.getQuerySQL();
         Class domainClass = paginatable.getDomainClass();
+
+        Databases.execute(((connection, sqlExecutor) -> {
+            DatabaseMetaData databaseMetaData = connection.getMetaData();
+            DatabaseType databaseType = DatabaseType.createByName(databaseMetaData.getDatabaseProductName(),
+                    databaseMetaData.getDatabaseMajorVersion());
+            PagedSQLBuilder sqlBuilder = Databases.getPagedSQLBuilderFactory()
+                    .createPagedSQLBuilder(databaseType);
+
+            return null;
+        }));
 
         return null;
     }

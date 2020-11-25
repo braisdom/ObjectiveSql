@@ -285,6 +285,7 @@ public final class Databases {
                 @Override
                 public PagedSQLBuilder createPagedSQLBuilder(DatabaseType databaseType) {
                     switch (databaseType) {
+                        case PostgreSQL:
                         default:
                             return new PagedSQLBuilder(){};
                     }
