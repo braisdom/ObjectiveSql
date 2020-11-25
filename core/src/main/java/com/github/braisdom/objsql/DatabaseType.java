@@ -21,6 +21,7 @@ package com.github.braisdom.objsql;
  */
 public enum DatabaseType {
     MySQL("MySQL"),
+    MySQL8("MySQL8"),
     PostgreSQL("PostgreSQL"),
     Oracle("Oracle"),
     MsSqlServer("MsSqlServer"),
@@ -44,7 +45,7 @@ public enum DatabaseType {
         return this.name.equalsIgnoreCase(name);
     }
 
-    public static DatabaseType createByName(String name) {
+    public static DatabaseType createByName(String name, int majorVersion) {
         if("Microsoft SQL Server".equals(name)) {
             return MsSqlServer;
         } else if(MySQL.nameEquals(name)) {
