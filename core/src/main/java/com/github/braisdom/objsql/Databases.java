@@ -19,7 +19,7 @@ package com.github.braisdom.objsql;
 import com.github.braisdom.objsql.jdbc.DbUtils;
 import com.github.braisdom.objsql.pagination.PagedSQLBuilder;
 import com.github.braisdom.objsql.pagination.PagedSQLBuilderFactory;
-import com.github.braisdom.objsql.pagination.impl.AnsiPagedSQLBuilder;
+import com.github.braisdom.objsql.pagination.impl.OraclePagedSQLBuilder;
 import com.github.braisdom.objsql.util.StringUtil;
 
 import java.sql.Connection;
@@ -285,10 +285,9 @@ public final class Databases {
                 @Override
                 public PagedSQLBuilder createPagedSQLBuilder(DatabaseType databaseType) {
                     switch (databaseType) {
-                        case Unknown:
-                            return new AnsiPagedSQLBuilder();
+                        default:
+                            return new PagedSQLBuilder(){};
                     }
-                    return null;
                 }
             };
         }

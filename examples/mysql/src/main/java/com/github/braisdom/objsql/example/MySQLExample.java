@@ -4,7 +4,6 @@ import com.github.braisdom.objsql.ConnectionFactory;
 import com.github.braisdom.objsql.Databases;
 import com.github.braisdom.objsql.util.WordUtil;
 import org.junit.Before;
-import org.junit.Test;
 
 import java.io.IOException;
 import java.sql.Connection;

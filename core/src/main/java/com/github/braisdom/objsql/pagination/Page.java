@@ -25,7 +25,7 @@ public class Page {
         this.pageSize = pageSize;
     }
 
-    public Page of(int page, int pageSize) {
+    public static Page of(int page, int pageSize) {
         return new Page(page, pageSize);
     }
 
@@ -35,5 +35,9 @@ public class Page {
 
     public int getPageSize() {
         return pageSize;
+    }
+
+    public long getOffset() {
+        return page * pageSize;
     }
 }

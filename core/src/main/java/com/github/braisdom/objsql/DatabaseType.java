@@ -17,7 +17,7 @@
 package com.github.braisdom.objsql;
 
 /**
- * The definition for ObjectiveSql supporting
+ * The definitions of database for ObjectiveSql supporting
  */
 public enum DatabaseType {
     MySQL("MySQL"),
@@ -26,9 +26,7 @@ public enum DatabaseType {
     MsSqlServer("MsSqlServer"),
     MariaDB("MariaDB"),
     SQLite("SQLite"),
-    H2Database("H2Database"),
     Clickhouse("Clickhouse"),
-    Hive("hive"),
     All("All"),
     Unknown("Unknown");
 

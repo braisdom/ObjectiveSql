@@ -3,11 +3,9 @@ package com.github.braisdom.objsql.pagination;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.Alias;
 import net.sf.jsqlparser.expression.Function;
-import net.sf.jsqlparser.expression.StringValue;
-import net.sf.jsqlparser.expression.UserVariable;
+import net.sf.jsqlparser.expression.LongValue;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
-import net.sf.jsqlparser.parser.SimpleNode;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.select.*;
@@ -64,5 +62,24 @@ public interface PagedSQLBuilder {
      * @return The original query sql.
      * @throws SQLException
      */
-    String buildQuerySQL(String rawSQL) throws SQLException;
+    default String buildQuerySQL(Page page, String rawSQL) throws SQLException {
+        try {
+            Statement statement = CCJSqlParserUtil.parse(rawSQL);
+            Select originalSelect = (Select) statement;
+
+            PlainSelect plainSelect = (PlainSelect) originalSelect.getSelectBody();
+            Offset offset = new Offset();
+            Fetch fetch = new Fetch();
+
+            offset.setOffset(page.getOffset());
+            fetch.setRowCount(page.getPageSize());
+
+            plainSelect.setOffset(offset);
+            plainSelect.setFetch(fetch);
+
+            return originalSelect.toString();
+        } catch (JSQLParserException e) {
+            throw new SQLException(e.getMessage(), e);
+        }
+    }
 }
