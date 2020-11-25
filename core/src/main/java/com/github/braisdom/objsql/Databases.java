@@ -173,8 +173,8 @@ public final class Databases {
 
     public static void truncateTable(String dataSourceName, String tableName) throws SQLException {
         execute(dataSourceName, (connection, sqlExecutor) -> {
-            String databaseName = connection.getMetaData().getDatabaseProductName();
-            String quotedTableName = getQuoter().quoteTableName(databaseName, tableName);
+            String databaseProductName = connection.getMetaData().getDatabaseProductName();
+            String quotedTableName = getQuoter().quoteTableName(databaseProductName, tableName);
             connection.createStatement().execute(String.format("TRUNCATE TABLE %s", quotedTableName));
             return null;
         });
