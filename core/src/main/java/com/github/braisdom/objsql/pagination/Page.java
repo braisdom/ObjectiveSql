@@ -21,6 +21,14 @@ public class Page {
     private int pageSize;
 
     public Page(int page, int pageSize) {
+        if(page < 0) {
+            throw new IllegalArgumentException("The page must be greater than 0 or equals 0");
+        }
+
+        if(pageSize < 0) {
+            throw new IllegalArgumentException("The pageSize must be greater than 0 or equals 0");
+        }
+
         this.page = page;
         this.pageSize = pageSize;
     }
