@@ -24,7 +24,7 @@ public interface Quoter {
 
     String[] quoteColumnNames(String databaseProductName, String[] columnNames);
 
-    String[] quoteValues(Object... values);
+    String[] quoteValues(String databaseProductName, Object... values);
 
     String quoteValue(Object value);
 }

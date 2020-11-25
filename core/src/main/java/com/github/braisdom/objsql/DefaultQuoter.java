@@ -31,7 +31,7 @@ public class DefaultQuoter implements Quoter {
     }
 
     @Override
-    public String[] quoteValues(Object... values) {
+    public String[] quoteValues(String databaseProductName, Object... values) {
         List<Object> quotedValues = new ArrayList<>();
 
         for (Object value : values) {

@@ -86,7 +86,9 @@ public class RelationshipNetwork implements RelationProcessor.Context {
         SQLExecutor sqlExecutor = Databases.getSqlExecutor();
         Quoter quoter = Databases.getQuoter();
 
-        String associatedValueString = String.join(",", quoter.quoteValues(associatedValues));
+        String databaseProductName = connection.getMetaData().getDatabaseProductName();
+        String associatedValueString = String.join(",", quoter
+                .quoteValues(databaseProductName, associatedValues));
         String relationConditions = StringUtil.isBlank(condition)
                 ? String.format(" %s IN (%s) ", associatedColumnName, associatedValueString)
                 : String.format(" %s IN (%s) AND (%s)", associatedColumnName, associatedValueString, condition);
