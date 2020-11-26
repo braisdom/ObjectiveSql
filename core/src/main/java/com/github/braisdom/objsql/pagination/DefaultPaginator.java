@@ -40,9 +40,9 @@ public class DefaultPaginator<T> implements Paginator<T> {
                     databaseMetaData.getDatabaseMajorVersion());
             PagedSQLBuilder sqlBuilder = Databases.getPagedSQLBuilderFactory()
                     .createPagedSQLBuilder(databaseType);
-            String sql = paginatable.getQuerySQL(connection.getMetaData().getDatabaseProductName());
-            String countSQL = sqlBuilder.buildCountSQL(sql);
-            String querySQL = sqlBuilder.buildQuerySQL(page, sql, modelDescriptor);
+            String rawSql = paginatable.getQuerySQL(connection.getMetaData().getDatabaseProductName());
+            String countSQL = sqlBuilder.buildCountSQL(rawSql);
+            String querySQL = sqlBuilder.buildQuerySQL(page, rawSql, modelDescriptor);
 
             List countResult = sqlExecutor.query(connection, countSQL, modelDescriptor);
             List queryResult = sqlExecutor.query(connection, querySQL, modelDescriptor);
@@ -51,7 +51,7 @@ public class DefaultPaginator<T> implements Paginator<T> {
                 return DefaultPagedList.createEmptyList(page);
             } else {
                 Object rowObject = countResult.get(0);
-                Object rawRowCount = PropertyUtils.getRawAttribute(rowObject, PagedSQLBuilder.COUNT_ALIAS);
+                Object rawRowCount = PropertyUtils.getRawAttribute(rowObject, sqlBuilder.getCountAlias());
                 Long rowCount = rawRowCount instanceof Long ? (Long)rawRowCount : new Long(String.valueOf(rawRowCount));
 
                 return new DefaultPagedList(queryResult, rowCount, page, page.calculatePageCount(rowCount));

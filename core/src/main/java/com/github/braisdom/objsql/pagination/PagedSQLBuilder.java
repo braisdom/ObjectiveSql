@@ -46,12 +46,7 @@ public interface PagedSQLBuilder {
             plainSelect.addSelectItems(expressionItem);
 
             // Raises a error from Oracle when 'AS' added before the alias
-            subSelect.setAlias(new Alias("T") {
-                @Override
-                public String toString() {
-                    return String.format(" %s", getName());
-                }
-            });
+            subSelect.setAlias(new TableAlias("T"));
             subSelect.setSelectBody(originalSelect.getSelectBody());
             plainSelect.setFromItem(subSelect);
             select.setSelectBody(plainSelect);
@@ -89,5 +84,9 @@ public interface PagedSQLBuilder {
         } catch (JSQLParserException e) {
             throw new SQLException(e.getMessage(), e);
         }
+    }
+
+    default String getCountAlias() {
+        return COUNT_ALIAS;
     }
 }
