@@ -18,8 +18,6 @@ package com.github.braisdom.objsql;
 
 import com.github.braisdom.objsql.annotations.PrimaryKey;
 
-import java.util.Optional;
-
 /**
  * It describes that a <code>DomainModel</code> can be adapted to ObjectiveSql。
  * The main purpose of the abstraction is that let the non JavaBean can be saved and queried.

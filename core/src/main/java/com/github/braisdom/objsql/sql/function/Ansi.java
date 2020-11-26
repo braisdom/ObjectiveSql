@@ -16,8 +16,10 @@
  */
 package com.github.braisdom.objsql.sql.function;
 
-import com.github.braisdom.objsql.DatabaseType;
-import com.github.braisdom.objsql.sql.*;
+import com.github.braisdom.objsql.sql.Expression;
+import com.github.braisdom.objsql.sql.ExpressionContext;
+import com.github.braisdom.objsql.sql.SQLSyntaxException;
+import com.github.braisdom.objsql.sql.SqlFunctionCall;
 import com.github.braisdom.objsql.sql.expression.CaseExpression;
 import com.github.braisdom.objsql.sql.expression.LiteralExpression;
 import com.github.braisdom.objsql.sql.expression.PlainExpression;
@@ -26,8 +28,6 @@ import com.github.braisdom.objsql.util.SuppressedException;
 
 import java.util.Arrays;
 import java.util.Objects;
-
-import static com.github.braisdom.objsql.DatabaseType.MsSqlServer;
 
 import static com.github.braisdom.objsql.sql.Expressions.literal;
 

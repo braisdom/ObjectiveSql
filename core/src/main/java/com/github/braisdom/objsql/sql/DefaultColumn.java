@@ -18,14 +18,6 @@ package com.github.braisdom.objsql.sql;
 
 import com.github.braisdom.objsql.Tables;
 import com.github.braisdom.objsql.sql.expression.*;
-import com.github.braisdom.objsql.util.StringUtil;
-import sun.tools.jstat.ExpressionExecuter;
-
-import javax.validation.constraints.NotNull;
-import java.util.Arrays;
-import java.util.Objects;
-
-import static com.github.braisdom.objsql.sql.Expressions.$;
 
 public class DefaultColumn extends AbstractExpression implements Column {
 

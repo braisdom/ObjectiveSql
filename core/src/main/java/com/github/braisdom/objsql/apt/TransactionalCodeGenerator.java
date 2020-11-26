@@ -1,12 +1,8 @@
 package com.github.braisdom.objsql.apt;
 
 import com.github.braisdom.objsql.Databases;
-import com.github.braisdom.objsql.RollbackCauseException;
-import com.github.braisdom.objsql.ValidationException;
 import com.github.braisdom.objsql.annotations.Transactional;
 import com.github.braisdom.objsql.jdbc.DbUtils;
-import com.github.braisdom.objsql.util.ArrayUtil;
-import com.sun.tools.javac.code.Flags;
 import com.sun.tools.javac.code.TypeTag;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
@@ -17,7 +13,6 @@ import org.mangosdk.spi.ProviderFor;
 import javax.annotation.processing.Processor;
 import java.lang.annotation.Annotation;
 import java.sql.Connection;
-import java.sql.SQLException;
 
 @ProviderFor(Processor.class)
 public class TransactionalCodeGenerator extends DomainModelProcessor {

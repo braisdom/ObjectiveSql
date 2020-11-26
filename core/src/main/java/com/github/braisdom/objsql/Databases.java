@@ -17,7 +17,10 @@
 package com.github.braisdom.objsql;
 
 import com.github.braisdom.objsql.jdbc.DbUtils;
-import com.github.braisdom.objsql.pagination.*;
+import com.github.braisdom.objsql.pagination.DefaultPaginator;
+import com.github.braisdom.objsql.pagination.PagedSQLBuilder;
+import com.github.braisdom.objsql.pagination.PagedSQLBuilderFactory;
+import com.github.braisdom.objsql.pagination.Paginator;
 import com.github.braisdom.objsql.pagination.impl.MySQLPagedSQLBuilder;
 import com.github.braisdom.objsql.pagination.impl.OraclePagedSQLBuilder;
 import com.github.braisdom.objsql.util.StringUtil;

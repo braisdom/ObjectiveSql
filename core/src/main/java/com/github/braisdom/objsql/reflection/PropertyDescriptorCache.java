@@ -18,7 +18,10 @@ package com.github.braisdom.objsql.reflection;
 
 import com.github.braisdom.objsql.util.WordUtil;
 
-import java.beans.*;
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

@@ -16,11 +16,7 @@
  */
 package com.github.braisdom.objsql.sql;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Locale;
-import java.util.Set;
-import java.util.StringTokenizer;
+import java.util.*;
 
 /**
  * Performs formatting of basic SQL statements (DML + query).

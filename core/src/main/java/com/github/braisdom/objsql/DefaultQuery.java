@@ -20,7 +20,6 @@ import com.github.braisdom.objsql.relation.Relationship;
 import com.github.braisdom.objsql.relation.RelationshipNetwork;
 import com.github.braisdom.objsql.util.StringUtil;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
@@ -69,6 +68,7 @@ public class DefaultQuery<T> extends AbstractQuery<T> {
     public String getQuerySQL(String databaseProductName) {
         Quoter quoter = Databases.getQuoter();
         String tableName = quoter.quoteTableName(databaseProductName, domainModelDescriptor.getTableName());
+
         return createQuerySQL(tableName, projection, filter, groupBy,
                 having, orderBy, offset, limit);
     }

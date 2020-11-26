@@ -16,7 +16,6 @@
  */
 package com.github.braisdom.objsql.pagination;
 
-import com.github.braisdom.objsql.BeanModelDescriptor;
 import com.github.braisdom.objsql.DatabaseType;
 import com.github.braisdom.objsql.Databases;
 import com.github.braisdom.objsql.DomainModelDescriptor;
