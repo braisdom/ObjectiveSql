@@ -25,14 +25,16 @@ public class PersistenceExample extends MySQLExample {
                 .setUpdatedAt(Timestamp.valueOf("2020-10-05 00:00:00"))
                 .setMobile("15011112222");
 
-        Member member = Member.create(newMember, true, true);
+        Member member = Member.create(newMember, true);
+
         Assert.assertNotNull(member);
+        Assert.assertTrue(Member.query("no = '10000'") != null);
     }
 
     @Test
     public void validateMemberWithError() {
         Member newMember = new Member()
-                .setNo("100") // @Size(min = 5, max = 20)
+                .setNo("100")
                 .setName("Pamela")
                 .setGender(1)
                 .setMobile("15011112222");
@@ -48,7 +50,7 @@ public class PersistenceExample extends MySQLExample {
                 .setName("Pamela")
                 .setGender(1)
                 .setMobile("15011112222");
-        Member.create(newMember, false, true);
+        Member.create(newMember, false);
     }
 
     @Test
@@ -66,7 +68,7 @@ public class PersistenceExample extends MySQLExample {
         attributes.put("extendedAttributes", extendedAttributes);
 
         Member member = Member.create(Member.newInstanceFrom(attributes, false),
-                false, true);
+                false);
         Assert.assertTrue(member.getId() != null);
     }
 
@@ -96,7 +98,7 @@ public class PersistenceExample extends MySQLExample {
                 "\"extendedAttributes\":{\"hobbies\":[\"Play football\"],\"age\":28}}";
         Member newMember = new GsonBuilder().create().fromJson(json, Member.class);
 
-        Member.create(newMember, false, true);
+        Member.create(newMember, false);
     }
 
     @Test
@@ -120,7 +122,7 @@ public class PersistenceExample extends MySQLExample {
                 .setMobile("15011112222");
 
         Member[] members = new Member[]{newMember1, newMember2, newMember3};
-        Member.create(members, false, true);
+        Member.create(members, false);
     }
 
     @Test
@@ -190,7 +192,7 @@ public class PersistenceExample extends MySQLExample {
                 .setAmount(3.5f)
                 .setQuantity(100.3f)
                 .setSalesAt(Timestamp.valueOf("2020-05-01 09:30:00"));
-        order.save(false, true);
+        order.save(false);
 
         long count = Order.countAll();
         Assert.assertTrue(count == 1);

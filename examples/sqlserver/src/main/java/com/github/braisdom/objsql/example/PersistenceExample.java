@@ -26,7 +26,7 @@ public class PersistenceExample extends MSSQLExample {
                 .setUpdatedAt(Timestamp.valueOf("2020-10-05 00:00:00"))
                 .setMobile("15011112222");
 
-        Member member = Member.create(newMember, true, true);
+        Member member = Member.create(newMember, true);
         Assert.assertNotNull(member);
     }
 
@@ -49,7 +49,7 @@ public class PersistenceExample extends MSSQLExample {
                 .setName("Pamela")
                 .setGender(1)
                 .setMobile("15011112222");
-        Member.create(newMember, false, true);
+        Member.create(newMember, false);
     }
 
     @Test
@@ -67,7 +67,7 @@ public class PersistenceExample extends MSSQLExample {
         attributes.put("extendedAttributes", extendedAttributes);
 
         Member member = Member.create(Member.newInstanceFrom(attributes, false),
-                false, true);
+                false);
         Assert.assertTrue(member.getId() != null);
     }
 
@@ -86,7 +86,7 @@ public class PersistenceExample extends MSSQLExample {
         attributes.put("extended_attributes", extendedAttributes);
 
         Member member = Member.newInstanceFrom(attributes, true);
-        Member.create(member, false, true);
+        Member.create(member, false);
     }
 
     @Test
@@ -95,7 +95,7 @@ public class PersistenceExample extends MSSQLExample {
                 "\"extendedAttributes\":{\"hobbies\":[\"Play football\"],\"age\":28}}";
         Member newMember = new GsonBuilder().create().fromJson(json, Member.class);
 
-        Member.create(newMember, false, true);
+        Member.create(newMember, false);
     }
 
     @Test
@@ -119,7 +119,7 @@ public class PersistenceExample extends MSSQLExample {
                 .setMobile("15011112222");
 
         Member[] members = new Member[]{newMember1, newMember2, newMember3};
-        Member.create(members, false, true);
+        Member.create(members, false);
     }
 
     @Test
@@ -189,7 +189,7 @@ public class PersistenceExample extends MSSQLExample {
                 .setAmount(3.5f)
                 .setQuantity(100.3f)
                 .setSalesAt(Timestamp.valueOf("2020-05-01 09:30:00"));
-        order.save(false, true);
+        order.save(false);
 
         long count = Order.countAll();
         Assert.assertTrue(count == 1);

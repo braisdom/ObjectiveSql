@@ -41,9 +41,9 @@ public class RelationExample extends MySQLExample {
         }
 
         int[] createdMembersCount = Member.create(members.toArray(new Member[]{}),
-                true, true);
+                true);
         int[] createdOrderCount = Order.create(orders.toArray(new Order[]{}),
-                true, true);
+                true);
 
         Assert.assertEquals(createdMembersCount.length, 6);
         Assert.assertEquals(createdOrderCount.length, 100);

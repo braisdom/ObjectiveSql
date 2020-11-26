@@ -118,7 +118,7 @@ public class PersistenceExample extends SQLiteExample {
                 .setMobile("15011112222");
 
         Member[] members = new Member[]{newMember1, newMember2, newMember3};
-        Member.create(members, false, true);
+        Member.create(members, false);
     }
 
     @Test
@@ -188,7 +188,7 @@ public class PersistenceExample extends SQLiteExample {
                 .setAmount(3.5d)
                 .setQuantity(100.3d)
                 .setSalesAt(Timestamp.valueOf("2020-05-01 09:30:00"));
-        order.save(false, true);
+        order.save(false);
 
         long count = Order.countAll();
         Assert.assertTrue(count == 1);

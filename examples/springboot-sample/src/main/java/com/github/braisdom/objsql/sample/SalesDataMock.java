@@ -56,7 +56,7 @@ public class SalesDataMock {
                     .setGender(RandomUtils.nextInt(1, 3))
                     .setMobile(getMobile()));
         }
-        Member.create(members.toArray(new Member[]{}), false, true);
+        Member.create(members.toArray(new Member[]{}), false);
 
         return members;
     }
@@ -72,7 +72,7 @@ public class SalesDataMock {
                     .setCost(RandomUtils.nextFloat(5.0f, 40.0f))
                     .setSalesPrice(RandomUtils.nextFloat(10.0f, 50.0f)));
         }
-        Product.create(products.toArray(new Product[]{}), false, true);
+        Product.create(products.toArray(new Product[]{}), false);
         return products;
     }
 
@@ -151,8 +151,8 @@ public class SalesDataMock {
             }
         }
 
-        Order.create(orders.toArray(new Order[]{}), true, true);
-        OrderLine.create(orderLines.toArray(new OrderLine[]{}), true, true);
+        Order.create(orders.toArray(new Order[]{}), true);
+        OrderLine.create(orderLines.toArray(new OrderLine[]{}), true);
     }
 
     private static String getMobile() {
