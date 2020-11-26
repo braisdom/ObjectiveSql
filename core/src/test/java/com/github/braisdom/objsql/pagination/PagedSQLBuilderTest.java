@@ -13,7 +13,7 @@ public class PagedSQLBuilderTest {
     public void testAnsiSQLPagination() throws SQLException {
         PagedSQLBuilder sqlBuilder = Databases.getPagedSQLBuilderFactory()
                 .createPagedSQLBuilder(DatabaseType.Ansi);
-        Page page = Page.of(0, 30);
+        Page page = Page.create(0, 30);
         String rawQuerySQL1 = "SELECT t1.id, t1.`no`, t1.name, COUNT(*) AS 'order_count' FROM members t1 \n" +
                 "LEFT JOIN orders t2 ON t2.member_id = t1.id \n" +
                 "GROUP BY t1.id, t1.`no`, t1.name, t2.member_id ";
@@ -34,7 +34,7 @@ public class PagedSQLBuilderTest {
     public void testMySQLPagination() throws SQLException {
         PagedSQLBuilder sqlBuilder = Databases.getPagedSQLBuilderFactory()
                 .createPagedSQLBuilder(DatabaseType.MySQL);
-        Page page = Page.of(0, 30);
+        Page page = Page.create(0, 30);
         String rawQuerySQL1 = "SELECT t1.id, t1.`no`, t1.name, COUNT(*) AS 'order_count' FROM members t1 \n" +
                 "LEFT JOIN orders t2 ON t2.member_id = t1.id \n" +
                 "GROUP BY t1.id, t1.`no`, t1.name, t2.member_id ";

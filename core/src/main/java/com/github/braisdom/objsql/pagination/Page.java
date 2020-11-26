@@ -33,7 +33,7 @@ public class Page {
         this.pageSize = pageSize;
     }
 
-    public static Page of(int page, int pageSize) {
+    public static Page create(int page, int pageSize) {
         return new Page(page, pageSize);
     }
 
