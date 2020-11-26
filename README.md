@@ -80,7 +80,7 @@ Member.execute(String.format("DELETE FROM %s WHERE name = 'Mary'", Member.TABLE_
 ```java
 // Querying objects with convenient methods, and it will carry the related objects
 Member.queryAll(Member.HAS_MANY_ORDERS);
-Member.queryPrimary(1, Member.HAS_MANY_ORDERS);
+Member.queryByPrimary(1, Member.HAS_MANY_ORDERS);
 Member.queryByName("demo", Member.HAS_MANY_ORDERS);
 ...
 ```
