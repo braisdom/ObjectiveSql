@@ -86,6 +86,8 @@ public class PersistenceExample extends MySQLExample {
 
         Member member = Member.newInstanceFrom(attributes, true);
         Member.create(member, false);
+
+        Assert.assertTrue(Member.queryByPrimaryKey(9L) != null);
     }
 
     @Test
