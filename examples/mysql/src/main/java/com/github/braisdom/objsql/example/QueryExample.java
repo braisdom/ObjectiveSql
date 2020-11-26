@@ -79,12 +79,30 @@ public class QueryExample extends MySQLExample {
     }
 
     @Test
+    public void query() throws SQLException {
+        prepareQueryData();
+
+        List<Member> members = Member.query("id > ?", 10);
+
+        Assert.assertEquals(members.size(), 100);
+    }
+
+    @Test
     public void queryAll() throws SQLException {
         prepareQueryData();
 
         List<Member> members = Member.queryAll();
 
         Assert.assertEquals(members.size(), 100);
+    }
+
+    @Test
+    public void pagedQueryAll() throws SQLException {
+        prepareQueryData();
+
+        PagedList<Member> members = Member.pagedQueryAll(Page.create(0, 10));
+
+        Assert.assertEquals(members.size(), 10);
     }
 
     @Test

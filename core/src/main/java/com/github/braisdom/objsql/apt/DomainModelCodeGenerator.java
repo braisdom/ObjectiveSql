@@ -4,6 +4,8 @@ import com.github.braisdom.objsql.*;
 import com.github.braisdom.objsql.annotations.DomainModel;
 import com.github.braisdom.objsql.annotations.PrimaryKey;
 import com.github.braisdom.objsql.annotations.Transient;
+import com.github.braisdom.objsql.pagination.Page;
+import com.github.braisdom.objsql.pagination.Paginator;
 import com.github.braisdom.objsql.reflection.ClassUtils;
 import com.github.braisdom.objsql.reflection.PropertyUtils;
 import com.github.braisdom.objsql.relation.Relationship;
@@ -48,11 +50,14 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
         handleDestroy2Method(aptBuilder);
         handleExecuteMethod(aptBuilder);
         handleQueryMethod(aptBuilder);
+        handlePagedQueryMethod(aptBuilder);
         handleQuery2Method(aptBuilder);
+        handlePagedQuery2Method(aptBuilder);
         handleQuery3Method(aptBuilder);
         handleQueryFirstMethod(aptBuilder);
         handleQueryFirst2Method(aptBuilder);
         handleQueryAllMethod(aptBuilder);
+        handlePagedQueryAllMethod(aptBuilder);
         handleCountMethod(aptBuilder);
         handleCountAllMethod(aptBuilder);
         handleValidateMethod(aptBuilder);
@@ -430,6 +435,29 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
                 .build("query", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
 
+    private void handlePagedQueryMethod(APTBuilder aptBuilder) {
+        MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
+        StatementBuilder statementBuilder = aptBuilder.createStatementBuilder();
+
+        statementBuilder.append(aptBuilder.newGenericsType(Query.class, aptBuilder.getClassName()), "query",
+                "createQuery");
+        statementBuilder.append(aptBuilder.newGenericsType(Paginator.class, aptBuilder.getClassName()), "paginator", Databases.class,
+                "getPaginator", List.nil());
+        statementBuilder.append("query", "where",
+                List.of(aptBuilder.varRef("predicate"), aptBuilder.varRef("params")));
+
+        methodBuilder.setReturnStatement("paginator", "paginate", aptBuilder.varRef("page"),
+                aptBuilder.varRef("query"));
+        aptBuilder.inject(methodBuilder
+                .addStatements(statementBuilder.build())
+                .addParameter("page", aptBuilder.typeRef(Page.class))
+                .addParameter("predicate", aptBuilder.typeRef(String.class))
+                .addVarargsParameter("params", aptBuilder.typeRef(Object.class))
+                .setThrowsClauses(SQLException.class)
+                .setReturnType(java.util.List.class, aptBuilder.typeRef(aptBuilder.getClassName()))
+                .build("pagedQuery", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
+    }
+
     private void handleQuery2Method(APTBuilder aptBuilder) {
         MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
         StatementBuilder statementBuilder = aptBuilder.createStatementBuilder();
@@ -448,6 +476,30 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
                 .setThrowsClauses(SQLException.class)
                 .setReturnType(java.util.List.class, aptBuilder.typeRef(aptBuilder.getClassName()))
                 .build("query", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
+    }
+
+    private void handlePagedQuery2Method(APTBuilder aptBuilder) {
+        MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
+        StatementBuilder statementBuilder = aptBuilder.createStatementBuilder();
+
+        statementBuilder.append(aptBuilder.newGenericsType(Query.class, aptBuilder.getClassName()), "query",
+                "createQuery");
+        statementBuilder.append(aptBuilder.newGenericsType(Paginator.class, aptBuilder.getClassName()), "paginator", Databases.class,
+                "getPaginator", List.nil());
+        statementBuilder.append("query", "where",
+                List.of(aptBuilder.varRef("predicate"), aptBuilder.varRef("params")));
+
+        methodBuilder.setReturnStatement("paginator", "paginate", aptBuilder.varRef("page"),
+                aptBuilder.varRef("query"), aptBuilder.varRef("relations"));
+        aptBuilder.inject(methodBuilder
+                .addStatements(statementBuilder.build())
+                .addParameter("page", aptBuilder.typeRef(Page.class))
+                .addParameter("predicate", aptBuilder.typeRef(String.class))
+                .addArrayParameter("relations", Relationship.class)
+                .addVarargsParameter("params", aptBuilder.typeRef(Object.class))
+                .setThrowsClauses(SQLException.class)
+                .setReturnType(java.util.List.class, aptBuilder.typeRef(aptBuilder.getClassName()))
+                .build("pagedQuery", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
 
     private void handleQuery3Method(APTBuilder aptBuilder) {
@@ -521,6 +573,29 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
                 .setThrowsClauses(SQLException.class)
                 .setReturnType(java.util.List.class, aptBuilder.typeRef(aptBuilder.getClassName()))
                 .build("queryAll", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
+    }
+
+    private void handlePagedQueryAllMethod(APTBuilder aptBuilder) {
+        TreeMaker treeMaker = aptBuilder.getTreeMaker();
+        MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
+        StatementBuilder statementBuilder = aptBuilder.createStatementBuilder();
+
+        statementBuilder.append(aptBuilder.newGenericsType(Query.class, aptBuilder.getClassName()), "query",
+                "createQuery");
+        statementBuilder.append(aptBuilder.newGenericsType(Paginator.class, aptBuilder.getClassName()), "paginator", Databases.class,
+                "getPaginator", List.nil());
+        statementBuilder.append("query", "where",
+                List.of(treeMaker.Literal("")));
+
+        methodBuilder.setReturnStatement("paginator", "paginate", aptBuilder.varRef("page"),
+                aptBuilder.varRef("query"), aptBuilder.varRef("relations"));
+        aptBuilder.inject(methodBuilder
+                .addStatements(statementBuilder.build())
+                .addParameter("page", aptBuilder.typeRef(Page.class))
+                .addVarargsParameter("relations", aptBuilder.typeRef(Relationship.class))
+                .setThrowsClauses(SQLException.class)
+                .setReturnType(java.util.List.class, aptBuilder.typeRef(aptBuilder.getClassName()))
+                .build("pagedQueryAll", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
 
     private void handleCountMethod(APTBuilder aptBuilder) {
