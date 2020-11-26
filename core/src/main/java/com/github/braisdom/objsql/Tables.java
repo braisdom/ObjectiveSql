@@ -155,6 +155,8 @@ public final class Tables {
     }
 
     public static final void installValidator(Validator validator) {
+        Objects.requireNonNull(validator, "The validator cannot be null");
+
         Tables.validator = validator;
     }
 

@@ -16,20 +16,22 @@
  */
 package com.github.braisdom.objsql.pagination;
 
+import com.github.braisdom.objsql.BeanModelDescriptor;
 import com.github.braisdom.objsql.DatabaseType;
 import com.github.braisdom.objsql.Databases;
 import com.github.braisdom.objsql.relation.Relationship;
 
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
+import java.util.List;
 
 public class DefaultPaginator<T> implements Paginator<T> {
 
     @Override
     public PagedList<T> paginate(Page page, Paginatable paginatable,
                                  Relationship... relationships) throws SQLException {
-        String sql = paginatable.getQuerySQL();
-        Class domainClass = paginatable.getDomainClass();
+        final String sql = paginatable.getQuerySQL();
+        final Class domainModelClass = paginatable.getDomainClass();
 
         Databases.execute(((connection, sqlExecutor) -> {
             DatabaseMetaData databaseMetaData = connection.getMetaData();
@@ -37,6 +39,11 @@ public class DefaultPaginator<T> implements Paginator<T> {
                     databaseMetaData.getDatabaseMajorVersion());
             PagedSQLBuilder sqlBuilder = Databases.getPagedSQLBuilderFactory()
                     .createPagedSQLBuilder(databaseType);
+
+            String countSQL = sqlBuilder.buildCountSQL(sql);
+            String querySQL = sqlBuilder.buildQuerySQL(page, sql);
+
+            List result = sqlExecutor.query(connection, countSQL, new BeanModelDescriptor(domainModelClass));
 
             return null;
         }));

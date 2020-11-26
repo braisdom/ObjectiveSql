@@ -29,7 +29,7 @@ public class DatabaseType {
     public static final DatabaseType MySQL = new DatabaseType("MySQL", 5);
     public static final DatabaseType MySQL8 = new DatabaseType("MySQL", 8);
     public static final DatabaseType Oracle = new DatabaseType("Oracle", 11);
-    public static final DatabaseType Oracle12 = new DatabaseType("Oracle", 12);
+    public static final DatabaseType Oracle12c = new DatabaseType("Oracle12c", 12);
     public static final DatabaseType PostgreSQL = new DatabaseType("PostgreSQL", -1);
     public static final DatabaseType MsSqlServer = new DatabaseType("Microsoft SQL Server", -1);
     public static final DatabaseType Ansi = new DatabaseType(DATABASE_PRODUCT_NAME_ANY, -1);
@@ -60,6 +60,14 @@ public class DatabaseType {
         return majorVersion;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof DatabaseType) {
+            return equals((DatabaseType) obj);
+        }
+        return super.equals(obj);
+    }
+
     public boolean equals(DatabaseType databaseType) {
         return equals(databaseType.getDatabaseProductName(),
                 databaseType.getMajorVersion());
@@ -76,7 +84,7 @@ public class DatabaseType {
             return true;
         } else {
             if (databaseProductName.equals(this.databaseProductName)) {
-                if (majorVersion == -1) {
+                if (majorVersion == -1 || this.majorVersion == -1) {
                     return true;
                 } else {
                     return majorVersion <= this.majorVersion;

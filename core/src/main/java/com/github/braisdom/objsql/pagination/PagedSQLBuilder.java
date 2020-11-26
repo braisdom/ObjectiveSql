@@ -12,7 +12,8 @@ import net.sf.jsqlparser.statement.select.*;
 import java.sql.SQLException;
 
 /**
- * It builds the relevant SQL required for paging。
+ * It builds the relevant SQL required for paging。By default,
+ * pagination SQL is based on ANSI SQL standard.
  */
 public interface PagedSQLBuilder {
 
