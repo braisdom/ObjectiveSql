@@ -45,6 +45,10 @@ public class Page {
         return pageSize;
     }
 
+    public int calculatePageCount(long totalCount) {
+        return (int) totalCount / pageSize;
+    }
+
     public long getOffset() {
         return page * pageSize;
     }

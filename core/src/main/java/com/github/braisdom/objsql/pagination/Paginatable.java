@@ -16,9 +16,11 @@
  */
 package com.github.braisdom.objsql.pagination;
 
+import com.github.braisdom.objsql.DomainModelDescriptor;
+
 public interface Paginatable {
 
-    String getQuerySQL();
+    String getQuerySQL(String databaseProductName);
 
-    Class<?> getDomainClass();
+    DomainModelDescriptor getDomainModelDescriptor();
 }

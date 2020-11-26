@@ -19,6 +19,8 @@ package com.github.braisdom.objsql.pagination;
 import com.github.braisdom.objsql.BeanModelDescriptor;
 import com.github.braisdom.objsql.DatabaseType;
 import com.github.braisdom.objsql.Databases;
+import com.github.braisdom.objsql.DomainModelDescriptor;
+import com.github.braisdom.objsql.reflection.PropertyUtils;
 import com.github.braisdom.objsql.relation.Relationship;
 
 import java.sql.DatabaseMetaData;
@@ -30,24 +32,31 @@ public class DefaultPaginator<T> implements Paginator<T> {
     @Override
     public PagedList<T> paginate(Page page, Paginatable paginatable,
                                  Relationship... relationships) throws SQLException {
-        final String sql = paginatable.getQuerySQL();
-        final Class domainModelClass = paginatable.getDomainClass();
 
-        Databases.execute(((connection, sqlExecutor) -> {
+        final DomainModelDescriptor modelDescriptor = paginatable.getDomainModelDescriptor();
+
+        return Databases.execute(((connection, sqlExecutor) -> {
             DatabaseMetaData databaseMetaData = connection.getMetaData();
             DatabaseType databaseType = DatabaseType.create(databaseMetaData.getDatabaseProductName(),
                     databaseMetaData.getDatabaseMajorVersion());
             PagedSQLBuilder sqlBuilder = Databases.getPagedSQLBuilderFactory()
                     .createPagedSQLBuilder(databaseType);
-
+            String sql = paginatable.getQuerySQL(connection.getMetaData().getDatabaseProductName());
             String countSQL = sqlBuilder.buildCountSQL(sql);
             String querySQL = sqlBuilder.buildQuerySQL(page, sql);
 
-            List result = sqlExecutor.query(connection, countSQL, new BeanModelDescriptor(domainModelClass));
+            List countResult = sqlExecutor.query(connection, countSQL, modelDescriptor);
+            List queryResult = sqlExecutor.query(connection, querySQL, modelDescriptor);
 
-            return null;
+            if (countResult == null || countResult.size() == 0) {
+                return DefaultPagedList.createEmptyList(page);
+            } else {
+                Object rowObject = countResult.get(0);
+                Object rawRowCount = PropertyUtils.getRawAttribute(rowObject, PagedSQLBuilder.COUNT_ALIAS);
+                Long rowCount = rawRowCount instanceof Long ? (Long)rawRowCount : new Long(String.valueOf(rawRowCount));
+
+                return new DefaultPagedList(queryResult, rowCount, page, page.calculatePageCount(rowCount));
+            }
         }));
-
-        return null;
     }
 }

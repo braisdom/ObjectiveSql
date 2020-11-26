@@ -65,8 +65,16 @@ public class DefaultQuery<T> extends AbstractQuery<T> {
         return null;
     }
 
+    @Override
+    public String getQuerySQL(String databaseProductName) {
+        Quoter quoter = Databases.getQuoter();
+        String tableName = quoter.quoteTableName(databaseProductName, domainModelDescriptor.getTableName());
+        return createQuerySQL(tableName, projection, filter, groupBy,
+                having, orderBy, offset, limit);
+    }
+
     protected String createQuerySQL(String tableName, String projections, String filter, String groupBy,
-                                  String having, String orderBy, int offset, int limit) {
+                                    String having, String orderBy, int offset, int limit) {
         Objects.requireNonNull(tableName, "The tableName cannot be null");
 
         StringBuilder sql = new StringBuilder();

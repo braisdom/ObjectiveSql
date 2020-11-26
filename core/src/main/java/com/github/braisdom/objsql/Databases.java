@@ -17,9 +17,7 @@
 package com.github.braisdom.objsql;
 
 import com.github.braisdom.objsql.jdbc.DbUtils;
-import com.github.braisdom.objsql.pagination.Page;
-import com.github.braisdom.objsql.pagination.PagedSQLBuilder;
-import com.github.braisdom.objsql.pagination.PagedSQLBuilderFactory;
+import com.github.braisdom.objsql.pagination.*;
 import com.github.braisdom.objsql.pagination.impl.MySQLPagedSQLBuilder;
 import com.github.braisdom.objsql.pagination.impl.OraclePagedSQLBuilder;
 import com.github.braisdom.objsql.util.StringUtil;
@@ -73,6 +71,8 @@ public final class Databases {
     private static PersistenceFactory persistenceFactory;
 
     private static PagedSQLBuilderFactory pagedSQLBuilderFactory;
+
+    private static Paginator paginator;
 
     /**
      * Represents a logic of data process, it will provide the connection and sql
@@ -142,8 +142,13 @@ public final class Databases {
     }
 
     public static void installPagedSQLBuilderFactory(PagedSQLBuilderFactory pagedSQLBuilderFactory) {
-        Objects.requireNonNull(quoter, "The pagedSQLBuilderFactory cannot be null");
+        Objects.requireNonNull(pagedSQLBuilderFactory, "The pagedSQLBuilderFactory cannot be null");
         Databases.pagedSQLBuilderFactory = pagedSQLBuilderFactory;
+    }
+
+    public static void installPaginator(Paginator paginator) {
+        Objects.requireNonNull(paginator, "The paginator cannot be null");
+        Databases.paginator = paginator;
     }
 
     public static <R> R executeTransactionally(String dataSourceName, TransactionalExecutor<R> executor) throws SQLException {
@@ -301,6 +306,14 @@ public final class Databases {
         }
 
         return pagedSQLBuilderFactory;
+    }
+
+    public static Paginator getPaginator() {
+        if (paginator == null) {
+            paginator = new DefaultPaginator();
+        }
+
+        return paginator;
     }
 
     public static LoggerFactory getLoggerFactory() {

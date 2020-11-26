@@ -17,6 +17,7 @@
 package com.github.braisdom.objsql.pagination;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class DefaultPagedList<T> extends ArrayList<T> implements PagedList<T> {
@@ -31,6 +32,10 @@ public class DefaultPagedList<T> extends ArrayList<T> implements PagedList<T> {
         this.totalSize = totalSize;
         this.page = page;
         this.pageCount = pageCount;
+    }
+
+    public static PagedList createEmptyList(Page page) {
+        return new DefaultPagedList(Collections.EMPTY_LIST, 0, page, 0);
     }
 
     @Override

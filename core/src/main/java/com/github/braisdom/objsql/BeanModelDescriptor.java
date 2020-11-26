@@ -173,7 +173,7 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
         return Arrays.stream(getColumnizableFields(domainModelClass, true, false))
                 .filter(field -> {
                     if (field.getName().equals(primaryName)) {
-                        // ‘Skip primary key’ given from method is Highest priority-first
+                        // ‘skipPrimaryKeyOnInserting’ given from method is Highest priority-first
                         if (skipPrimaryKeyOnInserting) {
                             return false;
                         } else {
