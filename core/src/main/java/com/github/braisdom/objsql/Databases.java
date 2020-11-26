@@ -23,6 +23,7 @@ import com.github.braisdom.objsql.pagination.PagedSQLBuilderFactory;
 import com.github.braisdom.objsql.pagination.Paginator;
 import com.github.braisdom.objsql.pagination.impl.MsSQLServerPagedSQLBuilder;
 import com.github.braisdom.objsql.pagination.impl.MySQLPagedSQLBuilder;
+import com.github.braisdom.objsql.pagination.impl.OraclePagedSQLBuilder;
 import com.github.braisdom.objsql.util.StringUtil;
 
 import java.sql.Connection;
@@ -296,11 +297,13 @@ public final class Databases {
             pagedSQLBuilderFactory = new PagedSQLBuilderFactory() {
                 @Override
                 public PagedSQLBuilder createPagedSQLBuilder(DatabaseType databaseType) {
-                    if(MySQL.equals(databaseType) || SQLite.equals(databaseType)) {
+                    if (MySQL.equals(databaseType) || SQLite.equals(databaseType)) {
                         return new MySQLPagedSQLBuilder();
-                    }else if(MsSqlServer.equals(databaseType)) {
+                    } else if (MsSqlServer.equals(databaseType)) {
                         return new MsSQLServerPagedSQLBuilder();
-                    }else {
+                    } else if (Oracle.equals(databaseType)) {
+                        return new OraclePagedSQLBuilder();
+                    } else {
                         return new PagedSQLBuilder() {};
                     }
                 }
