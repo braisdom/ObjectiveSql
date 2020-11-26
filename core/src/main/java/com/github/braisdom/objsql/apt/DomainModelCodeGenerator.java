@@ -5,6 +5,7 @@ import com.github.braisdom.objsql.annotations.DomainModel;
 import com.github.braisdom.objsql.annotations.PrimaryKey;
 import com.github.braisdom.objsql.annotations.Transient;
 import com.github.braisdom.objsql.pagination.Page;
+import com.github.braisdom.objsql.pagination.PagedList;
 import com.github.braisdom.objsql.pagination.Paginator;
 import com.github.braisdom.objsql.reflection.ClassUtils;
 import com.github.braisdom.objsql.reflection.PropertyUtils;
@@ -454,7 +455,7 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
                 .addParameter("predicate", aptBuilder.typeRef(String.class))
                 .addVarargsParameter("params", aptBuilder.typeRef(Object.class))
                 .setThrowsClauses(SQLException.class)
-                .setReturnType(java.util.List.class, aptBuilder.typeRef(aptBuilder.getClassName()))
+                .setReturnType(PagedList.class, aptBuilder.typeRef(aptBuilder.getClassName()))
                 .build("pagedQuery", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
 
@@ -498,7 +499,7 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
                 .addArrayParameter("relations", Relationship.class)
                 .addVarargsParameter("params", aptBuilder.typeRef(Object.class))
                 .setThrowsClauses(SQLException.class)
-                .setReturnType(java.util.List.class, aptBuilder.typeRef(aptBuilder.getClassName()))
+                .setReturnType(PagedList.class, aptBuilder.typeRef(aptBuilder.getClassName()))
                 .build("pagedQuery", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
 
@@ -594,7 +595,7 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
                 .addParameter("page", aptBuilder.typeRef(Page.class))
                 .addVarargsParameter("relations", aptBuilder.typeRef(Relationship.class))
                 .setThrowsClauses(SQLException.class)
-                .setReturnType(java.util.List.class, aptBuilder.typeRef(aptBuilder.getClassName()))
+                .setReturnType(PagedList.class, aptBuilder.typeRef(aptBuilder.getClassName()))
                 .build("pagedQueryAll", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
 
