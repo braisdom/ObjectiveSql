@@ -85,7 +85,7 @@ public class PersistenceExample extends MySQLExample {
         attributes.put("extended_attributes", extendedAttributes);
 
         Member member = Member.newInstanceFrom(attributes, true);
-        Member.create(member, false, true);
+        Member.create(member, false);
     }
 
     @Test
