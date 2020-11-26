@@ -32,9 +32,11 @@ public interface Query<T> extends Paginatable {
 
     Query select(String... columns);
 
-    Query limit(int limit);
+    Query fetch(long rowCount);
 
-    Query offset(int offset);
+    Query fetch(long rowCount, boolean first);
+
+    Query offset(long offset);
 
     Query groupBy(String groupBy);
 

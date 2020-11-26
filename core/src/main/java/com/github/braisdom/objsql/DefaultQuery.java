@@ -43,8 +43,7 @@ public class DefaultQuery<T> extends AbstractQuery<T> {
             Quoter quoter = Databases.getQuoter();
             String databaseProductName = connection.getMetaData().getDatabaseProductName();
             String tableName = quoter.quoteTableName(databaseProductName, domainModelDescriptor.getTableName());
-            String sql = createQuerySQL(tableName, projection, filter, groupBy,
-                    having, orderBy, offset, limit);
+            String sql = createQuerySQL(tableName);
             List rows = sqlExecutor.query(connection, sql, domainModelDescriptor, params);
 
             if (relationships.length > 0 && rows.size() > 0) {
@@ -69,12 +68,10 @@ public class DefaultQuery<T> extends AbstractQuery<T> {
         Quoter quoter = Databases.getQuoter();
         String tableName = quoter.quoteTableName(databaseProductName, domainModelDescriptor.getTableName());
 
-        return createQuerySQL(tableName, projection, filter, groupBy,
-                having, orderBy, offset, limit);
+        return createQuerySQL(tableName);
     }
 
-    protected String createQuerySQL(String tableName, String projections, String filter, String groupBy,
-                                    String having, String orderBy, int offset, int limit) {
+    protected String createQuerySQL(String tableName) {
         Objects.requireNonNull(tableName, "The tableName cannot be null");
 
         StringBuilder sql = new StringBuilder();
@@ -100,12 +97,13 @@ public class DefaultQuery<T> extends AbstractQuery<T> {
             sql.append(" ORDER BY ").append(orderBy);
         }
 
-        if (offset > 0) {
-            sql.append(" OFFSET ").append(offset);
+        if (offset > -1 ) {
+            sql.append(" OFFSET ").append(offset).append(" ROWS ");
         }
 
-        if (limit > 0) {
-            sql.append(" LIMIT ").append(limit);
+        if (rowCount > -1) {
+            sql.append(" FETCH ").append(fetchNext ? " NEXT " : " FIRST ")
+                    .append(rowCount).append(" ROWS ONLY ");
         }
 
         return sql.toString();

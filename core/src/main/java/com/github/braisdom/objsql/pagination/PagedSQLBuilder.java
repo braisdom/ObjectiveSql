@@ -20,7 +20,7 @@ public interface PagedSQLBuilder {
     String COUNT_ALIAS = "count_";
 
     /**
-     * Builds counting SQL by given SQL.
+     * Builds counting SQL by given query SQL.
      *
      * @param rawSQL The original query sql.
      *

@@ -24,10 +24,11 @@ public abstract class AbstractQuery<T> implements Query<T> {
 
     protected final DomainModelDescriptor<T> domainModelDescriptor;
 
-    protected int limit = -1;
-    protected int offset = -1;
+    protected long rowCount = -1;
+    protected long offset = -1;
+    protected boolean fetchNext = true;
 
-    protected String projection;
+    protected String projections;
     protected String filter;
     protected Object[] params;
     protected String orderBy;
@@ -51,13 +52,26 @@ public abstract class AbstractQuery<T> implements Query<T> {
 
     @Override
     public Query select(String... columns) {
-        this.projection = String.join(", ", columns);
+        this.projections = String.join(", ", columns);
         return this;
     }
 
     @Override
-    public Query limit(int limit) {
-        this.limit = limit;
+    public Query offset(long offset) {
+        this.offset = offset;
+        return this;
+    }
+
+    @Override
+    public Query fetch(long rowCount) {
+        this.rowCount = rowCount;
+        return this;
+    }
+
+    @Override
+    public Query fetch(long rowCount, boolean fetchNext) {
+        this.rowCount = rowCount;
+        this.fetchNext = fetchNext;
         return this;
     }
 
@@ -76,12 +90,6 @@ public abstract class AbstractQuery<T> implements Query<T> {
     @Override
     public Query having(String having) {
         this.having = having;
-        return this;
-    }
-
-    @Override
-    public Query offset(int offset) {
-        this.offset = offset;
         return this;
     }
 
