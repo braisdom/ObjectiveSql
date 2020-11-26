@@ -1,7 +1,9 @@
 package com.github.braisdom.objsql.pagination;
 
+import com.github.braisdom.objsql.BeanModelDescriptor;
 import com.github.braisdom.objsql.DatabaseType;
 import com.github.braisdom.objsql.Databases;
+import com.github.braisdom.objsql.DefaultQueryTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -19,7 +21,7 @@ public class PagedSQLBuilderTest {
                 "GROUP BY t1.id, t1.`no`, t1.name, t2.member_id ";
 
         String countSQL1 = sqlBuilder.buildCountSQL(rawQuerySQL1);
-        String querySQL2 = sqlBuilder.buildQuerySQL(page, rawQuerySQL1);
+        String querySQL2 = sqlBuilder.buildQuerySQL(page, rawQuerySQL1, new BeanModelDescriptor(DefaultQueryTest.Domain.class));
 
         Assertions.assertEquals(countSQL1, "SELECT COUNT(*) AS count_ FROM " +
                 "(SELECT t1.id, t1.`no`, t1.name, COUNT(*) AS 'order_count' " +
@@ -27,7 +29,7 @@ public class PagedSQLBuilderTest {
                 "GROUP BY t1.id, t1.`no`, t1.name, t2.member_id) AS T");
         Assertions.assertEquals(querySQL2, "SELECT t1.id, t1.`no`, t1.name, COUNT(*) AS 'order_count' " +
                 "FROM members t1 LEFT JOIN orders t2 ON t2.member_id = t1.id " +
-                "GROUP BY t1.id, t1.`no`, t1.name, t2.member_id OFFSET 0 FETCH NEXT 30 ROW ONLY");
+                "GROUP BY t1.id, t1.`no`, t1.name, t2.member_id OFFSET 0 ROWS FETCH NEXT 30 ROW ONLY");
     }
 
     @Test
@@ -40,7 +42,7 @@ public class PagedSQLBuilderTest {
                 "GROUP BY t1.id, t1.`no`, t1.name, t2.member_id ";
 
         String countSQL1 = sqlBuilder.buildCountSQL(rawQuerySQL1);
-        String querySQL2 = sqlBuilder.buildQuerySQL(page, rawQuerySQL1);
+        String querySQL2 = sqlBuilder.buildQuerySQL(page, rawQuerySQL1, new BeanModelDescriptor(DefaultQueryTest.Domain.class));
 
         Assertions.assertEquals(countSQL1, "SELECT COUNT(*) AS count_ FROM " +
                 "(SELECT t1.id, t1.`no`, t1.name, COUNT(*) AS 'order_count' " +

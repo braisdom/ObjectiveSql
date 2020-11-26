@@ -21,8 +21,8 @@ import com.github.braisdom.objsql.pagination.DefaultPaginator;
 import com.github.braisdom.objsql.pagination.PagedSQLBuilder;
 import com.github.braisdom.objsql.pagination.PagedSQLBuilderFactory;
 import com.github.braisdom.objsql.pagination.Paginator;
+import com.github.braisdom.objsql.pagination.impl.MsSQLServerPagedSQLBuilder;
 import com.github.braisdom.objsql.pagination.impl.MySQLPagedSQLBuilder;
-import com.github.braisdom.objsql.pagination.impl.OraclePagedSQLBuilder;
 import com.github.braisdom.objsql.util.StringUtil;
 
 import java.sql.Connection;
@@ -31,8 +31,7 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.logging.Level;
 
-import static com.github.braisdom.objsql.DatabaseType.MySQL;
-import static com.github.braisdom.objsql.DatabaseType.Oracle;
+import static com.github.braisdom.objsql.DatabaseType.*;
 
 /**
  * This class consists exclusively of utility methods that operate of behavior of database.
@@ -297,10 +296,10 @@ public final class Databases {
             pagedSQLBuilderFactory = new PagedSQLBuilderFactory() {
                 @Override
                 public PagedSQLBuilder createPagedSQLBuilder(DatabaseType databaseType) {
-                    if(MySQL.equals(databaseType)) {
+                    if(MySQL.equals(databaseType) || SQLite.equals(databaseType)) {
                         return new MySQLPagedSQLBuilder();
-                    }else if(Oracle.equals(databaseType)) {
-                        return new OraclePagedSQLBuilder();
+                    }else if(MsSqlServer.equals(databaseType)) {
+                        return new MsSQLServerPagedSQLBuilder();
                     }else {
                         return new PagedSQLBuilder() {};
                     }

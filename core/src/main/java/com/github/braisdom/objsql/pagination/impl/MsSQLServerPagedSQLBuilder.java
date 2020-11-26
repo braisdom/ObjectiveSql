@@ -4,30 +4,41 @@ import com.github.braisdom.objsql.DomainModelDescriptor;
 import com.github.braisdom.objsql.pagination.Page;
 import com.github.braisdom.objsql.pagination.PagedSQLBuilder;
 import net.sf.jsqlparser.JSQLParserException;
-import net.sf.jsqlparser.expression.LongValue;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
+import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.Statement;
-import net.sf.jsqlparser.statement.select.Limit;
-import net.sf.jsqlparser.statement.select.PlainSelect;
-import net.sf.jsqlparser.statement.select.Select;
+import net.sf.jsqlparser.statement.select.*;
 
 import java.sql.SQLException;
+import java.util.Arrays;
 
-public class MySQLPagedSQLBuilder implements PagedSQLBuilder {
+public class MsSQLServerPagedSQLBuilder implements PagedSQLBuilder {
 
     @Override
     public String buildQuerySQL(Page page, String rawSQL, DomainModelDescriptor modelDescriptor) throws SQLException {
         try {
             Statement statement = CCJSqlParserUtil.parse(rawSQL);
             Select originalSelect = (Select) statement;
-
             PlainSelect plainSelect = (PlainSelect) originalSelect.getSelectBody();
-            Limit limit = new Limit();
+            Offset offset = new Offset();
+            Fetch fetch = new Fetch();
 
-            limit.setOffset(new LongValue(page.getOffset()));
-            limit.setRowCount(new LongValue(page.getPageSize()));
+            offset.setOffset(page.getOffset());
+            offset.setOffsetParam("ROWS");
+            fetch.setRowCount(page.getPageSize());
 
-            plainSelect.setLimit(limit);
+            if (plainSelect.getOrderByElements() == null || plainSelect.getOrderByElements().size() == 0) {
+                OrderByElement orderByElement = new OrderByElement();
+
+                orderByElement.setExpression(new Column(modelDescriptor.getPrimaryKey().name()));
+                orderByElement.setAsc(true);
+
+                plainSelect.setOrderByElements(Arrays.asList(orderByElement));
+            }
+
+            plainSelect.setOffset(offset);
+            plainSelect.setFetch(fetch);
+
             return originalSelect.toString();
         } catch (JSQLParserException e) {
             throw new SQLException(e.getMessage(), e);

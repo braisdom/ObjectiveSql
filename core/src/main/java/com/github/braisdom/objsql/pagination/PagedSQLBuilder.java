@@ -1,5 +1,6 @@
 package com.github.braisdom.objsql.pagination;
 
+import com.github.braisdom.objsql.DomainModelDescriptor;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.Alias;
 import net.sf.jsqlparser.expression.Function;
@@ -62,7 +63,7 @@ public interface PagedSQLBuilder {
      * @return The original query sql.
      * @throws SQLException
      */
-    default String buildQuerySQL(Page page, String rawSQL) throws SQLException {
+    default String buildQuerySQL(Page page, String rawSQL, DomainModelDescriptor modelDescriptor) throws SQLException {
         try {
             Statement statement = CCJSqlParserUtil.parse(rawSQL);
             Select originalSelect = (Select) statement;
@@ -72,6 +73,7 @@ public interface PagedSQLBuilder {
             Fetch fetch = new Fetch();
 
             offset.setOffset(page.getOffset());
+            offset.setOffsetParam("ROWS");
             fetch.setRowCount(page.getPageSize());
 
             plainSelect.setOffset(offset);
