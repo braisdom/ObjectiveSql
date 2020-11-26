@@ -1,7 +1,12 @@
 package com.github.braisdom.objsql.example;
 
+import com.github.braisdom.objsql.Databases;
+import com.github.braisdom.objsql.Query;
 import com.github.braisdom.objsql.example.domains.Member;
 import com.github.braisdom.objsql.example.domains.Order;
+import com.github.braisdom.objsql.pagination.Page;
+import com.github.braisdom.objsql.pagination.PagedList;
+import com.github.braisdom.objsql.pagination.Paginator;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.Assert;
 import org.junit.Test;
@@ -103,6 +108,23 @@ public class QueryExample extends MySQLExample {
         Member member = Member.queryFirst("name = ?", "Jonathan");
         Assert.assertNotNull(member);
         Assert.assertEquals(member.getName(), "Jonathan");
+    }
+
+    @Test
+    public void pagedQuery() throws SQLException {
+        prepareQueryData();
+
+        Query query = Member.createQuery();
+        Paginator paginator = Databases.getPaginator();
+
+        PagedList<Member> members = paginator.paginate(
+                Page.create(0, 10), query, Member.HAS_MANY_ORDERS);
+
+        Assert.assertNotNull(members);
+        Assert.assertTrue(members.size() > 0);
+        Assert.assertTrue(members.size() == 10);
+        Assert.assertTrue(members.getPageCount() == 10);
+        Assert.assertTrue(members.getTotalSize() == 100);
     }
 
     @Test
