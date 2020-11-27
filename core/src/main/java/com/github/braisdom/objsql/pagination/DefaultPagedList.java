@@ -16,19 +16,19 @@
  */
 package com.github.braisdom.objsql.pagination;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
-public class DefaultPagedList<T> extends ArrayList<T> implements PagedList<T> {
+public class DefaultPagedList<T> implements PagedList<T> {
 
     private final long totalSize;
     private final Page page;
     private final int pageCount;
+    private final Collection<T> result;
 
-    public DefaultPagedList(List<T> realList, long totalSize,
+    public DefaultPagedList(Collection<T> result, long totalSize,
                             Page page, int pageCount) {
-        super(realList);
+        Objects.requireNonNull(result, "The result cannot be null");
+        this.result = result;
         this.totalSize = totalSize;
         this.page = page;
         this.pageCount = pageCount;
@@ -39,8 +39,13 @@ public class DefaultPagedList<T> extends ArrayList<T> implements PagedList<T> {
     }
 
     @Override
-    public long getTotalSize() {
+    public long totalSize() {
         return totalSize;
+    }
+
+    @Override
+    public int size() {
+        return result.size();
     }
 
     @Override
@@ -51,5 +56,10 @@ public class DefaultPagedList<T> extends ArrayList<T> implements PagedList<T> {
     @Override
     public int getPageCount() {
         return pageCount;
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        return result.iterator();
     }
 }

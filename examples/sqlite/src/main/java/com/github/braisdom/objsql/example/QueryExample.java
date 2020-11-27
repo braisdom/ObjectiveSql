@@ -124,7 +124,7 @@ public class QueryExample extends SQLiteExample {
         Assert.assertTrue(members.size() > 0);
         Assert.assertTrue(members.size() == 10);
         Assert.assertTrue(members.getPageCount() == 10);
-        Assert.assertTrue(members.getTotalSize() == 100);
+        Assert.assertTrue(members.totalSize() == 100);
     }
 
     @Test

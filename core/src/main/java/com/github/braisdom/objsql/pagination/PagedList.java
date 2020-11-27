@@ -22,11 +22,13 @@ import java.util.List;
  * A collection of paged records which carries pagination info.
  * @param <T>
  */
-public interface PagedList<T> extends List<T> {
+public interface PagedList<T> extends Iterable<T> {
 
-    long getTotalSize();
+    long totalSize();
 
     Page getPage();
 
     int getPageCount();
+
+    int size();
 }

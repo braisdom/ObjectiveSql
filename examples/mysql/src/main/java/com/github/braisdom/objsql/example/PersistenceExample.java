@@ -171,8 +171,8 @@ public class PersistenceExample extends MySQLExample {
 
         Member.destroy("name = 'Mary'");
 
-        long count = Member.countAll();
-        Assert.assertTrue(count == 2);
+        Assert.assertTrue(Member.countAll() == 2);
+        Assert.assertTrue(Member.queryFirst("name = 'Mary'") == null);
     }
 
     @Test
