@@ -128,7 +128,7 @@ public class QueryExample extends MySQLExample {
     }
 
     @Test
-    public void pagedQuery() throws SQLException {
+    public void rawPagedQuery() throws SQLException {
         prepareQueryData();
 
         Query query = Member.createQuery();

@@ -88,7 +88,7 @@ public final class Databases {
      */
     @FunctionalInterface
     public static interface DatabaseInvoke<T, R> {
-        R apply(Connection connection, SQLExecutor<T> sqlExecutor) throws SQLException, SQLSyntaxException;
+        R apply(Connection connection, SQLExecutor<T> sqlExecutor) throws SQLException;
     }
 
     /**
