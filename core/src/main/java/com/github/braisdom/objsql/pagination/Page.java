@@ -46,7 +46,7 @@ public class Page {
     }
 
     public int calculatePageCount(long totalCount) {
-        return (int) totalCount / pageSize;
+        return (int) Math.ceil(((float)totalCount) / ((float)pageSize));
     }
 
     public long getOffset() {
