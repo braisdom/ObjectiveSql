@@ -28,7 +28,7 @@ public class PersistenceExample extends MySQLExample {
         Member member = Member.create(newMember, true);
 
         Assert.assertNotNull(member);
-        Assert.assertTrue(Member.query("no = '10000'") != null);
+        Assert.assertTrue(Member.query("no = '100000'") != null);
     }
 
     @Test
