@@ -92,7 +92,7 @@ public final class Databases {
     }
 
     /**
-     * Represents logic will be executed in the transaction(There's only one
+     * Represents logics of databasce API will be executed in the transaction(There's only one
      * connection of database)
      *
      * @param <R>
