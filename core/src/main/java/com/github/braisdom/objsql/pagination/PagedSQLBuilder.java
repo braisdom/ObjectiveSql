@@ -17,6 +17,7 @@
 package com.github.braisdom.objsql.pagination;
 
 import com.github.braisdom.objsql.DomainModelDescriptor;
+import com.github.braisdom.objsql.pagination.impl.TableAlias;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.Alias;
 import net.sf.jsqlparser.expression.Function;

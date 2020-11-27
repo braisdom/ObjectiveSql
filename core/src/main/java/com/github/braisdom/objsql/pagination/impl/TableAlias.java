@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.braisdom.objsql.pagination;
+package com.github.braisdom.objsql.pagination.impl;
 
 import net.sf.jsqlparser.expression.Alias;
 
