@@ -29,10 +29,8 @@ import java.util.List;
 public class DefaultPaginator<T> implements Paginator<T> {
 
     @Override
-    public PagedList<T> paginate(Page page, Paginatable paginatable,
+    public PagedList<T> paginate(Page page, Paginatable paginatable, DomainModelDescriptor modelDescriptor,
                                  Relationship... relationships) throws SQLException {
-
-        final DomainModelDescriptor modelDescriptor = paginatable.getDomainModelDescriptor();
 
         return Databases.execute(((connection, sqlExecutor) -> {
             DatabaseMetaData databaseMetaData = connection.getMetaData();
@@ -40,6 +38,7 @@ public class DefaultPaginator<T> implements Paginator<T> {
                     databaseMetaData.getDatabaseMajorVersion());
             PagedSQLBuilder sqlBuilder = Databases.getPagedSQLBuilderFactory()
                     .createPagedSQLBuilder(databaseType);
+
             String rawSql = paginatable.getQuerySQL(connection.getMetaData().getDatabaseProductName());
             String countSQL = sqlBuilder.buildCountSQL(rawSql);
             String querySQL = sqlBuilder.buildQuerySQL(page, rawSql, modelDescriptor);

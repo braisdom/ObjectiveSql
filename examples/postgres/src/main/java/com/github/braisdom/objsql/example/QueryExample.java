@@ -120,7 +120,7 @@ public class QueryExample extends PostgresExample {
         Paginator paginator = Databases.getPaginator();
 
         PagedList<Member> members = paginator.paginate(
-                Page.create(0, 10), query, Member.HAS_MANY_ORDERS);
+                Page.create(0, 10), query, Member.class, Member.HAS_MANY_ORDERS);
 
         Assert.assertNotNull(members);
         Assert.assertTrue(members.size() > 0);

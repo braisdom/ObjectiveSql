@@ -18,6 +18,7 @@ package com.github.braisdom.objsql.sql;
 
 import com.github.braisdom.objsql.DatabaseType;
 import com.github.braisdom.objsql.Tables;
+import com.github.braisdom.objsql.pagination.Paginatable;
 import com.github.braisdom.objsql.sql.expression.JoinExpression;
 import com.github.braisdom.objsql.util.FunctionWithThrowable;
 import com.github.braisdom.objsql.util.SuppressedException;

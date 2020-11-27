@@ -390,7 +390,7 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
                 List.of(aptBuilder.varRef("predicate"), aptBuilder.varRef("params")));
 
         methodBuilder.setReturnStatement("paginator", "paginate", aptBuilder.varRef("page"),
-                aptBuilder.varRef("query"));
+                aptBuilder.varRef("query"), aptBuilder.classRef(aptBuilder.getClassName()));
         aptBuilder.inject(methodBuilder
                 .addStatements(statementBuilder.build())
                 .addParameter("page", aptBuilder.typeRef(Page.class))
@@ -433,7 +433,7 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
                 List.of(aptBuilder.varRef("predicate"), aptBuilder.varRef("params")));
 
         methodBuilder.setReturnStatement("paginator", "paginate", aptBuilder.varRef("page"),
-                aptBuilder.varRef("query"), aptBuilder.varRef("relations"));
+                aptBuilder.varRef("query"), aptBuilder.classRef(aptBuilder.getClassName()),  aptBuilder.varRef("relations"));
         aptBuilder.inject(methodBuilder
                 .addStatements(statementBuilder.build())
                 .addParameter("page", aptBuilder.typeRef(Page.class))
@@ -531,7 +531,7 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
                 List.of(treeMaker.Literal("")));
 
         methodBuilder.setReturnStatement("paginator", "paginate", aptBuilder.varRef("page"),
-                aptBuilder.varRef("query"), aptBuilder.varRef("relations"));
+                aptBuilder.varRef("query"), aptBuilder.classRef(aptBuilder.getClassName()), aptBuilder.varRef("relations"));
         aptBuilder.inject(methodBuilder
                 .addStatements(statementBuilder.build())
                 .addParameter("page", aptBuilder.typeRef(Page.class))

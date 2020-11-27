@@ -92,12 +92,7 @@ public abstract class AbstractQuery<T> implements Query<T> {
         this.having = having;
         return this;
     }
-
-    @Override
-    public DomainModelDescriptor getDomainModelDescriptor() {
-        return domainModelDescriptor;
-    }
-
+    
     protected String getTableName(Class tableClass) {
         return Tables.getTableName(tableClass);
     }

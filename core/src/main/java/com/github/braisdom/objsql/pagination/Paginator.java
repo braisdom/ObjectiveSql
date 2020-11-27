@@ -16,12 +16,19 @@
  */
 package com.github.braisdom.objsql.pagination;
 
+import com.github.braisdom.objsql.BeanModelDescriptor;
+import com.github.braisdom.objsql.DomainModelDescriptor;
 import com.github.braisdom.objsql.relation.Relationship;
 
 import java.sql.SQLException;
 
 public interface Paginator<T> {
 
-    PagedList<T> paginate(Page page, Paginatable paginatable,
+    default PagedList<T> paginate(Page page, Paginatable paginatable, Class<T> clazz,
+                          Relationship... relationships) throws SQLException {
+        return paginate(page, paginatable, new BeanModelDescriptor(clazz), relationships);
+    }
+
+    PagedList<T> paginate(Page page, Paginatable paginatable, DomainModelDescriptor<T> modelDescriptor,
                           Relationship... relationships) throws SQLException;
 }

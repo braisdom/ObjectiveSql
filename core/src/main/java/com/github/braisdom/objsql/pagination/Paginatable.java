@@ -25,5 +25,4 @@ public interface Paginatable {
 
     String getQuerySQL(String databaseProductName);
 
-    DomainModelDescriptor getDomainModelDescriptor();
 }

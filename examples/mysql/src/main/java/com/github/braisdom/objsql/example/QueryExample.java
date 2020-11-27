@@ -133,9 +133,8 @@ public class QueryExample extends MySQLExample {
 
         Query query = Member.createQuery();
         Paginator paginator = Databases.getPaginator();
-
-        PagedList<Member> members = paginator.paginate(
-                Page.create(0, 10), query, Member.HAS_MANY_ORDERS);
+        Page page = Page.create(0, 10);
+        PagedList<Member> members = paginator.paginate(page, query, Member.class, Member.HAS_MANY_ORDERS);
 
         Assert.assertNotNull(members);
         Assert.assertTrue(members.size() > 0);
