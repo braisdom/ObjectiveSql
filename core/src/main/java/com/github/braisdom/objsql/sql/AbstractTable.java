@@ -16,6 +16,7 @@
  */
 package com.github.braisdom.objsql.sql;
 
+import com.github.braisdom.objsql.DatabaseType;
 import com.github.braisdom.objsql.Tables;
 
 import java.util.Arrays;
@@ -32,11 +33,18 @@ public abstract class AbstractTable extends AbstractExpression implements Datase
 
     @Override
     public String toSql(ExpressionContext expressionContext) {
+        DatabaseType databaseType = expressionContext.getDatabaseType();
         String[] nameParts = Tables.getTableName(modelClass).split("\\.");
         String[] quotedNameParts = Arrays.stream(nameParts)
                 .map(namePart -> expressionContext.quoteTable(namePart)).toArray(String[]::new);
         String tableAlias = expressionContext.getAlias(this, true);
-        return String.format("%s AS %s", String.join("\\.", quotedNameParts),
-                expressionContext.quoteColumn(tableAlias));
+
+        if(DatabaseType.Oracle.equals(databaseType)) {
+            return String.format("%s %s", String.join("\\.", quotedNameParts),
+                    expressionContext.quoteColumn(tableAlias));
+        }else {
+            return String.format("%s AS %s", String.join("\\.", quotedNameParts),
+                    expressionContext.quoteColumn(tableAlias));
+        }
     }
 }

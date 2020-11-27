@@ -16,6 +16,7 @@
  */
 package com.github.braisdom.objsql.sql;
 
+import com.github.braisdom.objsql.DatabaseType;
 import com.github.braisdom.objsql.sql.expression.ParenExpression;
 import com.github.braisdom.objsql.sql.expression.PolynaryExpression;
 
@@ -103,8 +104,13 @@ public abstract class AbstractExpression implements Expression {
         if (dataset instanceof AbstractTable) {
             return dataset.toSql(expressionContext);
         } else {
+            DatabaseType databaseType = expressionContext.getDatabaseType();
             String datasetAlias = expressionContext.getAlias(dataset, true);
-            return String.format("(%s) AS %s", dataset.toSql(expressionContext), datasetAlias);
+            if (DatabaseType.Oracle.equals(databaseType)) {
+                return String.format("(%s) %s", dataset.toSql(expressionContext), datasetAlias);
+            } else {
+                return String.format("(%s) AS %s", dataset.toSql(expressionContext), datasetAlias);
+            }
         }
     }
 }
