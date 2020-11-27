@@ -20,7 +20,7 @@ Installation step: `Preferences/Settings -> Plugins -> Search with "ObjectiveSql
 <dependency>
     <groupId>com.github.braisdom</groupId>
     <artifactId>objective-sql</artifactId>
-    <version>1.3.9</version>
+    <version>1.4.0</version>
 </dependency>
 ```
 
@@ -29,7 +29,7 @@ Installation step: `Preferences/Settings -> Plugins -> Search with "ObjectiveSql
 <dependency>
   <groupId>com.github.braisdom</groupId>
   <artifactId>objsql-springboot</artifactId>
-  <version>1.0.1</version>
+  <version>1.1.0</version>
 </dependency>
 ```
 
