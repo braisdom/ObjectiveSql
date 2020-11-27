@@ -7,7 +7,6 @@ import com.github.braisdom.objsql.example.domains.Order;
 import com.github.braisdom.objsql.pagination.Page;
 import com.github.braisdom.objsql.pagination.PagedList;
 import com.github.braisdom.objsql.pagination.Paginator;
-import com.google.gson.Gson;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.Assert;
 import org.junit.Test;
@@ -102,7 +101,6 @@ public class QueryExample extends MySQLExample {
         prepareQueryData();
 
         PagedList<Member> members = Member.pagedQueryAll(Page.create(0, 10));
-        String json = new Gson().toJson(members);
         Assert.assertEquals(members.size(), 10);
     }
 
