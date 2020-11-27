@@ -4,16 +4,17 @@ ObjectiveSQL is an ORM framework in Java based on ActiveRecord pattern, which en
 ### Features
 
 - Dynamic code generation with [JSR 269](https://jcp.org/en/jsr/detail?id=269) for Java API of database access
-- Full Java API of database access without coding
-- Dynamically SQL programming with Java syntax,  and very similar to SQL syntax
+- Automate your methods of CRUD operations in database, and much more
+- Easy to relation query, transaction and paged query
+- Dynamically SQL programming with Java syntax,  and similar to program with SQL syntax extremely
 
 ### Installation
 
 #### IntelliJ IDEA plugin installation
 
-Installation step: `Preferences/Settings -> Plugins -> Search with "ObjectiveSql" in market -> Install`
+`Preferences/Settings` -> `Plugins` -> `Search with "ObjectiveSql" in market` -> `Install`
 
-#### Maven dependencies installation
+#### Maven dependencies
 
 ```xml
 <!-- In standalone -->
@@ -33,6 +34,8 @@ Installation step: `Preferences/Settings -> Plugins -> Search with "ObjectiveSql
 </dependency>
 ```
 
+Refer to the [pom.xml](https://github.com/braisdom/ObjectiveSql/blob/master/examples/mysql/pom.xml#L67) for more configurations
+
 ### Examples
 
 ObjectiveSQL provides full example for various databases below, You can open it directly with IntelliJ IDEA as a standalone project. In fact, they are not just examples, but also unit tests of ObjectiveSQL in various databases.
@@ -41,8 +44,9 @@ ObjectiveSQL provides full example for various databases below, You can open it 
 
 ### Simple SQL programming without coding
 
+You just define a JavaBean with one annotation your class has a fully featured database access capabilities
+
 ```java
-// You only define a domain model and fill related properties
 @DomainModel
 public class Member {
     private String no;
@@ -58,24 +62,45 @@ public class Member {
 }
 ```
 
+#### Persistence methods
+
 ```java
-// You will get behaviors of query, update and delete without coding.
+Member.create(newMember);
+Member.create(newMember, true); // Create a member without validating
+Member.create(Member.newInstanceFrom(memberHash));
+Member.create(new Member[]{newMember1, newMember2, newMember3}, false);
+
+Member.update(1L, newMember, true); // Update a member with primary key
+Member.update("name = 'Smith => Jackson'", "name = 'Alice'");
+
+Member.destroy(1L); // Delete a member with primary key
+Member.destroy("name = 'Mary'");
+
+// Execute SQL
+Member.execute(String.format("DELETE FROM %s WHERE name = 'Mary'", Member.TABLE_NAME));
+```
+
+#### Transaction
+
+#### Counting and querying simply
+
+```java
 Member.countAll();
 Member.count("id > ?", 1);
 Member.queryByPrimaryKey(1);
 Member.queryFirst("id = ?", 1);
 Member.query("id > ?", 1);
 Member.queryAll();
-
-Member[] members = new Member[]{newMember1, newMember2, newMember3};
-Member.create(newMember1);
-Member.create(members);
-
-Member.update(1L, newMember);
-Member.destroy(1L);
-Member.execute(String.format("DELETE FROM %s WHERE name = 'Mary'", Member.TABLE_NAME));
-...
 ```
+
+#### Paged query
+
+```java
+Page page = Page.create(0, 10);// Create a Page instance with current page and page size
+PagedList<Member> members = Member.pagedQueryAll(page, Member.HAS_MANY_ORDERS);
+```
+
+#### Relation query
 
 ```java
 // Querying objects with convenient methods, and it will carry the related objects
