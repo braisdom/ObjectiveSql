@@ -40,8 +40,9 @@ public class QueryExample extends MSSQLExample {
                     .setMobile("150000000" + i));
         }
 
-        for (int i = 0; i < 100; i++) {
+        for (int i = 1; i <= 100; i++) {
             orders.add(new Order()
+                    .setId((long)i)
                     .setNo("20200000" + i)
                     .setMemberId((long)i)
                     .setAmount(RandomUtils.nextFloat(10.0f, 30.0f))

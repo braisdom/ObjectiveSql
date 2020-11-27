@@ -184,12 +184,13 @@ public class PersistenceExample extends MSSQLExample {
     @Test
     public void createOrder() throws SQLException {
         Order order = new Order()
+                .setId(3L)
                 .setNo("202000001")
                 .setMemberId((long)3)
                 .setAmount(3.5f)
                 .setQuantity(100.3f)
                 .setSalesAt(Timestamp.valueOf("2020-05-01 09:30:00"));
-        order.save(false);
+        Order.create(order, true);
 
         long count = Order.countAll();
         Assert.assertTrue(count == 1);

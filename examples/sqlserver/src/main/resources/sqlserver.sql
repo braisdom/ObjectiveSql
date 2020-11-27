@@ -15,7 +15,7 @@ CREATE TABLE dbo.members(
 );
 
 CREATE TABLE dbo.orders(
-    id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    id BIGINT PRIMARY KEY,
     no VARCHAR(100),
     member_id BIGINT,
     amount REAL,
