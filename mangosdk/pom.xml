@@ -5,8 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.braisdom</groupId>
     <artifactId>mangosdk-spi</artifactId>
-    <version>1.0.2</version>
-    <packaging>jar</packaging>
+    <version>1.1.0</version>
+    <packaging>pom</packaging>
     <url>http://www.objsql.com</url>
     <description>It is for installing mangosdk without giving repository</description>
 
