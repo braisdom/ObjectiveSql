@@ -144,6 +144,22 @@ public class QueryExample extends MySQLExample {
     }
 
     @Test
+    public void pagedQuery() throws SQLException {
+        prepareQueryData();
+
+        Page page = Page.create(0, 10);
+        PagedList<Member> members = Member.pagedQueryAll(page, Member.HAS_MANY_ORDERS);
+
+        Assert.assertNotNull(members);
+        Assert.assertTrue(members.size() > 0);
+        Assert.assertTrue(members.size() == 10);
+        Assert.assertTrue(members.getPageCount() == 10);
+        Assert.assertTrue(members.totalSize() == 100);
+        Assert.assertTrue(members.totalSize() == 100);
+        Assert.assertTrue(members.get(0).getOrders() != null);
+    }
+
+    @Test
     public void queryByPredicate() throws SQLException {
         prepareQueryData();
 

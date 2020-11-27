@@ -23,12 +23,12 @@ public class DefaultPagedList<T> implements PagedList<T> {
     private final long totalSize;
     private final Page page;
     private final int pageCount;
-    private final Collection<T> result;
+    private final List<T> rows;
 
-    public DefaultPagedList(Collection<T> result, long totalSize,
+    public DefaultPagedList(List<T> rows, long totalSize,
                             Page page, int pageCount) {
-        Objects.requireNonNull(result, "The result cannot be null");
-        this.result = result;
+        Objects.requireNonNull(rows, "The result cannot be null");
+        this.rows = rows;
         this.totalSize = totalSize;
         this.page = page;
         this.pageCount = pageCount;
@@ -45,7 +45,7 @@ public class DefaultPagedList<T> implements PagedList<T> {
 
     @Override
     public int size() {
-        return result.size();
+        return rows.size();
     }
 
     @Override
@@ -58,8 +58,17 @@ public class DefaultPagedList<T> implements PagedList<T> {
         return pageCount;
     }
 
+    public Collection<T> getRows() {
+        return rows;
+    }
+
     @Override
     public Iterator<T> iterator() {
-        return result.iterator();
+        return rows.iterator();
+    }
+
+    @Override
+    public T get(int index) {
+        return rows.get(index);
     }
 }

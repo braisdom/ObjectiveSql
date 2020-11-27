@@ -31,4 +31,6 @@ public interface PagedList<T> extends Iterable<T> {
     int getPageCount();
 
     int size();
+
+    T get(int index);
 }

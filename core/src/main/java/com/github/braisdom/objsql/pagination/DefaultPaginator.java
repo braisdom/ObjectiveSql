@@ -21,6 +21,7 @@ import com.github.braisdom.objsql.Databases;
 import com.github.braisdom.objsql.DomainModelDescriptor;
 import com.github.braisdom.objsql.reflection.PropertyUtils;
 import com.github.braisdom.objsql.relation.Relationship;
+import com.github.braisdom.objsql.relation.RelationshipNetwork;
 
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
@@ -52,6 +53,10 @@ public class DefaultPaginator<T> implements Paginator<T> {
                 Object rowObject = countResult.get(0);
                 Object rawRowCount = PropertyUtils.getRawAttribute(rowObject, sqlBuilder.getCountAlias());
                 Long rowCount = rawRowCount instanceof Long ? (Long)rawRowCount : new Long(String.valueOf(rawRowCount));
+
+                if (relationships.length > 0 && queryResult.size() > 0) {
+                    new RelationshipNetwork(connection, modelDescriptor).process(queryResult, relationships);
+                }
 
                 return new DefaultPagedList(queryResult, rowCount, page, page.calculatePageCount(rowCount));
             }
