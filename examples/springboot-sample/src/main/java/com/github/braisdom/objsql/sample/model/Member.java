@@ -56,6 +56,6 @@ public class Member implements Serializable {
                 max(order.salesAt).as("last_shopping"));
         select.groupBy(member.no, member.name, member.mobile);
 
-        return select.execute(DatabaseType.MySQL, Member.class);
+        return select.execute(Member.class);
     }
 }

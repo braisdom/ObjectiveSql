@@ -64,9 +64,9 @@ public class DefaultQuery<T> extends AbstractQuery<T> {
     }
 
     @Override
-    public String getQuerySQL(String databaseProductName) {
+    public String getQuerySQL(DatabaseType databaseType) {
         Quoter quoter = Databases.getQuoter();
-        String tableName = quoter.quoteTableName(databaseProductName, domainModelDescriptor.getTableName());
+        String tableName = quoter.quoteTableName(databaseType.getDatabaseProductName(), domainModelDescriptor.getTableName());
 
         return createQuerySQL(tableName);
     }

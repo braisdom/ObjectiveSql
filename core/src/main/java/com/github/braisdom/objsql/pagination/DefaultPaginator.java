@@ -39,7 +39,7 @@ public class DefaultPaginator<T> implements Paginator<T> {
             PagedSQLBuilder sqlBuilder = Databases.getPagedSQLBuilderFactory()
                     .createPagedSQLBuilder(databaseType);
 
-            String rawSql = paginatable.getQuerySQL(connection.getMetaData().getDatabaseProductName());
+            String rawSql = paginatable.getQuerySQL(databaseType);
             String countSQL = sqlBuilder.buildCountSQL(rawSql);
             String querySQL = sqlBuilder.buildQuerySQL(page, rawSql, modelDescriptor);
 

@@ -24,6 +24,7 @@ import com.github.braisdom.objsql.pagination.Paginator;
 import com.github.braisdom.objsql.pagination.impl.MsSQLServerPagedSQLBuilder;
 import com.github.braisdom.objsql.pagination.impl.MySQLPagedSQLBuilder;
 import com.github.braisdom.objsql.pagination.impl.OraclePagedSQLBuilder;
+import com.github.braisdom.objsql.sql.SQLSyntaxException;
 import com.github.braisdom.objsql.util.StringUtil;
 
 import java.sql.Connection;
@@ -87,7 +88,7 @@ public final class Databases {
      */
     @FunctionalInterface
     public static interface DatabaseInvoke<T, R> {
-        R apply(Connection connection, SQLExecutor<T> sqlExecutor) throws SQLException;
+        R apply(Connection connection, SQLExecutor<T> sqlExecutor) throws SQLException, SQLSyntaxException;
     }
 
     /**

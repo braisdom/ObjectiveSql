@@ -16,9 +16,10 @@
  */
 package com.github.braisdom.objsql.sql;
 
-import com.github.braisdom.objsql.DatabaseType;
-import com.github.braisdom.objsql.Tables;
+import com.github.braisdom.objsql.*;
 import com.github.braisdom.objsql.pagination.Paginatable;
+import com.github.braisdom.objsql.relation.Relationship;
+import com.github.braisdom.objsql.relation.RelationshipNetwork;
 import com.github.braisdom.objsql.sql.expression.JoinExpression;
 import com.github.braisdom.objsql.util.FunctionWithThrowable;
 import com.github.braisdom.objsql.util.SuppressedException;
@@ -26,7 +27,7 @@ import com.github.braisdom.objsql.util.SuppressedException;
 import java.sql.SQLException;
 import java.util.*;
 
-public class Select<T> extends AbstractExpression implements Dataset {
+public class Select<T> extends AbstractExpression implements Dataset, Paginatable {
 
     protected List<Expression> projections = new ArrayList<>();
     protected Map<String, Expression> projectionMaps = new HashMap<>();
@@ -145,9 +146,33 @@ public class Select<T> extends AbstractExpression implements Dataset {
         return SQLFormatter.format(sql);
     }
 
-    public List<T> execute(DatabaseType databaseType, Class<T> domainClass) throws SQLException, SQLSyntaxException {
-        String sql = toSql(new DefaultExpressionContext(databaseType));
-        return Tables.query(domainClass, sql);
+    public List<T> execute(Class<?> clazz, Relationship... relationships) throws SQLException {
+        return execute(new BeanModelDescriptor(clazz), relationships);
+    }
+
+    public List<T> execute(DomainModelDescriptor domainModelDescriptor, Relationship... relationships) throws SQLException {
+        String dataSourceName = Tables.getDataSourceName(domainModelDescriptor.getDomainModelClass());
+        return Databases.execute(dataSourceName, (connection, sqlExecutor) -> {
+            DatabaseType databaseType = DatabaseType.create(connection.getMetaData().getDatabaseProductName(),
+                    connection.getMetaData().getDatabaseMajorVersion());
+            String sql = toSql(new DefaultExpressionContext(databaseType));
+            List rows = sqlExecutor.query(connection, sql, domainModelDescriptor);
+
+            if (relationships.length > 0 && rows.size() > 0) {
+                new RelationshipNetwork(connection, domainModelDescriptor).process(rows, relationships);
+            }
+
+            return rows;
+        });
+    }
+
+    @Override
+    public String getQuerySQL(DatabaseType databaseType) {
+        try {
+            return toSql(databaseType);
+        } catch (SQLSyntaxException e) {
+            throw new IllegalStateException(e.getMessage(), e);
+        }
     }
 
     @Override

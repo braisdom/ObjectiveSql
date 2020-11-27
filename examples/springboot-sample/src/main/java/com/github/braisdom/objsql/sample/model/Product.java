@@ -81,7 +81,7 @@ public class Product {
                 target.col("sales_year"),
                 target.col("sales_month"));
 
-        return select.execute(DatabaseType.MySQL, Product.class);
+        return select.execute(Product.class);
     }
 
     private static Expression formatMoney(Expression column) {

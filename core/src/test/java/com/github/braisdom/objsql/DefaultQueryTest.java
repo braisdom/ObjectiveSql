@@ -12,9 +12,9 @@ public class DefaultQueryTest {
     public void testSimpleSQL() {
         Query query = new DefaultQuery(Domain.class);
 
-        Assertions.assertEquals(query.getQuerySQL(MySQL.getDatabaseProductName()), "SELECT * FROM `domains`");
-        Assertions.assertEquals(query.getQuerySQL(PostgreSQL.getDatabaseProductName()), "SELECT * FROM \"domains\"");
-        Assertions.assertEquals(query.getQuerySQL(Oracle.getDatabaseProductName()), "SELECT * FROM \"DOMAINS\"");
+        Assertions.assertEquals(query.getQuerySQL(MySQL), "SELECT * FROM `domains`");
+        Assertions.assertEquals(query.getQuerySQL(PostgreSQL), "SELECT * FROM \"domains\"");
+        Assertions.assertEquals(query.getQuerySQL(Oracle), "SELECT * FROM \"DOMAINS\"");
     }
 
     @Test
@@ -22,9 +22,9 @@ public class DefaultQueryTest {
         Query query = new DefaultQuery(Domain.class);
         query.where("name = ?", "12");
 
-        Assertions.assertEquals(query.getQuerySQL(MySQL.getDatabaseProductName()), "SELECT * FROM `domains` WHERE name = ?");
-        Assertions.assertEquals(query.getQuerySQL(PostgreSQL.getDatabaseProductName()), "SELECT * FROM \"domains\" WHERE name = ?");
-        Assertions.assertEquals(query.getQuerySQL(Oracle.getDatabaseProductName()), "SELECT * FROM \"DOMAINS\" WHERE name = ?");
+        Assertions.assertEquals(query.getQuerySQL(MySQL), "SELECT * FROM `domains` WHERE name = ?");
+        Assertions.assertEquals(query.getQuerySQL(PostgreSQL), "SELECT * FROM \"domains\" WHERE name = ?");
+        Assertions.assertEquals(query.getQuerySQL(Oracle), "SELECT * FROM \"DOMAINS\" WHERE name = ?");
     }
 
     @Test
@@ -32,9 +32,9 @@ public class DefaultQueryTest {
         Query query = new DefaultQuery(Domain.class);
         query.offset(10).fetch(10);
 
-        Assertions.assertEquals(query.getQuerySQL(MySQL.getDatabaseProductName()), "SELECT * FROM `domains` OFFSET 10 ROWS  FETCH  NEXT 10 ROWS ONLY ");
-        Assertions.assertEquals(query.getQuerySQL(PostgreSQL.getDatabaseProductName()), "SELECT * FROM \"domains\" OFFSET 10 ROWS  FETCH  NEXT 10 ROWS ONLY ");
-        Assertions.assertEquals(query.getQuerySQL(Oracle.getDatabaseProductName()), "SELECT * FROM \"DOMAINS\" OFFSET 10 ROWS  FETCH  NEXT 10 ROWS ONLY ");
+        Assertions.assertEquals(query.getQuerySQL(MySQL), "SELECT * FROM `domains` OFFSET 10 ROWS  FETCH  NEXT 10 ROWS ONLY ");
+        Assertions.assertEquals(query.getQuerySQL(PostgreSQL), "SELECT * FROM \"domains\" OFFSET 10 ROWS  FETCH  NEXT 10 ROWS ONLY ");
+        Assertions.assertEquals(query.getQuerySQL(Oracle), "SELECT * FROM \"DOMAINS\" OFFSET 10 ROWS  FETCH  NEXT 10 ROWS ONLY ");
     }
 
     @Test
@@ -42,9 +42,9 @@ public class DefaultQueryTest {
         Query query = new DefaultQuery(Domain.class);
         query.groupBy("name").having("len(name) > 10").orderBy("name DESC");
 
-        Assertions.assertEquals(query.getQuerySQL(MySQL.getDatabaseProductName()), "SELECT * FROM `domains` GROUP BY name HAVING len(name) > 10 ORDER BY name DESC");
-        Assertions.assertEquals(query.getQuerySQL(PostgreSQL.getDatabaseProductName()), "SELECT * FROM \"domains\" GROUP BY name HAVING len(name) > 10 ORDER BY name DESC");
-        Assertions.assertEquals(query.getQuerySQL(Oracle.getDatabaseProductName()), "SELECT * FROM \"DOMAINS\" GROUP BY name HAVING len(name) > 10 ORDER BY name DESC");
+        Assertions.assertEquals(query.getQuerySQL(MySQL), "SELECT * FROM `domains` GROUP BY name HAVING len(name) > 10 ORDER BY name DESC");
+        Assertions.assertEquals(query.getQuerySQL(PostgreSQL), "SELECT * FROM \"domains\" GROUP BY name HAVING len(name) > 10 ORDER BY name DESC");
+        Assertions.assertEquals(query.getQuerySQL(Oracle), "SELECT * FROM \"DOMAINS\" GROUP BY name HAVING len(name) > 10 ORDER BY name DESC");
     }
 
     @DomainModel
