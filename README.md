@@ -44,7 +44,7 @@ ObjectiveSQL provides full example for various databases below, You can open it 
 
 ### Simple SQL programming without coding
 
-You just define a JavaBean with one annotation your class has a fully featured database access capabilities
+You just define a JavaBean with one annotation your class has fully featured database access capabilities
 
 ```java
 @DomainModel
