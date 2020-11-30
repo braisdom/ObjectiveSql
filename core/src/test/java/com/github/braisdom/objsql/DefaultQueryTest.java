@@ -1,8 +1,11 @@
 package com.github.braisdom.objsql;
 
 import com.github.braisdom.objsql.annotations.DomainModel;
+import com.github.braisdom.objsql.annotations.Transactional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.sql.SQLException;
 
 import static com.github.braisdom.objsql.DatabaseType.*;
 
@@ -50,5 +53,10 @@ public class DefaultQueryTest {
     @DomainModel
     public static class Domain {
         private String name;
+
+        @Transactional
+        public void test() throws SQLException {
+
+        }
     }
 }
