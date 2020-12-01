@@ -98,12 +98,11 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
 
     public BeanModelDescriptor(Class<T> domainModelClass) {
         Objects.requireNonNull(domainModelClass, "The domainModelClass cannot be null");
-
-        if (Tables.getPrimaryKey(domainModelClass) == null) {
-            throw new DomainModelException(String.format("The %s has no primary key", domainModelClass.getSimpleName()));
-        }
+        Objects.requireNonNull(Tables.getPrimaryKey(domainModelClass), String.format("The %s has no primary key",
+                domainModelClass.getSimpleName()));
 
         DomainModel domainModel = domainModelClass.getAnnotation(DomainModel.class);
+        Objects.requireNonNull(domainModel, "The domainModelClass must have DomainModel annotation");
 
         this.domainModel = domainModel;
         this.domainModelClass = domainModelClass;
@@ -112,6 +111,15 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
 
         prepareColumnToPropertyOverrides(domainModelClass);
         instantiateColumnTransitionMap(domainModelClass.getDeclaredFields());
+    }
+
+    @Override
+    public String getDataSourceName() {
+        if (StringUtil.isBlank(domainModel.dataSource())) {
+            return ConnectionFactory.DEFAULT_DATA_SOURCE_NAME;
+        } else {
+            return domainModel.dataSource();
+        }
     }
 
     @Override
@@ -239,7 +247,7 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
             Field field = domainModelClass.getDeclaredField(fieldName);
 
             if (value == null && domainModel.primaryFieldName().equals(fieldName)) {
-                if(!StringUtil.isBlank(domainModel.primaryKeyDefaultValue())) {
+                if (!StringUtil.isBlank(domainModel.primaryKeyDefaultValue())) {
                     return new DefaultFieldValue(JDBCType.NUMERIC, domainModel.primaryKeyDefaultValue());
                 }
             }

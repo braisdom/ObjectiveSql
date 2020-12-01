@@ -66,7 +66,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
             }
         }
 
-        String dataSourceName = Tables.getDataSourceName(domainModelDescriptor.getDomainModelClass());
+        String dataSourceName = domainModelDescriptor.getDataSourceName();
         return Databases.execute(dataSourceName, (connection, sqlExecutor) -> {
             DatabaseMetaData metaData = connection.getMetaData();
             Quoter quoter = Databases.getQuoter();
@@ -101,7 +101,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
             }
         }
 
-        String dataSourceName = Tables.getDataSourceName(domainModelDescriptor.getDomainModelClass());
+        String dataSourceName = domainModelDescriptor.getDataSourceName();
         return Databases.execute(dataSourceName, (connection, sqlExecutor) -> {
             DatabaseMetaData metaData = connection.getMetaData();
             Quoter quoter = Databases.getQuoter();
@@ -161,7 +161,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
         ensurePrimaryKeyNotNull(primaryKey);
 
         Quoter quoter = Databases.getQuoter();
-        String dataSourceName = Tables.getDataSourceName(domainModelDescriptor.getDomainModelClass());
+        String dataSourceName = domainModelDescriptor.getDataSourceName();
         return Databases.execute(dataSourceName, (connection, sqlExecutor) -> {
             DatabaseMetaData metaData = connection.getMetaData();
             String[] rawColumnNames = domainModelDescriptor.getUpdatableColumns();
@@ -218,7 +218,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
         ensureNotBlank(updates, "predication");
 
         Quoter quoter = Databases.getQuoter();
-        String dataSourceName = Tables.getDataSourceName(domainModelDescriptor.getDomainModelClass());
+        String dataSourceName = domainModelDescriptor.getDataSourceName();
 
         return Databases.execute(dataSourceName, (connection, sqlExecutor) -> {
             String databaseProductName = connection.getMetaData().getDatabaseProductName();
@@ -234,7 +234,8 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
         ensureNotBlank(predication, "predication");
 
         Quoter quoter = Databases.getQuoter();
-        String dataSourceName = Tables.getDataSourceName(domainModelDescriptor.getDomainModelClass());
+        String dataSourceName = domainModelDescriptor.getDataSourceName();
+
         return Databases.execute(dataSourceName, (connection, sqlExecutor) -> {
             String databaseProductName = connection.getMetaData().getDatabaseProductName();
             String tableName = quoter.quoteTableName(databaseProductName, domainModelDescriptor.getTableName());
@@ -251,7 +252,8 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
         ensurePrimaryKeyNotNull(primaryKey);
 
         Quoter quoter = Databases.getQuoter();
-        String dataSourceName = Tables.getDataSourceName(domainModelDescriptor.getDomainModelClass());
+        String dataSourceName = domainModelDescriptor.getDataSourceName();
+
         return Databases.execute(dataSourceName, (connection, sqlExecutor) -> {
             String databaseProductName = connection.getMetaData().getDatabaseProductName();
             String tableName = quoter.quoteTableName(databaseProductName, domainModelDescriptor.getTableName());
@@ -266,7 +268,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
     public int execute(final String sql) throws SQLException {
         Objects.requireNonNull(sql, "The sql cannot be null");
 
-        String dataSourceName = Tables.getDataSourceName(domainModelDescriptor.getDomainModelClass());
+        String dataSourceName = domainModelDescriptor.getDataSourceName();
         return Databases.execute(dataSourceName, (connection, sqlExecutor) ->
                 sqlExecutor.execute(connection, sql));
     }

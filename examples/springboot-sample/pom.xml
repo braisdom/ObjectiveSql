@@ -112,7 +112,7 @@
                         <path>
                             <groupId>com.github.braisdom</groupId>
                             <artifactId>objective-sql</artifactId>
-                            <version>1.3.9</version>
+                            <version>${core.version}</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>

@@ -151,7 +151,9 @@ public class Select<T> extends AbstractExpression implements Dataset, Paginatabl
     }
 
     public List<T> execute(DomainModelDescriptor domainModelDescriptor, Relationship... relationships) throws SQLException {
-        String dataSourceName = Tables.getDataSourceName(domainModelDescriptor.getDomainModelClass());
+        Objects.requireNonNull(domainModelDescriptor, "The domainModelDescriptor cannot be null");
+        String dataSourceName = domainModelDescriptor.getDataSourceName();
+
         return Databases.execute(dataSourceName, (connection, sqlExecutor) -> {
             DatabaseType databaseType = DatabaseType.create(connection.getMetaData().getDatabaseProductName(),
                     connection.getMetaData().getDatabaseMajorVersion());

@@ -64,19 +64,6 @@ public final class Tables {
         }
     }
 
-    public static final String getDataSourceName(Class baseClass) {
-        Objects.requireNonNull(baseClass, "The baseClass cannot be null");
-        DomainModel domainModel = (DomainModel) baseClass.getAnnotation(DomainModel.class);
-
-        Objects.requireNonNull(domainModel, "The baseClass must have the DomainModel annotation");
-
-        if (!StringUtil.isBlank(domainModel.dataSource())) {
-            return domainModel.dataSource();
-        } else {
-            return ConnectionFactory.DEFAULT_DATA_SOURCE_NAME;
-        }
-    }
-
     public static final PrimaryKey getPrimaryKey(Class tableClass) {
         Field[] fields = tableClass.getDeclaredFields();
         for (Field field : fields) {
@@ -183,14 +170,17 @@ public final class Tables {
     }
 
     public static final <T> List<T> query(DomainModelDescriptor<T> domainModelDescriptor, String sql, Object... params) throws SQLException {
-        String dataSourceName = Tables.getDataSourceName(domainModelDescriptor.getDomainModelClass());
+        String dataSourceName = domainModelDescriptor.getDataSourceName();
         return (List<T>) Databases.execute(dataSourceName, (connection, sqlExecutor) ->
                 sqlExecutor.query(connection, sql, domainModelDescriptor, params));
     }
 
     public static final int execute(Class<?> domainModelClass, String sql, Object... params) throws SQLException {
-        String dataSourceName = Tables.getDataSourceName(domainModelClass);
-        return Databases.execute(dataSourceName, (connection, sqlExecutor) ->
+        return Tables.execute(new BeanModelDescriptor(domainModelClass), sql, params);
+    }
+
+    public static final <T> int execute(DomainModelDescriptor<T> domainModelDescriptor, String sql, Object... params) throws SQLException {
+        return Databases.execute(domainModelDescriptor.getDataSourceName(), (connection, sqlExecutor) ->
                 sqlExecutor.execute(connection, sql, params));
     }
 
