@@ -51,7 +51,7 @@ public class DefaultQuoter implements Quoter {
         return String.format("'%s'", value);
     }
 
-    private String quoteName(String databaseProductName, String item) {
+    protected String quoteName(String databaseProductName, String item) {
         if (MySQL.equals(databaseProductName)) {
             return String.format("`%s`", item);
         } else if (PostgreSQL.equals(databaseProductName)) {
