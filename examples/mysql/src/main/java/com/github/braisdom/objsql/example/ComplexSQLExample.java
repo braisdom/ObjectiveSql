@@ -16,7 +16,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.github.braisdom.objsql.sql.Expressions.$;
 import static com.github.braisdom.objsql.sql.function.Ansi.count;
 import static com.github.braisdom.objsql.sql.function.Ansi.sum;
 
@@ -125,7 +124,7 @@ public class ComplexSQLExample extends MySQLExample {
         Order.Table orderTable = Order.asTable();
         Select select = new Select();
 
-        select.project((sum(orderTable.amount) / sum(orderTable.quantity) * 100))
+        select.project((sum(orderTable.amount) / sum(orderTable.quantity) * 100).as("unit_amount"))
                 .from(orderTable)
                 .where(orderTable.quantity > 30 &&
                         orderTable.salesAt.between("2020-05-01 00:00:00", "2020-05-02 23:59:59"))

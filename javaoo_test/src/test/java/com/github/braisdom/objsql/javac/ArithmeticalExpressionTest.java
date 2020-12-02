@@ -15,7 +15,7 @@ public class ArithmeticalExpressionTest {
     @Test
     public void testPlus() throws SQLSyntaxException {
         ExpressionContext mysql = new DefaultExpressionContext(DatabaseType.MySQL);
-        Expression numberPlus = ($(1) + $(1)) * 10 * 10;
+        Expression numberPlus = ($(1) + $(1));
         Expression numberPlus2 = $(1) + ($(1) + $(1));
         Expression numberPlus3 = $(1) + 1;
         Expression numberPlus4 = $(1) + 1L;

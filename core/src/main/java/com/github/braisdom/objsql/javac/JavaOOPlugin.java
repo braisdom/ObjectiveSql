@@ -92,7 +92,7 @@ public class JavaOOPlugin extends TreeScanner<Void, Void> implements Plugin {
     }
 
     private void visitBinarySide(JCExpression expression) {
-        if(expression instanceof JCParens) {
+        if (expression instanceof JCParens) {
             visitParens((JCParens) expression);
         }
     }
@@ -120,7 +120,8 @@ public class JavaOOPlugin extends TreeScanner<Void, Void> implements Plugin {
                 visitBinarySide(jcBinary.rhs);
                 jcReturn.expr = JCBinarys.createOperatorExpr(aptBuilder, jcBinary);
             }
-        } if(jcReturn.expr instanceof JCParens) {
+        }
+        if (jcReturn.expr instanceof JCParens) {
             visitParens((JCParens) jcReturn.expr);
         }
         return super.visitReturn(node, unused);
@@ -140,7 +141,7 @@ public class JavaOOPlugin extends TreeScanner<Void, Void> implements Plugin {
                 } else {
                     newArgs = newArgs.append((JCExpression) arg);
                 }
-            } else if(arg instanceof JCParens) {
+            } else if (arg instanceof JCParens) {
                 visitParens((JCParens) arg);
                 newArgs = newArgs.append((JCExpression) arg);
             } else {
@@ -149,12 +150,22 @@ public class JavaOOPlugin extends TreeScanner<Void, Void> implements Plugin {
         }
 
         JCMethodInvocation methodInvocation = (JCMethodInvocation) node;
+        if(methodInvocation.meth instanceof JCFieldAccess) {
+            JCFieldAccess fieldAccess = (JCFieldAccess) methodInvocation.meth;
+            if(fieldAccess.selected instanceof JCParens) {
+                visitParens((JCParens) fieldAccess.selected);
+            }
+        }
         methodInvocation.args = newArgs.toList();
 
         return super.visitMethodInvocation(node, unused);
     }
 
-    public boolean isEqOrNe(Tag tag) {
+    private void visitMethodInvocation() {
+
+    }
+
+    private boolean isEqOrNe(Tag tag) {
         return tag.equals(Tag.EQ) || tag.equals(Tag.NE);
     }
 }
