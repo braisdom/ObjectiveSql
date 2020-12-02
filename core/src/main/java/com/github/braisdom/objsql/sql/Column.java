@@ -68,6 +68,10 @@ public interface Column extends Expression {
 
     LogicalExpression between(Expression left, Expression right);
 
+    default LogicalExpression between(String left, String right) {
+        return between($(left), $(right));
+    }
+
     default LogicalExpression between(Integer left, Integer right) {
         return between($(left), $(right));
     }

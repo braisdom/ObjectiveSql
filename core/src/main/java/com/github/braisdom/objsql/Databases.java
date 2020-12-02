@@ -99,7 +99,7 @@ public final class Databases {
      */
     @FunctionalInterface
     public static interface TransactionalExecutor<R> {
-        R apply() throws Exception;
+        R apply(Connection connection, SQLExecutor sqlExecutor) throws Exception;
     }
 
     @FunctionalInterface
@@ -155,13 +155,19 @@ public final class Databases {
         Databases.paginator = paginator;
     }
 
+    public static <R> R executeTransactionally(TransactionalExecutor<R> executor) throws SQLException {
+        return executeTransactionally(ConnectionFactory.DEFAULT_DATA_SOURCE_NAME, executor);
+    }
+
     public static <R> R executeTransactionally(String dataSourceName, TransactionalExecutor<R> executor) throws SQLException {
         Connection connection = null;
         try {
             connection = Databases.getConnectionFactory().getConnection(dataSourceName);
             connection.setAutoCommit(false);
             connectionThreadLocal.set(connection);
-            R result = executor.apply();
+            SQLExecutor sqlExecutor = getSqlExecutor();
+
+            R result = executor.apply(connection, sqlExecutor);
             connection.commit();
             return result;
         } catch (SQLException ex) {

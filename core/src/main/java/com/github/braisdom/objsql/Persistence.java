@@ -28,11 +28,11 @@ public interface Persistence<T> {
 
     T update(Object id, T dirtyObject, boolean skipValidation) throws SQLException;
 
-    int update(String updates, String predication) throws SQLException;
+    int update(String updates, String predication, Object... args) throws SQLException;
 
     int delete(Object id) throws SQLException;
 
-    int delete(String predication) throws SQLException;
+    int delete(String predication, Object... args) throws SQLException;
 
-    int execute(String sql) throws SQLException;
+    int execute(String sql, Object... args) throws SQLException;
 }

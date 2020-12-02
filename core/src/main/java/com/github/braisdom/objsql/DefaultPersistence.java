@@ -210,7 +210,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
     }
 
     @Override
-    public int update(String updates, String predication) throws SQLException {
+    public int update(String updates, String predication, Object... args) throws SQLException {
         Objects.requireNonNull(updates, "The updates cannot be null");
         Objects.requireNonNull(predication, "The predication cannot be null");
 
@@ -224,12 +224,12 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
             String databaseProductName = connection.getMetaData().getDatabaseProductName();
             String tableName = quoter.quoteTableName(databaseProductName, domainModelDescriptor.getTableName());
             String sql = formatUpdateSql(tableName, updates, predication);
-            return sqlExecutor.execute(connection, sql);
+            return sqlExecutor.execute(connection, sql, args);
         });
     }
 
     @Override
-    public int delete(String predication) throws SQLException {
+    public int delete(String predication, Object... args) throws SQLException {
         Objects.requireNonNull(predication, "The criteria cannot be null");
         ensureNotBlank(predication, "predication");
 
@@ -240,7 +240,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
             String databaseProductName = connection.getMetaData().getDatabaseProductName();
             String tableName = quoter.quoteTableName(databaseProductName, domainModelDescriptor.getTableName());
             String sql = formatDeleteSql(tableName, predication);
-            return sqlExecutor.execute(connection, sql);
+            return sqlExecutor.execute(connection, sql, args);
         });
     }
 
@@ -265,12 +265,12 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
     }
 
     @Override
-    public int execute(final String sql) throws SQLException {
+    public int execute(final String sql, Object... args) throws SQLException {
         Objects.requireNonNull(sql, "The sql cannot be null");
 
         String dataSourceName = domainModelDescriptor.getDataSourceName();
         return Databases.execute(dataSourceName, (connection, sqlExecutor) ->
-                sqlExecutor.execute(connection, sql));
+                sqlExecutor.execute(connection, sql, args));
     }
 
     private void ensurePrimaryKeyNotNull(PrimaryKey primaryKey) throws PersistenceException {

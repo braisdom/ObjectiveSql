@@ -31,7 +31,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
-public final class Relationship {
+public class Relationship {
 
     private final Class baseClass;
     private final Field relationField;

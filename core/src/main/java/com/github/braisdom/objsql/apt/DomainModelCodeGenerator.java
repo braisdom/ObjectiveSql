@@ -295,13 +295,15 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
                 "createPersistence");
 
         methodBuilder.setReturnStatement("persistence", "update",
-                aptBuilder.varRef("updates"), aptBuilder.varRef("predicates"));
+                aptBuilder.varRef("updates"), aptBuilder.varRef("predicates"),
+                aptBuilder.varRef("args"));
 
         aptBuilder.inject(methodBuilder
                 .setReturnType(treeMaker.TypeIdent(TypeTag.INT))
                 .addStatements(statementBuilder.build())
                 .addParameter("updates", aptBuilder.typeRef(String.class))
                 .addParameter("predicates", aptBuilder.typeRef(String.class))
+                .addVarargsParameter("args", aptBuilder.typeRef(Object.class))
                 .setThrowsClauses(SQLException.class)
                 .build("update", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
@@ -335,12 +337,13 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
                 "createPersistence");
 
         methodBuilder.setReturnStatement("persistence", "delete",
-                aptBuilder.varRef("predicate"));
+                aptBuilder.varRef("predicate"), aptBuilder.varRef("args"));
 
         aptBuilder.inject(methodBuilder
                 .setReturnType(treeMaker.TypeIdent(TypeTag.INT))
                 .addStatements(statementBuilder.build())
                 .addParameter("predicate", aptBuilder.typeRef(String.class))
+                .addVarargsParameter("args", aptBuilder.typeRef(Object.class))
                 .setThrowsClauses(SQLException.class)
                 .build("destroy", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
