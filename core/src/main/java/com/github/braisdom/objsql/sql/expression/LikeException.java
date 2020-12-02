@@ -48,8 +48,10 @@ public class LikeException extends AbstractExpression implements LogicalExpressi
     @Override
     public String toSql(ExpressionContext expressionContext) throws SQLSyntaxException {
         if (negated) {
-            return String.format(" %s NOT LIKE %s ", left.toSql(expressionContext).trim(), right.toSql(expressionContext).trim());
+            return String.format(" %s NOT LIKE %s ",
+                    left.toSql(expressionContext).trim(), right.toSql(expressionContext).trim());
         }
-        return String.format(" %s LIKE %s ", left.toSql(expressionContext).trim(), right.toSql(expressionContext).trim());
+        return String.format(" %s LIKE %s ",
+                left.toSql(expressionContext).trim(), right.toSql(expressionContext).trim());
     }
 }

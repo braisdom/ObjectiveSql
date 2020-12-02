@@ -33,14 +33,12 @@ public class LiteralExpression extends AbstractExpression {
     @Override
     public String toSql(ExpressionContext expressionContext) throws SQLSyntaxException {
         if(rawLiteral == null) {
-            return " NULL ";
+            return attachAlias(" NULL ");
         }
-        if(String.class.isAssignableFrom(rawLiteral.getClass())) {
-            return String.format("'%s'", rawLiteral);
-        }
-        if(Timestamp.class.isAssignableFrom(rawLiteral.getClass())) {
 
+        if(String.class.isAssignableFrom(rawLiteral.getClass())) {
+            return attachAlias(String.format("'%s'", rawLiteral));
         }
-        return String.valueOf(rawLiteral);
+        return attachAlias(String.valueOf(rawLiteral));
     }
 }

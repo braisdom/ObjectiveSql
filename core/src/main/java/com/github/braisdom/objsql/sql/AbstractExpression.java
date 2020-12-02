@@ -99,6 +99,10 @@ public abstract class AbstractExpression implements Expression {
         this.alias = alias;
     }
 
+    protected String attachAlias(String sqlExpression) {
+        return alias == null ? sqlExpression : String.format(" %s AS %s", sqlExpression, alias);
+    }
+
     protected String processDataset(ExpressionContext expressionContext, Dataset dataset)
             throws SQLSyntaxException {
         if (dataset instanceof AbstractTable) {
