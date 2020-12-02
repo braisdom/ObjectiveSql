@@ -28,6 +28,7 @@ import com.sun.source.tree.ReturnTree;
 import com.sun.source.tree.VariableTree;
 import com.sun.source.util.*;
 import com.sun.tools.javac.api.BasicJavacTask;
+import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.JCTree.*;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.Context;
@@ -37,9 +38,10 @@ import com.sun.tools.javac.util.Names;
 import org.mangosdk.spi.ProviderFor;
 
 @ProviderFor(Plugin.class)
-public class JavaOOPlugin implements Plugin {
+public class JavaOOPlugin extends TreeScanner<Void, Void> implements Plugin {
 
     public static final String NAME = "JavaOO";
+    private APTBuilder aptBuilder;
 
     @Override
     public String getName() {
@@ -53,7 +55,7 @@ public class JavaOOPlugin implements Plugin {
         TreeMaker treeMaker = TreeMaker.instance(context);
         Names names = Names.instance(context);
 
-        APTBuilder aptBuilder = new APTBuilder(treeMaker, names);
+        aptBuilder = new APTBuilder(treeMaker, names);
 
         task.addTaskListener(new TaskListener() {
             @Override
@@ -65,64 +67,91 @@ public class JavaOOPlugin implements Plugin {
                 if (e.getKind() != TaskEvent.Kind.PARSE) {
                     return;
                 }
-                e.getCompilationUnit()
-                        .accept(new TreeScanner<Void, Void>() {
-                            @Override
-                            public Void visitVariable(VariableTree node, Void unused) {
-                                JCVariableDecl variableDecl = (JCVariableDecl) node;
-                                if (variableDecl.init != null && variableDecl.init instanceof JCBinary) {
-                                    JCBinary jcBinary = (JCBinary)variableDecl.init;
-                                    if(!isEqOrNe(jcBinary.getTag())) {
-                                        JCExpression expression = JCBinarys.createOperatorExpr(aptBuilder,
-                                                jcBinary);
-                                        variableDecl.init = expression;
-                                    }
-                                }
-
-                                return super.visitVariable(node, unused);
-                            }
-
-                            @Override
-                            public Void visitReturn(ReturnTree node, Void unused) {
-                                JCReturn jcReturn = (JCReturn) node;
-                                if(jcReturn.expr instanceof JCBinary) {
-                                    JCBinary jcBinary = (JCBinary)jcReturn.expr;
-                                    if(!isEqOrNe(jcBinary.getTag())) {
-                                        JCExpression expression = JCBinarys.createOperatorExpr(aptBuilder,
-                                                jcBinary);
-                                        jcReturn.expr = expression;
-                                    }
-                                }
-                                return super.visitReturn(node, unused);
-                            }
-
-                            @Override
-                            public Void visitMethodInvocation(MethodInvocationTree node, Void unused) {
-                                ListBuffer<JCExpression> newArgs = new ListBuffer<>();
-                                List<JCExpression> args = (List<JCExpression>) node.getArguments();
-                                for (ExpressionTree arg : args) {
-                                    if (arg instanceof JCBinary) {
-                                        JCBinary jcBinary = (JCBinary)arg;
-                                        if(!isEqOrNe(jcBinary.getTag())) {
-                                            JCExpression expression = JCBinarys.createOperatorExpr(aptBuilder,
-                                                    jcBinary);
-                                            newArgs = newArgs.append(expression);
-                                        }else {
-                                            newArgs = newArgs.append((JCExpression) arg);
-                                        }
-                                    } else {
-                                        newArgs = newArgs.append((JCExpression) arg);
-                                    }
-                                }
-
-                                JCMethodInvocation methodInvocation = (JCMethodInvocation) node;
-                                methodInvocation.args = newArgs.toList();
-
-                                return super.visitMethodInvocation(node, unused);
-                            }
-                        }, null);
+                e.getCompilationUnit().accept(JavaOOPlugin.this, null);
             }
         });
+    }
+
+    @Override
+    public Void visitVariable(VariableTree node, Void unused) {
+        visitVariableBinary((JCVariableDecl) node);
+        return super.visitVariable(node, unused);
+    }
+
+    private void visitVariableBinary(JCVariableDecl variableDecl) {
+        if (variableDecl.init != null && variableDecl.init instanceof JCBinary) {
+            JCBinary jcBinary = (JCBinary) variableDecl.init;
+            if (!isEqOrNe(jcBinary.getTag())) {
+                visitBinarySide(jcBinary.lhs);
+                visitBinarySide(jcBinary.rhs);
+                variableDecl.init = JCBinarys.createOperatorExpr(aptBuilder, jcBinary);
+            }
+        } else if (variableDecl.init instanceof JCParens) {
+            visitParens((JCParens) variableDecl.init);
+        }
+    }
+
+    private void visitBinarySide(JCExpression expression) {
+        if(expression instanceof JCParens) {
+            visitParens((JCParens) expression);
+        }
+    }
+
+    private void visitParens(JCParens parens) {
+        if (parens.expr != null && parens.expr instanceof JCBinary) {
+            JCBinary jcBinary = (JCBinary) parens.expr;
+            if (!isEqOrNe(jcBinary.getTag())) {
+                visitBinarySide(jcBinary.lhs);
+                visitBinarySide(jcBinary.rhs);
+                parens.expr = JCBinarys.createOperatorExpr(aptBuilder, jcBinary);
+            }
+        } else if (parens.expr instanceof JCParens) {
+            visitParens((JCParens) parens.expr);
+        }
+    }
+
+    @Override
+    public Void visitReturn(ReturnTree node, Void unused) {
+        JCReturn jcReturn = (JCReturn) node;
+        if (jcReturn.expr instanceof JCBinary) {
+            JCBinary jcBinary = (JCBinary) jcReturn.expr;
+            if (!isEqOrNe(jcBinary.getTag())) {
+                visitBinarySide(jcBinary.lhs);
+                visitBinarySide(jcBinary.rhs);
+                jcReturn.expr = JCBinarys.createOperatorExpr(aptBuilder, jcBinary);
+            }
+        } if(jcReturn.expr instanceof JCParens) {
+            visitParens((JCParens) jcReturn.expr);
+        }
+        return super.visitReturn(node, unused);
+    }
+
+    @Override
+    public Void visitMethodInvocation(MethodInvocationTree node, Void unused) {
+        ListBuffer<JCExpression> newArgs = new ListBuffer<>();
+        List<JCExpression> args = (List<JCExpression>) node.getArguments();
+        for (ExpressionTree arg : args) {
+            if (arg instanceof JCBinary) {
+                JCBinary jcBinary = (JCBinary) arg;
+                if (!isEqOrNe(jcBinary.getTag())) {
+                    JCExpression expression = JCBinarys.createOperatorExpr(aptBuilder,
+                            jcBinary);
+                    newArgs = newArgs.append(expression);
+                } else {
+                    newArgs = newArgs.append((JCExpression) arg);
+                }
+            } else if(arg instanceof JCParens) {
+                visitParens((JCParens) arg);
+                newArgs = newArgs.append((JCExpression) arg);
+            } else {
+                newArgs = newArgs.append((JCExpression) arg);
+            }
+        }
+
+        JCMethodInvocation methodInvocation = (JCMethodInvocation) node;
+        methodInvocation.args = newArgs.toList();
+
+        return super.visitMethodInvocation(node, unused);
     }
 
     public boolean isEqOrNe(Tag tag) {
