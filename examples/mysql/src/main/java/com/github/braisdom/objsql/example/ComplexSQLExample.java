@@ -16,7 +16,9 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.github.braisdom.objsql.sql.Expressions.$;
 import static com.github.braisdom.objsql.sql.function.Ansi.count;
+import static com.github.braisdom.objsql.sql.function.Ansi.sum;
 
 public class ComplexSQLExample extends MySQLExample {
 
@@ -101,6 +103,7 @@ public class ComplexSQLExample extends MySQLExample {
 
         Member.Table member = Member.asTable();
         Order.Table order = Order.asTable();
+
         Paginator<Member> paginator = Databases.getPaginator();
         Page page = Page.create(0, 20);
 
@@ -113,5 +116,22 @@ public class ComplexSQLExample extends MySQLExample {
 
         PagedList<Member> members = paginator.paginate(page, select, Member.class);
         Assert.assertTrue(members.size() > 0);
+    }
+
+    @Test
+    public void complexExpressionQuery() throws SQLException {
+        prepareQueryData();
+
+        Order.Table orderTable = Order.asTable();
+        Select select = new Select();
+
+        select.project((sum(orderTable.amount) / sum(orderTable.quantity) * 100))
+                .from(orderTable)
+                .where(orderTable.quantity > 30 &&
+                        orderTable.salesAt.between("2020-05-01 00:00:00", "2020-05-02 23:59:59"))
+                .groupBy(orderTable.memberId);
+
+        List<Order> orders = select.execute(Order.class);
+        Assert.assertTrue(orders.size() > 0);
     }
 }

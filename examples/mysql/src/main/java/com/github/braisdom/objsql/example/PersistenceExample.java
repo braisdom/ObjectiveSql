@@ -1,5 +1,6 @@
 package com.github.braisdom.objsql.example;
 
+import com.github.braisdom.objsql.Databases;
 import com.github.braisdom.objsql.Validator;
 import com.github.braisdom.objsql.example.domains.Member;
 import com.github.braisdom.objsql.example.domains.Order;
@@ -149,7 +150,9 @@ public class PersistenceExample extends MySQLExample {
     public void updateMemberBySQL() throws SQLException {
         createMemberWithArray();
 
-        Member.update("name = 'Smith => Jackson'", "name = 'Alice'");
+        String oldName = "Alice";
+        String newName = "Smith => Jackson";
+        Member.update("name = ?", "name = ?", newName, oldName);
 
         Member member = Member.queryByPrimaryKey(1L);
         Assert.assertTrue(member.getName().equals("Smith => Jackson"));
@@ -169,7 +172,8 @@ public class PersistenceExample extends MySQLExample {
     public void deleteMemberByPredicate() throws SQLException {
         createMemberWithArray();
 
-        Member.destroy("name = 'Mary'");
+        String name = "Mary";
+        Member.destroy("name = ?", name);
 
         Assert.assertTrue(Member.countAll() == 2);
         Assert.assertTrue(Member.queryFirst("name = 'Mary'") == null);
