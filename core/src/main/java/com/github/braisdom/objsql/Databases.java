@@ -205,7 +205,7 @@ public final class Databases {
     }
 
     public static <T, R> R execute(String dataSourceName, DatabaseInvoke<T, R> databaseInvoke) throws SQLException {
-        Objects.requireNonNull(databaseInvoke, "The datasourceName cannot be null");
+        Objects.requireNonNull(dataSourceName, "The datasourceName cannot be null");
         Objects.requireNonNull(databaseInvoke, "The databaseInvoke cannot be null");
 
         Connection connection = connectionThreadLocal.get();
