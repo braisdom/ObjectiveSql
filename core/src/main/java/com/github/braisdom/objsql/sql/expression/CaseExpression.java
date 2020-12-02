@@ -56,6 +56,6 @@ public class CaseExpression extends AbstractExpression {
         }
 
         sql.append(" END ");
-        return sql.toString();
+        return attachAlias(sql.toString());
     }
 }
