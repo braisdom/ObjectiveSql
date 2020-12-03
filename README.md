@@ -37,7 +37,8 @@ Refer to the [pom.xml](https://github.com/braisdom/ObjectiveSql/blob/master/exam
 
 ### Reference documentation
 
-[English](https://github.com/braisdom/ObjectiveSql/wiki/ObjectiveSQL-Tutorial) [Chinese(中文)](https://github.com/braisdom/ObjectiveSql/wiki/ObjectiveSQL-%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97)
+- [English](https://github.com/braisdom/ObjectiveSql/wiki/ObjectiveSQL-Tutorial)
+- [Chinese(中文)](https://github.com/braisdom/ObjectiveSql/wiki/ObjectiveSQL-%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97)
 
 ### Examples
 
