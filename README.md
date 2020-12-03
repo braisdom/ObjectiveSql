@@ -3,10 +3,9 @@ ObjectiveSQL is an ORM framework in Java based on ActiveRecord pattern, which en
 
 ### Features
 
-- Dynamic code generation with [JSR 269](https://jcp.org/en/jsr/detail?id=269) for Java API of database access
-- Automate your methods of CRUD operations in database, and much more
-- Easy to relation query, transactional and paged query
-- Dynamically SQL programming with Java syntax,  and similar to program with SQL syntax extremely
+- With one annotation your Class has a fully featured SQL programming capability
+- Easy to relation querying(`has_one`, `has_many`, `beglongs_to`) and paged querying
+- Java expression programming(arithmetic, comparison and logical) is converted into SQL expression directly
 
 ### Installation
 
@@ -35,6 +34,10 @@ ObjectiveSQL is an ORM framework in Java based on ActiveRecord pattern, which en
 ```
 
 Refer to the [pom.xml](https://github.com/braisdom/ObjectiveSql/blob/master/examples/mysql/pom.xml#L67) for more configurations
+
+### Reference documentation
+
+[English](https://github.com/braisdom/ObjectiveSql/wiki/ObjectiveSQL-Tutorial) [Chinese(中文)](https://github.com/braisdom/ObjectiveSql/wiki/ObjectiveSQL-%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97)
 
 ### Examples
 
