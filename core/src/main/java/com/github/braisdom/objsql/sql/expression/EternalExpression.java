@@ -5,6 +5,6 @@ import static com.github.braisdom.objsql.sql.Expressions.$;
 public class EternalExpression extends PolynaryExpression {
 
     public EternalExpression() {
-        super(EQ, $("1"), $("1"));
+        super(EQ, $(1), $(1));
     }
 }

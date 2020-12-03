@@ -6,7 +6,9 @@ import com.github.braisdom.objsql.example.domains.Order;
 import com.github.braisdom.objsql.pagination.Page;
 import com.github.braisdom.objsql.pagination.PagedList;
 import com.github.braisdom.objsql.pagination.Paginator;
+import com.github.braisdom.objsql.sql.LogicalExpression;
 import com.github.braisdom.objsql.sql.Select;
+import com.github.braisdom.objsql.sql.expression.EternalExpression;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.Assert;
 import org.junit.Test;
@@ -128,6 +130,34 @@ public class ComplexSQLExample extends MySQLExample {
                 .from(orderTable)
                 .where(orderTable.quantity > 30 &&
                         orderTable.salesAt.between("2020-05-01 00:00:00", "2020-05-02 23:59:59"))
+                .groupBy(orderTable.memberId);
+
+        List<Order> orders = select.execute(Order.class);
+        Assert.assertTrue(orders.size() > 0);
+    }
+
+    @Test
+    public void dynamicExpressionQuery() throws SQLException {
+        prepareQueryData();
+
+        String[] filteredNo = {"202000001", "202000002", "202000003"};
+        int filteredQuantity = 0;
+
+        Order.Table orderTable = Order.asTable();
+        Select select = new Select();
+        LogicalExpression eternalExpression = new EternalExpression();
+
+        if(filteredNo.length > 0) {
+            eternalExpression = eternalExpression.and(orderTable.no.in(filteredNo));
+        }
+
+        if(filteredQuantity != 0) {
+            eternalExpression = eternalExpression.and(orderTable > filteredQuantity);
+        }
+
+        select.project((sum(orderTable.amount) / sum(orderTable.quantity) * 100).as("unit_amount"))
+                .from(orderTable)
+                .where(eternalExpression)
                 .groupBy(orderTable.memberId);
 
         List<Order> orders = select.execute(Order.class);
