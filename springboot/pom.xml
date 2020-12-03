@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.braisdom</groupId>
     <artifactId>objsql-springboot</artifactId>
-    <version>1.1.0</version>
+    <version>1.2.0</version>
     <packaging>jar</packaging>
     <url>http://www.objsql.com</url>
     <description>SpringBoot adapter for ObjectiveSQL</description>
@@ -22,8 +22,7 @@
         <java.version>1.8</java.version>
         <javadocExecutable>${java.home}/../bin/javadoc</javadocExecutable>
         <maven.javadoc.skip>false</maven.javadoc.skip>
-        <core.version>1.4.0</core.version>
-        <springboot.version>1.1.0</springboot.version>
+        <core.version>1.4.1</core.version>
     </properties>
 
     <dependencies>

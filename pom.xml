@@ -9,8 +9,8 @@
     <version>1.4</version>
 
     <properties>
-        <core.version>1.4.0</core.version>
-        <springboot.version>1.0.2</springboot.version>
+        <core.version>1.4.1</core.version>
+        <springboot.version>1.2.0</springboot.version>
     </properties>
 
     <modules>
