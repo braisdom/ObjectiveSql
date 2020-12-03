@@ -6,8 +6,13 @@ import com.github.braisdom.objsql.example.domains.Order;
 import com.github.braisdom.objsql.pagination.Page;
 import com.github.braisdom.objsql.pagination.PagedList;
 import com.github.braisdom.objsql.pagination.Paginator;
+import com.github.braisdom.objsql.sql.LogicalExpression;
 import com.github.braisdom.objsql.sql.Select;
+import com.github.braisdom.objsql.sql.expression.EternalExpression;
 import org.apache.commons.lang3.RandomUtils;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -17,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.github.braisdom.objsql.sql.function.Ansi.count;
+import static com.github.braisdom.objsql.sql.function.Ansi.sum;
 
 public class ComplexSQLExample extends SQLiteExample {
 
@@ -36,7 +42,6 @@ public class ComplexSQLExample extends SQLiteExample {
 
         for (int i = 0; i < 100; i++) {
             members.add(new Member()
-                    .setId(i)
                     .setNo("Q200000" + i)
                     .setName(MEMBER_NAMES[i])
                     .setGender(0)
@@ -45,7 +50,6 @@ public class ComplexSQLExample extends SQLiteExample {
 
         for (int i = 0; i < 100; i++) {
             orders.add(new Order()
-                    .setId(i)
                     .setNo("20200000" + i)
                     .setMemberId(i)
                     .setAmount(RandomUtils.nextDouble(10.0f, 30.0f))
@@ -98,11 +102,30 @@ public class ComplexSQLExample extends SQLiteExample {
     }
 
     @Test
+    public void join2Query() throws SQLException {
+        prepareQueryData();
+
+        Member.Table member = Member.asTable();
+        Order.Table order = Order.asTable();
+
+        Select select = new Select();
+
+        select.project(member.no, member.name, count().as("order_count"))
+                .from(member)
+                .leftOuterJoin(order, order.memberId.eq(member.id))
+                .groupBy(member.no, member.name);
+
+        List<Member> members = select.execute(Member.class);
+        Assert.assertTrue(members.size() > 0);
+    }
+
+    @Test
     public void pagedQuery() throws SQLException {
         prepareQueryData();
 
         Member.Table member = Member.asTable();
         Order.Table order = Order.asTable();
+
         Paginator<Member> paginator = Databases.getPaginator();
         Page page = Page.create(0, 20);
 
@@ -115,5 +138,55 @@ public class ComplexSQLExample extends SQLiteExample {
 
         PagedList<Member> members = paginator.paginate(page, select, Member.class);
         Assert.assertTrue(members.size() > 0);
+    }
+
+    @Test
+    public void complexExpressionQuery() throws SQLException {
+        prepareQueryData();
+
+        Order.Table orderTable = Order.asTable();
+        Select select = new Select();
+
+        DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+
+        long begin = DateTime.parse("2020-05-01 00:00:00", dateTimeFormatter).getMillis();
+        long end = DateTime.parse("2020-05-02 23:59:59", dateTimeFormatter).getMillis();
+
+        select.project((sum(orderTable.amount) / sum(orderTable.quantity) * 100).as("unit_amount"))
+                .from(orderTable)
+                .where(orderTable.quantity > 30 &&
+                        orderTable.salesAt.between(begin, end))
+                .groupBy(orderTable.memberId);
+
+        List<Order> orders = select.execute(Order.class);
+        Assert.assertTrue(orders.size() > 0);
+    }
+
+    @Test
+    public void dynamicExpressionQuery() throws SQLException {
+        prepareQueryData();
+
+        String[] filteredNo = {"202000001", "202000002", "202000003"};
+        int filteredQuantity = 0;
+
+        Order.Table orderTable = Order.asTable();
+        Select select = new Select();
+        LogicalExpression eternalExpression = new EternalExpression();
+
+        if(filteredNo.length > 0) {
+            eternalExpression = eternalExpression.and(orderTable.no.in(filteredNo));
+        }
+
+        if(filteredQuantity != 0) {
+            eternalExpression = eternalExpression.and(orderTable > filteredQuantity);
+        }
+
+        select.project((sum(orderTable.amount) / sum(orderTable.quantity) * 100).as("unit_amount"))
+                .from(orderTable)
+                .where(eternalExpression)
+                .groupBy(orderTable.memberId);
+
+        List<Order> orders = select.execute(Order.class);
+        Assert.assertTrue(orders.size() > 0);
     }
 }
