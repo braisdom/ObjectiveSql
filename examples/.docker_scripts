@@ -1,0 +1,4 @@
+# Create mysql-5.37.31 docker container
+docker run --name mysql5.7.31 -e MYSQL_ROOT_PASSWORD=123456 -p 4406:3306 -d mysql:5.7.31
+docker run --name postgres -e POSTGRES_PASSWORD=123456 -p 5432:5432 -d postgres
+docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=yourStrong(!)Password' -p 1433:1433 -d mcr.microsoft.com/mssql/server:2017-CU8-ubuntu

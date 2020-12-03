@@ -2,8 +2,6 @@ package com.github.braisdom.objsql;
 
 import com.github.braisdom.objsql.util.FunctionWithThrowable;
 
-import java.sql.DatabaseMetaData;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -13,27 +11,27 @@ import static com.github.braisdom.objsql.DatabaseType.*;
 public class DefaultQuoter implements Quoter {
 
     @Override
-    public String quoteTableName(DatabaseMetaData databaseMetaData, String tableName) throws SQLException {
+    public String quoteTableName(String databaseProductName, String tableName) {
         String[] tableNameItems = tableName.split("\\.");
         String[] quotedTableNames = Arrays.stream(tableNameItems).map(FunctionWithThrowable
-                .castFunctionWithThrowable(item -> quoteName(databaseMetaData, item))).toArray(String[]::new);
+                .castFunctionWithThrowable(item -> quoteName(databaseProductName, item))).toArray(String[]::new);
         return String.join(".", quotedTableNames);
     }
 
     @Override
-    public String quoteColumnName(DatabaseMetaData databaseMetaData, String columnName) throws SQLException {
-        return quoteName(databaseMetaData, columnName);
+    public String quoteColumnName(String databaseProductName, String columnName) {
+        return quoteName(databaseProductName, columnName);
     }
 
     @Override
-    public String[] quoteColumnNames(DatabaseMetaData databaseMetaData, String[] columnNames) throws SQLException {
+    public String[] quoteColumnNames(String databaseProductName, String[] columnNames) {
         String[] quotedColumnNames = Arrays.stream(columnNames).map(FunctionWithThrowable
-                .castFunctionWithThrowable(column -> quoteName(databaseMetaData, column))).toArray(String[]::new);
+                .castFunctionWithThrowable(column -> quoteName(databaseProductName, column))).toArray(String[]::new);
         return quotedColumnNames;
     }
 
     @Override
-    public String[] quoteValues(Object... values) {
+    public String[] quoteValues(String databaseProductName, Object... values) {
         List<Object> quotedValues = new ArrayList<>();
 
         for (Object value : values) {
@@ -46,30 +44,22 @@ public class DefaultQuoter implements Quoter {
     @Override
     public String quoteValue(Object value) {
         if (value instanceof Integer || value instanceof Long ||
-                value instanceof Float || value instanceof Double)
+                value instanceof Float || value instanceof Double) {
             return String.valueOf(value);
-        else {
-            String stringValue = String.valueOf(value);
-            if (stringValue.startsWith(NO_QUOTE_PREFIX)) {
-                String[] stringValues = stringValue.split(":");
-                if(stringValues.length < 2)
-                    throw new IllegalArgumentException("'%s' is invalid no quote value");
-                return String.join("",
-                        Arrays.copyOfRange(stringValues, 1, stringValues.length));
-            }
         }
 
         return String.format("'%s'", value);
     }
 
-    private String quoteName(DatabaseMetaData databaseMetaData, String item) throws SQLException {
-        String databaseName = databaseMetaData.getDatabaseProductName();
-        if (MySQL.nameEquals(databaseName) || MariaDB.nameEquals(databaseName))
+    protected String quoteName(String databaseProductName, String item) {
+        if (MySQL.equals(databaseProductName)) {
             return String.format("`%s`", item);
-        else if (PostgreSQL.nameEquals(databaseName) || SQLite.nameEquals(databaseName))
+        } else if (PostgreSQL.equals(databaseProductName)) {
             return String.format("\"%s\"", item);
-        else if (Oracle.nameEquals(databaseName))
+        } else if(Oracle.equals(databaseProductName)) {
             return String.format("\"%s\"", item.toUpperCase());
+        }
+
         return String.format("\"%s\"", item);
     }
 }

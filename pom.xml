@@ -3,69 +3,27 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
-    <parent>
-        <groupId>org.sonatype.oss</groupId>
-        <artifactId>oss-parent</artifactId>
-        <version>7</version>
-    </parent>
-
     <groupId>com.github.braisdom</groupId>
     <artifactId>objsql</artifactId>
     <packaging>pom</packaging>
-    <version>1.3</version>
+    <version>1.4</version>
+
+    <properties>
+        <core.version>1.4.0</core.version>
+        <springboot.version>1.0.2</springboot.version>
+    </properties>
 
     <modules>
         <module>core</module>
-        <module>universal_example</module>
-        <module>springboot_example</module>
-        <module>oracle_example</module>
+        <module>springboot</module>
+        <module>javaoo_test</module>
+        <module>mangosdk</module>
+        <module>examples/sqlite</module>
+        <module>examples/mysql</module>
+        <module>examples/oracle</module>
+        <module>examples/sqlserver</module>
+        <module>examples/postgres</module>
+        <module>examples/springboot-sample</module>
     </modules>
-
-    <licenses>
-        <license>
-            <name>Apache 2</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-
-    <scm>
-        <connection>scm:git:git@github.com:braisdom/JDrucker.git</connection>
-        <developerConnection>scm:git:git@github.com:braisdom/JDrucker.git</developerConnection>
-        <url>https://github.com/braisdom/JDrucker</url>
-    </scm>
-
-    <issueManagement>
-        <url>https://github.com/braisdom/JDrucker/issues</url>
-    </issueManagement>
-
-    <organization>
-        <name>com.github.braisdom</name>
-        <url>http://www.joowing.com</url>
-    </organization>
-
-    <developers>
-        <developer>
-            <id>braisdom</id>
-            <name>Braisdom Wang</name>
-            <email>wangyonghe@msn.com</email>
-            <url>http://www.objsql.com</url>
-            <timezone>+8</timezone>
-        </developer>
-    </developers>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>8</source>
-                    <target>8</target>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>

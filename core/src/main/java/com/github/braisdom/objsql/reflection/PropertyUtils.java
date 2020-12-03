@@ -18,12 +18,14 @@ package com.github.braisdom.objsql.reflection;
 
 import com.github.braisdom.objsql.relation.RelationalException;
 import com.github.braisdom.objsql.util.WordUtil;
+import org.apache.commons.beanutils.BeanUtilsBean;
+import org.apache.commons.beanutils.ConvertUtilsBean;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
@@ -130,12 +132,26 @@ public final class PropertyUtils {
             if (!isWritable(propertyDescriptor)) {
                 throw new RelationalException(propertyDescriptor.getName() + " is not writable");
             } else {
-                Object[] args = new Object[]{value};
-                Method writeMethod = propertyDescriptor.getWriteMethod();
-                withAccessibleObject(writeMethod, method -> method.invoke(destination, args), force);
+                if (value != null) {
+                    ConvertUtilsBean convertUtilsBean = BeanUtilsBean.getInstance().getConvertUtils();
+                    Object convertedValue = convertUtilsBean.convert(value, propertyDescriptor.getPropertyType());
+                    Object[] args = new Object[]{convertedValue};
+                    Method writeMethod = propertyDescriptor.getWriteMethod();
+                    withAccessibleObject(writeMethod, method -> method.invoke(destination, args), force);
+                } else {
+                    Method writeMethod = propertyDescriptor.getWriteMethod();
+                    withAccessibleObject(writeMethod, method -> method.invoke(destination, new Object[]{null}), force);
+                }
             }
         } catch (ReflectiveOperationException | RuntimeException e) {
-            throw new ReflectionException("Failed to write " + getQualifiedPropertyName(destination, propertyDescriptor), e);
+            Method writeMethod = propertyDescriptor.getWriteMethod();
+            Parameter[] parameters = writeMethod.getParameters();
+            String qualifiedPropertyName = getQualifiedPropertyName(destination, propertyDescriptor);
+            String realTypeName = value != null ? value.getClass().getSimpleName() : "Null";
+            String methodTypeName = parameters.length > 0 ? parameters[0].getType().getSimpleName() : "Null";
+            String message = String.format("Failed to write %s, because setter method requires %s, but give a %s(%s)",
+                    qualifiedPropertyName, methodTypeName, realTypeName, value);
+            throw new ReflectionException(message, e);
         }
     }
 
@@ -175,13 +191,15 @@ public final class PropertyUtils {
             throws ReflectionException {
         Objects.requireNonNull(bean, "The bean cannot be null");
 
-        if (properties == null)
+        if (properties == null) {
             return;
+        }
 
         for (final Map.Entry<String, ? extends Object> entry : properties.entrySet()) {
             final String name = underline ? WordUtil.camelize(entry.getKey(), true) : entry.getKey();
-            if (name == null)
+            if (name == null) {
                 continue;
+            }
             write(bean, name, entry.getValue());
         }
     }

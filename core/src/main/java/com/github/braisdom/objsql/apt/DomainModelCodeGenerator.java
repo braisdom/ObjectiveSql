@@ -4,12 +4,15 @@ import com.github.braisdom.objsql.*;
 import com.github.braisdom.objsql.annotations.DomainModel;
 import com.github.braisdom.objsql.annotations.PrimaryKey;
 import com.github.braisdom.objsql.annotations.Transient;
-import com.github.braisdom.objsql.sql.AbstractTable;
-import com.github.braisdom.objsql.sql.Column;
-import com.github.braisdom.objsql.sql.DefaultColumn;
+import com.github.braisdom.objsql.pagination.Page;
+import com.github.braisdom.objsql.pagination.PagedList;
+import com.github.braisdom.objsql.pagination.Paginator;
 import com.github.braisdom.objsql.reflection.ClassUtils;
 import com.github.braisdom.objsql.reflection.PropertyUtils;
 import com.github.braisdom.objsql.relation.Relationship;
+import com.github.braisdom.objsql.sql.AbstractTable;
+import com.github.braisdom.objsql.sql.Column;
+import com.github.braisdom.objsql.sql.DefaultColumn;
 import com.github.braisdom.objsql.sql.Select;
 import com.sun.tools.javac.code.Flags;
 import com.sun.tools.javac.code.TypeTag;
@@ -37,22 +40,22 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
         handleCreateSelectMethod(aptBuilder);
         handleCreatePersistenceMethod(aptBuilder);
         handleSaveMethod(aptBuilder);
-        handleSave2Method(aptBuilder);
         handleCreateMethod(aptBuilder);
-        handleCreate2Method(aptBuilder);
         handleCreateArrayMethod(aptBuilder);
-        handleCreateArray2Method(aptBuilder);
         handleUpdateMethod(annotationValues, aptBuilder);
         handleUpdate2Method(aptBuilder);
         handleDestroyMethod(annotationValues, aptBuilder);
         handleDestroy2Method(aptBuilder);
         handleExecuteMethod(aptBuilder);
         handleQueryMethod(aptBuilder);
+        handlePagedQueryMethod(aptBuilder);
         handleQuery2Method(aptBuilder);
+        handlePagedQuery2Method(aptBuilder);
         handleQuery3Method(aptBuilder);
         handleQueryFirstMethod(aptBuilder);
         handleQueryFirst2Method(aptBuilder);
         handleQueryAllMethod(aptBuilder);
+        handlePagedQueryAllMethod(aptBuilder);
         handleCountMethod(aptBuilder);
         handleCountAllMethod(aptBuilder);
         handleValidateMethod(aptBuilder);
@@ -182,19 +185,6 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
                 .build("createPersistence", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
 
-    private void handleSave2Method(APTBuilder aptBuilder) {
-        MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
-        TreeMaker treeMaker = aptBuilder.getTreeMaker();
-
-        methodBuilder.setReturnStatement("this", "save",
-                aptBuilder.varRef("skipValidation"), treeMaker.Literal(false));
-        aptBuilder.inject(methodBuilder
-                .addParameter("skipValidation", treeMaker.TypeIdent(TypeTag.BOOLEAN))
-                .setReturnType(aptBuilder.typeRef(aptBuilder.getClassName()))
-                .setThrowsClauses(SQLException.class)
-                .build("save", Flags.PUBLIC | Flags.FINAL));
-    }
-
     private void handleSaveMethod(APTBuilder aptBuilder) {
         MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
         TreeMaker treeMaker = aptBuilder.getTreeMaker();
@@ -208,15 +198,13 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
                 "persistence", "persistenceFactory", "createPersistence",
                 treeMaker.NewClass(null, List.nil(),
                         aptBuilder.typeRef(BeanModelDescriptor.class),
-                        List.of(aptBuilder.classRef(aptBuilder.getClassName()),
-                                aptBuilder.varRef("skipPrimaryKeyOnInserting")), null));
+                        List.of(aptBuilder.classRef(aptBuilder.getClassName())), null));
 
         methodBuilder.setReturnStatement("persistence", "save",
                 aptBuilder.varRef("this"), aptBuilder.varRef("skipValidation"));
         aptBuilder.inject(methodBuilder
                 .addStatements(statementBuilder.build())
                 .addParameter("skipValidation", treeMaker.TypeIdent(TypeTag.BOOLEAN))
-                .addParameter("skipPrimaryKeyOnInserting", treeMaker.TypeIdent(TypeTag.BOOLEAN))
                 .setReturnType(aptBuilder.typeRef(aptBuilder.getClassName()))
                 .setThrowsClauses(SQLException.class)
                 .build("save", Flags.PUBLIC | Flags.FINAL));
@@ -235,30 +223,10 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
                 "persistence", "persistenceFactory", "createPersistence",
                 treeMaker.NewClass(null, List.nil(),
                         aptBuilder.typeRef(BeanModelDescriptor.class),
-                        List.of(aptBuilder.classRef(aptBuilder.getClassName()),
-                                aptBuilder.varRef("skipPrimaryKeyOnInserting")), null));
+                        List.of(aptBuilder.classRef(aptBuilder.getClassName())), null));
 
         methodBuilder.setReturnStatement("persistence", "insert",
                 aptBuilder.varRef("dirtyObject"), aptBuilder.varRef("skipValidation"));
-
-        aptBuilder.inject(methodBuilder
-                .setReturnType(aptBuilder.typeRef(aptBuilder.getClassName()))
-                .addStatements(statementBuilder.build())
-                .addParameter("dirtyObject", aptBuilder.typeRef(aptBuilder.getClassName()))
-                .addParameter("skipValidation", treeMaker.TypeIdent(TypeTag.BOOLEAN))
-                .addParameter("skipPrimaryKeyOnInserting", treeMaker.TypeIdent(TypeTag.BOOLEAN))
-                .setThrowsClauses(SQLException.class)
-                .build("create", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
-    }
-
-    private void handleCreate2Method(APTBuilder aptBuilder) {
-        MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
-        TreeMaker treeMaker = aptBuilder.getTreeMaker();
-        StatementBuilder statementBuilder = aptBuilder.createStatementBuilder();
-
-        methodBuilder.setReturnStatement(aptBuilder.getClassName(), "create",
-                aptBuilder.varRef("dirtyObject"), aptBuilder.varRef("skipValidation"),
-                treeMaker.Literal(false));
 
         aptBuilder.inject(methodBuilder
                 .setReturnType(aptBuilder.typeRef(aptBuilder.getClassName()))
@@ -282,30 +250,10 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
                 "persistence", "persistenceFactory", "createPersistence",
                 treeMaker.NewClass(null, List.nil(),
                         aptBuilder.typeRef(BeanModelDescriptor.class),
-                        List.of(aptBuilder.classRef(aptBuilder.getClassName()),
-                                aptBuilder.varRef("skipPrimaryKeyOnInserting")), null));
+                        List.of(aptBuilder.classRef(aptBuilder.getClassName())), null));
 
         methodBuilder.setReturnStatement("persistence", "insert",
                 aptBuilder.varRef("dirtyObjects"), aptBuilder.varRef("skipValidation"));
-
-        aptBuilder.inject(methodBuilder
-                .setReturnType(aptBuilder.newArrayType(treeMaker.TypeIdent(TypeTag.INT)))
-                .addStatements(statementBuilder.build())
-                .addParameter("dirtyObjects", aptBuilder.newArrayType(aptBuilder.getClassName()))
-                .addParameter("skipValidation", treeMaker.TypeIdent(TypeTag.BOOLEAN))
-                .addParameter("skipPrimaryKeyOnInserting", treeMaker.TypeIdent(TypeTag.BOOLEAN))
-                .setThrowsClauses(SQLException.class)
-                .build("create", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
-    }
-
-    private void handleCreateArray2Method(APTBuilder aptBuilder) {
-        MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
-        TreeMaker treeMaker = aptBuilder.getTreeMaker();
-        StatementBuilder statementBuilder = aptBuilder.createStatementBuilder();
-
-        methodBuilder.setReturnStatement(aptBuilder.getClassName(), "create",
-                aptBuilder.varRef("dirtyObjects"), aptBuilder.varRef("skipValidation"),
-                treeMaker.Literal(false));
 
         aptBuilder.inject(methodBuilder
                 .setReturnType(aptBuilder.newArrayType(treeMaker.TypeIdent(TypeTag.INT)))
@@ -347,13 +295,15 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
                 "createPersistence");
 
         methodBuilder.setReturnStatement("persistence", "update",
-                aptBuilder.varRef("updates"), aptBuilder.varRef("predicates"));
+                aptBuilder.varRef("updates"), aptBuilder.varRef("predicates"),
+                aptBuilder.varRef("args"));
 
         aptBuilder.inject(methodBuilder
                 .setReturnType(treeMaker.TypeIdent(TypeTag.INT))
                 .addStatements(statementBuilder.build())
                 .addParameter("updates", aptBuilder.typeRef(String.class))
                 .addParameter("predicates", aptBuilder.typeRef(String.class))
+                .addVarargsParameter("args", aptBuilder.typeRef(Object.class))
                 .setThrowsClauses(SQLException.class)
                 .build("update", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
@@ -387,12 +337,13 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
                 "createPersistence");
 
         methodBuilder.setReturnStatement("persistence", "delete",
-                aptBuilder.varRef("predicate"));
+                aptBuilder.varRef("predicate"), aptBuilder.varRef("args"));
 
         aptBuilder.inject(methodBuilder
                 .setReturnType(treeMaker.TypeIdent(TypeTag.INT))
                 .addStatements(statementBuilder.build())
                 .addParameter("predicate", aptBuilder.typeRef(String.class))
+                .addVarargsParameter("args", aptBuilder.typeRef(Object.class))
                 .setThrowsClauses(SQLException.class)
                 .build("destroy", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
@@ -430,6 +381,29 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
                 .build("query", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
 
+    private void handlePagedQueryMethod(APTBuilder aptBuilder) {
+        MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
+        StatementBuilder statementBuilder = aptBuilder.createStatementBuilder();
+
+        statementBuilder.append(aptBuilder.newGenericsType(Query.class, aptBuilder.getClassName()), "query",
+                "createQuery");
+        statementBuilder.append(aptBuilder.newGenericsType(Paginator.class, aptBuilder.getClassName()), "paginator", Databases.class,
+                "getPaginator", List.nil());
+        statementBuilder.append("query", "where",
+                List.of(aptBuilder.varRef("predicate"), aptBuilder.varRef("params")));
+
+        methodBuilder.setReturnStatement("paginator", "paginate", aptBuilder.varRef("page"),
+                aptBuilder.varRef("query"), aptBuilder.classRef(aptBuilder.getClassName()));
+        aptBuilder.inject(methodBuilder
+                .addStatements(statementBuilder.build())
+                .addParameter("page", aptBuilder.typeRef(Page.class))
+                .addParameter("predicate", aptBuilder.typeRef(String.class))
+                .addVarargsParameter("params", aptBuilder.typeRef(Object.class))
+                .setThrowsClauses(SQLException.class)
+                .setReturnType(PagedList.class, aptBuilder.typeRef(aptBuilder.getClassName()))
+                .build("pagedQuery", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
+    }
+
     private void handleQuery2Method(APTBuilder aptBuilder) {
         MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
         StatementBuilder statementBuilder = aptBuilder.createStatementBuilder();
@@ -448,6 +422,30 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
                 .setThrowsClauses(SQLException.class)
                 .setReturnType(java.util.List.class, aptBuilder.typeRef(aptBuilder.getClassName()))
                 .build("query", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
+    }
+
+    private void handlePagedQuery2Method(APTBuilder aptBuilder) {
+        MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
+        StatementBuilder statementBuilder = aptBuilder.createStatementBuilder();
+
+        statementBuilder.append(aptBuilder.newGenericsType(Query.class, aptBuilder.getClassName()), "query",
+                "createQuery");
+        statementBuilder.append(aptBuilder.newGenericsType(Paginator.class, aptBuilder.getClassName()), "paginator", Databases.class,
+                "getPaginator", List.nil());
+        statementBuilder.append("query", "where",
+                List.of(aptBuilder.varRef("predicate"), aptBuilder.varRef("params")));
+
+        methodBuilder.setReturnStatement("paginator", "paginate", aptBuilder.varRef("page"),
+                aptBuilder.varRef("query"), aptBuilder.classRef(aptBuilder.getClassName()),  aptBuilder.varRef("relations"));
+        aptBuilder.inject(methodBuilder
+                .addStatements(statementBuilder.build())
+                .addParameter("page", aptBuilder.typeRef(Page.class))
+                .addParameter("predicate", aptBuilder.typeRef(String.class))
+                .addArrayParameter("relations", Relationship.class)
+                .addVarargsParameter("params", aptBuilder.typeRef(Object.class))
+                .setThrowsClauses(SQLException.class)
+                .setReturnType(PagedList.class, aptBuilder.typeRef(aptBuilder.getClassName()))
+                .build("pagedQuery", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
 
     private void handleQuery3Method(APTBuilder aptBuilder) {
@@ -521,6 +519,29 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
                 .setThrowsClauses(SQLException.class)
                 .setReturnType(java.util.List.class, aptBuilder.typeRef(aptBuilder.getClassName()))
                 .build("queryAll", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
+    }
+
+    private void handlePagedQueryAllMethod(APTBuilder aptBuilder) {
+        TreeMaker treeMaker = aptBuilder.getTreeMaker();
+        MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
+        StatementBuilder statementBuilder = aptBuilder.createStatementBuilder();
+
+        statementBuilder.append(aptBuilder.newGenericsType(Query.class, aptBuilder.getClassName()), "query",
+                "createQuery");
+        statementBuilder.append(aptBuilder.newGenericsType(Paginator.class, aptBuilder.getClassName()), "paginator", Databases.class,
+                "getPaginator", List.nil());
+        statementBuilder.append("query", "where",
+                List.of(treeMaker.Literal("")));
+
+        methodBuilder.setReturnStatement("paginator", "paginate", aptBuilder.varRef("page"),
+                aptBuilder.varRef("query"), aptBuilder.classRef(aptBuilder.getClassName()), aptBuilder.varRef("relations"));
+        aptBuilder.inject(methodBuilder
+                .addStatements(statementBuilder.build())
+                .addParameter("page", aptBuilder.typeRef(Page.class))
+                .addVarargsParameter("relations", aptBuilder.typeRef(Relationship.class))
+                .setThrowsClauses(SQLException.class)
+                .setReturnType(PagedList.class, aptBuilder.typeRef(aptBuilder.getClassName()))
+                .build("pagedQueryAll", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
 
     private void handleCountMethod(APTBuilder aptBuilder) {

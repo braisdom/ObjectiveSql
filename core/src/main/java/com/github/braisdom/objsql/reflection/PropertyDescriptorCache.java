@@ -18,7 +18,10 @@ package com.github.braisdom.objsql.reflection;
 
 import com.github.braisdom.objsql.util.WordUtil;
 
-import java.beans.*;
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -126,8 +129,9 @@ class PropertyDescriptorCache<T> {
     private static void detectFields(Class<?> type, List<Field> detectedFields) {
         Field[] fields = type.getDeclaredFields();
         detectedFields.addAll(Arrays.asList(fields));
-        if (!Object.class.isAssignableFrom(type.getSuperclass()))
+        if (!Object.class.isAssignableFrom(type.getSuperclass())) {
             detectFields(type.getSuperclass(), detectedFields);
+        }
     }
 
     // workaround for https://bugs.openjdk.java.net/browse/JDK-8071693

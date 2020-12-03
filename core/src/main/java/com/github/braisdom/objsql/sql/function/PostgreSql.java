@@ -16,8 +16,10 @@
  */
 package com.github.braisdom.objsql.sql.function;
 
-import com.github.braisdom.objsql.DatabaseType;
-import com.github.braisdom.objsql.sql.*;
+import com.github.braisdom.objsql.sql.Expression;
+import com.github.braisdom.objsql.sql.ExpressionContext;
+import com.github.braisdom.objsql.sql.SQLSyntaxException;
+import com.github.braisdom.objsql.sql.SqlFunctionCall;
 import com.github.braisdom.objsql.sql.expression.LiteralExpression;
 import com.github.braisdom.objsql.sql.expression.PlainExpression;
 import com.github.braisdom.objsql.util.ArrayUtil;
@@ -30,8 +32,9 @@ public class PostgreSql {
 
     public static final Expression concatWs(String delimiter, Expression... expressions) throws SQLSyntaxException {
         Objects.requireNonNull(expressions, "The expressions cannot be null");
-        if(expressions.length == 0)
+        if(expressions.length == 0) {
             throw new SQLSyntaxException("The expressions cannot be empty");
+        }
 
         return new SqlFunctionCall("concat_ws", ArrayUtil.aheadElement(Expression.class, expressions,
                 new LiteralExpression(delimiter)));

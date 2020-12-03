@@ -1,12 +1,8 @@
 package com.github.braisdom.objsql.apt;
 
 import com.github.braisdom.objsql.Databases;
-import com.github.braisdom.objsql.RollbackCauseException;
-import com.github.braisdom.objsql.ValidationException;
 import com.github.braisdom.objsql.annotations.Transactional;
 import com.github.braisdom.objsql.jdbc.DbUtils;
-import com.github.braisdom.objsql.util.ArrayUtil;
-import com.sun.tools.javac.code.Flags;
 import com.sun.tools.javac.code.TypeTag;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
@@ -17,7 +13,6 @@ import org.mangosdk.spi.ProviderFor;
 import javax.annotation.processing.Processor;
 import java.lang.annotation.Annotation;
 import java.sql.Connection;
-import java.sql.SQLException;
 
 @ProviderFor(Processor.class)
 public class TransactionalCodeGenerator extends DomainModelProcessor {
@@ -30,16 +25,18 @@ public class TransactionalCodeGenerator extends DomainModelProcessor {
     @Override
     protected void handle(AnnotationValues annotationValues, JCTree ast, APTBuilder aptBuilder) {
         JCTree.JCMethodDecl methodDecl = (JCTree.JCMethodDecl) aptBuilder.get();
-        if(ast == null || methodDecl == null)
+        if(ast == null || methodDecl == null) {
             return;
+        }
 
         String originalMethodName = methodDecl.name.toString();
         methodDecl.name = methodDecl.name.append(aptBuilder.toName("InTransaction"));
 
         MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
 
-        for(JCTree.JCExpression throwExpression : methodDecl.getThrows())
+        for(JCTree.JCExpression throwExpression : methodDecl.getThrows()) {
             methodBuilder.addThrowsClauses(throwExpression);
+        }
 
         methodBuilder.addParameter(methodDecl.params.toArray(new JCTree.JCVariableDecl[0]));
         methodBuilder.setReturnType(methodDecl.restype);

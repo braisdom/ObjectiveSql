@@ -20,7 +20,6 @@ import com.github.braisdom.objsql.relation.Relationship;
 import com.github.braisdom.objsql.relation.RelationshipNetwork;
 import com.github.braisdom.objsql.util.StringUtil;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
@@ -39,16 +38,17 @@ public class DefaultQuery<T> extends AbstractQuery<T> {
 
     @Override
     public List<T> execute(Relationship... relationships) throws SQLException {
-        Quoter quoter = Databases.getQuoter();
-        String dataSourceName = Tables.getDataSourceName(domainModelDescriptor.getDomainModelClass());
+        String dataSourceName = domainModelDescriptor.getDataSourceName();
         return Databases.execute(dataSourceName, (connection, sqlExecutor) -> {
-            String tableName = quoter.quoteTableName(connection.getMetaData(), domainModelDescriptor.getTableName());
-            String sql = createQuerySQL(tableName, projection, filter, groupBy,
-                    having, orderBy, offset, limit);
+            Quoter quoter = Databases.getQuoter();
+            String databaseProductName = connection.getMetaData().getDatabaseProductName();
+            String tableName = quoter.quoteTableName(databaseProductName, domainModelDescriptor.getTableName());
+            String sql = createQuerySQL(tableName);
             List rows = sqlExecutor.query(connection, sql, domainModelDescriptor, params);
 
-            if (relationships.length > 0 && rows.size() > 0)
+            if (relationships.length > 0 && rows.size() > 0) {
                 new RelationshipNetwork(connection, domainModelDescriptor).process(rows, relationships);
+            }
 
             return rows;
         });
@@ -57,13 +57,21 @@ public class DefaultQuery<T> extends AbstractQuery<T> {
     @Override
     public T queryFirst(Relationship... relationships) throws SQLException {
         List<T> results = execute(relationships);
-        if (results.size() > 0)
+        if (results.size() > 0) {
             return results.get(0);
+        }
         return null;
     }
 
-    private String createQuerySQL(String tableName, String projections, String filter, String groupBy,
-                                  String having, String orderBy, int offset, int limit) {
+    @Override
+    public String getQuerySQL(DatabaseType databaseType) {
+        Quoter quoter = Databases.getQuoter();
+        String tableName = quoter.quoteTableName(databaseType.getDatabaseProductName(), domainModelDescriptor.getTableName());
+
+        return createQuerySQL(tableName);
+    }
+
+    protected String createQuerySQL(String tableName) {
         Objects.requireNonNull(tableName, "The tableName cannot be null");
 
         StringBuilder sql = new StringBuilder();
@@ -73,23 +81,30 @@ public class DefaultQuery<T> extends AbstractQuery<T> {
 
         sql.append(standardSql);
 
-        if (!StringUtil.isBlank(filter))
+        if (!StringUtil.isBlank(filter)) {
             sql.append(" WHERE ").append(filter);
+        }
 
-        if (!StringUtil.isBlank(groupBy))
+        if (!StringUtil.isBlank(groupBy)) {
             sql.append(" GROUP BY ").append(groupBy);
+        }
 
-        if (!StringUtil.isBlank(having))
+        if (!StringUtil.isBlank(having)) {
             sql.append(" HAVING ").append(having);
+        }
 
-        if (!StringUtil.isBlank(orderBy))
+        if (!StringUtil.isBlank(orderBy)) {
             sql.append(" ORDER BY ").append(orderBy);
+        }
 
-        if (offset > 0)
-            sql.append(" OFFSET ").append(offset);
+        if (offset > -1 ) {
+            sql.append(" OFFSET ").append(offset).append(" ROWS ");
+        }
 
-        if (limit > 0)
-            sql.append(" LIMIT ").append(limit);
+        if (rowCount > -1) {
+            sql.append(" FETCH ").append(fetchNext ? " NEXT " : " FIRST ")
+                    .append(rowCount).append(" ROWS ONLY ");
+        }
 
         return sql.toString();
     }

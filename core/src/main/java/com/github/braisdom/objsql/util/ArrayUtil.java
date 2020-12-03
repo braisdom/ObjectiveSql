@@ -93,9 +93,13 @@ public final class ArrayUtil {
      * not found.
      */
     public static <T> int indexOf(T[] array, T value) {
-        if (array == null) return -1;
+        if (array == null) {
+            return -1;
+        }
         for (int i = 0; i < array.length; i++) {
-            if (Objects.equals(array[i], value)) return i;
+            if (Objects.equals(array[i], value)) {
+                return i;
+            }
         }
         return -1;
     }
@@ -104,7 +108,9 @@ public final class ArrayUtil {
      * Test if all {@code check} items are contained in {@code array}.
      */
     public static <T> boolean containsAll(T[] array, T[] check) {
-        if (check == null) return true;
+        if (check == null) {
+            return true;
+        }
         for (T checkItem : check) {
             if (!contains(array, checkItem)) {
                 return false;
@@ -114,7 +120,9 @@ public final class ArrayUtil {
     }
 
     public static boolean contains(int[] array, int value) {
-        if (array == null) return false;
+        if (array == null) {
+            return false;
+        }
         for (int element : array) {
             if (element == value) {
                 return true;
@@ -124,7 +132,9 @@ public final class ArrayUtil {
     }
 
     public static boolean contains(long[] array, long value) {
-        if (array == null) return false;
+        if (array == null) {
+            return false;
+        }
         for (long element : array) {
             if (element == value) {
                 return true;
@@ -179,7 +189,9 @@ public final class ArrayUtil {
     @SuppressWarnings("unchecked")
     public static  <T> T[] removeElement(Class<T> kind,  T[] array, T element) {
         if (array != null) {
-            if (!contains(array, element)) return array;
+            if (!contains(array, element)) {
+                return array;
+            }
             final int length = array.length;
             for (int i = 0; i < length; i++) {
                 if (Objects.equals(array[i], element)) {

@@ -16,7 +16,9 @@
  */
 package com.github.braisdom.objsql.sql;
 
-public class SQLSyntaxException extends Exception {
+import java.sql.SQLException;
+
+public class SQLSyntaxException extends SQLException {
     public SQLSyntaxException() {
     }
 
@@ -30,9 +32,5 @@ public class SQLSyntaxException extends Exception {
 
     public SQLSyntaxException(Throwable cause) {
         super(cause);
-    }
-
-    public SQLSyntaxException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
     }
 }

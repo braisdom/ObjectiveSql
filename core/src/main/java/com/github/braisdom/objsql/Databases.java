@@ -17,6 +17,14 @@
 package com.github.braisdom.objsql;
 
 import com.github.braisdom.objsql.jdbc.DbUtils;
+import com.github.braisdom.objsql.pagination.DefaultPaginator;
+import com.github.braisdom.objsql.pagination.PagedSQLBuilder;
+import com.github.braisdom.objsql.pagination.PagedSQLBuilderFactory;
+import com.github.braisdom.objsql.pagination.Paginator;
+import com.github.braisdom.objsql.pagination.impl.MsSQLServerPagedSQLBuilder;
+import com.github.braisdom.objsql.pagination.impl.MySQLPagedSQLBuilder;
+import com.github.braisdom.objsql.pagination.impl.OraclePagedSQLBuilder;
+import com.github.braisdom.objsql.sql.SQLSyntaxException;
 import com.github.braisdom.objsql.util.StringUtil;
 
 import java.sql.Connection;
@@ -25,8 +33,10 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.logging.Level;
 
+import static com.github.braisdom.objsql.DatabaseType.*;
+
 /**
- * This class consists exclusively of static methods that operate of behavior of database.
+ * This class consists exclusively of utility methods that operate of behavior of database.
  * and the extension point for application.
  */
 @SuppressWarnings("ALL")
@@ -64,6 +74,10 @@ public final class Databases {
 
     private static PersistenceFactory persistenceFactory;
 
+    private static PagedSQLBuilderFactory pagedSQLBuilderFactory;
+
+    private static Paginator paginator;
+
     /**
      * Represents a logic of data process, it will provide the connection and sql
      * executor of database, and the concrete logic will be ignored the behavior
@@ -78,14 +92,14 @@ public final class Databases {
     }
 
     /**
-     * Represents logic will be executed in the transaction(There's only one
+     * Represents logics of databasce API will be executed in the transaction(There's only one
      * connection of database)
      *
      * @param <R>
      */
     @FunctionalInterface
     public static interface TransactionalExecutor<R> {
-        R apply() throws Exception;
+        R apply(Connection connection, SQLExecutor sqlExecutor) throws Exception;
     }
 
     @FunctionalInterface
@@ -131,13 +145,29 @@ public final class Databases {
         Databases.quoter = quoter;
     }
 
+    public static void installPagedSQLBuilderFactory(PagedSQLBuilderFactory pagedSQLBuilderFactory) {
+        Objects.requireNonNull(pagedSQLBuilderFactory, "The pagedSQLBuilderFactory cannot be null");
+        Databases.pagedSQLBuilderFactory = pagedSQLBuilderFactory;
+    }
+
+    public static void installPaginator(Paginator paginator) {
+        Objects.requireNonNull(paginator, "The paginator cannot be null");
+        Databases.paginator = paginator;
+    }
+
+    public static <R> R executeTransactionally(TransactionalExecutor<R> executor) throws SQLException {
+        return executeTransactionally(ConnectionFactory.DEFAULT_DATA_SOURCE_NAME, executor);
+    }
+
     public static <R> R executeTransactionally(String dataSourceName, TransactionalExecutor<R> executor) throws SQLException {
         Connection connection = null;
         try {
             connection = Databases.getConnectionFactory().getConnection(dataSourceName);
             connection.setAutoCommit(false);
             connectionThreadLocal.set(connection);
-            R result = executor.apply();
+            SQLExecutor sqlExecutor = getSqlExecutor();
+
+            R result = executor.apply(connection, sqlExecutor);
             connection.commit();
             return result;
         } catch (SQLException ex) {
@@ -158,7 +188,8 @@ public final class Databases {
 
     public static void truncateTable(String dataSourceName, String tableName) throws SQLException {
         execute(dataSourceName, (connection, sqlExecutor) -> {
-            String quotedTableName = getQuoter().quoteTableName(connection.getMetaData(), tableName);
+            String databaseProductName = connection.getMetaData().getDatabaseProductName();
+            String quotedTableName = getQuoter().quoteTableName(databaseProductName, tableName);
             connection.createStatement().execute(String.format("TRUNCATE TABLE %s", quotedTableName));
             return null;
         });
@@ -180,7 +211,7 @@ public final class Databases {
     }
 
     public static <T, R> R execute(String dataSourceName, DatabaseInvoke<T, R> databaseInvoke) throws SQLException {
-        Objects.requireNonNull(databaseInvoke, "The datasourceName cannot be null");
+        Objects.requireNonNull(dataSourceName, "The datasourceName cannot be null");
         Objects.requireNonNull(databaseInvoke, "The databaseInvoke cannot be null");
 
         Connection connection = connectionThreadLocal.get();
@@ -266,6 +297,35 @@ public final class Databases {
             quoter = new DefaultQuoter();
 
         return quoter;
+    }
+
+    public static PagedSQLBuilderFactory getPagedSQLBuilderFactory() {
+        if (pagedSQLBuilderFactory == null) {
+            pagedSQLBuilderFactory = new PagedSQLBuilderFactory() {
+                @Override
+                public PagedSQLBuilder createPagedSQLBuilder(DatabaseType databaseType) {
+                    if (MySQL.equals(databaseType) || SQLite.equals(databaseType)) {
+                        return new MySQLPagedSQLBuilder();
+                    } else if (MsSqlServer.equals(databaseType)) {
+                        return new MsSQLServerPagedSQLBuilder();
+                    } else if (Oracle.equals(databaseType)) {
+                        return new OraclePagedSQLBuilder();
+                    } else {
+                        return new PagedSQLBuilder() {};
+                    }
+                }
+            };
+        }
+
+        return pagedSQLBuilderFactory;
+    }
+
+    public static Paginator getPaginator() {
+        if (paginator == null) {
+            paginator = new DefaultPaginator();
+        }
+
+        return paginator;
     }
 
     public static LoggerFactory getLoggerFactory() {

@@ -16,6 +16,10 @@
  */
 package com.github.braisdom.objsql.sql;
 
+import com.github.braisdom.objsql.DatabaseType;
+import com.github.braisdom.objsql.sql.expression.ParenExpression;
+import com.github.braisdom.objsql.sql.expression.PolynaryExpression;
+
 public abstract class AbstractExpression implements Expression {
 
     private String alias;
@@ -26,11 +30,91 @@ public abstract class AbstractExpression implements Expression {
         return this;
     }
 
+    @Override
     public String getAlias() {
         return alias;
     }
 
+    @Override
+    public Expression plus(Expression expression) {
+        return new ParenExpression(new PolynaryExpression(PolynaryExpression.PLUS, this, expression));
+    }
+
+    @Override
+    public Expression minus(Expression expression) {
+        return new ParenExpression(new PolynaryExpression(PolynaryExpression.MINUS, this, expression));
+    }
+
+    @Override
+    public Expression times(Expression expression) {
+        return new ParenExpression(new PolynaryExpression(PolynaryExpression.MULTIPLY, this, expression));
+    }
+
+    @Override
+    public Expression div(Expression expression) {
+        return new ParenExpression(new PolynaryExpression(PolynaryExpression.DIVIDE, this, expression));
+    }
+
+    @Override
+    public Expression rem(Expression expression) {
+        return new ParenExpression(new PolynaryExpression(PolynaryExpression.REM, this, expression));
+    }
+
+    @Override
+    public LogicalExpression lt(Expression expression) {
+        return new PolynaryExpression(PolynaryExpression.LT, this, expression);
+    }
+
+    @Override
+    public LogicalExpression gt(Expression expression) {
+        return new PolynaryExpression(PolynaryExpression.GT, this, expression);
+    }
+
+    @Override
+    public LogicalExpression eq(Expression expression) {
+        return new PolynaryExpression(PolynaryExpression.EQ, this, expression);
+    }
+
+    @Override
+    public LogicalExpression le(Expression expression) {
+        return new PolynaryExpression(PolynaryExpression.LE, this, expression);
+    }
+
+    @Override
+    public LogicalExpression ge(Expression expression) {
+        return new PolynaryExpression(PolynaryExpression.GE, this, expression);
+    }
+
+    @Override
+    public LogicalExpression ne(Expression expression) {
+        return new PolynaryExpression(PolynaryExpression.NE, this, expression);
+    }
+
+    @Override
+    public LogicalExpression ne2(Expression expr) {
+        return new PolynaryExpression(PolynaryExpression.NE2, this, expr);
+    }
+
     protected void setAlias(String alias) {
         this.alias = alias;
+    }
+
+    protected String attachAlias(String sqlExpression) {
+        return alias == null ? sqlExpression : String.format(" %s AS %s", sqlExpression, alias);
+    }
+
+    protected String processDataset(ExpressionContext expressionContext, Dataset dataset)
+            throws SQLSyntaxException {
+        if (dataset instanceof AbstractTable) {
+            return dataset.toSql(expressionContext);
+        } else {
+            DatabaseType databaseType = expressionContext.getDatabaseType();
+            String datasetAlias = expressionContext.getAlias(dataset, true);
+            if (DatabaseType.Oracle.equals(databaseType)) {
+                return String.format("(%s) %s", dataset.toSql(expressionContext), datasetAlias);
+            } else {
+                return String.format("(%s) AS %s", dataset.toSql(expressionContext), datasetAlias);
+            }
+        }
     }
 }

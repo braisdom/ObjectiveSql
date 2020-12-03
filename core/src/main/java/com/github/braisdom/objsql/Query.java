@@ -16,6 +16,7 @@
  */
 package com.github.braisdom.objsql;
 
+import com.github.braisdom.objsql.pagination.Paginatable;
 import com.github.braisdom.objsql.relation.Relationship;
 
 import java.sql.SQLException;
@@ -25,15 +26,17 @@ import java.util.List;
  * A programmable structure for SQL statement.
  * @param <T>
  */
-public interface Query<T> {
+public interface Query<T> extends Paginatable {
 
     Query where(String filter, Object... args);
 
     Query select(String... columns);
 
-    Query limit(int limit);
+    Query fetch(long rowCount);
 
-    Query offset(int offset);
+    Query fetch(long rowCount, boolean first);
+
+    Query offset(long offset);
 
     Query groupBy(String groupBy);
 

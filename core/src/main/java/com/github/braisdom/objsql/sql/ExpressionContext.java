@@ -18,8 +18,6 @@ package com.github.braisdom.objsql.sql;
 
 import com.github.braisdom.objsql.DatabaseType;
 
-import java.sql.Timestamp;
-
 public interface ExpressionContext {
 
     DatabaseType getDatabaseType();

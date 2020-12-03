@@ -61,8 +61,9 @@ public class RelationshipNetwork implements RelationProcessor.Context {
         List<Relationship> baseRelationships = Arrays.stream(relationships)
                 .filter(r -> r.getBaseClass().equals(domainModelDescriptor.getDomainModelClass())).collect(Collectors.toList());
 
-        for (Relationship relationship : baseRelationships)
+        for (Relationship relationship : baseRelationships) {
             setupAssociatedObjects(relationship, new ArrayList<>(Arrays.asList(relationships)));
+        }
     }
 
     private void setupAssociatedObjects(Relationship relationship, List<Relationship> relationships) throws SQLException {
@@ -73,8 +74,9 @@ public class RelationshipNetwork implements RelationProcessor.Context {
         final Class childClass = relationship.getRelatedClass();
         Relationship[] childRelationships = relationships.stream()
                 .filter(r -> r.getBaseClass().equals(childClass)).toArray(Relationship[]::new);
-        if (childRelationships.length > 0)
+        if (childRelationships.length > 0) {
             setupAssociatedObjects(childRelationships[0], relationships);
+        }
     }
 
     protected List queryObjects(Class clazz, String associatedColumnName,
@@ -84,7 +86,9 @@ public class RelationshipNetwork implements RelationProcessor.Context {
         SQLExecutor sqlExecutor = Databases.getSqlExecutor();
         Quoter quoter = Databases.getQuoter();
 
-        String associatedValueString = String.join(",", quoter.quoteValues(associatedValues));
+        String databaseProductName = connection.getMetaData().getDatabaseProductName();
+        String associatedValueString = String.join(",", quoter
+                .quoteValues(databaseProductName, associatedValues));
         String relationConditions = StringUtil.isBlank(condition)
                 ? String.format(" %s IN (%s) ", associatedColumnName, associatedValueString)
                 : String.format(" %s IN (%s) AND (%s)", associatedColumnName, associatedValueString, condition);

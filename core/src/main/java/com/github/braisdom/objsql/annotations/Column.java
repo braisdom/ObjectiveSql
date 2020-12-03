@@ -26,6 +26,8 @@ import java.sql.JDBCType;
 
 /**
  * The annotation is used for mapping the column and field of Java Bean.
+ *
+ * @author braisdom
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
@@ -65,6 +67,8 @@ public @interface Column {
     /**
      * Returns invariable value for the column, it means that the invariable value
      * will replace the real value of domain model when inserting or updating.
+     *
+     * Commonly, it is used for default value of column database-related
      *
      * @return an invariable value
      */

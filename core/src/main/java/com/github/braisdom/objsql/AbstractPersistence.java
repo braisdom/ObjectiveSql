@@ -48,9 +48,11 @@ public abstract class AbstractPersistence<T> implements Persistence<T> {
                 .map(columnName -> {
                     String fieldName = domainModelDescriptor.getFieldName(columnName);
                     Optional invariableValue = domainModelDescriptor.getFieldDefaultValue(fieldName);
-                    if(invariableValue.isPresent())
+                    if(invariableValue.isPresent()) {
                         return invariableValue.get();
-                    else return "?";
+                    } else {
+                        return "?";
+                    }
                 }).toArray(String[]::new);
         return formatInsertSql(tableName, quotedColumnNames, String.join(",", valuesPlaceHolder));
     }

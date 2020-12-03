@@ -47,14 +47,15 @@ public abstract class DomainModelProcessor extends AbstractProcessor {
         for(Element element : elements) {
             JCTree ast = javacTrees.getTree(element);
             JCTree.JCClassDecl classDecl;
-            if(ast instanceof JCTree.JCClassDecl)
+            if(ast instanceof JCTree.JCClassDecl) {
                 classDecl = (JCTree.JCClassDecl) ast;
-            else if(ast instanceof JCTree.JCVariableDecl)
+            } else if(ast instanceof JCTree.JCVariableDecl) {
                 classDecl = getClassDecl((JCTree.JCVariableDecl) ast);
-            else if(ast instanceof JCTree.JCMethodDecl)
+            } else if(ast instanceof JCTree.JCMethodDecl) {
                 classDecl = getClassDecl((JCTree.JCMethodDecl) ast);
-            else
+            } else {
                 classDecl = null;
+            }
             APTBuilder aptBuilder = new APTBuilder(classDecl, element, ast, treeMaker, names, messager);
             handle(new AnnotationValues(ast, classloader), ast, aptBuilder);
         }

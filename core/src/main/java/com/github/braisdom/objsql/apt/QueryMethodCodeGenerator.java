@@ -21,8 +21,9 @@ public class QueryMethodCodeGenerator extends DomainModelProcessor {
     @Override
     public void handle(AnnotationValues annotationValues, JCTree ast, APTBuilder aptBuilder) {
         JCTree.JCVariableDecl field = (JCTree.JCVariableDecl) aptBuilder.get();
-        if(ast == null || field == null)
+        if(ast == null || field == null) {
             return;
+        }
 
         TreeMaker treeMaker = aptBuilder.getTreeMaker();
         boolean returnsMany = annotationValues.getAnnotationValue(Queryable.class).many();

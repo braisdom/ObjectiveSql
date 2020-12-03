@@ -284,13 +284,17 @@ public class WordUtil {
      * @return pluralized string
      */
     public static String pluralize(String word) {
-        if (word == null || "".equals(word)) return word;
+        if (word == null || "".equals(word)) {
+            return word;
+        }
 
         String plform = resolvedSingle2Plurals.get(word);
         if (plform == null && (resolvedPlurals.contains(word) || resolvedPlural2Singles.containsKey(word))) {
             plform = word;
         }
-        if (plform != null) return plform;
+        if (plform != null) {
+            return plform;
+        }
 
         String tmp = word.toLowerCase();
         plform = single2plurals.get(tmp);
@@ -342,7 +346,7 @@ public class WordUtil {
         else if (tmp.endsWith("o")) {
             //All words that end in a vowel plus -o (-ao, -eo, -io, -oo, -uo) have plurals that end in just -s:
             if (tmp.endsWith("ao") || tmp.endsWith("eo") || tmp.endsWith("io") ||
-                    tmp.endsWith("oo") || tmp.endsWith("uo")) {
+                    tmp.endsWith("javaoo") || tmp.endsWith("uo")) {
                 plform = word + "s";
             }
             //All musical terms ending in -o have plurals ending in just -s.
@@ -401,7 +405,9 @@ public class WordUtil {
             }
         }
 
-        if (caseChanged) plform = new String(pChars);
+        if (caseChanged) {
+            plform = new String(pChars);
+        }
         if (!plform.equalsIgnoreCase(word)) {
             resolvedSingle2Plurals.put(word, plform);
             resolvedPlural2Singles.put(plform, word);
@@ -419,13 +425,17 @@ public class WordUtil {
      * @return singularized string
      */
     public static String singularize(String word) {
-        if (word == null || "".equals(word)) return word;
+        if (word == null || "".equals(word)) {
+            return word;
+        }
 
         String sgform = resolvedPlural2Singles.get(word);
         if (sgform == null && (resolvedSingles.contains(word) || resolvedSingle2Plurals.containsKey(word))) {
             sgform = word;
         }
-        if (sgform != null) return sgform;
+        if (sgform != null) {
+            return sgform;
+        }
 
         String tmp = word.toLowerCase();
         sgform = plural2singles.get(tmp);
@@ -502,7 +512,9 @@ public class WordUtil {
             }
         }
 
-        if (caseChanged) sgform = new String(sChars);
+        if (caseChanged) {
+            sgform = new String(sChars);
+        }
         if (!sgform.equalsIgnoreCase(word)) {
             resolvedPlural2Singles.put(word, sgform);
             resolvedSingle2Plurals.put(sgform, word);
@@ -520,7 +532,9 @@ public class WordUtil {
      * @return a new string
      */
     public static String replaceLast(String data, String oldSymbol, String newSymbol) {
-        if (data == null || data.indexOf(oldSymbol) == -1) return data;
+        if (data == null || data.indexOf(oldSymbol) == -1) {
+            return data;
+        }
 
         int lastIndex = data.lastIndexOf(oldSymbol);
         int oldLength = oldSymbol.length();
@@ -568,7 +582,9 @@ public class WordUtil {
      * @return a camelized string
      */
     public static String camelize(String word, boolean firstLetterInLowerCase) {
-        if (word == null || "".equals(word)) return word;
+        if (word == null || "".equals(word)) {
+            return word;
+        }
 
         String result = "";
         if (word.indexOf('_') != -1) {
@@ -594,7 +610,9 @@ public class WordUtil {
     }
 
     private static String camelizeOneWord(String word, boolean firstLetterInLowerCase) {
-        if (word == null || "".equals(word)) return word;
+        if (word == null || "".equals(word)) {
+            return word;
+        }
 
         String firstChar = word.substring(0,1);
         String result = (firstLetterInLowerCase)?firstChar.toLowerCase():firstChar.toUpperCase();
@@ -619,7 +637,9 @@ public class WordUtil {
      * @return an underscored string
      */
     public static String underscore(String phase) {
-        if (phase == null || "".equals(phase)) return phase;
+        if (phase == null || "".equals(phase)) {
+            return phase;
+        }
 
         phase = phase.replace('-', '_');
         StringBuilder sb = new StringBuilder();
@@ -674,7 +694,9 @@ public class WordUtil {
      * @return a titleized string
      */
     public static String titleize(String phase) {
-        if (phase == null || "".equals(phase)) return phase;
+        if (phase == null || "".equals(phase)) {
+            return phase;
+        }
 
         phase = humanize(phase);
         StringBuilder sb = new StringBuilder();
@@ -715,9 +737,13 @@ public class WordUtil {
      * @return a humanized string
      */
     public static String humanize(String phase) {
-        if (phase == null || "".equals(phase)) return phase;
+        if (phase == null || "".equals(phase)) {
+            return phase;
+        }
         phase = underscore(phase);
-        if (phase.endsWith("_id")) phase += " ";
+        if (phase.endsWith("_id")) {
+            phase += " ";
+        }
         return camelize(phase.replaceAll("_id ", " ").replace('_', ' ').trim());
     }
 
@@ -783,10 +809,15 @@ public class WordUtil {
      */
     public static String ordinalize(int number) {
         String result = "" + number;
-        if (result.endsWith("1")) result = result + "st";
-        else if (result.endsWith("2")) result = result + "nd";
-        else if (result.endsWith("3")) result = result + "rd";
-        else result = result + "th";
+        if (result.endsWith("1")) {
+            result = result + "st";
+        } else if (result.endsWith("2")) {
+            result = result + "nd";
+        } else if (result.endsWith("3")) {
+            result = result + "rd";
+        } else {
+            result = result + "th";
+        }
         return result;
     }
 }

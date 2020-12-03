@@ -17,6 +17,8 @@
 package com.github.braisdom.objsql.sql;
 
 import com.github.braisdom.objsql.DatabaseType;
+import com.github.braisdom.objsql.Databases;
+import com.github.braisdom.objsql.Quoter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,45 +40,25 @@ public class DefaultExpressionContext implements ExpressionContext {
 
     @Override
     public String getAlias(Dataset dataset, boolean forceCreate) {
-        if (dataset.getAlias() != null)
+        if (dataset.getAlias() != null) {
             return dataset.getAlias();
-        if (!datasets.contains(dataset))
+        }
+        if (!datasets.contains(dataset)) {
             datasets.add(dataset);
+        }
         return String.format("T%d", datasets.indexOf(dataset));
     }
 
     @Override
     public String quoteTable(String tableName) {
-        switch (databaseType) {
-            case MariaDB:
-            case MySQL:
-                return String.format("`%s`", tableName);
-            case PostgreSQL:
-            case Oracle:
-            case SQLite:
-            case MsSqlServer:
-                return String.format("\"%s\"", tableName);
-            case All:
-                return String.format("\"%s\"", tableName);
-        }
-        return null;
+        Quoter quoter = Databases.getQuoter();
+        return quoter.quoteTableName(databaseType.getDatabaseProductName(), tableName);
     }
 
     @Override
     public String quoteColumn(String columnName) {
-        switch (databaseType) {
-            case MariaDB:
-            case MySQL:
-                return String.format("`%s`", columnName);
-            case PostgreSQL:
-            case Oracle:
-            case SQLite:
-            case MsSqlServer:
-                return String.format("\"%s\"", columnName);
-            case All:
-                return String.format("\"%s\"", columnName);
-        }
-        return null;
+        Quoter quoter = Databases.getQuoter();
+        return quoter.quoteColumnName(databaseType.getDatabaseProductName(), columnName);
     }
 
     @Override

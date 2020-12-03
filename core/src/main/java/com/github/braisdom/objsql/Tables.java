@@ -31,7 +31,7 @@ import java.sql.SQLException;
 import java.util.*;
 
 /**
- * The static methods relates to the database table.
+ * Utility methods relates to the database table.
  *
  * @author braisdom
  * @since 1.0
@@ -57,22 +57,11 @@ public final class Tables {
 
         Objects.requireNonNull(domainModel, "The baseClass must have the DomainModel annotation");
 
-        if (!StringUtil.isBlank(domainModel.tableName()))
+        if (!StringUtil.isBlank(domainModel.tableName())) {
             return domainModel.tableName();
-        else
+        } else {
             return WordUtil.tableize(baseClass.getSimpleName());
-    }
-
-    public static final String getDataSourceName(Class baseClass) {
-        Objects.requireNonNull(baseClass, "The baseClass cannot be null");
-        DomainModel domainModel = (DomainModel) baseClass.getAnnotation(DomainModel.class);
-
-        Objects.requireNonNull(domainModel, "The baseClass must have the DomainModel annotation");
-
-        if (!StringUtil.isBlank(domainModel.dataSource()))
-            return domainModel.dataSource();
-        else
-            return ConnectionFactory.DEFAULT_DATA_SOURCE_NAME;
+        }
     }
 
     public static final PrimaryKey getPrimaryKey(Class tableClass) {
@@ -88,22 +77,27 @@ public final class Tables {
 
     public static final boolean isPrimaryField(Field field) {
         PrimaryKey primaryKey = field.getDeclaredAnnotation(PrimaryKey.class);
-        if (primaryKey != null)
+        if (primaryKey != null) {
             return true;
-        else return DEFAULT_PRIMARY_KEY.equals(field.getName());
+        } else {
+            return DEFAULT_PRIMARY_KEY.equals(field.getName());
+        }
     }
 
     public static Object getPrimaryValue(Object domainObject) {
         PrimaryKey primaryKey = getPrimaryKey(domainObject.getClass());
         if (primaryKey != null) {
             return PropertyUtils.read(domainObject, primaryKey.name());
-        } else return null;
+        } else {
+            return null;
+        }
     }
 
     public static void writePrimaryValue(Object domainObject, Object primaryValue) {
         PrimaryKey primaryKey = getPrimaryKey(domainObject.getClass());
-        if (primaryKey != null)
+        if (primaryKey != null) {
             PropertyUtils.write(domainObject, primaryKey.name(), primaryValue);
+        }
     }
 
     public static final Field getPrimaryField(Class tableClass) {
@@ -114,11 +108,13 @@ public final class Tables {
 
         for (Field field : fields) {
             PrimaryKey primaryKey = field.getDeclaredAnnotation(PrimaryKey.class);
-            if (primaryKey != null)
+            if (primaryKey != null) {
                 primaryField = field;
+            }
 
-            if (DEFAULT_PRIMARY_KEY.equals(field.getName()))
+            if (DEFAULT_PRIMARY_KEY.equals(field.getName())) {
                 defaultField = field;
+            }
         }
 
         return primaryField == null ? defaultField : primaryField;
@@ -130,8 +126,9 @@ public final class Tables {
             Column column = field.getDeclaredAnnotation(Column.class);
 
             if (column != null) {
-                if (!WordUtil.isEmpty(column.name()))
+                if (!WordUtil.isEmpty(column.name())) {
                     return column.name();
+                }
             }
 
             return WordUtil.underscore(field.getName());
@@ -145,6 +142,8 @@ public final class Tables {
     }
 
     public static final void installValidator(Validator validator) {
+        Objects.requireNonNull(validator, "The validator cannot be null");
+
         Tables.validator = validator;
     }
 
@@ -159,8 +158,9 @@ public final class Tables {
         List<Validator.Violation> violationList = new ArrayList<>();
         for (Object bean : beans) {
             Validator.Violation[] violations = validator.validate(bean);
-            if (violations.length > 0)
+            if (violations.length > 0) {
                 violationList.addAll(Arrays.asList(violations));
+            }
         }
         return violationList.toArray(violationList.toArray(new Validator.Violation[]{}));
     }
@@ -170,14 +170,17 @@ public final class Tables {
     }
 
     public static final <T> List<T> query(DomainModelDescriptor<T> domainModelDescriptor, String sql, Object... params) throws SQLException {
-        String dataSourceName = Tables.getDataSourceName(domainModelDescriptor.getDomainModelClass());
+        String dataSourceName = domainModelDescriptor.getDataSourceName();
         return (List<T>) Databases.execute(dataSourceName, (connection, sqlExecutor) ->
                 sqlExecutor.query(connection, sql, domainModelDescriptor, params));
     }
 
     public static final int execute(Class<?> domainModelClass, String sql, Object... params) throws SQLException {
-        String dataSourceName = Tables.getDataSourceName(domainModelClass);
-        return Databases.execute(dataSourceName, (connection, sqlExecutor) ->
+        return Tables.execute(new BeanModelDescriptor(domainModelClass), sql, params);
+    }
+
+    public static final <T> int execute(DomainModelDescriptor<T> domainModelDescriptor, String sql, Object... params) throws SQLException {
+        return Databases.execute(domainModelDescriptor.getDataSourceName(), (connection, sqlExecutor) ->
                 sqlExecutor.execute(connection, sql, params));
     }
 
@@ -189,16 +192,20 @@ public final class Tables {
         if (rows.size() > 0) {
             Map<String, Object> countRowsMap = PropertyUtils.getRawAttributes(rows.get(0));
             Object count = countRowsMap.get(countRowsMap.keySet().toArray()[0]);
-            if (count == null)
+            if (count == null) {
                 return 0L;
-            else if (count instanceof Long)
+            } else if (count instanceof Long) {
                 return (Long) count;
-            else if (count instanceof Integer)
+            } else if (count instanceof Integer) {
                 return Long.valueOf((Integer) count);
-            else if(count instanceof BigDecimal)
+            } else if(count instanceof BigDecimal) {
                 return ((BigDecimal)count).longValue();
-            else return 0L;
-        } else return 0L;
+            } else {
+                return 0L;
+            }
+        } else {
+            return 0L;
+        }
     }
 
     public static final String encodeDefaultKey(String name) {

@@ -16,10 +16,16 @@
  */
 package com.github.braisdom.objsql.sql;
 
+import com.github.braisdom.objsql.DatabaseType;
+
 /**
  * Indicates a node can become to SQL expression.
  */
 public interface Sqlizable {
+
+    default String toSql(DatabaseType databaseType) throws SQLSyntaxException {
+        return toSql(new DefaultExpressionContext(databaseType));
+    }
 
     String toSql(ExpressionContext expressionContext) throws SQLSyntaxException;
 }

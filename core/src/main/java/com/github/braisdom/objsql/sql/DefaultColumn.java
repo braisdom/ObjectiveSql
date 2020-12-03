@@ -18,11 +18,6 @@ package com.github.braisdom.objsql.sql;
 
 import com.github.braisdom.objsql.Tables;
 import com.github.braisdom.objsql.sql.expression.*;
-import com.github.braisdom.objsql.util.StringUtil;
-
-import javax.validation.constraints.NotNull;
-import java.util.Arrays;
-import java.util.Objects;
 
 public class DefaultColumn extends AbstractExpression implements Column {
 
@@ -53,265 +48,53 @@ public class DefaultColumn extends AbstractExpression implements Column {
     }
 
     @Override
-    public Expression isNull() {
+    public LogicalExpression isNull() {
         return new ColumnExpression(this, new PlainExpression(" IS NULL "));
     }
 
     @Override
-    public Expression isNotNull() {
+    public LogicalExpression isNotNull() {
         return new ColumnExpression(this, new PlainExpression(" IS NOT NULL "));
     }
 
     @Override
-    public Expression lt(Expression expr) {
-        return new PolynaryExpression(PolynaryExpression.LT, this, expr);
-    }
-
-    @Override
-    public Expression lt(Integer literal) {
-        return new PolynaryExpression(PolynaryExpression.LT, this, new LiteralExpression(literal));
-    }
-
-    @Override
-    public Expression lt(Float literal) {
-        return new PolynaryExpression(PolynaryExpression.LT, this, new LiteralExpression(literal));
-    }
-
-    @Override
-    public Expression lt(Double literal) {
-        return new PolynaryExpression(PolynaryExpression.LT, this, new LiteralExpression(literal));
-    }
-
-    @Override
-    public Expression gt(Expression expr) {
-        return new PolynaryExpression(PolynaryExpression.GT, this, expr);
-    }
-
-    @Override
-    public Expression gt(Integer literal) {
-        return new PolynaryExpression(PolynaryExpression.GT, this, new LiteralExpression(literal));
-    }
-
-    @Override
-    public Expression gt(Float literal) {
-        return new PolynaryExpression(PolynaryExpression.GT, this, new LiteralExpression(literal));
-    }
-
-    @Override
-    public Expression gt(Double literal) {
-        return new PolynaryExpression(PolynaryExpression.GT, this, new LiteralExpression(literal));
-    }
-
-    @Override
-    public Expression eq(Expression expr) {
-        return new PolynaryExpression(PolynaryExpression.EQ, this, expr);
-    }
-
-    @Override
-    public Expression eq(Integer literal) {
-        return new PolynaryExpression(PolynaryExpression.EQ, this, new LiteralExpression(literal));
-    }
-
-    @Override
-    public Expression eq(Float literal) {
-        return new PolynaryExpression(PolynaryExpression.EQ, this, new LiteralExpression(literal));
-    }
-
-    @Override
-    public Expression eq(Double literal) {
-        return new PolynaryExpression(PolynaryExpression.EQ, this, new LiteralExpression(literal));
-    }
-
-    @Override
-    public Expression eq(String literal) {
-        return new PolynaryExpression(PolynaryExpression.EQ, this, new LiteralExpression(literal));
-    }
-
-    @Override
-    public Expression le(Expression expr) {
-        return new PolynaryExpression(PolynaryExpression.LE, this, expr);
-    }
-
-    @Override
-    public Expression le(Integer literal) {
-        return new PolynaryExpression(PolynaryExpression.LE, this, new LiteralExpression(literal));
-    }
-
-    @Override
-    public Expression le(Float literal) {
-        return new PolynaryExpression(PolynaryExpression.LE, this, new LiteralExpression(literal));
-    }
-
-    @Override
-    public Expression le(Double literal) {
-        return new PolynaryExpression(PolynaryExpression.LE, this, new LiteralExpression(literal));
-    }
-
-    @Override
-    public Expression ge(Expression expr) {
-        return new PolynaryExpression(PolynaryExpression.GE, this, expr);
-    }
-
-    @Override
-    public Expression ge(Integer literal) {
-        return new PolynaryExpression(PolynaryExpression.GE, this, new LiteralExpression(literal));
-    }
-
-    @Override
-    public Expression ge(Float literal) {
-        return new PolynaryExpression(PolynaryExpression.GE, this, new LiteralExpression(literal));
-    }
-
-    @Override
-    public Expression ge(Double literal) {
-        return new PolynaryExpression(PolynaryExpression.GE, this, new LiteralExpression(literal));
-    }
-
-    @Override
-    public Expression ne(Expression expr) {
-        return new PolynaryExpression(PolynaryExpression.NE, this, expr);
-    }
-
-    @Override
-    public Expression ne(Integer literal) {
-        return new PolynaryExpression(PolynaryExpression.NE, this, new LiteralExpression(literal));
-    }
-
-    @Override
-    public Expression ne(Float literal) {
-        return new PolynaryExpression(PolynaryExpression.NE, this, new LiteralExpression(literal));
-    }
-
-    @Override
-    public Expression ne(Double literal) {
-        return new PolynaryExpression(PolynaryExpression.NE, this, new LiteralExpression(literal));
-    }
-
-    @Override
-    public Expression ne(String literal) {
-        return new PolynaryExpression(PolynaryExpression.NE, this, new LiteralExpression(literal));
-    }
-
-    @Override
-    public Expression ne2(Expression expr) {
-        return new PolynaryExpression(PolynaryExpression.NE2, this, expr);
-    }
-
-    @Override
-    public Expression ne2(Integer literal) {
-        return new PolynaryExpression(PolynaryExpression.NE2, this, new LiteralExpression(literal));
-    }
-
-    @Override
-    public Expression ne2(Float literal) {
-        return new PolynaryExpression(PolynaryExpression.NE2, this, new LiteralExpression(literal));
-    }
-
-    @Override
-    public Expression ne2(Double literal) {
-        return new PolynaryExpression(PolynaryExpression.NE2, this, new LiteralExpression(literal));
-    }
-
-    @Override
-    public Expression ne2(String literal) {
-        return new PolynaryExpression(PolynaryExpression.NE2, this, new LiteralExpression(literal));
-    }
-
-    @Override
-    public Expression in(Expression... expressions) {
+    public LogicalExpression in(Expression... expressions) {
         return new ColumnExpression(this, new InExpression(false, expressions));
     }
 
     @Override
-    public Expression in(Dataset dataset) {
+    public LogicalExpression in(Dataset dataset) {
         return new ColumnExpression(this, new InExpression(false, dataset));
     }
 
     @Override
-    public Expression notIn(Expression... expressions) {
+    public LogicalExpression notIn(Expression... expressions) {
         return new ColumnExpression(this, new InExpression(true, expressions));
     }
 
     @Override
-    public Expression notIn(Dataset dataset) {
+    public LogicalExpression notIn(Dataset dataset) {
         return new ColumnExpression(this, new InExpression(true, dataset));
     }
 
     @Override
-    public Expression between(Expression left, Expression right) {
+    public LogicalExpression between(Expression left, Expression right) {
         return new ColumnExpression(this, new BetweenExpression(false, left, right));
     }
 
     @Override
-    public Expression in(String... strLiterals) {
-        Expression[] expressions = Arrays.stream(strLiterals)
-                .map(literal -> new LiteralExpression(literal)).toArray(Expression[]::new);
-        return new ColumnExpression(this, new InExpression(false, expressions));
-    }
-
-    @Override
-    public Expression in(Integer... intLiterals) {
-        Expression[] expressions = Arrays.stream(intLiterals)
-                .map(literal -> new LiteralExpression(literal)).toArray(Expression[]::new);
-        return new ColumnExpression(this, new InExpression(false, expressions));
-    }
-
-    @Override
-    public Expression in(Long... longLiterals) {
-        Expression[] expressions = Arrays.stream(longLiterals)
-                .map(literal -> new LiteralExpression(literal)).toArray(Expression[]::new);
-        return new ColumnExpression(this, new InExpression(false, expressions));
-    }
-
-    @Override
-    public Expression notIn(String... strLiterals) {
-        Expression[] expressions = Arrays.stream(strLiterals)
-                .map(literal -> new LiteralExpression(literal)).toArray(Expression[]::new);
-        return new ColumnExpression(this, new InExpression(true, expressions));
-    }
-
-    @Override
-    public Expression notIn(Integer... intLiterals) {
-        Expression[] expressions = Arrays.stream(intLiterals)
-                .map(literal -> new LiteralExpression(literal)).toArray(Expression[]::new);
-        return new ColumnExpression(this, new InExpression(true, expressions));
-    }
-
-    @Override
-    public Expression notIn(Long... longLiterals) {
-        Expression[] expressions = Arrays.stream(longLiterals)
-                .map(literal -> new LiteralExpression(literal)).toArray(Expression[]::new);
-        return new ColumnExpression(this, new InExpression(true, expressions));
-    }
-
-    @Override
-    public Expression notBetween(Expression left, Expression right) {
+    public LogicalExpression notBetween(Expression left, Expression right) {
         return new ColumnExpression(this, new BetweenExpression(true, left, right));
     }
 
     @Override
-    public Expression between(Integer left, Integer right) {
-        return between(new LiteralExpression(left), new LiteralExpression(right));
+    public LogicalExpression like(Expression expression) {
+        return new LikeException(false, this, expression);
     }
 
     @Override
-    public Expression notBetween(Integer left, Integer right) {
-        return notBetween(new LiteralExpression(left), new LiteralExpression(right));
-    }
-
-    @Override
-    public Expression between(Long left, Long right) {
-        return between(new LiteralExpression(left), new LiteralExpression(right));
-    }
-
-    @Override
-    public Expression notBetween(Long left, Long right) {
-        return notBetween(new LiteralExpression(left), new LiteralExpression(right));
-    }
-
-    @Override
-    public Expression like(String str) {
-        return new ColumnExpression(this, new LiteralExpression(str));
+    public LogicalExpression notLike(Expression expression) {
+        return new LikeException(true, this, expression);
     }
 
     @Override
@@ -320,6 +103,7 @@ public class DefaultColumn extends AbstractExpression implements Column {
         // cannot be applied in anywhere, then a new instance of Column will be created
         // after "AS" operation, avoiding to pollute the old instance.
         return new DefaultColumn(dataset, columnName) {
+            @Override
             public String getAlias() {
                 return alias;
             }
@@ -331,8 +115,12 @@ public class DefaultColumn extends AbstractExpression implements Column {
         String tableAlias = expressionContext.getAlias(dataset, true);
         String columnAlias = getAlias();
         return String.format("%s.%s %s",
-                expressionContext.quoteTable(tableAlias), expressionContext.quoteColumn(columnName),
-                columnAlias == null ? "" : " AS " + expressionContext.quoteColumn(columnAlias));
+                expressionContext.quoteTable(tableAlias), expressionContext.quoteColumn(columnName).trim(),
+                columnAlias == null ? "" : "AS " + expressionContext.quoteColumn(columnAlias).trim());
+    }
+
+    protected Dataset getDataset() {
+        return this.dataset;
     }
 
     @Override
