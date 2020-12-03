@@ -32,10 +32,13 @@ public class ObjLoggerFactoryImpl implements LoggerFactory {
         }
 
         private String createLogContent(long elapsedTime, String sql, Object[] params) {
-            String[] paramStrings = Arrays.stream(params).map(param -> String.valueOf(param)).toArray(String[]::new);
+            String[] paramStrings = Arrays.stream(params)
+                    .map(param -> String.valueOf(param)).toArray(String[]::new);
             String paramString = String.join(",", paramStrings);
-            return String.format("[%dms] %s, with: [%s]", elapsedTime, sql, String.join(",",
-                    paramString.length() > 100 ? StringUtil.truncate(paramString, 99) : paramString));
+            return String.format("[%dms] %s, with: [%s]",
+                    elapsedTime, sql, String.join(",",
+                    paramString.length() > 100 ? StringUtil
+                            .truncate(paramString, 99) : paramString));
         }
     }
 

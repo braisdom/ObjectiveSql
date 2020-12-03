@@ -36,12 +36,14 @@ public class CacheableSQLExecutor<T> extends DefaultSQLExecutor<T> {
 
     @Override
     public List<T> query(Connection connection, String sql,
-                         TableRowAdapter tableRowAdapter, Object... params) throws SQLException {
+                         TableRowAdapter tableRowAdapter, Object... params)
+            throws SQLException {
         Class<?> domainClass = tableRowAdapter.getDomainModelClass();
 
         if (CACHEABLE_CLASSES.contains(domainClass)) {
-            if(!Serializable.class.isAssignableFrom(domainClass))
+            if(!Serializable.class.isAssignableFrom(domainClass)) {
                 throw new IllegalArgumentException(String.format("The %s cannot be serialized"));
+            }
 
             messageDigest.update(sql.getBytes());
 
