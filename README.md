@@ -4,7 +4,7 @@ ObjectiveSQL is an ORM framework in Java based on ActiveRecord pattern, which en
 ### Features
 
 - With one annotation your Class has a fully featured SQL programming capability
-- Easy to relation querying(`has_one`, `has_many`, `beglongs_to`) and paged querying
+- Easy to relational querying(`has_one`, `has_many`, `beglongs_to`) and paged querying
 - Java expression programming(arithmetic, comparison and logical) is converted into SQL expression directly
 
 ### Installation
