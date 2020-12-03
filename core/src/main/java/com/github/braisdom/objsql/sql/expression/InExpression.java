@@ -39,6 +39,26 @@ public class InExpression extends AbstractExpression {
     }
 
     @Override
+    public Expression plus(Expression Expression) {
+        throw new UnsupportedArithmeticalException("In expression cannot be plused ");
+    }
+
+    @Override
+    public Expression minus(Expression Expression) {
+        throw new UnsupportedArithmeticalException("In expression cannot be minused");
+    }
+
+    @Override
+    public Expression times(Expression Expression) {
+        throw new UnsupportedArithmeticalException("In expression cannot be timesed");
+    }
+
+    @Override
+    public Expression div(Expression Expression) {
+        throw new UnsupportedArithmeticalException("In expression cannot be dived");
+    }
+
+    @Override
     public Expression as(String alias) {
         throw new UnsupportedOperationException("The IN expression cannot be aliased");
     }

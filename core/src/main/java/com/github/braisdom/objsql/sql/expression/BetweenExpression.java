@@ -34,6 +34,31 @@ public class BetweenExpression extends AbstractExpression {
     }
 
     @Override
+    public Expression plus(Expression Expression) {
+        throw new UnsupportedArithmeticalException("Between expression cannot be plused ");
+    }
+
+    @Override
+    public Expression minus(Expression Expression) {
+        throw new UnsupportedArithmeticalException("Between expression cannot be minused");
+    }
+
+    @Override
+    public Expression times(Expression Expression) {
+        throw new UnsupportedArithmeticalException("Between expression cannot be timesed");
+    }
+
+    @Override
+    public Expression div(Expression Expression) {
+        throw new UnsupportedArithmeticalException("Between expression cannot be dived");
+    }
+
+    @Override
+    public Expression rem(Expression Expression) {
+        throw new UnsupportedArithmeticalException("Between expression cannot be remed");
+    }
+
+    @Override
     public String toSql(ExpressionContext expressionContext)  throws SQLSyntaxException {
         return String.format(" %s BETWEEN %s AND %s ",
                 negated ? "NOT" : "", left.toSql(expressionContext), right.toSql(expressionContext));

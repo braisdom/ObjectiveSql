@@ -53,6 +53,26 @@ public class PolynaryExpression extends AbstractExpression implements LogicalExp
     }
 
     @Override
+    public Expression plus(Expression Expression) {
+        throw new UnsupportedArithmeticalException("Polynary expression cannot be plused ");
+    }
+
+    @Override
+    public Expression minus(Expression Expression) {
+        throw new UnsupportedArithmeticalException("Polynary expression cannot be minused");
+    }
+
+    @Override
+    public Expression times(Expression Expression) {
+        throw new UnsupportedArithmeticalException("Polynary expression cannot be timesed");
+    }
+
+    @Override
+    public Expression div(Expression Expression) {
+        throw new UnsupportedArithmeticalException("Polynary expression cannot be dived");
+    }
+
+    @Override
     public LogicalExpression and(LogicalExpression logicalExpression) {
         return new PolynaryExpression(AND, this, logicalExpression);
     }

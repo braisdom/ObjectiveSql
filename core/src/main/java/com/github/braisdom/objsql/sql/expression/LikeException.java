@@ -41,8 +41,28 @@ public class LikeException extends AbstractExpression implements LogicalExpressi
     }
 
     @Override
+    public Expression plus(Expression Expression) {
+        throw new UnsupportedArithmeticalException("Like expression cannot be plused ");
+    }
+
+    @Override
+    public Expression minus(Expression Expression) {
+        throw new UnsupportedArithmeticalException("Like expression cannot be minused");
+    }
+
+    @Override
+    public Expression times(Expression Expression) {
+        throw new UnsupportedArithmeticalException("Like expression cannot be timesed");
+    }
+
+    @Override
+    public Expression div(Expression Expression) {
+        throw new UnsupportedArithmeticalException("Like expression cannot be dived");
+    }
+
+    @Override
     public Expression as(String alias) {
-        throw new UnsupportedOperationException("The null expression cannot be aliased");
+        throw new UnsupportedOperationException("The Like expression cannot be aliased");
     }
 
     @Override
