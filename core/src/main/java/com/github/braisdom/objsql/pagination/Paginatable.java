@@ -20,7 +20,7 @@ import com.github.braisdom.objsql.DatabaseType;
 import com.github.braisdom.objsql.DomainModelDescriptor;
 
 /**
- * It describes a paged query object
+ * It describes a paginatable query object
  */
 public interface Paginatable {
 

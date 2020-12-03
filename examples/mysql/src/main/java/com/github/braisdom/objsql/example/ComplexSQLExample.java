@@ -99,6 +99,24 @@ public class ComplexSQLExample extends MySQLExample {
     }
 
     @Test
+    public void join2Query() throws SQLException {
+        prepareQueryData();
+
+        Member.Table member = Member.asTable();
+        Order.Table order = Order.asTable();
+
+        Select select = new Select();
+
+        select.project(member.no, member.name, count().as("order_count"))
+                .from(member)
+                .leftOuterJoin(order, order.memberId.eq(member.id))
+                .groupBy(member.no, member.name);
+
+        List<Member> members = select.execute(Member.class);
+        Assert.assertTrue(members.size() > 0);
+    }
+
+    @Test
     public void pagedQuery() throws SQLException {
         prepareQueryData();
 
