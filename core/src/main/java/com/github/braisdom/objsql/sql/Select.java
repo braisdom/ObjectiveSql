@@ -37,7 +37,8 @@ public class Select<T> extends AbstractExpression implements Dataset, Paginatabl
     protected Expression[] groupByExpressions;
     protected Expression havingExpression;
     protected Expression[] orderByExpressions;
-    protected int limit = -1;
+    protected boolean fetchNext;
+    protected int rowCount = -1;
     protected int offset = -1;
     protected Dataset[] unionDatasets;
     protected Dataset[] unionAllDatasets;
@@ -121,8 +122,14 @@ public class Select<T> extends AbstractExpression implements Dataset, Paginatabl
         return this;
     }
 
-    public Select limit(int limit) {
-        this.limit = limit;
+    public Select rowCount(int rowCount) {
+        this.rowCount(rowCount, true);
+        return this;
+    }
+
+    public Select rowCount(int rowCount, boolean fetchNext) {
+        this.rowCount = rowCount;
+        this.fetchNext = fetchNext;
         return this;
     }
 
@@ -190,11 +197,12 @@ public class Select<T> extends AbstractExpression implements Dataset, Paginatabl
         processOrderBy(expressionContext, sql);
 
         if (offset > 0) {
-            sql.append(" OFFSET ").append(offset);
+            sql.append(" OFFSET ").append(offset).append(" ROWS ");
         }
 
-        if (limit > 0) {
-            sql.append(" LIMIT ").append(limit);
+        if (rowCount > 0) {
+            sql.append(" FETCH ").append(fetchNext ? " NEXT " : " FIRST ")
+                    .append(rowCount).append(" ROWS ONLY ");
         }
 
         processUnion(expressionContext, sql);
