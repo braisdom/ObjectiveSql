@@ -33,7 +33,7 @@ ObjectiveSQL is an ORM framework in Java based on ActiveRecord pattern, which en
 </dependency>
 ```
 
-Refer to the [pom.xml](https://github.com/braisdom/ObjectiveSql/blob/master/examples/mysql/pom.xml#L67) for more configurations
+Refer to the [pom.xml](https://github.com/braisdom/ObjectiveSql/blob/master/examples/mysql/pom.xml#L67) for more configuration
 
 ### Examples
 
