@@ -79,16 +79,6 @@ Member.destroy("name = 'Mary'");
 Member.execute(String.format("DELETE FROM %s WHERE name = 'Mary'", Member.TABLE_NAME));
 ```
 
-#### Transaction
-
-```java
-@Transactional
-public static void makeOrder(Order order, OrderLine... orderLines) throws SQLException {
-  Order.create(order, false);
-  OrderLine.create(orderLines, false);
-}
-```
-
 #### Counting and querying simply
 
 ```java
