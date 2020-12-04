@@ -117,7 +117,7 @@ Select select = new Select();
 select.project(sum(orderTable.amount) / sum(orderTable.quantity) * 100)
         .from(orderTable)
         .where(orderTable.quantity > 30 &&
-            orderTable.salesAt.between($("2020-10-10 00:00:00"), $("2020-10-30 23:59:59")))
+            orderTable.salesAt.between("2020-10-10 00:00:00", "2020-10-30 23:59:59"))
         .groupBy(orderTable.productId);
 ```
 
