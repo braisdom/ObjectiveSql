@@ -2,21 +2,21 @@ package com.github.braisdom.objsql;
 
 import com.github.braisdom.objsql.annotations.Column;
 import com.github.braisdom.objsql.annotations.DomainModel;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class TablesTest {
 
     @Test
     public void testGetTableName() {
-        Assertions.assertEquals(Tables.getTableName(DemoTable.class), "demo_tables");
-        Assertions.assertEquals(Tables.getTableName(DemoTable2.class), "demo_table2");
+        Assert.assertEquals(Tables.getTableName(DemoTable.class), "demo_tables");
+        Assert.assertEquals(Tables.getTableName(DemoTable2.class), "demo_table2");
     }
 
     @Test
     public void testGetColumnName() {
-        Assertions.assertEquals(Tables.getColumnName(DemoTable.class, "testField"), "test_field");
-        Assertions.assertEquals(Tables.getColumnName(DemoTable2.class, "testField"), "cus_test_field");
+        Assert.assertEquals(Tables.getColumnName(DemoTable.class, "testField"), "test_field");
+        Assert.assertEquals(Tables.getColumnName(DemoTable2.class, "testField"), "cus_test_field");
     }
 
     @DomainModel

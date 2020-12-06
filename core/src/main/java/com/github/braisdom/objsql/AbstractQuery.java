@@ -17,7 +17,7 @@
 package com.github.braisdom.objsql;
 
 /**
- * The class provides the default implementations of structure of SQL
+ * The class provides default implementations of structure of SQL
  * @param <T>
  */
 public abstract class AbstractQuery<T> implements Query<T> {

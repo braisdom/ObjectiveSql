@@ -66,7 +66,8 @@ public class DefaultQuery<T> extends AbstractQuery<T> {
     @Override
     public String getQuerySQL(DatabaseType databaseType) {
         Quoter quoter = Databases.getQuoter();
-        String tableName = quoter.quoteTableName(databaseType.getDatabaseProductName(), domainModelDescriptor.getTableName());
+        String tableName = quoter.quoteTableName(databaseType.getDatabaseProductName(),
+                domainModelDescriptor.getTableName());
 
         return createQuerySQL(tableName);
     }
@@ -77,9 +78,8 @@ public class DefaultQuery<T> extends AbstractQuery<T> {
         StringBuilder sql = new StringBuilder();
 
         projections = (projections == null || projections.length() < 0) ? "*" : projections;
-        String standardSql = String.format(SELECT_STATEMENT, projections, tableName);
 
-        sql.append(standardSql);
+        sql.append("SELECT ").append(projections).append(" FROM ").append(tableName);
 
         if (!StringUtil.isBlank(filter)) {
             sql.append(" WHERE ").append(filter);
