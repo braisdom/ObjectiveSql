@@ -63,7 +63,7 @@ public class Member {
 }
 ```
 
-#### Persistence methods
+#### Persistence
 
 ```java
 Member.create(newMember);
@@ -81,7 +81,7 @@ Member.destroy("name = 'Mary'");
 Member.execute(String.format("DELETE FROM %s WHERE name = 'Mary'", Member.TABLE_NAME));
 ```
 
-#### Counting and querying simply
+#### Counting and querying
 
 ```java
 Member.countAll();
@@ -92,14 +92,14 @@ Member.query("id > ?", 1);
 Member.queryAll();
 ```
 
-#### Paged query
+#### Paged querying
 
 ```java
 Page page = Page.create(0, 10);// Create a Page instance with current page and page size
 PagedList<Member> members = Member.pagedQueryAll(page, Member.HAS_MANY_ORDERS);
 ```
 
-#### Relation query
+#### Relation querying
 
 ```java
 // Querying objects with convenient methods, and it will carry the related objects
