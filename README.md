@@ -4,8 +4,8 @@ ObjectiveSQL is an ORM framework in Java based on ActiveRecord pattern, which en
 ### Features
 
 - With one annotation your `Class` has fully featured capabilities of SQL programming
-- Easy to relational(`has_one`, `has_many`, `beglongs_to`) querying and paged querying
-- Java expressions programming(arithmetic, comparison and logical) can be converted into SQL expression directly
+- Easy to relational(`has_one`, `has_many`, `beglongs_to`) query and paged query
+- Java expressions(arithmetic, comparison and logical) can be converted into SQL expression directly
 
 ### Installation
 
@@ -20,7 +20,7 @@ ObjectiveSQL is an ORM framework in Java based on ActiveRecord pattern, which en
 <dependency>
     <groupId>com.github.braisdom</groupId>
     <artifactId>objective-sql</artifactId>
-    <version>1.4.0</version>
+    <version>1.4.2</version>
 </dependency>
 ```
 
@@ -29,17 +29,19 @@ ObjectiveSQL is an ORM framework in Java based on ActiveRecord pattern, which en
 <dependency>
   <groupId>com.github.braisdom</groupId>
   <artifactId>objsql-springboot</artifactId>
-  <version>1.1.0</version>
+  <version>1.3.0</version>
 </dependency>
 ```
 
-Refer to the [pom.xml](https://github.com/braisdom/ObjectiveSql/blob/master/examples/mysql/pom.xml#L67) for more configurations
+Refer to the [pom.xml](https://github.com/braisdom/ObjectiveSql/blob/master/examples/mysql/pom.xml#L67) for more configuration
 
 ### Examples
 
 ObjectiveSQL provides full example for various databases below, You can open it directly with IntelliJ IDEA as a standalone project. In fact, they are not just examples, but also unit tests of ObjectiveSQL in various databases.
 
-[MySQL](https://github.com/braisdom/ObjectiveSql/tree/master/examples/mysql),  [Oracle](https://github.com/braisdom/ObjectiveSql/tree/master/examples/oracle),  [MS SQL Server](https://github.com/braisdom/ObjectiveSql/tree/master/examples/sqlserver),  [SQLite](https://github.com/braisdom/ObjectiveSql/tree/master/examples/sqlite),  [PostgreSQL](https://github.com/braisdom/ObjectiveSql/tree/master/examples/postgres),  [Spring Boot](https://github.com/braisdom/ObjectiveSql/tree/master/examples/springboot-sample)
+If you want to run without configuration, you can try: [SQLite](https://github.com/braisdom/ObjectiveSql/tree/master/examples/sqlite)
+
+Others: [MySQL](https://github.com/braisdom/ObjectiveSql/tree/master/examples/mysql),  [Oracle](https://github.com/braisdom/ObjectiveSql/tree/master/examples/oracle),  [MS SQL Server](https://github.com/braisdom/ObjectiveSql/tree/master/examples/sqlserver), [PostgreSQL](https://github.com/braisdom/ObjectiveSql/tree/master/examples/postgres),  [Spring Boot](https://github.com/braisdom/ObjectiveSql/tree/master/examples/springboot-sample)
 
 ### Simple SQL programming without coding
 
@@ -61,7 +63,7 @@ public class Member {
 }
 ```
 
-#### Persistence methods
+#### Persistence
 
 ```java
 Member.create(newMember);
@@ -79,17 +81,7 @@ Member.destroy("name = 'Mary'");
 Member.execute(String.format("DELETE FROM %s WHERE name = 'Mary'", Member.TABLE_NAME));
 ```
 
-#### Transaction
-
-```java
-@Transactional
-public static void makeOrder(Order order, OrderLine... orderLines) throws SQLException {
-  Order.create(order, false);
-  OrderLine.create(orderLines, false);
-}
-```
-
-#### Counting and querying simply
+#### Counting and querying
 
 ```java
 Member.countAll();
@@ -100,14 +92,14 @@ Member.query("id > ?", 1);
 Member.queryAll();
 ```
 
-#### Paged query
+#### Paged querying
 
 ```java
 Page page = Page.create(0, 10);// Create a Page instance with current page and page size
 PagedList<Member> members = Member.pagedQueryAll(page, Member.HAS_MANY_ORDERS);
 ```
 
-#### Relation query
+#### Relation querying
 
 ```java
 // Querying objects with convenient methods, and it will carry the related objects
@@ -127,7 +119,7 @@ Select select = new Select();
 select.project(sum(orderTable.amount) / sum(orderTable.quantity) * 100)
         .from(orderTable)
         .where(orderTable.quantity > 30 &&
-            orderTable.salesAt.between($("2020-10-10 00:00:00"), $("2020-10-30 23:59:59")))
+            orderTable.salesAt.between("2020-10-10 00:00:00", "2020-10-30 23:59:59"))
         .groupBy(orderTable.productId);
 ```
 
