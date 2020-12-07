@@ -251,6 +251,18 @@ public final class APTBuilder {
         return fields.toArray(new JCVariableDecl[]{});
     }
 
+    public boolean hasField(String name) {
+        List<JCTree> members = classDecl.defs;
+        for (JCTree member : members) {
+            if ((member instanceof JCVariableDecl) &&
+                    ((JCVariableDecl) member).name.toString().equals(name)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public JCMethodDecl newGetter(JCVariableDecl field) {
         String fieldName = field.name.toString();
         String getterName;

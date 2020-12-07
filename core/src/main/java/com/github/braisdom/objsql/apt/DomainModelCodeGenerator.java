@@ -89,20 +89,22 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
         TreeMaker treeMaker = aptBuilder.getTreeMaker();
         DomainModel domainModel = annotationValues.getAnnotationValue(DomainModel.class);
 
-        JCTree.JCAnnotation annotation = treeMaker.Annotation(aptBuilder.typeRef(PrimaryKey.class),
-                List.of(treeMaker.Assign(treeMaker.Ident(aptBuilder.toName("name")),
-                        treeMaker.Literal(domainModel.primaryColumnName()))));
-        JCModifiers modifiers = treeMaker.Modifiers(Flags.PRIVATE);
-        modifiers.annotations = modifiers.annotations.append(annotation);
+        if(!aptBuilder.hasField(domainModel.primaryFieldName())) {
+            JCTree.JCAnnotation annotation = treeMaker.Annotation(aptBuilder.typeRef(PrimaryKey.class),
+                    List.of(treeMaker.Assign(treeMaker.Ident(aptBuilder.toName("name")),
+                            treeMaker.Literal(domainModel.primaryColumnName()))));
+            JCModifiers modifiers = treeMaker.Modifiers(Flags.PRIVATE);
+            modifiers.annotations = modifiers.annotations.append(annotation);
 
-        JCVariableDecl primaryField = treeMaker.VarDef(modifiers,
-                aptBuilder.toName(domainModel.primaryFieldName()), aptBuilder.typeRef(domainModel.primaryClass()), null);
-        JCMethodDecl queryByPrimaryKey = createQueryByPrimaryKeyMethod(domainModel, primaryField, aptBuilder);
+            JCVariableDecl primaryField = treeMaker.VarDef(modifiers,
+                    aptBuilder.toName(domainModel.primaryFieldName()), aptBuilder.typeRef(domainModel.primaryClass()), null);
+            JCMethodDecl queryByPrimaryKey = createQueryByPrimaryKeyMethod(domainModel, primaryField, aptBuilder);
 
-        aptBuilder.inject(primaryField);
-        aptBuilder.inject(queryByPrimaryKey);
-        aptBuilder.inject(aptBuilder.newSetter(primaryField, domainModel.fluent()));
-        aptBuilder.inject(aptBuilder.newGetter(primaryField));
+            aptBuilder.inject(primaryField);
+            aptBuilder.inject(queryByPrimaryKey);
+            aptBuilder.inject(aptBuilder.newSetter(primaryField, domainModel.fluent()));
+            aptBuilder.inject(aptBuilder.newGetter(primaryField));
+        }
     }
 
     private JCMethodDecl createQueryByPrimaryKeyMethod(DomainModel domainModel, JCVariableDecl primaryField, APTBuilder aptBuilder) {
