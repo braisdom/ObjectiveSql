@@ -29,9 +29,7 @@ import java.util.Objects;
  * @param <T>
  */
 public class DefaultQuery<T> extends AbstractQuery<T> {
-
-    private static final String SELECT_STATEMENT = "SELECT %s FROM %s";
-
+    
     public DefaultQuery(Class<T> domainModelClass) {
         super(domainModelClass);
     }
