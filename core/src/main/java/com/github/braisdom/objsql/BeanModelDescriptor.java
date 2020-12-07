@@ -98,10 +98,13 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
 
     public BeanModelDescriptor(Class<T> domainModelClass) {
         Objects.requireNonNull(domainModelClass, "The domainModelClass cannot be null");
+
+        DomainModel domainModel = domainModelClass.getAnnotation(DomainModel.class);
+
+        Objects.requireNonNull(domainModel, String.format("%s has no annotation: DomainModel", domainModelClass.getSimpleName()));
         Objects.requireNonNull(Tables.getPrimaryKey(domainModelClass), String.format("The %s has no primary key",
                 domainModelClass.getSimpleName()));
 
-        DomainModel domainModel = domainModelClass.getAnnotation(DomainModel.class);
         Objects.requireNonNull(domainModel, "The domainModelClass must have DomainModel annotation");
 
         this.domainModel = domainModel;
