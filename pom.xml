@@ -24,6 +24,7 @@
         <module>examples/sqlserver</module>
         <module>examples/postgres</module>
         <module>examples/springboot-sample</module>
+        <module>benchmark</module>
     </modules>
 
 </project>
