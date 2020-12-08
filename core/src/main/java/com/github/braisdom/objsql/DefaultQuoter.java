@@ -58,6 +58,8 @@ public class DefaultQuoter implements Quoter {
             return String.format("\"%s\"", item);
         } else if(Oracle.equals(databaseProductName)) {
             return String.format("\"%s\"", item.toUpperCase());
+        } else if(HSQLDB.equals(databaseProductName)) {
+            return String.valueOf(item);
         }
 
         return String.format("\"%s\"", item);

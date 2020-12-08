@@ -32,6 +32,7 @@ public class DatabaseType {
     public static final DatabaseType Oracle12c = new DatabaseType("Oracle12c", 12);
     public static final DatabaseType PostgreSQL = new DatabaseType("PostgreSQL", -1);
     public static final DatabaseType MsSqlServer = new DatabaseType("Microsoft SQL Server", -1);
+    public static final DatabaseType HSQLDB = new DatabaseType("HSQL Database Engine", 12);
     public static final DatabaseType Ansi = new DatabaseType(DATABASE_PRODUCT_NAME_ANY, -1);
 
     private String databaseProductName;
