@@ -185,6 +185,13 @@ public class Select<T> extends AbstractExpression implements Dataset, Paginatabl
     }
 
     @Override
+    public String getOriginalName() {
+        String[] datasetNames = Arrays.stream(fromDatasets)
+                .map(dataset -> dataset.getOriginalName()).toArray(String[]::new);
+        return String.join("_", datasetNames);
+    }
+
+    @Override
     public String toSql(ExpressionContext expressionContext) throws SQLSyntaxException {
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT ");

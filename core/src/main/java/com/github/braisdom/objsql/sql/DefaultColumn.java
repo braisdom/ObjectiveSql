@@ -64,7 +64,7 @@ public class DefaultColumn extends AbstractExpression implements Column {
 
     @Override
     public LogicalExpression in(Dataset dataset) {
-        return new ColumnExpression(this, new InExpression(false, dataset));
+        return new ColumnExpression(this, new InDatasetExpression(dataset));
     }
 
     @Override
@@ -74,7 +74,7 @@ public class DefaultColumn extends AbstractExpression implements Column {
 
     @Override
     public LogicalExpression notIn(Dataset dataset) {
-        return new ColumnExpression(this, new InExpression(true, dataset));
+        return new ColumnExpression(this, new InDatasetExpression(dataset));
     }
 
     @Override

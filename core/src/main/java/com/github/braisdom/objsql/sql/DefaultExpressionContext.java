@@ -46,7 +46,7 @@ public class DefaultExpressionContext implements ExpressionContext {
         if (!datasets.contains(dataset)) {
             datasets.add(dataset);
         }
-        return String.format("T%d", datasets.indexOf(dataset));
+        return String.format("%s_t%d", dataset.getOriginalName(), datasets.indexOf(dataset));
     }
 
     @Override

@@ -16,8 +16,15 @@
  */
 package com.github.braisdom.objsql.sql;
 
-public interface Dataset extends Expression {
+/**
+ * A data set describe a structure of queryable statement, it will be
+ * as a subquery in JOIN statement or WHERE statement.
+ */
+public interface Dataset extends Sqlizable {
 
-    @Override
+    Expression as(String alias);
+
     String getAlias();
+
+    String getOriginalName();
 }
