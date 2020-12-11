@@ -671,6 +671,14 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
         asTableMethod.setReturnStatement(treeMaker.NewClass(null, List.nil(), aptBuilder.typeRef("Table"),
                 List.nil(), null));
 
+        JCExpression allInit = aptBuilder.staticMethodCall(DefaultColumn.class, "create",
+                aptBuilder.classRef(aptBuilder.getClassName()),
+                aptBuilder.varRef("this"), treeMaker.Literal("*"));
+        JCVariableDecl allVar = aptBuilder.newVar(Flags.PUBLIC | Flags.FINAL,
+                Column.class, "all", allInit);
+
+        classDecl.defs = classDecl.defs.append(allVar);
+
         JCVariableDecl[] fields = aptBuilder.getFields();
         for (JCVariableDecl field : fields) {
             if (!aptBuilder.isStatic(field.mods)) {

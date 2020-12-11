@@ -29,7 +29,7 @@ public class DefaultColumn extends AbstractExpression implements Column {
     }
 
     public DefaultColumn(Class domainModelClass, Dataset dataset, String fieldName) {
-        this(dataset, Tables.getColumnName(domainModelClass, fieldName));
+        this(dataset, ALL.equals(fieldName) ? fieldName : Tables.getColumnName(domainModelClass, fieldName));
     }
 
     public DefaultColumn(Dataset dataset, String columnName) {

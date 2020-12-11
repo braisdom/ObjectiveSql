@@ -26,6 +26,8 @@ import static com.github.braisdom.objsql.sql.Expressions.$;
  */
 public interface Column extends Expression {
 
+    String ALL = "*";
+
     Expression asc();
 
     Expression desc();
