@@ -21,8 +21,8 @@ import com.github.braisdom.objsql.Tables;
 import com.github.braisdom.objsql.annotations.PrimaryKey;
 import com.github.braisdom.objsql.annotations.Relation;
 import com.github.braisdom.objsql.reflection.PropertyUtils;
+import com.github.braisdom.objsql.util.Inflector;
 import com.github.braisdom.objsql.util.StringUtil;
-import com.github.braisdom.objsql.util.WordUtil;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
@@ -103,10 +103,10 @@ public class Relationship {
         if (StringUtil.isBlank(relation.foreignKey())) {
             if (isBelongsTo()) {
                 String rawForeignKey = getRelatedClass().getSimpleName();
-                return Tables.encodeDefaultKey(WordUtil.underscore(rawForeignKey));
+                return Tables.encodeDefaultKey(Inflector.getInstance().underscore(rawForeignKey));
             } else {
                 String rawForeignKey = baseClass.getSimpleName();
-                return Tables.encodeDefaultKey(WordUtil.underscore(rawForeignKey));
+                return Tables.encodeDefaultKey(Inflector.getInstance().underscore(rawForeignKey));
             }
         } else {
             return relation.foreignKey();
@@ -128,11 +128,11 @@ public class Relationship {
     public String getForeignFieldName() {
         if (StringUtil.isBlank(relation.foreignFieldName())) {
             if (isBelongsTo()) {
-                String rawForeignFieldName = WordUtil.underscore(getRelatedClass().getSimpleName());
-                return WordUtil.camelize(Tables.encodeDefaultKey(rawForeignFieldName), true);
+                String rawForeignFieldName = Inflector.getInstance().underscore(getRelatedClass().getSimpleName());
+                return Inflector.getInstance().camelize(Tables.encodeDefaultKey(rawForeignFieldName), true);
             } else {
-                String rawForeignFieldName = WordUtil.underscore(getBaseClass().getSimpleName());
-                return WordUtil.camelize(Tables.encodeDefaultKey(rawForeignFieldName), true);
+                String rawForeignFieldName = Inflector.getInstance().underscore(getBaseClass().getSimpleName());
+                return Inflector.getInstance().camelize(Tables.encodeDefaultKey(rawForeignFieldName), true);
             }
         } else {
             return relation.foreignFieldName();

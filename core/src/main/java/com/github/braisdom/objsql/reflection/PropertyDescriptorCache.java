@@ -16,7 +16,7 @@
  */
 package com.github.braisdom.objsql.reflection;
 
-import com.github.braisdom.objsql.util.WordUtil;
+import com.github.braisdom.objsql.util.Inflector;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
@@ -110,7 +110,7 @@ class PropertyDescriptorCache<T> {
 
     public static Method getWriteMethod(Class<?> type, Field field) {
         try {
-            String writeMethodName = WordUtil.camelize(String.format("set_%s", field.getName()), true);
+            String writeMethodName = Inflector.getInstance().camelize(String.format("set_%s", field.getName()), true);
             return type.getMethod(writeMethodName, field.getType());
         } catch (NoSuchMethodException e) {
             return null;
@@ -119,7 +119,7 @@ class PropertyDescriptorCache<T> {
 
     public static Method getReadMethod(Class<?> type, Field field) {
         try {
-            String writeMethodName = WordUtil.camelize(String.format("get_%s", field.getName()), true);
+            String writeMethodName = Inflector.getInstance().camelize(String.format("get_%s", field.getName()), true);
             return type.getMethod(writeMethodName);
         } catch (NoSuchMethodException e) {
             return null;

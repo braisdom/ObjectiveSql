@@ -30,6 +30,10 @@ public final class StringUtil {
         return type.getName().split("\\.");
     }
 
+    public static boolean isEmpty(String str) {
+        return str == null || str.length() == 0;
+    }
+
     public static String truncate(String str, int length) {
         assert length >= 3 : length;
         length = length - 3;

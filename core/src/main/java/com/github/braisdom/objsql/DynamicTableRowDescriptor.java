@@ -1,7 +1,7 @@
 package com.github.braisdom.objsql;
 
 import com.github.braisdom.objsql.reflection.ClassUtils;
-import com.github.braisdom.objsql.util.WordUtil;
+import com.github.braisdom.objsql.util.Inflector;
 
 public class DynamicTableRowDescriptor<T extends DynamicModel> implements TableRowAdapter {
 
@@ -28,7 +28,7 @@ public class DynamicTableRowDescriptor<T extends DynamicModel> implements TableR
 
     @Override
     public String getFieldName(String columnName) {
-        return WordUtil.camelize(columnName, true);
+        return Inflector.getInstance().camelize(columnName, true);
     }
 
     @Override

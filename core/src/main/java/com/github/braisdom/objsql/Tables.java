@@ -20,8 +20,8 @@ import com.github.braisdom.objsql.annotations.Column;
 import com.github.braisdom.objsql.annotations.DomainModel;
 import com.github.braisdom.objsql.annotations.PrimaryKey;
 import com.github.braisdom.objsql.reflection.PropertyUtils;
+import com.github.braisdom.objsql.util.Inflector;
 import com.github.braisdom.objsql.util.StringUtil;
-import com.github.braisdom.objsql.util.WordUtil;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -60,7 +60,7 @@ public final class Tables {
         if (!StringUtil.isBlank(domainModel.tableName())) {
             return domainModel.tableName();
         } else {
-            return WordUtil.tableize(baseClass.getSimpleName());
+            return Inflector.getInstance().tableize(baseClass.getSimpleName());
         }
     }
 
@@ -126,12 +126,12 @@ public final class Tables {
             Column column = field.getDeclaredAnnotation(Column.class);
 
             if (column != null) {
-                if (!WordUtil.isEmpty(column.name())) {
+                if (!StringUtil.isEmpty(column.name())) {
                     return column.name();
                 }
             }
 
-            return WordUtil.underscore(field.getName());
+            return Inflector.getInstance().underscore(field.getName());
         } catch (NoSuchFieldException ex) {
             throw new DomainModelException(ex.getMessage(), ex);
         }

@@ -23,8 +23,8 @@ import com.github.braisdom.objsql.annotations.Transient;
 import com.github.braisdom.objsql.reflection.ClassUtils;
 import com.github.braisdom.objsql.reflection.PropertyUtils;
 import com.github.braisdom.objsql.transition.ColumnTransition;
+import com.github.braisdom.objsql.util.Inflector;
 import com.github.braisdom.objsql.util.StringUtil;
-import com.github.braisdom.objsql.util.WordUtil;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -207,12 +207,12 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
             Field field = domainModelClass.getDeclaredField(fieldName);
 
             if (field.getName().equals(domainModel.primaryFieldName())
-                    && !WordUtil.isEmpty(domainModel.primaryKeyDefaultValue())) {
+                    && !StringUtil.isEmpty(domainModel.primaryKeyDefaultValue())) {
                 return Optional.of(domainModel.primaryKeyDefaultValue());
             }
 
             Column column = field.getAnnotation(Column.class);
-            if (column != null && !WordUtil.isEmpty(column.defaultValue())) {
+            if (column != null && !StringUtil.isEmpty(column.defaultValue())) {
                 return Optional.of(column.defaultValue());
             }
             return Optional.empty();
@@ -228,12 +228,12 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
             Field field = domainModelClass.getDeclaredField(fieldName);
 
             if (field.getName().equals(domainModel.primaryFieldName())) {
-                return !WordUtil.isEmpty(domainModel.primaryKeyDefaultValue());
+                return !StringUtil.isEmpty(domainModel.primaryKeyDefaultValue());
             }
 
             Column column = field.getAnnotation(Column.class);
             if (column != null) {
-                return !WordUtil.isEmpty(column.defaultValue());
+                return !StringUtil.isEmpty(column.defaultValue());
             }
             return false;
         } catch (NoSuchFieldException ex) {
@@ -339,7 +339,7 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
         if (column != null && !StringUtil.isBlank(column.name())) {
             return column.name();
         } else {
-            return WordUtil.underscore(field.getName());
+            return Inflector.getInstance().underscore(field.getName());
         }
     }
 
@@ -368,17 +368,17 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
 
             if (primaryKey != null) {
                 String columnName = StringUtil.isBlank(primaryKey.name())
-                        ? WordUtil.underscore(field.getName()) : primaryKey.name();
+                        ? Inflector.getInstance().underscore(field.getName()) : primaryKey.name();
                 columnToField.put(columnName, field);
                 columnToField.put(columnName.toUpperCase(), field);
             } else if (column != null) {
                 String columnName = StringUtil.isBlank(column.name())
-                        ? WordUtil.underscore(field.getName()) : column.name();
+                        ? Inflector.getInstance().underscore(field.getName()) : column.name();
                 columnToField.put(columnName.toUpperCase(), field);
                 columnToField.put(columnName, field);
             } else {
-                columnToField.put(WordUtil.underscore(field.getName()), field);
-                columnToField.put(WordUtil.underscore(field.getName()).toUpperCase(), field);
+                columnToField.put(Inflector.getInstance().underscore(field.getName()), field);
+                columnToField.put(Inflector.getInstance().underscore(field.getName()).toUpperCase(), field);
             }
         });
     }

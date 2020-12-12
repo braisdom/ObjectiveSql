@@ -2,7 +2,7 @@ package com.github.braisdom.objsql.example;
 
 import com.github.braisdom.objsql.ConnectionFactory;
 import com.github.braisdom.objsql.Databases;
-import com.github.braisdom.objsql.util.WordUtil;
+import com.github.braisdom.objsql.util.StringUtil;
 import org.junit.Before;
 
 import java.io.File;
@@ -42,8 +42,9 @@ public class SQLiteExample {
         SQLFile sqlFile = new SQLFile("/sqlite.sql");
 
         for(String sql : sqlFile.getSqls()){
-            if(!WordUtil.isEmpty(sql))
+            if(!StringUtil.isEmpty(sql)) {
                 Databases.execute(sql);
+            }
         }
     }
 

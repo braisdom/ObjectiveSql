@@ -4,7 +4,7 @@ import com.github.braisdom.objsql.Query;
 import com.github.braisdom.objsql.Tables;
 import com.github.braisdom.objsql.annotations.Queryable;
 import com.github.braisdom.objsql.relation.Relationship;
-import com.github.braisdom.objsql.util.WordUtil;
+import com.github.braisdom.objsql.util.Inflector;
 import com.sun.tools.javac.code.Flags;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
@@ -27,7 +27,7 @@ public class QueryMethodCodeGenerator extends DomainModelProcessor {
 
         TreeMaker treeMaker = aptBuilder.getTreeMaker();
         boolean returnsMany = annotationValues.getAnnotationValue(Queryable.class).many();
-        String methodName = WordUtil.camelize("queryBy_" + field.getName(), true);
+        String methodName = Inflector.getInstance().camelize("queryBy_" + field.getName(), true);
 
         MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
         StatementBuilder statementBuilder = aptBuilder.createStatementBuilder();

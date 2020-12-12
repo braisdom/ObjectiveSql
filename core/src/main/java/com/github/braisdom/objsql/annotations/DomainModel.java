@@ -53,7 +53,7 @@ public @interface DomainModel {
      *
      * @return a table name customized.
      *
-     * @see com.github.braisdom.objsql.util.WordUtil#tableize(String)
+     * @see com.github.braisdom.objsql.util.Inflector#tableize(String)
      */
     String tableName() default "";
 

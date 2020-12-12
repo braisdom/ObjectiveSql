@@ -17,7 +17,7 @@
 package com.github.braisdom.objsql.reflection;
 
 import com.github.braisdom.objsql.relation.RelationalException;
-import com.github.braisdom.objsql.util.WordUtil;
+import com.github.braisdom.objsql.util.Inflector;
 import org.apache.commons.beanutils.BeanUtilsBean;
 import org.apache.commons.beanutils.ConvertUtilsBean;
 
@@ -196,7 +196,8 @@ public final class PropertyUtils {
         }
 
         for (final Map.Entry<String, ? extends Object> entry : properties.entrySet()) {
-            final String name = underline ? WordUtil.camelize(entry.getKey(), true) : entry.getKey();
+            final String name = underline ? Inflector.getInstance().camelize(entry.getKey(),
+                    true) : entry.getKey();
             if (name == null) {
                 continue;
             }

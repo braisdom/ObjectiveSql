@@ -1,6 +1,6 @@
 package com.github.braisdom.objsql.sample;
 
-import com.github.braisdom.objsql.util.WordUtil;
+import com.github.braisdom.objsql.util.Inflector;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,7 +37,7 @@ public class ResponseObject {
 
     public static ResponseObject createFailureResponse(Object result) {
         Map<String, Object> resultMap = new HashMap<>();
-        resultMap.put(WordUtil.camelize(result.getClass().getSimpleName(), true), result);
+        resultMap.put(Inflector.getInstance().camelize(result.getClass().getSimpleName(), true), result);
         return new ResponseObject(STATUS_SUCC, resultMap);
     }
 }
