@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -82,6 +83,21 @@ public class DomainModelCodeGeneratorTest {
 
         Assert.assertNotNull(methodMap.get("createPersistence"));
         Assert.assertEquals(Persistence.class, methodMap.get("createPersistence").getReturnType());
+
+        Assert.assertNotNull(methodMap.get("save"));
+        Assert.assertEquals(1, methodMap.get("save").getParameterCount());
+        Assert.assertEquals(boolean.class, methodMap.get("save").getParameters()[0].getType());
+        Assert.assertEquals(TestClass.class, methodMap.get("save").getReturnType());
+        Assert.assertEquals(1, methodMap.get("save").getExceptionTypes().length);
+        Assert.assertEquals(SQLException.class, methodMap.get("save").getExceptionTypes()[0]);
+
+        Assert.assertNotNull(methodMap.get("create"));
+        Assert.assertEquals(2, methodMap.get("create").getParameterCount());
+        Assert.assertEquals(TestClass.class, methodMap.get("create").getParameters()[0].getType());
+        Assert.assertEquals(boolean.class, methodMap.get("create").getParameters()[1].getType());
+        Assert.assertEquals(TestClass.class, methodMap.get("create").getReturnType());
+        Assert.assertEquals(1, methodMap.get("create").getExceptionTypes().length);
+        Assert.assertEquals(SQLException.class, methodMap.get("create").getExceptionTypes()[0]);
     }
 
     @Test
