@@ -33,6 +33,13 @@
         </dependency>
 
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>
+            <version>2.3.6.RELEASE</version>
+        </dependency>
+
+
+        <dependency>
             <groupId>com.github.braisdom</groupId>
             <artifactId>objective-sql</artifactId>
             <version>${core.version}</version>
