@@ -78,26 +78,29 @@ public class DomainModelCodeGeneratorTest {
     }
 
     @Test
-    public void testPersistenceMethod() {
+    public void testPersistenceMethod() throws NoSuchMethodException {
         Map<String, Method> methodMap = getMethodMaps(TestClass.class);
 
         Assert.assertNotNull(methodMap.get("createPersistence"));
         Assert.assertEquals(Persistence.class, methodMap.get("createPersistence").getReturnType());
 
-        Assert.assertNotNull(methodMap.get("save"));
-        Assert.assertEquals(1, methodMap.get("save").getParameterCount());
-        Assert.assertEquals(boolean.class, methodMap.get("save").getParameters()[0].getType());
-        Assert.assertEquals(TestClass.class, methodMap.get("save").getReturnType());
-        Assert.assertEquals(1, methodMap.get("save").getExceptionTypes().length);
-        Assert.assertEquals(SQLException.class, methodMap.get("save").getExceptionTypes()[0]);
+        Method saveMethod = TestClass.class.getMethod("save", boolean.class);
+        Assert.assertNotNull(saveMethod);
+        Assert.assertEquals(TestClass.class, saveMethod.getReturnType());
+        Assert.assertEquals(1, saveMethod.getExceptionTypes().length);
+        Assert.assertEquals(SQLException.class, saveMethod.getExceptionTypes()[0]);
 
-        Assert.assertNotNull(methodMap.get("create"));
-        Assert.assertEquals(2, methodMap.get("create").getParameterCount());
-        Assert.assertEquals(TestClass.class, methodMap.get("create").getParameters()[0].getType());
-        Assert.assertEquals(boolean.class, methodMap.get("create").getParameters()[1].getType());
-        Assert.assertEquals(TestClass.class, methodMap.get("create").getReturnType());
-        Assert.assertEquals(1, methodMap.get("create").getExceptionTypes().length);
-        Assert.assertEquals(SQLException.class, methodMap.get("create").getExceptionTypes()[0]);
+        Method createMethod = TestClass.class.getMethod("create", TestClass.class, boolean.class);
+        Assert.assertNotNull(createMethod);
+        Assert.assertEquals(TestClass.class, createMethod.getReturnType());
+        Assert.assertEquals(1, createMethod.getExceptionTypes().length);
+        Assert.assertEquals(SQLException.class, createMethod.getExceptionTypes()[0]);
+
+        Method createArrayMethod = TestClass.class.getMethod("create", TestClass[].class, boolean.class);
+        Assert.assertNotNull(createArrayMethod);
+        Assert.assertEquals(int[].class, createArrayMethod.getReturnType());
+        Assert.assertEquals(1, createArrayMethod.getExceptionTypes().length);
+        Assert.assertEquals(SQLException.class, createArrayMethod.getExceptionTypes()[0]);
     }
 
     @Test
