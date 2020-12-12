@@ -16,8 +16,6 @@
  */
 package com.github.braisdom.objsql.pagination;
 
-import java.util.List;
-
 /**
  * A collection of paged records which carries pagination info.
  * @param <T>
