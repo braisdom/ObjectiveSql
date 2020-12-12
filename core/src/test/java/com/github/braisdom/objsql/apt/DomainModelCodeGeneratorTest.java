@@ -1,31 +1,95 @@
 package com.github.braisdom.objsql.apt;
 
+import com.github.braisdom.objsql.Persistence;
+import com.github.braisdom.objsql.Query;
 import com.github.braisdom.objsql.annotations.DomainModel;
-import com.github.braisdom.objsql.util.Inflector;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
+
 public class DomainModelCodeGeneratorTest {
 
-    @Test
-    public void testSetterGetter() {
-        TestClass clazz = new TestClass();
-        clazz.setName("test");
-        Assert.assertEquals("test", clazz.getName());
-        Assert.assertEquals("test", clazz.name);
+    private Map<String, Method> getMethodMaps(Class clazz) {
+        Method[] methods = clazz.getMethods();
+        Map<String, Method> methodMap = new HashMap<>();
+        for(Method method : methods) {
+            methodMap.put(method.getName(), method);
+        }
+        return methodMap;
+    }
+
+    private Map<String, Field> getFieldMaps(Class clazz) {
+        Field[] fields = clazz.getDeclaredFields();
+        Map<String, Field> methodMap = new HashMap<>();
+        for(Field field : fields) {
+            methodMap.put(field.getName(), field);
+        }
+        return methodMap;
     }
 
     @Test
-    public void testCustomizedPrimary() {
-        TestClass2 clazz = new TestClass2();
-        clazz.setId2(1);
-        Assert.assertEquals(new Integer(1), clazz.id2);
+    public void testPrimaryKey() {
+        Map<String, Method> methodMap = getMethodMaps(TestClass.class);
+        Map<String, Field> fieldMapMap = getFieldMaps(TestClass.class);
+
+        Map<String, Method> methodMap2 = getMethodMaps(TestClass2.class);
+        Map<String, Field> fieldMapMap2 = getFieldMaps(TestClass2.class);
+
+        Assert.assertNotNull(methodMap.get("setId"));
+        Assert.assertNotNull(methodMap2.get("setId2"));
+        Assert.assertNotNull(methodMap.get("getId"));
+        Assert.assertNotNull(methodMap2.get("getId2"));
+        Assert.assertNotNull(fieldMapMap.get("id"));
+        Assert.assertNotNull(fieldMapMap2.get("id2"));
+
+        Assert.assertEquals(TestClass.class, methodMap.get("setId").getReturnType());
+        Assert.assertEquals(1, methodMap.get("setId").getParameterCount());
+        Assert.assertEquals(Long.class, methodMap.get("setId").getParameters()[0].getType());
+
+        Assert.assertEquals(TestClass2.class, methodMap2.get("setId2").getReturnType());
+        Assert.assertEquals(1, methodMap2.get("setId2").getParameterCount());
+        Assert.assertEquals(Integer.class, methodMap2.get("setId2").getParameters()[0].getType());
+
+        Assert.assertEquals(Long.class, methodMap.get("getId").getReturnType());
+        Assert.assertEquals(Integer.class, methodMap2.get("getId2").getReturnType());
+    }
+
+    @Test
+    public void testSetterGetter() {
+        Map<String, Method> methodMap = getMethodMaps(TestClass.class);
+
+        Assert.assertNotNull(methodMap.get("getName"));
+        Assert.assertNotNull(methodMap.get("setName"));
+
+        Assert.assertEquals(TestClass.class, methodMap.get("setName").getReturnType());
+        Assert.assertEquals(1, methodMap.get("setName").getParameterCount());
+        Assert.assertEquals(String.class, methodMap.get("setName").getParameters()[0].getType());
     }
 
     @Test
     public void testTableName() {
-        Assert.assertEquals("test_classes", Inflector.getInstance().tableize("TestPerson"));
-        Assert.assertEquals("test_class", TestClass.TABLE_NAME);
+        Assert.assertEquals("test_classes", TestClass.TABLE_NAME);
+        Assert.assertEquals("test_class2s", TestClass2.TABLE_NAME);
+    }
+
+    @Test
+    public void testPersistenceMethod() {
+        Map<String, Method> methodMap = getMethodMaps(TestClass.class);
+
+        Assert.assertNotNull(methodMap.get("createPersistence"));
+        Assert.assertEquals(Persistence.class, methodMap.get("createPersistence").getReturnType());
+    }
+
+    @Test
+    public void testQueryMethod() {
+        Map<String, Method> methodMap = getMethodMaps(TestClass.class);
+
+        Assert.assertNotNull(methodMap.get("createQuery"));
+        Assert.assertEquals(Query.class, methodMap.get("createQuery").getReturnType());
     }
 
     @DomainModel
@@ -35,6 +99,5 @@ public class DomainModelCodeGeneratorTest {
 
     @DomainModel(primaryClass = Integer.class, primaryFieldName = "id2")
     private static class TestClass2 {
-        private String name;
     }
 }
