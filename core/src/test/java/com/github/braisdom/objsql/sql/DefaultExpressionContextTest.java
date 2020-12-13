@@ -42,7 +42,7 @@ public class DefaultExpressionContextTest {
         Assert.assertEquals("test", context2.quoteColumn("test"));
 
         Assert.assertEquals("'test'", context.quoteString("test"));
-        Assert.assertEquals("'test'", context1.quoteColumn("test"));
-        Assert.assertEquals("'test'", context2.quoteColumn("test"));
+        Assert.assertEquals("\"test\"", context1.quoteColumn("test"));
+        Assert.assertEquals("test", context2.quoteColumn("test"));
     }
 }
