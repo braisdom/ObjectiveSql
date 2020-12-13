@@ -51,17 +51,17 @@ public class DefaultQuoter implements Quoter {
         return String.format("'%s'", value);
     }
 
-    protected String quoteName(String databaseProductName, String item) {
+    protected String quoteName(String databaseProductName, String name) {
         if (MySQL.equals(databaseProductName)) {
-            return String.format("`%s`", item);
+            return String.format("`%s`", name);
         } else if (PostgreSQL.equals(databaseProductName)) {
-            return String.format("\"%s\"", item);
+            return String.format("\"%s\"", name);
         } else if(Oracle.equals(databaseProductName)) {
-            return String.format("\"%s\"", item.toUpperCase());
+            return String.format("\"%s\"", name.toUpperCase());
         } else if(HSQLDB.equals(databaseProductName)) {
-            return String.valueOf(item);
+            return String.valueOf(name);
         }
 
-        return String.format("\"%s\"", item);
+        return String.format("\"%s\"", name);
     }
 }
