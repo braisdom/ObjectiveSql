@@ -2,6 +2,7 @@ package com.github.braisdom.objsql.apt;
 
 import com.github.braisdom.objsql.Persistence;
 import com.github.braisdom.objsql.Query;
+import com.github.braisdom.objsql.Validator;
 import com.github.braisdom.objsql.annotations.DomainModel;
 import com.github.braisdom.objsql.pagination.Page;
 import com.github.braisdom.objsql.pagination.PagedList;
@@ -191,8 +192,30 @@ public class DomainModelCodeGeneratorTest {
         Assert.assertEquals(SQLException.class, pagedQueryMethod.getExceptionTypes()[0]);
     }
 
-    public void testOthers() {
-        
+    @Test
+    public void testOthers() throws NoSuchMethodException, NoSuchFieldException {
+        Method validateMethod = TestClass.class.getMethod("validate");
+        Assert.assertNotNull(validateMethod);
+        Assert.assertEquals(Validator.Violation[].class, validateMethod.getReturnType());
+
+        Method newInstanceFromMethod = TestClass.class.getMethod("newInstanceFrom", Map.class, boolean.class);
+        Assert.assertNotNull(newInstanceFromMethod);
+        Assert.assertEquals(TestClass.class, newInstanceFromMethod.getReturnType());
+
+        Method newInstanceFrom2Method = TestClass.class.getMethod("newInstanceFrom", Map.class);
+        Assert.assertNotNull(newInstanceFrom2Method);
+        Assert.assertEquals(TestClass.class, newInstanceFrom2Method.getReturnType());
+
+        Assert.assertNotNull(TestClass.class.getDeclaredField("rawAttributes"));
+        Method getRawAttributesMethod = TestClass.class.getMethod("getRawAttributes");
+        Assert.assertNotNull(getRawAttributesMethod);
+        Assert.assertEquals(Map.class, getRawAttributesMethod.getReturnType());
+    }
+
+    @Test
+    public void testTableClas() throws NoSuchFieldException {
+        Assert.assertNotNull(TestClass.Table.class.getDeclaredField("all"));
+        Assert.assertNotNull(TestClass.Table.class.getDeclaredField("name"));
     }
 
     @DomainModel
