@@ -191,6 +191,10 @@ public class DomainModelCodeGeneratorTest {
         Assert.assertEquals(SQLException.class, pagedQueryMethod.getExceptionTypes()[0]);
     }
 
+    public void testOthers() {
+        
+    }
+
     @DomainModel
     private static class TestClass {
         private String name;
