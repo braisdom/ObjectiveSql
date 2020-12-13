@@ -32,7 +32,6 @@ public class DefaultPaginator<T> implements Paginator<T> {
     @Override
     public PagedList<T> paginate(Page page, Paginatable paginatable, DomainModelDescriptor modelDescriptor,
                                  Relationship... relationships) throws SQLException {
-
         return Databases.execute(((connection, sqlExecutor) -> {
             DatabaseMetaData databaseMetaData = connection.getMetaData();
             DatabaseType databaseType = DatabaseType.create(databaseMetaData.getDatabaseProductName(),
