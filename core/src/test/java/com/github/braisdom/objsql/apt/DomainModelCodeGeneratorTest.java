@@ -189,12 +189,6 @@ public class DomainModelCodeGeneratorTest {
         Assert.assertEquals(PagedList.class, pagedQueryMethod.getReturnType());
         Assert.assertEquals(1, pagedQueryMethod.getExceptionTypes().length);
         Assert.assertEquals(SQLException.class, pagedQueryMethod.getExceptionTypes()[0]);
-
-        Method pagedQueryAllMethod = TestClass.class.getMethod("pagedQuery", Page.class, String.class, Object[].class);
-        Assert.assertNotNull(pagedQueryAllMethod);
-        Assert.assertEquals(PagedList.class, pagedQueryAllMethod.getReturnType());
-        Assert.assertEquals(1, pagedQueryAllMethod.getExceptionTypes().length);
-        Assert.assertEquals(SQLException.class, pagedQueryAllMethod.getExceptionTypes()[0]);
     }
 
     @DomainModel
