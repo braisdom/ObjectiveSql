@@ -24,6 +24,7 @@ package com.github.braisdom.objsql.javac;
 import com.github.braisdom.objsql.apt.APTBuilder;
 import com.github.braisdom.objsql.sql.Expression;
 import com.github.braisdom.objsql.sql.LogicalExpression;
+import com.github.braisdom.objsql.sql.expression.ParenExpression;
 import com.sun.tools.javac.tree.JCTree.JCBinary;
 import com.sun.tools.javac.tree.JCTree.JCExpression;
 import com.sun.tools.javac.tree.JCTree.JCParens;
@@ -1160,16 +1161,54 @@ public class JCBinarys {
 
     // ==================== for Expression OR operation =============
     public static LogicalExpression or(LogicalExpression lhs, LogicalExpression rhs) {
-        return lhs.and(rhs);
+        return lhs.or(rhs);
     }
 
     public static boolean or(boolean lhs, boolean rhs) {
         return lhs || rhs;
     }
 
+    // ==================== for parens =============
+
+    public static boolean parens(boolean expValue) {
+        return expValue;
+    }
+
+    public static byte parens(byte expValue) {
+        return expValue;
+    }
+
+    public static short parens(short expValue) {
+        return expValue;
+    }
+
+    public static int parens(int expValue) {
+        return expValue;
+    }
+
+    public static long parens(long expValue) {
+        return expValue;
+    }
+
+    public static float parens(float expValue) {
+        return expValue;
+    }
+
+    public static double parens(double expValue) {
+        return expValue;
+    }
+
+    public static Expression parens(Expression expValue) {
+        return new ParenExpression(expValue);
+    }
+
     public static JCExpression createOperatorExpr(APTBuilder aptBuilder, JCBinary init) {
         String operator = init.getTag().name();
         return createOperatorExpr(aptBuilder, operator, init.lhs, init.rhs);
+    }
+
+    public static JCExpression createParensOperatorExpr(APTBuilder aptBuilder, JCBinary expr) {
+        return aptBuilder.staticMethodCall(JCBinarys.class, "parens", expr);
     }
 
     private static JCExpression createOperatorExpr(APTBuilder aptBuilder, String operator,

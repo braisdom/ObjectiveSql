@@ -178,7 +178,7 @@ public class ComplexSQLExample extends SQLiteExample {
         }
 
         if(filteredQuantity != 0) {
-            eternalExpression = eternalExpression.and(orderTable > filteredQuantity);
+            eternalExpression = eternalExpression.and(orderTable.quantity > filteredQuantity);
         }
 
         select.project((sum(orderTable.amount) / sum(orderTable.quantity) * 100).as("unit_amount"))

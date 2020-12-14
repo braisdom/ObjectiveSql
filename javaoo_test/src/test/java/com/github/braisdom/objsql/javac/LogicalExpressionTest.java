@@ -22,15 +22,15 @@ public class LogicalExpressionTest {
         LogicalExpression expression4 = $(1) > 1 && $(2) > 2;
 
         LogicalExpression expression5 = $(1) < 1;
-        LogicalExpression expression6 = $(1) < 1 && $(2) < 2;
+        LogicalExpression expression6 = $(1) < 1 || $(2) < 2;
 
-        Assertions.assertEquals(expression1.toSql(mysql), "(1 = 1)");
-        Assertions.assertEquals(expression2.toSql(mysql), "((1 = 1) AND (2 = 2))");
+        Assertions.assertEquals("1 = 1", expression1.toSql(mysql));
+        Assertions.assertEquals("1 = 1 AND 2 = 2", expression2.toSql(mysql));
 
-        Assertions.assertEquals(expression3.toSql(mysql), "(1 > 1)");
-        Assertions.assertEquals(expression4.toSql(mysql), "((1 > 1) AND (2 > 2))");
+        Assertions.assertEquals("1 > 1", expression3.toSql(mysql));
+        Assertions.assertEquals("1 > 1 AND 2 > 2", expression4.toSql(mysql));
 
-        Assertions.assertEquals(expression5.toSql(mysql), "(1 < 1)");
-        Assertions.assertEquals(expression6.toSql(mysql), "((1 < 1) AND (2 < 2))");
+        Assertions.assertEquals("1 < 1", expression5.toSql(mysql), "(1 < 1)");
+        Assertions.assertEquals("1 < 1 OR 2 < 2", expression6.toSql(mysql));
     }
 }

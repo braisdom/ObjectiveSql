@@ -33,14 +33,14 @@ public class ComparableExpressionText {
         boolean integerPlus10 = (short)1 < 1;
         boolean integerPlus11 = (byte)1 < 1;
 
-        Assertions.assertEquals(numberPlus.toSql(mysql), "(1 < 1)");
-        Assertions.assertEquals(numberPlus2.toSql(mysql), "(1 < ((1 + 1)))");
-        Assertions.assertEquals(numberPlus3.toSql(mysql), "(1 < 1)");
-        Assertions.assertEquals(numberPlus4.toSql(mysql), "(1 < 1)");
-        Assertions.assertEquals(numberPlus5.toSql(mysql), "(1 < 1)");
-        Assertions.assertEquals(numberPlus6.toSql(mysql), "(1 < 1)");
-        Assertions.assertEquals(numberPlus7.toSql(mysql), "(1 < 1.2)");
-        Assertions.assertEquals(numberPlus8.toSql(mysql), "(1 < 1.2)");
+        Assertions.assertEquals("1 < 1", numberPlus.toSql(mysql));
+        Assertions.assertEquals("1 < (1 + 1)", numberPlus2.toSql(mysql));
+        Assertions.assertEquals("1 < 1",numberPlus3.toSql(mysql));
+        Assertions.assertEquals("1 < 1",numberPlus4.toSql(mysql));
+        Assertions.assertEquals("1 < 1",numberPlus5.toSql(mysql));
+        Assertions.assertEquals("1 < 1",numberPlus6.toSql(mysql));
+        Assertions.assertEquals("1 < 1.2", numberPlus7.toSql(mysql));
+        Assertions.assertEquals("1 < 1.2", numberPlus8.toSql(mysql));
 
         Assertions.assertFalse(integerPlus);
         Assertions.assertFalse(integerPlus2);
@@ -79,14 +79,14 @@ public class ComparableExpressionText {
         boolean integerPlus10 = (short)1 > 1;
         boolean integerPlus11 = (byte)1 > 1;
 
-        Assertions.assertEquals(numberPlus.toSql(mysql), "(1 > 1)");
-        Assertions.assertEquals(numberPlus2.toSql(mysql), "(1 > ((1 + 1)))");
-        Assertions.assertEquals(numberPlus3.toSql(mysql), "(1 > 1)");
-        Assertions.assertEquals(numberPlus4.toSql(mysql), "(1 > 1)");
-        Assertions.assertEquals(numberPlus5.toSql(mysql), "(1 > 1)");
-        Assertions.assertEquals(numberPlus6.toSql(mysql), "(1 > 1)");
-        Assertions.assertEquals(numberPlus7.toSql(mysql), "(1 > 1.2)");
-        Assertions.assertEquals(numberPlus8.toSql(mysql), "(1 > 1.2)");
+        Assertions.assertEquals("1 > 1", numberPlus.toSql(mysql));
+        Assertions.assertEquals("1 > (1 + 1)", numberPlus2.toSql(mysql));
+        Assertions.assertEquals("1 > 1", numberPlus3.toSql(mysql));
+        Assertions.assertEquals("1 > 1", numberPlus4.toSql(mysql));
+        Assertions.assertEquals("1 > 1", numberPlus5.toSql(mysql));
+        Assertions.assertEquals("1 > 1", numberPlus6.toSql(mysql));
+        Assertions.assertEquals("1 > 1.2", numberPlus7.toSql(mysql));
+        Assertions.assertEquals("1 > 1.2", numberPlus8.toSql(mysql));
 
         Assertions.assertFalse(integerPlus);
         Assertions.assertFalse(integerPlus2);
@@ -125,14 +125,14 @@ public class ComparableExpressionText {
         boolean integerPlus10 = (short)1 <= 1;
         boolean integerPlus11 = (byte)1 <= 1;
 
-        Assertions.assertEquals(numberPlus.toSql(mysql), "(1 <= 1)");
-        Assertions.assertEquals(numberPlus2.toSql(mysql), "(1 <= ((1 + 1)))");
-        Assertions.assertEquals(numberPlus3.toSql(mysql), "(1 <= 1)");
-        Assertions.assertEquals(numberPlus4.toSql(mysql), "(1 <= 1)");
-        Assertions.assertEquals(numberPlus5.toSql(mysql), "(1 <= 1)");
-        Assertions.assertEquals(numberPlus6.toSql(mysql), "(1 <= 1)");
-        Assertions.assertEquals(numberPlus7.toSql(mysql), "(1 <= 1.2)");
-        Assertions.assertEquals(numberPlus8.toSql(mysql), "(1 <= 1.2)");
+        Assertions.assertEquals("1 <= 1", numberPlus.toSql(mysql));
+        Assertions.assertEquals("1 <= (1 + 1)", numberPlus2.toSql(mysql));
+        Assertions.assertEquals("1 <= 1", numberPlus3.toSql(mysql));
+        Assertions.assertEquals("1 <= 1", numberPlus4.toSql(mysql));
+        Assertions.assertEquals("1 <= 1", numberPlus5.toSql(mysql));
+        Assertions.assertEquals("1 <= 1", numberPlus6.toSql(mysql));
+        Assertions.assertEquals("1 <= 1.2", numberPlus7.toSql(mysql));
+        Assertions.assertEquals("1 <= 1.2", numberPlus8.toSql(mysql));
 
         Assertions.assertTrue(integerPlus);
         Assertions.assertTrue(integerPlus2);
@@ -171,14 +171,14 @@ public class ComparableExpressionText {
         boolean integerPlus10 = (short)1 >= 1;
         boolean integerPlus11 = (byte)1 >= 1;
 
-        Assertions.assertEquals(numberPlus.toSql(mysql), "(1 >= 1)");
-        Assertions.assertEquals(numberPlus2.toSql(mysql), "(1 >= ((1 + 1)))");
-        Assertions.assertEquals(numberPlus3.toSql(mysql), "(1 >= 1)");
-        Assertions.assertEquals(numberPlus4.toSql(mysql), "(1 >= 1)");
-        Assertions.assertEquals(numberPlus5.toSql(mysql), "(1 >= 1)");
-        Assertions.assertEquals(numberPlus6.toSql(mysql), "(1 >= 1)");
-        Assertions.assertEquals(numberPlus7.toSql(mysql), "(1 >= 1.2)");
-        Assertions.assertEquals(numberPlus8.toSql(mysql), "(1 >= 1.2)");
+        Assertions.assertEquals("1 >= 1", numberPlus.toSql(mysql));
+        Assertions.assertEquals("1 >= (1 + 1)", numberPlus2.toSql(mysql));
+        Assertions.assertEquals("1 >= 1", numberPlus3.toSql(mysql));
+        Assertions.assertEquals("1 >= 1", numberPlus4.toSql(mysql));
+        Assertions.assertEquals("1 >= 1", numberPlus5.toSql(mysql));
+        Assertions.assertEquals("1 >= 1", numberPlus6.toSql(mysql));
+        Assertions.assertEquals("1 >= 1.2", numberPlus7.toSql(mysql));
+        Assertions.assertEquals("1 >= 1.2", numberPlus8.toSql(mysql));
 
         Assertions.assertTrue(integerPlus);
         Assertions.assertTrue(integerPlus2);

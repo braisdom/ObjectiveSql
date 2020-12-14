@@ -37,27 +37,27 @@ public abstract class AbstractExpression implements Expression {
 
     @Override
     public Expression plus(Expression expression) {
-        return new ParenExpression(new PolynaryExpression(PolynaryExpression.PLUS, this, expression));
+        return new PolynaryExpression(PolynaryExpression.PLUS, this, expression);
     }
 
     @Override
     public Expression minus(Expression expression) {
-        return new ParenExpression(new PolynaryExpression(PolynaryExpression.MINUS, this, expression));
+        return new PolynaryExpression(PolynaryExpression.MINUS, this, expression);
     }
 
     @Override
     public Expression times(Expression expression) {
-        return new ParenExpression(new PolynaryExpression(PolynaryExpression.MULTIPLY, this, expression));
+        return new PolynaryExpression(PolynaryExpression.MULTIPLY, this, expression);
     }
 
     @Override
     public Expression div(Expression expression) {
-        return new ParenExpression(new PolynaryExpression(PolynaryExpression.DIVIDE, this, expression));
+        return new PolynaryExpression(PolynaryExpression.DIVIDE, this, expression);
     }
 
     @Override
     public Expression rem(Expression expression) {
-        return new ParenExpression(new PolynaryExpression(PolynaryExpression.REM, this, expression));
+        return new PolynaryExpression(PolynaryExpression.REM, this, expression);
     }
 
     @Override

@@ -53,26 +53,6 @@ public class PolynaryExpression extends AbstractExpression implements LogicalExp
     }
 
     @Override
-    public Expression plus(Expression Expression) {
-        throw new UnsupportedArithmeticalException("Polynary expression cannot be plused ");
-    }
-
-    @Override
-    public Expression minus(Expression Expression) {
-        throw new UnsupportedArithmeticalException("Polynary expression cannot be minused");
-    }
-
-    @Override
-    public Expression times(Expression Expression) {
-        throw new UnsupportedArithmeticalException("Polynary expression cannot be timesed");
-    }
-
-    @Override
-    public Expression div(Expression Expression) {
-        throw new UnsupportedArithmeticalException("Polynary expression cannot be dived");
-    }
-
-    @Override
     public LogicalExpression and(LogicalExpression logicalExpression) {
         return new PolynaryExpression(AND, this, logicalExpression);
     }
@@ -92,7 +72,7 @@ public class PolynaryExpression extends AbstractExpression implements LogicalExp
                     .map(FunctionWithThrowable
                             .castFunctionWithThrowable(
                                     expression -> expression.toSql(expressionContext))).toArray(String[]::new);
-            return String.format("(%s)", String.join(operator, expressionStrings));
+            return String.format("%s", String.join(operator, expressionStrings));
         } catch (SuppressedException ex) {
             if (ex.getCause() instanceof SQLSyntaxException) {
                 throw (SQLSyntaxException) ex.getCause();

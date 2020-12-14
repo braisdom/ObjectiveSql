@@ -103,7 +103,7 @@ public class JavaOOPlugin extends TreeScanner<Void, Void> implements Plugin {
             if (!isEqOrNe(jcBinary.getTag())) {
                 visitBinarySide(jcBinary.lhs);
                 visitBinarySide(jcBinary.rhs);
-                parens.expr = JCBinarys.createOperatorExpr(aptBuilder, jcBinary);
+                parens.expr = JCBinarys.createParensOperatorExpr(aptBuilder, jcBinary);
             }
         } else if (parens.expr instanceof JCParens) {
             visitParens((JCParens) parens.expr);
@@ -135,8 +135,9 @@ public class JavaOOPlugin extends TreeScanner<Void, Void> implements Plugin {
             if (arg instanceof JCBinary) {
                 JCBinary jcBinary = (JCBinary) arg;
                 if (!isEqOrNe(jcBinary.getTag())) {
-                    JCExpression expression = JCBinarys.createOperatorExpr(aptBuilder,
-                            jcBinary);
+                    visitBinarySide(jcBinary.lhs);
+                    visitBinarySide(jcBinary.rhs);
+                    JCExpression expression = JCBinarys.createOperatorExpr(aptBuilder, jcBinary);
                     newArgs = newArgs.append(expression);
                 } else {
                     newArgs = newArgs.append((JCExpression) arg);
@@ -159,10 +160,6 @@ public class JavaOOPlugin extends TreeScanner<Void, Void> implements Plugin {
         methodInvocation.args = newArgs.toList();
 
         return super.visitMethodInvocation(node, unused);
-    }
-
-    private void visitMethodInvocation() {
-
     }
 
     private boolean isEqOrNe(Tag tag) {

@@ -15,7 +15,7 @@ public class ArithmeticalExpressionTest {
     @Test
     public void testPlus() throws SQLSyntaxException {
         ExpressionContext mysql = new DefaultExpressionContext(DatabaseType.MySQL);
-        Expression numberPlus = ($(1) + $(1));
+        Expression numberPlus = ($(1) + $(1)) * 10;
         Expression numberPlus2 = $(1) + ($(1) + $(1));
         Expression numberPlus3 = $(1) + 1;
         Expression numberPlus4 = $(1) + 1L;
@@ -36,14 +36,14 @@ public class ArithmeticalExpressionTest {
         int integerPlus10 = (short)1 + 1;
         int integerPlus11 = (byte)1 + 1;
 
-        Assertions.assertEquals(numberPlus.toSql(mysql), "((((((1 + 1)) * 10)) * 10))");
-        Assertions.assertEquals(numberPlus2.toSql(mysql), "((1 + ((1 + 1))))");
-        Assertions.assertEquals(numberPlus3.toSql(mysql), "((1 + 1))");
-        Assertions.assertEquals(numberPlus4.toSql(mysql), "((1 + 1))");
-        Assertions.assertEquals(numberPlus5.toSql(mysql), "((1 + 1))");
-        Assertions.assertEquals(numberPlus6.toSql(mysql), "((1 + 1))");
-        Assertions.assertEquals(numberPlus7.toSql(mysql), "((1 + 1.2))");
-        Assertions.assertEquals(numberPlus8.toSql(mysql), "((1 + 1.2))");
+        Assertions.assertEquals("(1 + 1) * 10", numberPlus.toSql(mysql));
+        Assertions.assertEquals("1 + (1 + 1)",numberPlus2.toSql(mysql));
+        Assertions.assertEquals("1 + 1",  numberPlus3.toSql(mysql));
+        Assertions.assertEquals("1 + 1",  numberPlus4.toSql(mysql));
+        Assertions.assertEquals("1 + 1",  numberPlus5.toSql(mysql));
+        Assertions.assertEquals("1 + 1",  numberPlus6.toSql(mysql));
+        Assertions.assertEquals("1 + 1.2", numberPlus7.toSql(mysql));
+        Assertions.assertEquals("1 + 1.2", numberPlus8.toSql(mysql));
 
         Assertions.assertEquals(integerPlus, 2);
         Assertions.assertEquals(integerPlus2, 2);
@@ -82,14 +82,14 @@ public class ArithmeticalExpressionTest {
         int integerPlus10 = 1 - (short)1;
         int integerPlus11 = 1 - (byte)1;
 
-        Assertions.assertEquals(numberPlus.toSql(mysql), "((1 - 1))");
-        Assertions.assertEquals(numberPlus2.toSql(mysql), "((1 - ((1 + 1))))");
-        Assertions.assertEquals(numberPlus3.toSql(mysql), "((1 - 1))");
-        Assertions.assertEquals(numberPlus4.toSql(mysql), "((1 - 1))");
-        Assertions.assertEquals(numberPlus5.toSql(mysql), "((1 - 1))");
-        Assertions.assertEquals(numberPlus6.toSql(mysql), "((1 - 1))");
-        Assertions.assertEquals(numberPlus7.toSql(mysql), "((1 - 1.2))");
-        Assertions.assertEquals(numberPlus8.toSql(mysql), "((1 - 1.2))");
+        Assertions.assertEquals("(1 - 1)", numberPlus.toSql(mysql));
+        Assertions.assertEquals("1 - (1 + 1)", numberPlus2.toSql(mysql));
+        Assertions.assertEquals("1 - 1", numberPlus3.toSql(mysql));
+        Assertions.assertEquals("1 - 1", numberPlus4.toSql(mysql));
+        Assertions.assertEquals("1 - 1", numberPlus5.toSql(mysql));
+        Assertions.assertEquals("1 - 1", numberPlus6.toSql(mysql));
+        Assertions.assertEquals("1 - 1.2", numberPlus7.toSql(mysql));
+        Assertions.assertEquals("1 - 1.2", numberPlus8.toSql(mysql));
 
         Assertions.assertEquals(integerPlus, 0);
         Assertions.assertEquals(integerPlus2, 0);
@@ -128,14 +128,14 @@ public class ArithmeticalExpressionTest {
         int integerPlus10 = 1 * (short)1;
         int integerPlus11 = 1 * (byte)1;
 
-        Assertions.assertEquals(numberPlus.toSql(mysql), "((1 * 1))");
-        Assertions.assertEquals(numberPlus2.toSql(mysql), "((1 * ((1 + 1))))");
-        Assertions.assertEquals(numberPlus3.toSql(mysql), "((1 * 1))");
-        Assertions.assertEquals(numberPlus4.toSql(mysql), "((1 * 1))");
-        Assertions.assertEquals(numberPlus5.toSql(mysql), "((1 * 1))");
-        Assertions.assertEquals(numberPlus6.toSql(mysql), "((1 * 1))");
-        Assertions.assertEquals(numberPlus7.toSql(mysql), "((1 * 1.2))");
-        Assertions.assertEquals(numberPlus8.toSql(mysql), "((1 * 1.2))");
+        Assertions.assertEquals("1 * 1", numberPlus.toSql(mysql));
+        Assertions.assertEquals("1 * (1 + 1)", numberPlus2.toSql(mysql));
+        Assertions.assertEquals("1 * 1", numberPlus3.toSql(mysql));
+        Assertions.assertEquals("1 * 1", numberPlus4.toSql(mysql));
+        Assertions.assertEquals("1 * 1", numberPlus5.toSql(mysql));
+        Assertions.assertEquals("1 * 1", numberPlus6.toSql(mysql));
+        Assertions.assertEquals("1 * 1.2", numberPlus7.toSql(mysql));
+        Assertions.assertEquals("1 * 1.2", numberPlus8.toSql(mysql));
 
         Assertions.assertEquals(integerPlus, 1);
         Assertions.assertEquals(integerPlus2, 1);
@@ -174,14 +174,14 @@ public class ArithmeticalExpressionTest {
         int integerPlus10 = 1 / (short)1;
         int integerPlus11 = 1 / (byte)1;
 
-        Assertions.assertEquals(numberPlus.toSql(mysql), "((1 / 1))");
-        Assertions.assertEquals(numberPlus2.toSql(mysql), "((1 / ((1 + 1))))");
-        Assertions.assertEquals(numberPlus3.toSql(mysql), "((1 / 1))");
-        Assertions.assertEquals(numberPlus4.toSql(mysql), "((1 / 1))");
-        Assertions.assertEquals(numberPlus5.toSql(mysql), "((1 / 1))");
-        Assertions.assertEquals(numberPlus6.toSql(mysql), "((1 / 1))");
-        Assertions.assertEquals(numberPlus7.toSql(mysql), "((1 / 1.2))");
-        Assertions.assertEquals(numberPlus8.toSql(mysql), "((1 / 1.2))");
+        Assertions.assertEquals("1 / 1", numberPlus.toSql(mysql));
+        Assertions.assertEquals("1 / (1 + 1)", numberPlus2.toSql(mysql));
+        Assertions.assertEquals("1 / 1", numberPlus3.toSql(mysql));
+        Assertions.assertEquals("1 / 1", numberPlus4.toSql(mysql));
+        Assertions.assertEquals("1 / 1", numberPlus5.toSql(mysql));
+        Assertions.assertEquals("1 / 1", numberPlus6.toSql(mysql));
+        Assertions.assertEquals("1 / 1.2", numberPlus7.toSql(mysql));
+        Assertions.assertEquals("1 / 1.2", numberPlus8.toSql(mysql));
 
         Assertions.assertEquals(integerPlus, 1);
         Assertions.assertEquals(integerPlus2, 1);
@@ -220,14 +220,14 @@ public class ArithmeticalExpressionTest {
         int integerPlus10 = 1 % (short)1;
         int integerPlus11 = 1 % (byte)1;
 
-        Assertions.assertEquals(numberPlus.toSql(mysql), "((1 % 1))");
-        Assertions.assertEquals(numberPlus2.toSql(mysql), "((1 % ((1 + 1))))");
-        Assertions.assertEquals(numberPlus3.toSql(mysql), "((1 % 1))");
-        Assertions.assertEquals(numberPlus4.toSql(mysql), "((1 % 1))");
-        Assertions.assertEquals(numberPlus5.toSql(mysql), "((1 % 1))");
-        Assertions.assertEquals(numberPlus6.toSql(mysql), "((1 % 1))");
-        Assertions.assertEquals(numberPlus7.toSql(mysql), "((1 % 1.2))");
-        Assertions.assertEquals(numberPlus8.toSql(mysql), "((1 % 1.2))");
+        Assertions.assertEquals("1 % 1", numberPlus.toSql(mysql));
+        Assertions.assertEquals("1 % (1 + 1)", numberPlus2.toSql(mysql));
+        Assertions.assertEquals("1 % 1", numberPlus3.toSql(mysql));
+        Assertions.assertEquals("1 % 1", numberPlus4.toSql(mysql));
+        Assertions.assertEquals("1 % 1", numberPlus5.toSql(mysql));
+        Assertions.assertEquals("1 % 1", numberPlus6.toSql(mysql));
+        Assertions.assertEquals("1 % 1.2", numberPlus7.toSql(mysql));
+        Assertions.assertEquals("1 % 1.2", numberPlus8.toSql(mysql));
 
         Assertions.assertEquals(integerPlus, 0);
         Assertions.assertEquals(integerPlus2, 0);
@@ -254,24 +254,16 @@ public class ArithmeticalExpressionTest {
         Expression numberPlus7 = $(1) % 1.2f;
         Expression numberPlus8 = $(1) % 1.2d;
 
-        Assertions.assertTrue(numberPlus.toSql(mysql)
-                .equals(methodCall($(1) % $(1)).toSql(mysql)));
-        Assertions.assertTrue(numberPlus2.toSql(mysql)
-                .equals(methodCall($(1) % ($(1) + $(1))).toSql(mysql)));
-        Assertions.assertTrue(numberPlus3.toSql(mysql)
-                .equals(methodCall($(1) % 1).toSql(mysql)));
-        Assertions.assertTrue(numberPlus4.toSql(mysql)
-                .equals(methodCall($(1) % 1L).toSql(mysql)));
-        Assertions.assertTrue(numberPlus5.toSql(mysql)
-                .equals(methodCall($(1) % (byte)1).toSql(mysql)));
-        Assertions.assertTrue(numberPlus6.toSql(mysql)
-                .equals(methodCall($(1) % $(1)).toSql(mysql)));
-        Assertions.assertTrue(numberPlus7.toSql(mysql)
-                .equals(methodCall($(1) % 1.2f).toSql(mysql)));
-        Assertions.assertTrue(numberPlus8.toSql(mysql)
-                .equals(methodCall($(1) % 1.2d).toSql(mysql)));
+        Assertions.assertEquals(numberPlus.toSql(mysql), methodCall($(1) % $(1)).toSql(mysql));
+        Assertions.assertEquals(numberPlus2.toSql(mysql), methodCall($(1) % ($(1) + $(1))).toSql(mysql));
+        Assertions.assertEquals(numberPlus3.toSql(mysql), methodCall($(1) % 1).toSql(mysql));
+        Assertions.assertEquals(numberPlus4.toSql(mysql), methodCall($(1) % 1L).toSql(mysql));
+        Assertions.assertEquals(numberPlus5.toSql(mysql), methodCall($(1) % (byte)1).toSql(mysql));
+        Assertions.assertEquals(numberPlus6.toSql(mysql), methodCall($(1) % $(1)).toSql(mysql));
+        Assertions.assertEquals(numberPlus7.toSql(mysql), methodCall($(1) % 1.2f).toSql(mysql));
+        Assertions.assertEquals(numberPlus8.toSql(mysql), methodCall($(1) % 1.2d).toSql(mysql));
     }
-
+    
     private <T> T methodCall(T value) {
         return value;
     }

@@ -18,7 +18,7 @@ package com.github.braisdom.objsql.sql.expression;
 
 import com.github.braisdom.objsql.sql.*;
 
-public class ColumnExpression extends AbstractExpression implements LogicalExpression{
+public class ColumnExpression extends AbstractExpression implements LogicalExpression {
 
     private final Column column;
     private final Expression expression;
