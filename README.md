@@ -139,4 +139,4 @@ GROUP BY `T0`.`product_id`
 
 ### Job seeker
 
-本人正在寻找合适的工作机会，有这方面资源的，请加我微信：braisdom
+本人正在寻找合适的工作机会，工作地点为上海，有合适资源的，请加我微信详谈：braisdom
