@@ -109,7 +109,7 @@ Member.queryByName("demo", Member.HAS_MANY_ORDERS);
 Order.Table orderTable = Order.asTable();
 Select select = new Select();
 
-// Java can be to operator overloading in ObjectiveSQL
+// In ObjectiveSQL, Java operator can be overloaded
 select.project(sum(orderTable.amount) / sum(orderTable.quantity) * 100)
         .from(orderTable)
         .where(orderTable.quantity > 30 &&
