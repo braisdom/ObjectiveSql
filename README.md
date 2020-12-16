@@ -67,18 +67,13 @@ public class Member {
 
 ```java
 Member.create(newMember);
-Member.create(newMember, true); // Create a member without validating
-Member.create(Member.newInstanceFrom(memberHash));
 Member.create(new Member[]{newMember1, newMember2, newMember3}, false);
 
-Member.update(1L, newMember, true); // Update a member with primary key
-Member.update("name = 'Smith => Jackson'", "name = 'Alice'");
+Member.update(1L, newMember, true);
+Member.update("name = 'Smith => Jackson'", "name = ?", "Alice");
 
-Member.destroy(1L); // Delete a member with primary key
-Member.destroy("name = 'Mary'");
-
-// Execute SQL
-Member.execute(String.format("DELETE FROM %s WHERE name = 'Mary'", Member.TABLE_NAME));
+Member.destroy(1L);
+Member.destroy("name = ?", "Mary");
 ```
 
 #### Counting and querying
@@ -95,14 +90,13 @@ Member.queryAll();
 #### Paged querying
 
 ```java
-Page page = Page.create(0, 10);// Create a Page instance with current page and page size
+Page page = Page.create(0, 10);
 PagedList<Member> members = Member.pagedQueryAll(page, Member.HAS_MANY_ORDERS);
 ```
 
 #### Relation querying
 
 ```java
-// Querying objects with convenient methods, and it will carry the related objects
 Member.queryAll(Member.HAS_MANY_ORDERS);
 Member.queryByPrimary(1, Member.HAS_MANY_ORDERS);
 Member.queryByName("demo", Member.HAS_MANY_ORDERS);
@@ -112,10 +106,10 @@ Member.queryByName("demo", Member.HAS_MANY_ORDERS);
 ### Complex SQL programming
 
 ```java
-// SQL programming with Java syntax without losing the features of SQL syntax
 Order.Table orderTable = Order.asTable();
 Select select = new Select();
 
+// Java can be operator overloading in ObjectiveSQL
 select.project(sum(orderTable.amount) / sum(orderTable.quantity) * 100)
         .from(orderTable)
         .where(orderTable.quantity > 30 &&
@@ -124,10 +118,9 @@ select.project(sum(orderTable.amount) / sum(orderTable.quantity) * 100)
 ```
 
 ```sql
--- SQL syntax is the same as Java syntax
-SELECT ((((SUM(`T0`.`amount` ) / SUM(`T0`.`quantity` ) )) * 100))
+SELECT SUM(`T0`.`amount`) / SUM(`T0`.`quantity` * 100
 FROM `orders` AS `T0`
-WHERE ((`T0`.`quantity` > 30) AND 
+WHERE `T0`.`quantity` > 30 AND 
        `T0`.`sales_at` BETWEEN '2020-10-10 00:00:00' AND '2020-10-30 23:59:59')
 GROUP BY `T0`.`product_id`
 ```
