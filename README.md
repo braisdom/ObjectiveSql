@@ -45,7 +45,7 @@ Others: [MySQL](https://github.com/braisdom/ObjectiveSql/tree/master/examples/my
 
 ### Simple SQL programming without coding
 
-You just define a `JavaBean` with one annotation your `Class` has fully capabilities of featured database access
+> You just define a `JavaBean` with one annotation
 
 ```java
 @DomainModel
