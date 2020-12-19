@@ -128,7 +128,3 @@ GROUP BY `T0`.`product_id`
 
 - [English](https://github.com/braisdom/ObjectiveSql/wiki/ObjectiveSQL-Tutorial)
 - [Chinese(中文)](https://github.com/braisdom/ObjectiveSql/wiki/ObjectiveSQL-%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97)
-
-### Job seeker
-
-本人正在寻找合适的工作机会，工作地点为上海，有合适资源的，请加我微信详谈：braisdom
