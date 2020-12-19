@@ -45,8 +45,7 @@ Others: [MySQL](https://github.com/braisdom/ObjectiveSql/tree/master/examples/my
 
 ### Simple SQL programming without coding
 
-> You just define a `JavaBean` with one annotation
-
+> You define just a JavaBean with one annotation
 ```java
 @DomainModel
 public class Member {
