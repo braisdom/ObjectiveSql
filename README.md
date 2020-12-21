@@ -45,8 +45,7 @@ Others: [MySQL](https://github.com/braisdom/ObjectiveSql/tree/master/examples/my
 
 ### Simple SQL programming without coding
 
-> You just define a `JavaBean` with one annotation
-
+> You define just a JavaBean with one annotation
 ```java
 @DomainModel
 public class Member {
@@ -118,7 +117,7 @@ select.project(sum(orderTable.amount) / sum(orderTable.quantity) * 100)
 ```
 
 ```sql
-SELECT SUM(`T0`.`amount`) / SUM(`T0`.`quantity` * 100
+SELECT SUM(`T0`.`amount`) / SUM(`T0`.`quantity`) * 100
 FROM `orders` AS `T0`
 WHERE `T0`.`quantity` > 30 AND 
        `T0`.`sales_at` BETWEEN '2020-10-10 00:00:00' AND '2020-10-30 23:59:59')
@@ -129,7 +128,3 @@ GROUP BY `T0`.`product_id`
 
 - [English](https://github.com/braisdom/ObjectiveSql/wiki/ObjectiveSQL-Tutorial)
 - [Chinese(中文)](https://github.com/braisdom/ObjectiveSql/wiki/ObjectiveSQL-%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97)
-
-### Job seeker
-
-本人正在寻找合适的工作机会，工作地点为上海，有合适资源的，请加我微信详谈：braisdom
