@@ -34,7 +34,7 @@ import java.lang.annotation.Target;
 public @interface PrimaryKey {
 
     /**
-     * A name maps the column of table
+     * A name maps the column name of table
      * @return
      */
     String name() default Tables.DEFAULT_PRIMARY_KEY;
