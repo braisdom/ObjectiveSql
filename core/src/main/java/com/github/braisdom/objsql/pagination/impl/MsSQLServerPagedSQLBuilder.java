@@ -30,7 +30,7 @@ public class MsSQLServerPagedSQLBuilder implements PagedSQLBuilder {
             if (plainSelect.getOrderByElements() == null || plainSelect.getOrderByElements().size() == 0) {
                 OrderByElement orderByElement = new OrderByElement();
 
-                orderByElement.setExpression(new Column(modelDescriptor.getPrimaryKey().name()));
+                orderByElement.setExpression(new Column(modelDescriptor.getPrimaryKeyColumnName()));
                 orderByElement.setAsc(true);
 
                 plainSelect.setOrderByElements(Arrays.asList(orderByElement));

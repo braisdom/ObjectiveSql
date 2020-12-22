@@ -132,8 +132,8 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
 
     @Override
     public void setGeneratedKey(T bean, Object primaryKeyValue) {
-        Field primaryField = Tables.getPrimaryField(domainModelClass);
-        setFieldValue(bean, primaryField.getName(), primaryKeyValue);
+        String primaryKeyFieldName = Tables.getPrimaryKeyFieldName(domainModelClass);
+        setFieldValue(bean, primaryKeyFieldName, primaryKeyValue);
     }
 
     @Override
@@ -158,13 +158,14 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
     }
 
     @Override
-    public PrimaryKey getPrimaryKey() {
-        return Tables.getPrimaryKey(domainModelClass);
+    public String getPrimaryKeyColumnName() {
+        return Tables.getPrimaryKeyColumnName(domainModelClass);
     }
 
     @Override
     public Object getPrimaryValue(Object domainObject) {
-        return PropertyUtils.read(domainObject, getPrimaryKey().name());
+        String primaryKeyFieldName = Tables.getPrimaryKeyFieldName(domainModelClass);
+        return PropertyUtils.read(domainObject, primaryKeyFieldName);
     }
 
     @Override
@@ -174,10 +175,10 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
 
     @Override
     public String[] getInsertableColumns() {
-        String primaryName = getPrimaryKey().name();
+        String primaryKeyColumnName = Tables.getPrimaryKeyColumnName(domainModelClass);
         return Arrays.stream(getColumnizableFields(domainModelClass, true, false))
                 .filter(field -> {
-                    if (field.getName().equals(primaryName)) {
+                    if (field.getName().equals(primaryKeyColumnName)) {
                         return !domainModel.skipPrimaryValueOnInsert();
                     } else {
                         Column column = field.getAnnotation(Column.class);
@@ -367,8 +368,7 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
             Column column = field.getAnnotation(Column.class);
 
             if (primaryKey != null) {
-                String columnName = StringUtil.isBlank(primaryKey.name())
-                        ? Inflector.getInstance().underscore(field.getName()) : primaryKey.name();
+                String columnName = Tables.getPrimaryKeyColumnName(domainModelClass);
                 columnToField.put(columnName, field);
                 columnToField.put(columnName.toUpperCase(), field);
             } else if (column != null) {

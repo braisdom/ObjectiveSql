@@ -29,7 +29,7 @@ public class BelongsToProcessor implements RelationProcessor {
     public void process(Context context, Relationship relationship) throws SQLException {
         String associatedFieldName = relationship.getRelationField().getName();
         String primaryFieldName = relationship.getPrimaryAssociationFieldName();
-        String primaryKey = relationship.getPrimaryKey();
+        String primaryKeyColumnName = relationship.getPrimaryKeyColumnName();
         String foreignFieldName = relationship.getForeignFieldName();
 
         Class relatedClass = relationship.getRelatedClass();
@@ -40,7 +40,7 @@ public class BelongsToProcessor implements RelationProcessor {
                 .distinct()
                 .collect(Collectors.toList());
         List rawRelatedObjects = context.queryRelatedObjects(relatedClass,
-                primaryKey, associatedKeys.toArray(), relationship.getRelationCondition());
+                primaryKeyColumnName, associatedKeys.toArray(), relationship.getRelationCondition());
         Map<Object, List> groupedRelatedObjects = (Map<Object, List>) rawRelatedObjects
                 .stream().collect(Collectors.groupingBy(o -> PropertyUtils.read(o, primaryFieldName)));
 

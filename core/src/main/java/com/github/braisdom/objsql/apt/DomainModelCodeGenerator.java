@@ -86,10 +86,11 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
     }
 
     private void handlePrimary(AnnotationValues annotationValues, APTBuilder aptBuilder) {
-        TreeMaker treeMaker = aptBuilder.getTreeMaker();
+        JCVariableDecl customizedPrimaryKeyField = aptBuilder.getPrimaryKeyField();
         DomainModel domainModel = annotationValues.getAnnotationValue(DomainModel.class);
+        if (customizedPrimaryKeyField == null) {
+            TreeMaker treeMaker = aptBuilder.getTreeMaker();
 
-        if(!aptBuilder.hasField(domainModel.primaryFieldName())) {
             JCTree.JCAnnotation annotation = treeMaker.Annotation(aptBuilder.typeRef(PrimaryKey.class),
                     List.of(treeMaker.Assign(treeMaker.Ident(aptBuilder.toName("name")),
                             treeMaker.Literal(domainModel.primaryColumnName()))));
@@ -98,30 +99,37 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
 
             JCVariableDecl primaryField = treeMaker.VarDef(modifiers,
                     aptBuilder.toName(domainModel.primaryFieldName()), aptBuilder.typeRef(domainModel.primaryClass()), null);
-            JCMethodDecl queryByPrimaryKey = createQueryByPrimaryKeyMethod(domainModel, primaryField, aptBuilder);
+            JCMethodDecl queryByPrimaryKey = createQueryByPrimaryKeyMethod(domainModel, primaryField.vartype, aptBuilder);
 
             aptBuilder.inject(primaryField);
             aptBuilder.inject(queryByPrimaryKey);
             aptBuilder.inject(aptBuilder.newSetter(primaryField, domainModel.fluent()));
             aptBuilder.inject(aptBuilder.newGetter(primaryField));
+        } else {
+            JCMethodDecl queryByPrimaryKey = createQueryByPrimaryKeyMethod(domainModel,
+                    customizedPrimaryKeyField.vartype, aptBuilder);
+            aptBuilder.inject(queryByPrimaryKey);
         }
     }
 
-    private JCMethodDecl createQueryByPrimaryKeyMethod(DomainModel domainModel, JCVariableDecl primaryField, APTBuilder aptBuilder) {
+    private JCMethodDecl createQueryByPrimaryKeyMethod(DomainModel domainModel, JCExpression primaryKeyFieldType, APTBuilder aptBuilder) {
         TreeMaker treeMaker = aptBuilder.getTreeMaker();
         MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
         StatementBuilder statementBuilder = aptBuilder.createStatementBuilder();
-
         statementBuilder.append(aptBuilder.newGenericsType(Query.class,
                 aptBuilder.getClassName()), "query", "createQuery");
+        statementBuilder.append(aptBuilder.typeRef(String.class), "primaryKeyColumnName", Tables.class,
+                "getPrimaryKeyColumnName", aptBuilder.classRef(aptBuilder.getClassName()));
+        statementBuilder.append(aptBuilder.typeRef(String.class), "predicate", String.class,
+                "format", treeMaker.Literal("%s = ?"), aptBuilder.varRef("primaryKeyColumnName"));
         statementBuilder.append("query", "where",
-                List.of(treeMaker.Literal(String.format("%s = ?", domainModel.primaryColumnName())), aptBuilder.varRef("primaryKey")));
+                List.of(aptBuilder.varRef("predicate"), aptBuilder.varRef("primaryKey")));
 
         methodBuilder.setReturnStatement("query", "queryFirst",
                 aptBuilder.varRef("relationships"));
         return methodBuilder
                 .addStatements(statementBuilder.build())
-                .addParameter("primaryKey", primaryField.vartype)
+                .addParameter("primaryKey", primaryKeyFieldType)
                 .addVarargsParameter("relationships", aptBuilder.typeRef(Relationship.class))
                 .setThrowsClauses(SQLException.class)
                 .setReturnType(aptBuilder.typeRef(aptBuilder.getClassName()))
@@ -277,11 +285,13 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
 
         methodBuilder.setReturnStatement("persistence", "update",
                 aptBuilder.varRef("id"), aptBuilder.varRef("dirtyObject"), aptBuilder.varRef("skipValidation"));
-
+        JCVariableDecl primaryKeyField = aptBuilder.getPrimaryKeyField();
+        JCExpression primaryKeyFieldType = primaryKeyField == null
+                ? aptBuilder.typeRef(domainModel.primaryClass()) : primaryKeyField.vartype;
         aptBuilder.inject(methodBuilder
                 .setReturnType(aptBuilder.typeRef(aptBuilder.getClassName()))
                 .addStatements(statementBuilder.build())
-                .addParameter("id", aptBuilder.typeRef(domainModel.primaryClass()))
+                .addParameter("id", primaryKeyFieldType)
                 .addParameter("dirtyObject", aptBuilder.typeRef(aptBuilder.getClassName()))
                 .addParameter("skipValidation", treeMaker.TypeIdent(TypeTag.BOOLEAN))
                 .setThrowsClauses(SQLException.class)
@@ -321,11 +331,13 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
 
         methodBuilder.setReturnStatement("persistence", "delete",
                 aptBuilder.varRef("id"));
-
+        JCVariableDecl primaryKeyField = aptBuilder.getPrimaryKeyField();
+        JCExpression primaryKeyFieldType = primaryKeyField == null
+                ? aptBuilder.typeRef(domainModel.primaryClass()) : primaryKeyField.vartype;
         aptBuilder.inject(methodBuilder
                 .setReturnType(treeMaker.TypeIdent(TypeTag.INT))
                 .addStatements(statementBuilder.build())
-                .addParameter("id", aptBuilder.typeRef(domainModel.primaryClass()))
+                .addParameter("id", primaryKeyFieldType)
                 .setThrowsClauses(SQLException.class)
                 .build("destroy", Flags.PUBLIC | Flags.STATIC | Flags.FINAL));
     }
@@ -438,7 +450,7 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
                 List.of(aptBuilder.varRef("predicate"), aptBuilder.varRef("params")));
 
         methodBuilder.setReturnStatement("paginator", "paginate", aptBuilder.varRef("page"),
-                aptBuilder.varRef("query"), aptBuilder.classRef(aptBuilder.getClassName()),  aptBuilder.varRef("relations"));
+                aptBuilder.varRef("query"), aptBuilder.classRef(aptBuilder.getClassName()), aptBuilder.varRef("relations"));
         aptBuilder.inject(methodBuilder
                 .addStatements(statementBuilder.build())
                 .addParameter("page", aptBuilder.typeRef(Page.class))

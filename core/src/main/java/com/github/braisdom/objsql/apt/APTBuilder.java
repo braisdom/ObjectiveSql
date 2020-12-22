@@ -1,5 +1,6 @@
 package com.github.braisdom.objsql.apt;
 
+import com.github.braisdom.objsql.annotations.PrimaryKey;
 import com.sun.tools.javac.code.Flags;
 import com.sun.tools.javac.code.TypeTag;
 import com.sun.tools.javac.tree.JCTree;
@@ -249,6 +250,23 @@ public final class APTBuilder {
         }
 
         return fields.toArray(new JCVariableDecl[]{});
+    }
+
+    public JCVariableDecl getPrimaryKeyField() {
+        List<JCTree> members = classDecl.defs;
+        for (JCTree member : members) {
+            if ((member instanceof JCVariableDecl)) {
+                List<JCAnnotation> annotations = ((JCVariableDecl) member)
+                        .getModifiers().annotations;
+                for(JCAnnotation annotation : annotations) {
+                    if(annotation.type != null && PrimaryKey.class.getName().equals(annotation.type.toString())) {
+                        return (JCVariableDecl) member;
+                    }
+                }
+            }
+        }
+
+        return null;
     }
 
     public boolean hasField(String name) {

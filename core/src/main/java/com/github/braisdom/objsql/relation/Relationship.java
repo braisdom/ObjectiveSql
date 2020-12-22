@@ -16,9 +16,7 @@
  */
 package com.github.braisdom.objsql.relation;
 
-import com.github.braisdom.objsql.DomainModelException;
 import com.github.braisdom.objsql.Tables;
-import com.github.braisdom.objsql.annotations.PrimaryKey;
 import com.github.braisdom.objsql.annotations.Relation;
 import com.github.braisdom.objsql.reflection.PropertyUtils;
 import com.github.braisdom.objsql.util.Inflector;
@@ -79,20 +77,12 @@ public class Relationship {
         return relation.condition();
     }
 
-    public String getPrimaryKey() {
+    public String getPrimaryKeyColumnName() {
         if (StringUtil.isBlank(relation.primaryKey())) {
             if (isBelongsTo()) {
-                PrimaryKey primaryKey = Tables.getPrimaryKey(getBaseClass());
-                if(primaryKey == null) {
-                    throw new DomainModelException(String.format("The %s has no primary key", getBaseClass().getSimpleName()));
-                }
-                return primaryKey.name();
+                return Tables.getPrimaryKeyColumnName(getRelatedClass());
             } else {
-                PrimaryKey primaryKey = Tables.getPrimaryKey(getRelatedClass());
-                if(primaryKey == null) {
-                    throw new DomainModelException(String.format("The %s has no primary key", getRelatedClass().getSimpleName()));
-                }
-                return primaryKey.name();
+                return Tables.getPrimaryKeyColumnName(getBaseClass());
             }
         } else {
             return relation.primaryKey();
@@ -116,9 +106,9 @@ public class Relationship {
     public String getPrimaryAssociationFieldName() {
         if (StringUtil.isBlank(relation.primaryFieldName())) {
             if(isBelongsTo()) {
-                return Tables.getPrimaryField(getRelatedClass()).getName();
+                return Tables.getPrimaryKeyFieldName(getRelatedClass());
             } else {
-                return Tables.getPrimaryField(getBaseClass()).getName();
+                return Tables.getPrimaryKeyFieldName(getBaseClass());
             }
         } else {
             return relation.primaryFieldName();

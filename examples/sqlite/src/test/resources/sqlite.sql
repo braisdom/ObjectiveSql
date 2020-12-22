@@ -10,7 +10,7 @@ create table members (id INTEGER PRIMARY KEY AUTOINCREMENT,
     registered_at TEXT,
     updated_at TEXT);
 
-create table orders (id INTEGER PRIMARY KEY AUTOINCREMENT,
+create table orders (order_id INTEGER PRIMARY KEY AUTOINCREMENT,
     no TEXT, member_id INTEGER,
     amount REAL,
     quantity REAL,

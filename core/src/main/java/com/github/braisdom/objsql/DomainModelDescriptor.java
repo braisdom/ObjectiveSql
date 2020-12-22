@@ -30,7 +30,7 @@ public interface DomainModelDescriptor<T> extends TableRowAdapter<T> {
 
     String getDataSourceName();
 
-    PrimaryKey getPrimaryKey();
+    String getPrimaryKeyColumnName();
 
     Object getPrimaryValue(T domainObject);
 

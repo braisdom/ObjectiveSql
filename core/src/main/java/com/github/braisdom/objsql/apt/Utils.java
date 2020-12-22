@@ -36,7 +36,8 @@ final class Utils {
         return result;
     }
 
-    public static boolean containsMethod(Symbol.ClassSymbol classSymbol, JCTree.JCMethodDecl methodDecl, boolean recursive) {
+    public static boolean containsMethod(Symbol.ClassSymbol classSymbol, JCTree.JCMethodDecl methodDecl,
+                                         boolean recursive) {
         List<Symbol> methodSymbols = classSymbol.getEnclosedElements();
         String methodName = methodDecl.name.toString();
         int paramCount = methodDecl.params.size();

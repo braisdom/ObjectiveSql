@@ -38,7 +38,7 @@ import java.util.*;
  */
 public final class Tables {
 
-    public static final String DEFAULT_PRIMARY_KEY = "id";
+    public static final String INVALID_PRIMARY_KEY = "invalid~id";
     public static final String DEFAULT_KEY_SUFFIX = "id";
 
     private static Validator validator = bean -> {
@@ -75,49 +75,51 @@ public final class Tables {
         return null;
     }
 
-    public static final boolean isPrimaryField(Field field) {
-        PrimaryKey primaryKey = field.getDeclaredAnnotation(PrimaryKey.class);
-        if (primaryKey != null) {
-            return true;
-        } else {
-            return DEFAULT_PRIMARY_KEY.equals(field.getName());
-        }
+    public static Object getPrimaryValue(Object domainObject) {
+        String primaryKeyFieldName = getPrimaryKeyFieldName(domainObject.getClass());
+        return PropertyUtils.read(domainObject, primaryKeyFieldName);
     }
 
-    public static Object getPrimaryValue(Object domainObject) {
-        PrimaryKey primaryKey = getPrimaryKey(domainObject.getClass());
-        if (primaryKey != null) {
-            return PropertyUtils.read(domainObject, primaryKey.name());
-        } else {
-            return null;
+    public static String getPrimaryKeyColumnName(Class tableClass) {
+        Field[] fields = tableClass.getDeclaredFields();
+        for (Field field : fields) {
+            PrimaryKey primaryKey = field.getDeclaredAnnotation(PrimaryKey.class);
+            if (primaryKey != null) {
+                if(INVALID_PRIMARY_KEY.equals(primaryKey.name())) {
+                    return Inflector.getInstance().underscore(field.getName());
+                }else {
+                    return primaryKey.name();
+                }
+            }
         }
+        throw new IllegalStateException(String.format("Class '%s' has no @PrimaryKey", tableClass.getSimpleName()));
+    }
+
+    public static String getPrimaryKeyFieldName(Class tableClass) {
+        Field[] fields = tableClass.getDeclaredFields();
+        for (Field field : fields) {
+            PrimaryKey primaryKey = field.getDeclaredAnnotation(PrimaryKey.class);
+            if (primaryKey != null) {
+                return field.getName();
+            }
+        }
+        throw new IllegalStateException(String.format("Class '%s' has no @PrimaryKey", tableClass.getSimpleName()));
     }
 
     public static void writePrimaryValue(Object domainObject, Object primaryValue) {
-        PrimaryKey primaryKey = getPrimaryKey(domainObject.getClass());
-        if (primaryKey != null) {
-            PropertyUtils.write(domainObject, primaryKey.name(), primaryValue);
-        }
+        String primaryKeyFieldName = getPrimaryKeyFieldName(domainObject.getClass());
+        PropertyUtils.write(domainObject, primaryKeyFieldName, primaryValue);
     }
 
     public static final Field getPrimaryField(Class tableClass) {
         Field[] fields = tableClass.getDeclaredFields();
-
-        Field defaultField = null;
-        Field primaryField = null;
-
         for (Field field : fields) {
             PrimaryKey primaryKey = field.getDeclaredAnnotation(PrimaryKey.class);
             if (primaryKey != null) {
-                primaryField = field;
-            }
-
-            if (DEFAULT_PRIMARY_KEY.equals(field.getName())) {
-                defaultField = field;
+                return field;
             }
         }
-
-        return primaryField == null ? defaultField : primaryField;
+        throw new IllegalStateException(String.format("Class '%s' has no @PrimaryKey", tableClass.getSimpleName()));
     }
 
     public static final String getColumnName(Class tableClass, String fieldName) {

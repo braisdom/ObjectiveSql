@@ -70,7 +70,7 @@ public @interface Relation {
      *
      * @return
      *
-     * @see Relationship#getPrimaryKey()
+     * @see Relationship#getPrimaryKeyColumnName()
      */
     String primaryKey() default "";
 

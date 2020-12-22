@@ -32,7 +32,7 @@ public class RelationExample extends SQLiteExample {
 
         for (int i = 0; i < 100; i++) {
             orders.add(new Order()
-                    .setId(i)
+                    .setOrderId(i)
                     .setNo("20200000" + i)
                     .setMemberId(i % 6 + 1)
                     .setAmount(RandomUtils.nextDouble(10.0f, 30.0f))

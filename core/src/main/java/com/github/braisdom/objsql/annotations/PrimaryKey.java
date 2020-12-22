@@ -37,5 +37,5 @@ public @interface PrimaryKey {
      * A name maps the column name of table
      * @return
      */
-    String name() default Tables.DEFAULT_PRIMARY_KEY;
+    String name() default Tables.INVALID_PRIMARY_KEY;
 }

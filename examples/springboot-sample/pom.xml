@@ -78,6 +78,12 @@
             <artifactId>joda-time</artifactId>
             <version>2.10.6</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.braisdom</groupId>
+            <artifactId>objective-sql</artifactId>
+            <version>1.4.3</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <repositories>

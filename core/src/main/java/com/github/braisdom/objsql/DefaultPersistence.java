@@ -157,9 +157,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
             }
         }
 
-        PrimaryKey primaryKey = domainModelDescriptor.getPrimaryKey();
-        ensurePrimaryKeyNotNull(primaryKey);
-
+        String primaryKeyColumnName = domainModelDescriptor.getPrimaryKeyColumnName();
         Quoter quoter = Databases.getQuoter();
         String dataSourceName = domainModelDescriptor.getDataSourceName();
         return Databases.execute(dataSourceName, (connection, sqlExecutor) -> {
@@ -201,7 +199,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
 
             String tableName = quoter.quoteTableName(databaseProductName, domainModelDescriptor.getTableName());
             String sql = formatUpdateSql(tableName, updatesSql.toString(), String.format("%s = ?",
-                    quoter.quoteColumnName(databaseProductName, primaryKey.name())));
+                    quoter.quoteColumnName(databaseProductName, primaryKeyColumnName)));
 
             sqlExecutor.execute(connection, sql, ArrayUtil.appendElement(Object.class, values, id));
 
@@ -248,16 +246,14 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
     public int delete(final Object id) throws SQLException {
         Objects.requireNonNull(id, "The id cannot be null");
 
-        PrimaryKey primaryKey = domainModelDescriptor.getPrimaryKey();
-        ensurePrimaryKeyNotNull(primaryKey);
-
+        String primaryKeyColumnName = domainModelDescriptor.getPrimaryKeyColumnName();
         Quoter quoter = Databases.getQuoter();
         String dataSourceName = domainModelDescriptor.getDataSourceName();
 
         return Databases.execute(dataSourceName, (connection, sqlExecutor) -> {
             String databaseProductName = connection.getMetaData().getDatabaseProductName();
             String tableName = quoter.quoteTableName(databaseProductName, domainModelDescriptor.getTableName());
-            String quotedPrimaryName = quoter.quoteColumnName(databaseProductName, primaryKey.name());
+            String quotedPrimaryName = quoter.quoteColumnName(databaseProductName, primaryKeyColumnName);
             String sql = formatDeleteSql(tableName, String.format("%s = %s", quotedPrimaryName, quoter.quoteValue(id)));
 
             return sqlExecutor.execute(connection, sql);
@@ -275,7 +271,7 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
 
     private void ensurePrimaryKeyNotNull(PrimaryKey primaryKey) throws PersistenceException {
         if (primaryKey == null) {
-            throw new PersistenceException(String.format("The %s has no primary key",
+            throw new PersistenceException(String.format("Class '%s' has no @PrimaryKey",
                     domainModelDescriptor.getTableName()));
         }
     }

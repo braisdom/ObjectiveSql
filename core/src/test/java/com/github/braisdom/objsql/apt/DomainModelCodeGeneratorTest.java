@@ -2,8 +2,10 @@ package com.github.braisdom.objsql.apt;
 
 import com.github.braisdom.objsql.Persistence;
 import com.github.braisdom.objsql.Query;
+import com.github.braisdom.objsql.Tables;
 import com.github.braisdom.objsql.Validator;
 import com.github.braisdom.objsql.annotations.DomainModel;
+import com.github.braisdom.objsql.annotations.PrimaryKey;
 import com.github.braisdom.objsql.pagination.Page;
 import com.github.braisdom.objsql.pagination.PagedList;
 import com.github.braisdom.objsql.relation.Relationship;
@@ -223,7 +225,14 @@ public class DomainModelCodeGeneratorTest {
         private String name;
     }
 
-    @DomainModel(primaryClass = Integer.class, primaryFieldName = "id2")
+    @DomainModel(primaryClass = Integer.class, primaryFieldName = "id2", primaryColumnName = "id2")
     private static class TestClass2 {
+    }
+
+    @DomainModel
+    private static class TestClass3 {
+        @PrimaryKey
+        private Integer testId;
+        private String name;
     }
 }
