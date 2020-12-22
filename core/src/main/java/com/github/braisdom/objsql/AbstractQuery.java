@@ -93,7 +93,7 @@ public abstract class AbstractQuery<T> implements Query<T> {
         return this;
     }
     
-    protected String getTableName(Class tableClass) {
-        return Tables.getTableName(tableClass);
+    protected String getTableName() {
+        return domainModelDescriptor.getTableName();
     }
 }

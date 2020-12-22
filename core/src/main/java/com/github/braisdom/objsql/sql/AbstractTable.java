@@ -39,7 +39,7 @@ public abstract class AbstractTable extends AbstractExpression implements Datase
     @Override
     public String toSql(ExpressionContext expressionContext) {
         DatabaseType databaseType = expressionContext.getDatabaseType();
-        String[] nameParts = Tables.getTableName(modelClass).split("\\.");
+        String[] nameParts = getOriginalName().split("\\.");
         String[] quotedNameParts = Arrays.stream(nameParts)
                 .map(namePart -> expressionContext.quoteTable(namePart)).toArray(String[]::new);
         String tableAlias = expressionContext.getAlias(this, true);

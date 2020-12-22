@@ -66,7 +66,7 @@ public class RelationshipNetwork implements RelationProcessor.Context {
         }
     }
 
-    private void setupAssociatedObjects(Relationship relationship, List<Relationship> relationships) throws SQLException {
+    protected void setupAssociatedObjects(Relationship relationship, List<Relationship> relationships) throws SQLException {
         RelationProcessor relationProcessor = relationship.createProcessor();
         relationProcessor.process(this, relationship);
         relationships.remove(relationship);

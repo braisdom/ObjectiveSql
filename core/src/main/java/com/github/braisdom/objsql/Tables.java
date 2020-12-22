@@ -51,17 +51,20 @@ public final class Tables {
                 .toArray(Validator.Violation[]::new);
     };
 
-    public static final String getTableName(Class baseClass) {
-        Objects.requireNonNull(baseClass, "The baseClass cannot be null");
-        DomainModel domainModel = (DomainModel) baseClass.getAnnotation(DomainModel.class);
-
+    private static TableNameEncoder tableNameEncoder = domainModelClass -> {
+        Objects.requireNonNull(domainModelClass, "The baseClass cannot be null");
+        DomainModel domainModel = (DomainModel) domainModelClass.getAnnotation(DomainModel.class);
         Objects.requireNonNull(domainModel, "The baseClass must have the DomainModel annotation");
 
         if (!StringUtil.isBlank(domainModel.tableName())) {
             return domainModel.tableName();
         } else {
-            return Inflector.getInstance().tableize(baseClass.getSimpleName());
+            return Inflector.getInstance().tableize(domainModelClass.getSimpleName());
         }
+    };
+
+    public static final String getTableName(Class domainModelClass) {
+        return tableNameEncoder.getTableName(domainModelClass);
     }
 
     public static final PrimaryKey getPrimaryKey(Class tableClass) {
@@ -147,6 +150,12 @@ public final class Tables {
         Objects.requireNonNull(validator, "The validator cannot be null");
 
         Tables.validator = validator;
+    }
+
+    public static final void installTableNameEncoder(TableNameEncoder tableNameEncoder) {
+        Objects.requireNonNull(tableNameEncoder, "The tableNameEncoder cannot be null");
+
+        Tables.tableNameEncoder = tableNameEncoder;
     }
 
     public static final Validator.Violation[] validate(Object bean) {
