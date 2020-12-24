@@ -58,7 +58,7 @@ public class DefaultQuoter implements Quoter {
         } else if (PostgreSQL.equals(databaseProductName)) {
             return sb.append("\"").append(item).append("\"").toString();
         } else if(Oracle.equals(databaseProductName)) {
-            return sb.append("\"").append(item).append("\"").toString();
+            return sb.append("\"").append(item.toUpperCase()).append("\"").toString();
         } else if(HSQLDB.equals(databaseProductName)) {
             return String.valueOf(item);
         }

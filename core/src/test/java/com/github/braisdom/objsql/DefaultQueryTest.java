@@ -25,9 +25,9 @@ public class DefaultQueryTest {
         Query query = new DefaultQuery(Domain.class);
         query.where("name = ?", "12");
 
-        Assert.assertEquals(query.getQuerySQL(MySQL), "SELECT * FROM `domains` WHERE name = ?");
-        Assert.assertEquals(query.getQuerySQL(PostgreSQL), "SELECT * FROM \"domains\" WHERE name = ?");
-        Assert.assertEquals(query.getQuerySQL(Oracle), "SELECT * FROM \"DOMAINS\" WHERE name = ?");
+        Assert.assertEquals("SELECT * FROM `domains` WHERE name = ?", query.getQuerySQL(MySQL));
+        Assert.assertEquals("SELECT * FROM \"domains\" WHERE name = ?", query.getQuerySQL(PostgreSQL));
+        Assert.assertEquals("SELECT * FROM \"DOMAINS\" WHERE name = ?", query.getQuerySQL(Oracle));
     }
 
     @Test

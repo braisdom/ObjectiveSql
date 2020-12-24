@@ -89,7 +89,7 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
     private void handlePrimary(AnnotationValues annotationValues, APTBuilder aptBuilder) {
         JCVariableDecl customizedPrimaryKeyField = aptBuilder.getPrimaryKeyField();
         DomainModel domainModel = annotationValues.getAnnotationValue(DomainModel.class);
-        if (customizedPrimaryKeyField == null) {
+        if (customizedPrimaryKeyField == null && !aptBuilder.hasField(domainModel.primaryFieldName())) {
             TreeMaker treeMaker = aptBuilder.getTreeMaker();
 
             JCTree.JCAnnotation annotation = treeMaker.Annotation(aptBuilder.typeRef(PrimaryKey.class),
@@ -106,7 +106,7 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
             aptBuilder.inject(queryByPrimaryKey);
             aptBuilder.inject(aptBuilder.newSetter(primaryField, domainModel.fluent()));
             aptBuilder.inject(aptBuilder.newGetter(primaryField));
-        } else {
+        } else if(customizedPrimaryKeyField != null){
             JCMethodDecl queryByPrimaryKey = createQueryByPrimaryKeyMethod(domainModel,
                     customizedPrimaryKeyField.vartype, aptBuilder);
             aptBuilder.inject(queryByPrimaryKey);
@@ -632,40 +632,42 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
     }
 
     private void handleRawAttributesField(APTBuilder aptBuilder) {
-        TreeMaker treeMaker = aptBuilder.getTreeMaker();
-        JCExpression rawAttributesType = treeMaker.TypeApply(aptBuilder.typeRef(Map.class),
-                List.of(aptBuilder.typeRef(String.class), aptBuilder.typeRef(Object.class)));
-        JCExpression rawAttributesInit = treeMaker.NewClass(null, List.nil(), aptBuilder.typeRef(HashMap.class.getName()),
-                List.nil(), null);
-        JCModifiers modifiers = treeMaker.Modifiers(Flags.PRIVATE | Flags.FINAL);
-        modifiers.annotations = modifiers.annotations.append(treeMaker.Annotation(aptBuilder.typeRef(Transient.class), List.nil()));
+        if(!aptBuilder.hasField("rawAttributes")) {
+            TreeMaker treeMaker = aptBuilder.getTreeMaker();
+            JCExpression rawAttributesType = treeMaker.TypeApply(aptBuilder.typeRef(Map.class),
+                    List.of(aptBuilder.typeRef(String.class), aptBuilder.typeRef(Object.class)));
+            JCExpression rawAttributesInit = treeMaker.NewClass(null, List.nil(), aptBuilder.typeRef(HashMap.class.getName()),
+                    List.nil(), null);
+            JCModifiers modifiers = treeMaker.Modifiers(Flags.PRIVATE | Flags.FINAL);
+            modifiers.annotations = modifiers.annotations.append(treeMaker.Annotation(aptBuilder.typeRef(Transient.class), List.nil()));
 
-        aptBuilder.inject(treeMaker.VarDef(modifiers, aptBuilder.toName("rawAttributes"), rawAttributesType, rawAttributesInit));
+            aptBuilder.inject(treeMaker.VarDef(modifiers, aptBuilder.toName("rawAttributes"), rawAttributesType, rawAttributesInit));
 
-        MethodBuilder getRawAttributeMethodBuilder = aptBuilder.createMethodBuilder();
-        JCReturn getRawAttributeReturn = treeMaker.Return(aptBuilder
-                .methodCall("rawAttributes", "get", aptBuilder.varRef("name")));
-        aptBuilder.inject(getRawAttributeMethodBuilder
-                .addStatement(getRawAttributeReturn)
-                .addParameter("name", String.class)
-                .setReturnType(aptBuilder.typeRef(Object.class))
-                .build("getRawAttribute", Flags.PUBLIC | Flags.FINAL));
+            MethodBuilder getRawAttributeMethodBuilder = aptBuilder.createMethodBuilder();
+            JCReturn getRawAttributeReturn = treeMaker.Return(aptBuilder
+                    .methodCall("rawAttributes", "get", aptBuilder.varRef("name")));
+            aptBuilder.inject(getRawAttributeMethodBuilder
+                    .addStatement(getRawAttributeReturn)
+                    .addParameter("name", String.class)
+                    .setReturnType(aptBuilder.typeRef(Object.class))
+                    .build("getRawAttribute", Flags.PUBLIC | Flags.FINAL));
 
-        MethodBuilder setRawAttributeMethodBuilder = aptBuilder.createMethodBuilder();
-        JCExpression setRawAttributeExpression = aptBuilder.methodCall("rawAttributes", "put",
-                aptBuilder.varRef("name"), aptBuilder.varRef("value"));
-        aptBuilder.inject(setRawAttributeMethodBuilder
-                .addStatement(treeMaker.Exec(setRawAttributeExpression))
-                .addParameter("name", String.class)
-                .addParameter("value", Object.class)
-                .build("setRawAttribute", Flags.PUBLIC | Flags.FINAL));
+            MethodBuilder setRawAttributeMethodBuilder = aptBuilder.createMethodBuilder();
+            JCExpression setRawAttributeExpression = aptBuilder.methodCall("rawAttributes", "put",
+                    aptBuilder.varRef("name"), aptBuilder.varRef("value"));
+            aptBuilder.inject(setRawAttributeMethodBuilder
+                    .addStatement(treeMaker.Exec(setRawAttributeExpression))
+                    .addParameter("name", String.class)
+                    .addParameter("value", Object.class)
+                    .build("setRawAttribute", Flags.PUBLIC | Flags.FINAL));
 
-        MethodBuilder getRawAttributesMethodBuilder = aptBuilder.createMethodBuilder();
-        JCReturn getRawAttributesReturn = treeMaker.Return(aptBuilder.varRef("rawAttributes"));
-        aptBuilder.inject(getRawAttributesMethodBuilder
-                .addStatement(getRawAttributesReturn)
-                .setReturnType(aptBuilder.newGenericsType(Map.class, String.class, Object.class))
-                .build("getRawAttributes", Flags.PUBLIC | Flags.FINAL));
+            MethodBuilder getRawAttributesMethodBuilder = aptBuilder.createMethodBuilder();
+            JCReturn getRawAttributesReturn = treeMaker.Return(aptBuilder.varRef("rawAttributes"));
+            aptBuilder.inject(getRawAttributesMethodBuilder
+                    .addStatement(getRawAttributesReturn)
+                    .setReturnType(aptBuilder.newGenericsType(Map.class, String.class, Object.class))
+                    .build("getRawAttributes", Flags.PUBLIC | Flags.FINAL));
+        }
     }
 
     private void handleInnerTableClass(APTBuilder aptBuilder) {
