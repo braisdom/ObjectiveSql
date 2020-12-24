@@ -9,14 +9,18 @@ ObjectiveSQL is an ORM framework in Java based on ActiveRecord pattern, which en
 
 ### Performance
 
-![query_perf](./doc/query_perf.png)
+![query_perf](./doc/perf.png)
 
 ```
-Benchmark              (framework)   Mode  Cnt    Score   Error   Units
-BenchmarkRunner.query      mybatis  thrpt   10   68.590 ± 0.872  ops/ms
-BenchmarkRunner.query         jdbc  thrpt   10  131.875 ± 3.972  ops/ms
-BenchmarkRunner.query    hibernate  thrpt   10   60.538 ± 1.087  ops/ms
-BenchmarkRunner.query       objsql  thrpt   10   97.297 ± 1.341  ops/ms
+Benchmark               (framework)   Mode  Cnt    Score    Error   Units
+BenchmarkRunner.query       mybatis  thrpt   10   66.269 ±  5.584  ops/ms
+BenchmarkRunner.query          jdbc  thrpt   10  125.223 ±  6.476  ops/ms
+BenchmarkRunner.query     hibernate  thrpt   10   57.952 ±  2.983  ops/ms
+BenchmarkRunner.query        objsql  thrpt   10   85.329 ±  4.812  ops/ms
+BenchmarkRunner.update      mybatis  thrpt   10  118.780 ±  6.028  ops/ms
+BenchmarkRunner.update         jdbc  thrpt   10  184.414 ± 10.612  ops/ms
+BenchmarkRunner.update    hibernate  thrpt   10   66.626 ±  1.556  ops/ms
+BenchmarkRunner.update       objsql  thrpt   10  130.013 ±  2.718  ops/ms
 ```
 
 - Jdbc means using only native jdbc API, do not use any ORM frameworks.
