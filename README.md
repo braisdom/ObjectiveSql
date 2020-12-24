@@ -7,6 +7,21 @@ ObjectiveSQL is an ORM framework in Java based on ActiveRecord pattern, which en
 - Easy to relational(`has_one`, `has_many` and `belongs_to`) query and paged query
 - Writing SQL expressions(`arithmetic`, `comparison` and `logical`) using Java syntax
 
+### Performance
+
+![query_perf](./doc/query_perf.png)
+
+```
+Benchmark              (framework)   Mode  Cnt    Score   Error   Units
+BenchmarkRunner.query      mybatis  thrpt   10   68.590 ± 0.872  ops/ms
+BenchmarkRunner.query         jdbc  thrpt   10  131.875 ± 3.972  ops/ms
+BenchmarkRunner.query    hibernate  thrpt   10   60.538 ± 1.087  ops/ms
+BenchmarkRunner.query       objsql  thrpt   10   97.297 ± 1.341  ops/ms
+```
+
+- Jdbc means using only native jdbc API, do not use any ORM frameworks.
+- One *Query Cycle* is defined as single `select id, name, age from user where id = ?`.
+
 ### Installation
 
 #### IntelliJ IDEA plugin installation
