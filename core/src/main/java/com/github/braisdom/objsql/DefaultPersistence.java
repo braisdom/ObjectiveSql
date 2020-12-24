@@ -198,11 +198,10 @@ public class DefaultPersistence<T> extends AbstractPersistence<T> {
             updatesSql.delete(updatesSql.length() - 1, updatesSql.length());
 
             String tableName = quoter.quoteTableName(databaseProductName, domainModelDescriptor.getTableName());
-            String sql = formatUpdateSql(tableName, updatesSql.toString(), String.format("%s = ?",
-                    quoter.quoteColumnName(databaseProductName, primaryKeyColumnName)));
-
+            String predicate = new StringBuilder().append(quoter
+                    .quoteColumnName(databaseProductName, primaryKeyColumnName)).append(" = ?").toString();
+            String sql = formatUpdateSql(tableName, updatesSql.toString(), predicate);
             sqlExecutor.execute(connection, sql, ArrayUtil.appendElement(Object.class, values, id));
-
             return dirtyObject;
         });
     }

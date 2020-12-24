@@ -28,7 +28,6 @@ import java.util.Optional;
 public abstract class AbstractPersistence<T> implements Persistence<T> {
 
     private static final String INSERT_TEMPLATE = "INSERT INTO %s (%s) VALUES (%s)";
-    private static final String UPDATE_STATEMENT = "UPDATE %s SET %s WHERE %s";
     private static final String DELETE_STATEMENT = "DELETE FROM %s WHERE %s";
 
     protected final DomainModelDescriptor domainModelDescriptor;
@@ -62,7 +61,8 @@ public abstract class AbstractPersistence<T> implements Persistence<T> {
     }
 
     protected String formatUpdateSql(String tableName, String updates, String predicate) {
-        return String.format(UPDATE_STATEMENT, tableName, updates, predicate);
+        return new StringBuilder().append("UPDATE ").append(tableName)
+                .append(" SET ").append(updates).append(" WHERE ").append(predicate).toString();
     }
 
     protected String formatDeleteSql(String tableName, String predicate) {
