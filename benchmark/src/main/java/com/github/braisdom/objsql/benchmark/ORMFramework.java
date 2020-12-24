@@ -6,7 +6,7 @@ public interface ORMFramework {
 
     void initialize() throws Exception;
 
-    void update();
+    void update() throws Exception;
 
     User query() throws Exception;
 

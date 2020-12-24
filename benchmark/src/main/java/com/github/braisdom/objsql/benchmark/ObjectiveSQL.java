@@ -28,8 +28,8 @@ public class ObjectiveSQL implements ORMFramework, ConnectionFactory, Logger, Lo
     }
 
     @Override
-    public void update() {
-
+    public void update() throws Exception {
+        User.update("age = 12", "id = ?", 1);
     }
 
     @Override

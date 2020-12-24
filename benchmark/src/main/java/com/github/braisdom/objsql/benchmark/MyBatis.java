@@ -46,8 +46,16 @@ public class MyBatis implements ORMFramework {
     }
 
     @Override
-    public void update() {
-
+    public void update() throws Exception {
+        SqlSession session = sqlSessionFactory.openSession();
+        try {
+            UserMapper mapper = session.getMapper(UserMapper.class);
+            mapper.updateUser(1, 12);
+            session.commit();
+            return;
+        } finally {
+            session.close();
+        }
     }
 
     @Override

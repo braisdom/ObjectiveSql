@@ -6,6 +6,7 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class Jdbc implements ORMFramework {
 
@@ -40,8 +41,24 @@ public class Jdbc implements ORMFramework {
     }
 
     @Override
-    public void update() {
-
+    public void update() throws Exception {
+        Connection conn = null;
+        PreparedStatement pstat = null;
+        try {
+            conn = dataSource.getConnection();
+            pstat = conn.prepareStatement("update user set age = ? where id = ?");
+            pstat.setInt(1, 12);
+            pstat.setInt(2, 1);
+            pstat.executeUpdate();
+            return;
+        } finally {
+            if (pstat != null) {
+                pstat.close();
+            }
+            if (conn != null) {
+                conn.close();
+            }
+        }
     }
 
     @Override

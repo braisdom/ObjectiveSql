@@ -55,6 +55,12 @@ public class BenchmarkRunner {
         return ormFramework.query();
     }
 
+    @Benchmark
+    @CompilerControl(CompilerControl.Mode.INLINE)
+    public void update() throws Exception {
+        ormFramework.update();
+    }
+
     private HikariDataSource createDataSource() {
         HikariConfig config = new HikariConfig();
         config.setDriverClassName("org.hsqldb.jdbcDriver");

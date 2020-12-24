@@ -35,7 +35,15 @@ public class Hibernate implements ORMFramework {
 
     @Override
     public void update() {
-
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+        User user = new User();
+        user.setId(1);
+        user.setName("ash");
+        user.setAge(15);
+        session.update(user);
+        session.getTransaction().commit();
+        session.close();
     }
 
     @Override
