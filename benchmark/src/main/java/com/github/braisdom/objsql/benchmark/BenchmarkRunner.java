@@ -31,7 +31,7 @@ public class BenchmarkRunner {
             ");"
     };
 
-    @Param({MyBatis.FRAMEWORK_NAME, Jdbc.FRAMEWORK_NAME, ObjectiveSQL.FRAMEWORK_NAME})
+    @Param({MyBatis.FRAMEWORK_NAME, Jdbc.FRAMEWORK_NAME, Hibernate.FRAMEWORK_NAME, ObjectiveSQL.FRAMEWORK_NAME})
     public String framework;
     private ORMFramework ormFramework;
 

@@ -22,6 +22,8 @@ public interface ORMFramework {
                     return new Jdbc(dataSource);
                 case ObjectiveSQL.FRAMEWORK_NAME:
                     return new ObjectiveSQL(dataSource);
+                case Hibernate.FRAMEWORK_NAME:
+                    return new Hibernate(dataSource);
                 default:
                     throw new IllegalArgumentException("Cannot find ORM framework: " + frameworkName);
             }

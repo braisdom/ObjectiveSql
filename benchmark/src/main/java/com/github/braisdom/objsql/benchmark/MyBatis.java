@@ -55,12 +55,7 @@ public class MyBatis implements ORMFramework {
         SqlSession session = sqlSessionFactory.openSession();
         try {
             UserMapper mapper = session.getMapper(UserMapper.class);
-            User user = mapper.getUserById(1);
-            if(user == null) {
-                throw new NullPointerException("The user cannot be null");
-            }
-
-            return user;
+            return mapper.getUserById(1);
         } finally {
             session.close();
         }
