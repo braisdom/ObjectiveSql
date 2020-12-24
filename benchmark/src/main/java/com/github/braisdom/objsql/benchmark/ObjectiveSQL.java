@@ -24,11 +24,7 @@ public class ObjectiveSQL implements ORMFramework, ConnectionFactory, Logger, Lo
 
     @Override
     public void initialize() throws Exception {
-        User user = new User();
-        user.setId(1);
-        user.setName("ash");
-        user.setAge(25);
-        User.create(user, true);
+        Databases.execute("insert into user(id, name, age) values(1, 'ash', 25)");
     }
 
     @Override

@@ -41,6 +41,8 @@ public final class Tables {
     public static final String INVALID_PRIMARY_KEY = "invalid~id";
     public static final String DEFAULT_KEY_SUFFIX = "id";
 
+    private static final Map<String, Field> primaryKeyFieldCache = new HashMap<>();
+
     private static Validator validator = bean -> {
         javax.validation.Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
         Set<ConstraintViolation<Object>> rawViolations = validator.validate(bean);
@@ -84,18 +86,24 @@ public final class Tables {
     }
 
     public static String getPrimaryKeyColumnName(Class tableClass) {
-        Field[] fields = tableClass.getDeclaredFields();
-        for (Field field : fields) {
-            PrimaryKey primaryKey = field.getDeclaredAnnotation(PrimaryKey.class);
-            if (primaryKey != null) {
-                if(INVALID_PRIMARY_KEY.equals(primaryKey.name())) {
-                    return Inflector.getInstance().underscore(field.getName());
-                }else {
-                    return primaryKey.name();
+        Field primaryKeyField = primaryKeyFieldCache.get(tableClass.getName());
+        if (primaryKeyField == null) {
+            Field[] fields = tableClass.getDeclaredFields();
+            for (Field field : fields) {
+                PrimaryKey primaryKey = field.getDeclaredAnnotation(PrimaryKey.class);
+                if (primaryKey != null) {
+                    primaryKeyFieldCache.put(tableClass.getName(), field);
+                    if (INVALID_PRIMARY_KEY.equals(primaryKey.name())) {
+                        return Inflector.getInstance().underscore(field.getName());
+                    } else {
+                        return primaryKey.name();
+                    }
                 }
             }
+            throw new IllegalStateException(String.format("Class '%s' has no @PrimaryKey", tableClass.getSimpleName()));
+        } else {
+            return primaryKeyField.getName();
         }
-        throw new IllegalStateException(String.format("Class '%s' has no @PrimaryKey", tableClass.getSimpleName()));
     }
 
     public static String getPrimaryKeyFieldName(Class tableClass) {
@@ -209,8 +217,8 @@ public final class Tables {
                 return (Long) count;
             } else if (count instanceof Integer) {
                 return Long.valueOf((Integer) count);
-            } else if(count instanceof BigDecimal) {
-                return ((BigDecimal)count).longValue();
+            } else if (count instanceof BigDecimal) {
+                return ((BigDecimal) count).longValue();
             } else {
                 return 0L;
             }

@@ -189,7 +189,7 @@ public final class Databases {
         execute(dataSourceName, (connection, sqlExecutor) -> {
             String databaseProductName = connection.getMetaData().getDatabaseProductName();
             String quotedTableName = getQuoter().quoteTableName(databaseProductName, tableName);
-            connection.createStatement().execute(String.format("TRUNCATE TABLE %s", quotedTableName));
+            connection.createStatement().execute("TRUNCATE TABLE " + quotedTableName);
             return null;
         });
     }

@@ -338,10 +338,11 @@ public class QueryRunner extends AbstractQueryRunner {
 
         try {
             stmt = this.prepareStatement(conn, sql);
-            this.fillStatement(stmt, params);
+            if (params.length > 0) {
+                this.fillStatement(stmt, params);
+            }
             rs = this.wrap(stmt.executeQuery());
             result = rsh.handle(rs);
-
         } catch (SQLException e) {
             this.rethrow(e, sql, params);
 

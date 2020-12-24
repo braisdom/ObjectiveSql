@@ -95,8 +95,8 @@ public class BenchmarkRunner {
         Options opt = new OptionsBuilder()
                 .include(BenchmarkRunner.class.getSimpleName())
                 .forks(1)
-                .warmupIterations(4)
-                .measurementIterations(5)
+                .warmupIterations(10)
+                .measurementIterations(10)
                 .build();
 
         new Runner(opt).run();

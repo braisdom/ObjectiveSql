@@ -14,6 +14,7 @@ import com.github.braisdom.objsql.sql.AbstractTable;
 import com.github.braisdom.objsql.sql.Column;
 import com.github.braisdom.objsql.sql.DefaultColumn;
 import com.github.braisdom.objsql.sql.Select;
+import com.github.braisdom.objsql.util.StringUtil;
 import com.sun.tools.javac.code.Flags;
 import com.sun.tools.javac.code.TypeTag;
 import com.sun.tools.javac.tree.JCTree;
@@ -113,17 +114,16 @@ public class DomainModelCodeGenerator extends DomainModelProcessor {
     }
 
     private JCMethodDecl createQueryByPrimaryKeyMethod(DomainModel domainModel, JCExpression primaryKeyFieldType, APTBuilder aptBuilder) {
-        TreeMaker treeMaker = aptBuilder.getTreeMaker();
         MethodBuilder methodBuilder = aptBuilder.createMethodBuilder();
         StatementBuilder statementBuilder = aptBuilder.createStatementBuilder();
         statementBuilder.append(aptBuilder.newGenericsType(Query.class,
                 aptBuilder.getClassName()), "query", "createQuery");
         statementBuilder.append(aptBuilder.typeRef(String.class), "primaryKeyColumnName", Tables.class,
                 "getPrimaryKeyColumnName", aptBuilder.classRef(aptBuilder.getClassName()));
-        statementBuilder.append(aptBuilder.typeRef(String.class), "predicate", String.class,
-                "format", treeMaker.Literal("%s = ?"), aptBuilder.varRef("primaryKeyColumnName"));
+        statementBuilder.append(aptBuilder.typeRef(String.class), "predicate", StringUtil.class,
+                "formatEqualsString", aptBuilder.varRef("primaryKeyColumnName"), aptBuilder.varRef("primaryKey"));
         statementBuilder.append("query", "where",
-                List.of(aptBuilder.varRef("predicate"), aptBuilder.varRef("primaryKey")));
+                List.of(aptBuilder.varRef("predicate")));
 
         methodBuilder.setReturnStatement("query", "queryFirst",
                 aptBuilder.varRef("relationships"));

@@ -60,7 +60,7 @@ public class PostgreSql {
         return new LiteralExpression(str) {
             @Override
             public String toSql(ExpressionContext expressionContext) throws SQLSyntaxException {
-                return String.format("date %s", super.toSql(expressionContext));
+                return "date " + super.toSql(expressionContext);
             }
         };
     }
@@ -69,7 +69,7 @@ public class PostgreSql {
         return new LiteralExpression(str) {
             @Override
             public String toSql(ExpressionContext expressionContext) throws SQLSyntaxException {
-                return String.format("timestamp %s", super.toSql(expressionContext));
+                return "timestamp " + super.toSql(expressionContext);
             }
         };
     }

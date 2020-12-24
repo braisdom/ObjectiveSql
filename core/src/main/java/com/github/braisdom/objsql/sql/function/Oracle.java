@@ -61,7 +61,8 @@ public class Oracle {
     }
 
     public static final Expression timestamp(String string) {
-        return new PlainExpression(String.format("TIMESTAMP '%s'", string));
+        return new PlainExpression(new StringBuilder().append("TIMESTAMP ")
+                .append("'").append(string).append("'").toString());
     }
 
 }

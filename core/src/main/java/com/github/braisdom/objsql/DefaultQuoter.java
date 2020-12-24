@@ -48,20 +48,21 @@ public class DefaultQuoter implements Quoter {
             return String.valueOf(value);
         }
 
-        return String.format("'%s'", value);
+        return new StringBuffer().append("'").append(value).append("'").toString();
     }
 
     protected String quoteName(String databaseProductName, String item) {
+        StringBuilder sb = new StringBuilder();
         if (MySQL.equals(databaseProductName)) {
-            return String.format("`%s`", item);
+            return sb.append("`").append(item).append("`").toString();
         } else if (PostgreSQL.equals(databaseProductName)) {
-            return String.format("\"%s\"", item);
+            return sb.append("\"").append(item).append("\"").toString();
         } else if(Oracle.equals(databaseProductName)) {
-            return String.format("\"%s\"", item.toUpperCase());
+            return sb.append("\"").append(item).append("\"").toString();
         } else if(HSQLDB.equals(databaseProductName)) {
             return String.valueOf(item);
         }
 
-        return String.format("\"%s\"", item);
+        return sb.append("\"").append(item).append("\"").toString();
     }
 }

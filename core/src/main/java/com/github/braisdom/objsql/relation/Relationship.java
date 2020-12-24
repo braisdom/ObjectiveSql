@@ -37,8 +37,7 @@ public class Relationship {
 
     public Relationship(Class baseClass, Field relationField, Relation relation) {
         Objects.requireNonNull(relationField, "The relationField cannot be null");
-        Objects.requireNonNull(relation, String.format("The %s has no relation annotation",
-                relationField.getName()));
+        Objects.requireNonNull(relation, relationField.getName() + " has no relation annotation");
 
         this.baseClass = baseClass;
         this.relationField = relationField;

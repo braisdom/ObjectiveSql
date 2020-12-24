@@ -51,9 +51,10 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
             BigInteger.class, BigDecimal.class
     });
 
+    private static final Map<String, Map<String, ColumnTransition>> columnTransitionMapCache = new HashMap<>();
+    private static final Map<String, Map<String, Field>> columnToFieldMapCache = new HashMap<>();
+
     private final Class<T> domainModelClass;
-    private final Map<String, ColumnTransition> columnTransitionMap;
-    private final Map<String, Field> columnToField;
     private final DomainModel domainModel;
 
     private class DefaultFieldValue implements FieldValue {
@@ -101,28 +102,22 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
 
         DomainModel domainModel = domainModelClass.getAnnotation(DomainModel.class);
 
-        Objects.requireNonNull(domainModel, String.format("%s has no annotation: DomainModel", domainModelClass.getSimpleName()));
-        Objects.requireNonNull(Tables.getPrimaryKey(domainModelClass), String.format("The %s has no primary key",
-                domainModelClass.getSimpleName()));
+        Objects.requireNonNull(domainModel, domainModelClass.getSimpleName() + " has no annotation: DomainModel");
+        Objects.requireNonNull(Tables.getPrimaryKey(domainModelClass), domainModelClass.getSimpleName() + " has no primary key");
 
         Objects.requireNonNull(domainModel, "The domainModelClass must have DomainModel annotation");
 
         this.domainModel = domainModel;
         this.domainModelClass = domainModelClass;
-        this.columnTransitionMap = new HashMap<>();
-        this.columnToField = new HashMap<>();
 
+        prepareCache();
         prepareColumnToPropertyOverrides(domainModelClass);
         instantiateColumnTransitionMap(domainModelClass.getDeclaredFields());
     }
 
     @Override
     public String getDataSourceName() {
-        if (StringUtil.isBlank(domainModel.dataSource())) {
-            return ConnectionFactory.DEFAULT_DATA_SOURCE_NAME;
-        } else {
-            return domainModel.dataSource();
-        }
+        return domainModel.dataSource();
     }
 
     @Override
@@ -197,7 +192,8 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
 
     @Override
     public String getFieldName(String fieldName) {
-        Field field = columnToField.get(fieldName);
+        Map<String, Field> columnToFieldMap = columnToFieldMapCache.get(domainModelClass.getName());
+        Field field = columnToFieldMap.get(fieldName);
         return field == null ? null : field.getName();
     }
 
@@ -291,12 +287,29 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
 
     @Override
     public boolean isTransitable(String fieldName) {
+        Map<String, ColumnTransition> columnTransitionMap = columnTransitionMapCache
+                .get(domainModelClass.getName());
         return columnTransitionMap.get(fieldName) != null;
     }
 
     @Override
     public ColumnTransition getColumnTransition(String fieldName) {
+        Map<String, ColumnTransition> columnTransitionMap = columnTransitionMapCache
+                .get(domainModelClass.getName());
         return columnTransitionMap.get(fieldName);
+    }
+
+    protected void prepareCache() {
+        Map<String, Field> columnToFieldMap = columnToFieldMapCache.get(domainModelClass.getName());
+        Map<String, ColumnTransition> columnTransitionMap = columnTransitionMapCache.get(domainModelClass.getName());
+
+        if(columnToFieldMap == null) {
+            columnToFieldMapCache.put(domainModelClass.getName(), new HashMap<>());
+        }
+
+        if(columnTransitionMap == null) {
+            columnTransitionMapCache.put(domainModelClass.getName(), new HashMap<>());
+        }
     }
 
     protected Field[] getColumnizableFields(Class domainModelClass, boolean insertable, boolean updatable) {
@@ -363,34 +376,43 @@ public class BeanModelDescriptor<T> implements DomainModelDescriptor<T> {
 
     private void prepareColumnToPropertyOverrides(Class<T> rowClass) {
         Field[] fields = rowClass.getDeclaredFields();
-        Arrays.stream(fields).forEach(field -> {
-            PrimaryKey primaryKey = field.getAnnotation(PrimaryKey.class);
-            Column column = field.getAnnotation(Column.class);
+        Map<String, Field> columnToFieldMap = columnToFieldMapCache.get(domainModelClass.getName());
 
-            if (primaryKey != null) {
-                String columnName = Tables.getPrimaryKeyColumnName(domainModelClass);
-                columnToField.put(columnName, field);
-                columnToField.put(columnName.toUpperCase(), field);
-            } else if (column != null) {
-                String columnName = StringUtil.isBlank(column.name())
-                        ? Inflector.getInstance().underscore(field.getName()) : column.name();
-                columnToField.put(columnName.toUpperCase(), field);
-                columnToField.put(columnName, field);
-            } else {
-                columnToField.put(Inflector.getInstance().underscore(field.getName()), field);
-                columnToField.put(Inflector.getInstance().underscore(field.getName()).toUpperCase(), field);
-            }
-        });
+        if(columnToFieldMap.isEmpty()) {
+            Arrays.stream(fields).forEach(field -> {
+                PrimaryKey primaryKey = field.getAnnotation(PrimaryKey.class);
+                Column column = field.getAnnotation(Column.class);
+
+                if(!java.lang.reflect.Modifier.isStatic(field.getModifiers())) {
+                    if (primaryKey != null) {
+                        String columnName = Tables.getPrimaryKeyColumnName(domainModelClass);
+                        columnToFieldMap.put(columnName, field);
+                        columnToFieldMap.put(columnName.toUpperCase(), field);
+                    } else if (column != null) {
+                        String columnName = StringUtil.isBlank(column.name())
+                                ? Inflector.getInstance().underscore(field.getName()) : column.name();
+                        columnToFieldMap.put(columnName.toUpperCase(), field);
+                        columnToFieldMap.put(columnName, field);
+                    } else {
+                        columnToFieldMap.put(Inflector.getInstance().underscore(field.getName()), field);
+                        columnToFieldMap.put(Inflector.getInstance().underscore(field.getName()).toUpperCase(), field);
+                    }
+                }
+            });
+        }
     }
 
-    private Map<String, ColumnTransition> instantiateColumnTransitionMap(Field[] fields) {
-        Arrays.stream(fields).forEach(field -> {
-            Column column = field.getAnnotation(Column.class);
-            if (column != null && !column.transition().equals(ColumnTransition.class)) {
-                columnTransitionMap.put(field.getName(), ClassUtils.createNewInstance(column.transition()));
-            }
-        });
+    private void instantiateColumnTransitionMap(Field[] fields) {
+        Map<String, ColumnTransition> columnTransitionMap = columnTransitionMapCache
+                .get(domainModelClass.getName());
 
-        return columnTransitionMap;
+        if(columnTransitionMap.isEmpty()) {
+            Arrays.stream(fields).forEach(field -> {
+                Column column = field.getAnnotation(Column.class);
+                if (column != null && !column.transition().equals(ColumnTransition.class)) {
+                    columnTransitionMap.put(field.getName(), ClassUtils.createNewInstance(column.transition()));
+                }
+            });
+        }
     }
 }

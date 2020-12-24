@@ -26,6 +26,10 @@ public final class StringUtil {
         return String.format("%s: %s", addition, ex.getMessage());
     }
 
+    public static String formatEqualsString(String left, Object right) {
+        return new StringBuilder().append(left).append(" = ").append(right).toString();
+    }
+
     public static String[] splitNameOf(Class<?> type) {
         return type.getName().split("\\.");
     }
