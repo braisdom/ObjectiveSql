@@ -36,7 +36,7 @@ BenchmarkRunner.update       objsql  thrpt   10  130.013 ±  2.718  ops/ms
 <dependency>
     <groupId>com.github.braisdom</groupId>
     <artifactId>objective-sql</artifactId>
-    <version>1.4.4</version>
+    <version>1.4.5</version>
 </dependency>
 ```
 
@@ -45,7 +45,7 @@ BenchmarkRunner.update       objsql  thrpt   10  130.013 ±  2.718  ops/ms
 <dependency>
   <groupId>com.github.braisdom</groupId>
   <artifactId>objsql-springboot</artifactId>
-  <version>1.3.2</version>
+  <version>1.3.3</version>
 </dependency>
 ```
 
