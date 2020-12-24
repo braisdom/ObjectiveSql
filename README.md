@@ -23,9 +23,6 @@ BenchmarkRunner.update    hibernate  thrpt   10   66.626 ±  1.556  ops/ms
 BenchmarkRunner.update       objsql  thrpt   10  130.013 ±  2.718  ops/ms
 ```
 
-- Jdbc means using only native jdbc API, do not use any ORM frameworks.
-- One *Query Cycle* is defined as single `select id, name, age from user where id = ?`.
-
 ### Installation
 
 #### IntelliJ IDEA plugin installation
