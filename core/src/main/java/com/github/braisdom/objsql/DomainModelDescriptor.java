@@ -24,7 +24,6 @@ import com.github.braisdom.objsql.annotations.PrimaryKey;
  * For example, a object packaged from ProtoBuffer can be saved into database immediately,
  * no further conversion to Javabeans is required.
  *
- * @param <T> the domain model class
  */
 public interface DomainModelDescriptor<T> extends TableRowAdapter<T> {
 
