@@ -9,7 +9,7 @@ ObjectiveSQL is an ORM framework in Java based on ActiveRecord pattern, which en
 
 ### Why to choose
 
-- If your project focuses on data analysis based on relation database, and a lot of arithmetic expressions in SQL statement. ObjectiveSQL will help you write expressions conveniently and safely using Java
+- If your project focuses on data analysis based on relation database, and a lot of arithmetic expressions in SQL statement. ObjectiveSQL will help you write expressions conveniently and safely using Java syntax
 - If you don’t want to write Java codes of database access and various configuration files, ObjectiveSQL's dynamic code generation will help you access the database without coding
 
 ### Performance(Oracle JMH)
