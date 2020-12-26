@@ -18,11 +18,11 @@ ObjectiveSQL is an ORM framework in Java based on ActiveRecord pattern, which en
 
 ### Installation
 
-#### IntelliJ IDEA plugin installation
+##### IntelliJ IDEA plugin installation
 
 `Preferences/Settings` -> `Plugins` -> `Search with "ObjectiveSql" in market` -> `Install`
 
-#### Maven dependencies
+##### Maven dependencies
 
 ```xml
 <!-- In standalone -->
@@ -52,7 +52,7 @@ If you want to run without configuration, you can try: [SQLite](https://github.c
 
 Others: [MySQL](https://github.com/braisdom/ObjectiveSql/tree/master/examples/mysql),  [Oracle](https://github.com/braisdom/ObjectiveSql/tree/master/examples/oracle),  [MS SQL Server](https://github.com/braisdom/ObjectiveSql/tree/master/examples/sqlserver), [PostgreSQL](https://github.com/braisdom/ObjectiveSql/tree/master/examples/postgres),  [Spring Boot](https://github.com/braisdom/ObjectiveSql/tree/master/examples/springboot-sample)
 
-### Simple SQL programming without coding
+#### Simple SQL programming without coding
 
 > You define just a JavaBean with one annotation
 ```java
@@ -71,7 +71,7 @@ public class Member {
 }
 ```
 
-#### Persistence
+##### Persistence
 
 ```java
 Member.create(newMember);
@@ -84,7 +84,7 @@ Member.destroy(1L);
 Member.destroy("name = ?", "Mary");
 ```
 
-#### Counting and querying
+##### Counting and querying
 
 ```java
 Member.countAll();
@@ -95,14 +95,14 @@ Member.query("id > ?", 1);
 Member.queryAll();
 ```
 
-#### Paged querying
+##### Paged querying
 
 ```java
 Page page = Page.create(0, 10);
 PagedList<Member> members = Member.pagedQueryAll(page, Member.HAS_MANY_ORDERS);
 ```
 
-#### Relation querying
+##### Relation querying
 
 ```java
 Member.queryAll(Member.HAS_MANY_ORDERS);
