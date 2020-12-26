@@ -9,32 +9,20 @@ ObjectiveSQL is an ORM framework in Java based on ActiveRecord pattern, which en
 
 ### Why to choose
 
-- If your project focuses on data analysis in relation database, and a lot of arithmetic expressions in SQL statement. ObjectiveSQL will help you convenient and safe write expression using Java
+- If your project focuses on data analysis based on relation database, and a lot of arithmetic expressions in SQL statement. ObjectiveSQL will help you write expressions conveniently and safely using Java syntax
 - If you don’t want to write Java codes of database access and various configuration files, ObjectiveSQL's dynamic code generation will help you access the database without coding
 
-### Performance
+### Performance(Oracle JMH)
 
 ![query_perf](./doc/perf.png)
 
-```
-Benchmark               (framework)   Mode  Cnt    Score    Error   Units
-BenchmarkRunner.query       mybatis  thrpt   10   66.269 ±  5.584  ops/ms
-BenchmarkRunner.query          jdbc  thrpt   10  125.223 ±  6.476  ops/ms
-BenchmarkRunner.query     hibernate  thrpt   10   57.952 ±  2.983  ops/ms
-BenchmarkRunner.query        objsql  thrpt   10   85.329 ±  4.812  ops/ms
-BenchmarkRunner.update      mybatis  thrpt   10  118.780 ±  6.028  ops/ms
-BenchmarkRunner.update         jdbc  thrpt   10  184.414 ± 10.612  ops/ms
-BenchmarkRunner.update    hibernate  thrpt   10   66.626 ±  1.556  ops/ms
-BenchmarkRunner.update       objsql  thrpt   10  130.013 ±  2.718  ops/ms
-```
-
 ### Installation
 
-#### IntelliJ IDEA plugin installation
+##### IntelliJ IDEA plugin installation
 
 `Preferences/Settings` -> `Plugins` -> `Search with "ObjectiveSql" in market` -> `Install`
 
-#### Maven dependencies
+##### Maven dependencies
 
 ```xml
 <!-- In standalone -->
@@ -64,7 +52,7 @@ If you want to run without configuration, you can try: [SQLite](https://github.c
 
 Others: [MySQL](https://github.com/braisdom/ObjectiveSql/tree/master/examples/mysql),  [Oracle](https://github.com/braisdom/ObjectiveSql/tree/master/examples/oracle),  [MS SQL Server](https://github.com/braisdom/ObjectiveSql/tree/master/examples/sqlserver), [PostgreSQL](https://github.com/braisdom/ObjectiveSql/tree/master/examples/postgres),  [Spring Boot](https://github.com/braisdom/ObjectiveSql/tree/master/examples/springboot-sample)
 
-### Simple SQL programming without coding
+#### Simple SQL programming without coding
 
 > You define just a JavaBean with one annotation
 ```java
@@ -83,7 +71,7 @@ public class Member {
 }
 ```
 
-#### Persistence
+##### Persistence
 
 ```java
 Member.create(newMember);
@@ -96,7 +84,7 @@ Member.destroy(1L);
 Member.destroy("name = ?", "Mary");
 ```
 
-#### Counting and querying
+##### Counting and querying
 
 ```java
 Member.countAll();
@@ -107,14 +95,14 @@ Member.query("id > ?", 1);
 Member.queryAll();
 ```
 
-#### Paged querying
+##### Paged querying
 
 ```java
 Page page = Page.create(0, 10);
 PagedList<Member> members = Member.pagedQueryAll(page, Member.HAS_MANY_ORDERS);
 ```
 
-#### Relation querying
+##### Relation querying
 
 ```java
 Member.queryAll(Member.HAS_MANY_ORDERS);
