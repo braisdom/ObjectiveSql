@@ -102,7 +102,7 @@ public final class Tables {
             }
             throw new IllegalStateException(String.format("Class '%s' has no @PrimaryKey", tableClass.getSimpleName()));
         } else {
-            return primaryKeyField.getName();
+            return Inflector.getInstance().underscore(primaryKeyField.getName());
         }
     }
 
