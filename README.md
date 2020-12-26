@@ -16,18 +16,6 @@ ObjectiveSQL is an ORM framework in Java based on ActiveRecord pattern, which en
 
 ![query_perf](./doc/perf.png)
 
-```
-Benchmark               (framework)   Mode  Cnt    Score    Error   Units
-BenchmarkRunner.query       mybatis  thrpt   10   66.269 ±  5.584  ops/ms
-BenchmarkRunner.query          jdbc  thrpt   10  125.223 ±  6.476  ops/ms
-BenchmarkRunner.query     hibernate  thrpt   10   57.952 ±  2.983  ops/ms
-BenchmarkRunner.query        objsql  thrpt   10   85.329 ±  4.812  ops/ms
-BenchmarkRunner.update      mybatis  thrpt   10  118.780 ±  6.028  ops/ms
-BenchmarkRunner.update         jdbc  thrpt   10  184.414 ± 10.612  ops/ms
-BenchmarkRunner.update    hibernate  thrpt   10   66.626 ±  1.556  ops/ms
-BenchmarkRunner.update       objsql  thrpt   10  130.013 ±  2.718  ops/ms
-```
-
 ### Installation
 
 #### IntelliJ IDEA plugin installation
