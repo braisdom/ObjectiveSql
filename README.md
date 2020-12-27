@@ -29,7 +29,7 @@ ObjectiveSQL is an ORM framework in Java based on ActiveRecord pattern, which en
 <dependency>
     <groupId>com.github.braisdom</groupId>
     <artifactId>objective-sql</artifactId>
-    <version>1.4.5</version>
+    <version>1.4.6</version>
 </dependency>
 ```
 
@@ -38,7 +38,7 @@ ObjectiveSQL is an ORM framework in Java based on ActiveRecord pattern, which en
 <dependency>
   <groupId>com.github.braisdom</groupId>
   <artifactId>objsql-springboot</artifactId>
-  <version>1.3.3</version>
+  <version>1.3.4</version>
 </dependency>
 ```
 
