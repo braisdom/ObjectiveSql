@@ -15,8 +15,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
-        <core.version>1.4.3</core.version>
-        <springboot.version>1.3.2</springboot.version>
+        <core.version>1.4.6</core.version>
+        <springboot.version>1.3.4</springboot.version>
     </properties>
 
     <dependencies>
