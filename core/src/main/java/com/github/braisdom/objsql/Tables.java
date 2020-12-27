@@ -53,15 +53,23 @@ public final class Tables {
                 .toArray(Validator.Violation[]::new);
     };
 
-    private static TableNameEncoder tableNameEncoder = domainModelClass -> {
-        Objects.requireNonNull(domainModelClass, "The baseClass cannot be null");
-        DomainModel domainModel = (DomainModel) domainModelClass.getAnnotation(DomainModel.class);
-        Objects.requireNonNull(domainModel, "The baseClass must have the DomainModel annotation");
+    private static TableNameEncoder tableNameEncoder = new TableNameEncoder() {
+        @Override
+        public String getTableName(Class domainModelClass) {
+            Objects.requireNonNull(domainModelClass, "The baseClass cannot be null");
+            DomainModel domainModel = (DomainModel) domainModelClass.getAnnotation(DomainModel.class);
+            Objects.requireNonNull(domainModel, "The baseClass must have the DomainModel annotation");
 
-        if (!StringUtil.isBlank(domainModel.tableName())) {
-            return domainModel.tableName();
-        } else {
-            return Inflector.getInstance().tableize(domainModelClass.getSimpleName());
+            if (!StringUtil.isBlank(domainModel.tableName())) {
+                return domainModel.tableName();
+            } else {
+                return Inflector.getInstance().tableize(domainModelClass.getSimpleName());
+            }
+        }
+
+        @Override
+        public String getColumnName(Class domainModelClass, String fieldName) {
+            return Inflector.getInstance().underscore(fieldName);
         }
     };
 
@@ -94,7 +102,7 @@ public final class Tables {
                 if (primaryKey != null) {
                     primaryKeyFieldCache.put(tableClass.getName(), field);
                     if (INVALID_PRIMARY_KEY.equals(primaryKey.name())) {
-                        return Inflector.getInstance().underscore(field.getName());
+                        return tableNameEncoder.getColumnName(tableClass, field.getName());
                     } else {
                         return primaryKey.name();
                     }
@@ -102,7 +110,7 @@ public final class Tables {
             }
             throw new IllegalStateException(String.format("Class '%s' has no @PrimaryKey", tableClass.getSimpleName()));
         } else {
-            return Inflector.getInstance().underscore(primaryKeyField.getName());
+            return tableNameEncoder.getColumnName(tableClass, primaryKeyField.getName());
         }
     }
 
@@ -144,9 +152,9 @@ public final class Tables {
                 }
             }
 
-            return Inflector.getInstance().underscore(field.getName());
+            return tableNameEncoder.getColumnName(tableClass, field.getName());
         } catch (NoSuchFieldException ex) {
-            throw new DomainModelException(ex.getMessage(), ex);
+            throw new IllegalStateException(ex.getMessage(), ex);
         }
     }
 

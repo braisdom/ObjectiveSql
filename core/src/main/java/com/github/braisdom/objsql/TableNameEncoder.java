@@ -16,4 +16,6 @@ public interface TableNameEncoder {
      */
     String getTableName(Class domainModelClass);
 
+    String getColumnName(Class domainModelClass, String fieldName);
+
 }
