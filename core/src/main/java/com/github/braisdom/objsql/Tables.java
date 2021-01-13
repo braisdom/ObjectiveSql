@@ -27,6 +27,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -227,6 +228,8 @@ public final class Tables {
                 return Long.valueOf((Integer) count);
             } else if (count instanceof BigDecimal) {
                 return ((BigDecimal) count).longValue();
+            } else if (count instanceof BigInteger) {
+                return ((BigInteger) count).longValue();
             } else {
                 return 0L;
             }
