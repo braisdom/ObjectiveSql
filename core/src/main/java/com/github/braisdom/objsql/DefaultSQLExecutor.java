@@ -146,6 +146,11 @@ class DomainModelHandler implements ResultSetHandler<Object> {
     @Override
     public Object handle(ResultSet rs) throws SQLException {
         Object bean = tableRowDescriptor.newInstance();
+
+        if (rs == null) {
+            return bean;
+        }
+
         ResultSetMetaData metaData = rs.getMetaData();
         int columnCount = metaData.getColumnCount();
 

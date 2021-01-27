@@ -597,7 +597,14 @@ public class QueryRunner extends AbstractQueryRunner {
         T generatedKeys = null;
 
         try {
-            stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            // If the JDBC driver does not support the method with a constant of Statement.RETURN_GENERATED_KEYS,
+            // call the method with an SQL statement.
+            try {
+                stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            } catch (SQLFeatureNotSupportedException e) {
+                stmt = conn.prepareStatement(sql);
+            }
+
             this.fillStatement(stmt, params);
             stmt.executeUpdate();
             ResultSet resultSet = stmt.getGeneratedKeys();
@@ -677,7 +684,13 @@ public class QueryRunner extends AbstractQueryRunner {
 
         PreparedStatement stmt = null;
         try {
-            stmt = this.prepareStatement(conn, sql, Statement.RETURN_GENERATED_KEYS);
+            // If the JDBC driver does not support the method with a constant of Statement.RETURN_GENERATED_KEYS,
+            // call the method with an SQL statement.
+            try {
+                stmt = this.prepareStatement(conn, sql, Statement.RETURN_GENERATED_KEYS);
+            } catch (SQLFeatureNotSupportedException e) {
+                stmt = this.prepareStatement(conn, sql);
+            }
 
             for (int i = 0; i < params.length; i++) {
                 this.fillStatement(stmt, params[i]);
