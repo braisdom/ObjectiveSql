@@ -37,7 +37,7 @@ public class QueryMethodCodeGenerator extends DomainModelProcessor {
         statementBuilder.append(String.class, "columnName", Tables.class, "getColumnName",
                 aptBuilder.classRef(aptBuilder.getClassName()), treeMaker.Literal(field.getName().toString()));
         JCTree.JCExpression stringFormatExpression = aptBuilder.staticMethodCall(String.class,
-                "format", treeMaker.Literal("%s = ?"), treeMaker.Literal(field.name.toString()));
+                "format", treeMaker.Literal("%s = ?"), aptBuilder.varRef("columnName"));
         statementBuilder.append("query", "where",
                         List.of(stringFormatExpression, aptBuilder.varRef("value")));
 

@@ -44,6 +44,7 @@ public class JCBinarys {
     private static final String OPERATOR_LE = "LE";
     private static final String OPERATOR_GT = "GT";
     private static final String OPERATOR_GE = "GE";
+    private static final String OPERATOR_EQ = "EQ";
 
     // ==================== for PLUS operation =============
     public static String plus(String lhs, Object rhs) {
@@ -1168,6 +1169,10 @@ public class JCBinarys {
         return lhs || rhs;
     }
 
+    public static boolean eq(Object lhs, Object rhs) {
+        return lhs == rhs;
+    }
+
     // ==================== for parens =============
 
     public static boolean parens(boolean expValue) {
@@ -1278,6 +1283,8 @@ public class JCBinarys {
                 return "and";
             case OPERATOR_OR:
                 return "or";
+            case OPERATOR_EQ:
+                return "eq";
         }
         return null;
     }
