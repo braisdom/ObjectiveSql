@@ -81,7 +81,7 @@
         <dependency>
             <groupId>com.github.braisdom</groupId>
             <artifactId>objective-sql</artifactId>
-            <version>1.4.3</version>
+            <version>${core.version}</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
