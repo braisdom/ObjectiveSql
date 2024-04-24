@@ -13,7 +13,7 @@
     <artifactId>springboot-sample</artifactId>
     <version>1.0</version>
     <properties>
-        <project.build.sourceEhttps://github.com/ren-jq101/ObjectiveSql.gitncoding>UTF-8</project.build.sourceEncoding>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
         <core.version>1.4.6</core.version>
         <springboot.version>1.3.4</springboot.version>
